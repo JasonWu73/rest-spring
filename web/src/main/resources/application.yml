@@ -2,10 +2,6 @@ core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
   allowed-ant-paths: /anonymous
 
-logging:
-  level:
-    org.springframework: info
-
 server:
   port: 8080
 

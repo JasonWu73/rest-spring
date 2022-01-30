@@ -2,8 +2,9 @@
 .idea
 *.iml
 
-# === 项目编译 ===
+# === 项目输出的临时文件 ===
 target
+logs
 
 # === MacOS ===
 .DS_Store

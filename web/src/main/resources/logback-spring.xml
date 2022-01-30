@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- 加载 Spring Boot 配置 -->
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+  <!-- 配置属性 -->
+  <!-- 日志文件的存储路径 -->
+  <property name="logFileDir" value="logs/"/>
+  <!-- 日志文件的名称 -->
+  <property name="logFileName" value="web.log"/>
+  <!-- 活动文件的大小 -->
+  <property name="maxFileSizeVal" value="100KB"/>
+  <!-- 保留的归档文件的最大数量 -->
+  <property name="maxHistoryVal" value="2"/>
+  <!-- 控制所有归档日志文件的总大小 -->
+  <property name="totalSizeCapVal" value="10MB"/>
+
+  <!-- 记录日志文件 -->
+  <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${logFileDir}${logFileName}</file>
+    <encoder>
+      <!-- 使用 Spring Boot 的配置 -->
+      <pattern>${FILE_LOG_PATTERN}</pattern>
+      <charset>${FILE_LOG_CHARSET}</charset>
+    </encoder>
+
+    <!-- 每日滚动日志 -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- 设置每天滚动 -->
+      <fileNamePattern>${logFileDir}/${logFileName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- 设置每个日志文件的最大尺寸应保持在指定大小左右, 默认为 10MB.
+      如果设置了该属性, Logback 将在文件大小达到阈值或新的一天开始时生成新的日志文件 -->
+      <maxFileSize>${maxFileSizeVal}</maxFileSize>
+      <!-- 设置 Logback 最大保存的天数, 默认为 7 天.
+      如果设置了该属性, Logback 会删除超过指定天数的归档日志文件 -->
+      <maxHistory>${maxHistoryVal}</maxHistory>
+      <!-- 设置所有日志文件的总大小 (MB, GB).
+      如果设置了该属性, Logback 将删除最旧的日志文件, 以保持总大小不超过指定值 -->
+      <totalSizeCap>${totalSizeCapVal}</totalSizeCap>
+      <!-- 设置 Logback 是否在启动时清理存档的日志文件, 默认为 false
+      true: Logback 将在程序启动时, 根据 `totalSizeCap` 和 `maxHistory` 的值来清理旧的日志文件 -->
+      <cleanHistoryOnStart>true</cleanHistoryOnStart>
+    </rollingPolicy>
+  </appender>
+
+  <logger name="org.springframework" level="DEBUG"/>
+
+  <root level="DEBUG">
+    <!-- 控制台输出直接使用 Spring Boot 的配置 -->
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOG_FILE"/>
+  </root>
+</configuration>
