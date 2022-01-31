@@ -5,39 +5,39 @@
   <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
   <!-- 配置属性 -->
-  <!-- 日志文件的存储路径 -->
-  <property name="logFileDir" value="logs/"/>
-  <!-- 日志文件的名称 -->
-  <property name="logFileName" value="web.log"/>
-  <!-- 活动文件的大小 -->
-  <property name="maxFileSizeVal" value="100KB"/>
-  <!-- 保留的归档文件的最大数量 -->
-  <property name="maxHistoryVal" value="2"/>
+  <!-- 日志文件的存放目录 (绝对或相对路径) -->
+  <property name="LOG_FILE_DIR" value="logs/"/>
+  <!-- 日志文件的名称 (不包含扩展名 .log) -->
+  <property name="LOG_FILE_NAME" value="app"/>
+  <!-- 每个文件大小的最大估值 (非精确值, 可以 以字节, KB, MB 或 GB 为单位, 默认单位为字节) -->
+  <property name="MAX_FILE_SIZE" value="100MB"/>
+  <!-- 保留的归档文件的最大天数 -->
+  <property name="MAX_HISTORY" value="60"/>
   <!-- 控制所有归档日志文件的总大小 -->
-  <property name="totalSizeCapVal" value="10MB"/>
+  <property name="TOTAL_SIZE_CAP" value="20GB"/>
 
   <!-- 记录日志文件 -->
   <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${logFileDir}${logFileName}</file>
+    <file>${LOG_FILE_DIR}${LOG_FILE_NAME}.log</file>
     <encoder>
       <!-- 使用 Spring Boot 的配置 -->
       <pattern>${FILE_LOG_PATTERN}</pattern>
       <charset>${FILE_LOG_CHARSET}</charset>
     </encoder>
 
-    <!-- 每日滚动日志 -->
+    <!-- 滚动日志文件 -->
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- 设置每天滚动 -->
-      <fileNamePattern>${logFileDir}/${logFileName}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-      <!-- 设置每个日志文件的最大尺寸应保持在指定大小左右, 默认为 10MB.
+      <!-- 每日滚存 (daily rollover) -->
+      <fileNamePattern>${LOG_FILE_DIR}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+      <!-- 设置每个日志文件的最大尺寸应保持在多少大小左右, 默认为 10MB.
       如果设置了该属性, Logback 将在文件大小达到阈值或新的一天开始时生成新的日志文件 -->
-      <maxFileSize>${maxFileSizeVal}</maxFileSize>
+      <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
       <!-- 设置 Logback 最大保存的天数, 默认为 7 天.
       如果设置了该属性, Logback 会删除超过指定天数的归档日志文件 -->
-      <maxHistory>${maxHistoryVal}</maxHistory>
+      <maxHistory>${MAX_HISTORY}</maxHistory>
       <!-- 设置所有日志文件的总大小 (MB, GB).
       如果设置了该属性, Logback 将删除最旧的日志文件, 以保持总大小不超过指定值 -->
-      <totalSizeCap>${totalSizeCapVal}</totalSizeCap>
+      <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
       <!-- 设置 Logback 是否在启动时清理存档的日志文件, 默认为 false
       true: Logback 将在程序启动时, 根据 `totalSizeCap` 和 `maxHistory` 的值来清理旧的日志文件 -->
       <cleanHistoryOnStart>true</cleanHistoryOnStart>
