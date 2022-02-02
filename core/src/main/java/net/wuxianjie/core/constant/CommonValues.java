@@ -1,10 +1,15 @@
 package net.wuxianjie.core.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * 常用值常量类
  *
  * @author 吴仙杰
  */
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CommonValues {
   /** 中国东八区时区 */
   public static final String CHINA_TIME_ZONE = "Asia/Shanghai";
@@ -14,6 +19,4 @@ public final class CommonValues {
 
   /** 同时包含日期和时间的格式化字符串, 比如: {@code 2022-01-25 17:43:25} */
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
-  private CommonValues() {}
 }

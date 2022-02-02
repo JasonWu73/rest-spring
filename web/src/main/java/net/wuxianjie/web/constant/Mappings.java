@@ -1,10 +1,14 @@
 package net.wuxianjie.web.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * 请求路径常量
  *
  * @author 吴仙杰
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Mappings {
 
   /** 匿名用户即可访问的测试资源 */
@@ -18,6 +22,4 @@ public final class Mappings {
 
   /** 拥有 {@code admin} 角色的用户才可以访问的测试资源 */
   public static final String ADMIN = "/admin";
-
-  private Mappings() {}
 }

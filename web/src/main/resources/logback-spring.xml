@@ -44,7 +44,7 @@
     </rollingPolicy>
   </appender>
 
-  <logger name="org.springframework" level="DEBUG"/>
+  <logger name="org.springframework" level="INFO"/>
 
   <root level="INFO">
     <!-- 控制台输出直接使用 Spring Boot 的配置 -->

@@ -1,10 +1,15 @@
 package net.wuxianjie.web.constant;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 /**
  * Token 属性常量
  *
  * @author 吴仙杰
  */
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TokenAttributes {
 
   /** Access Token 的有效期 (秒为单位, 有效期30分钟) */
@@ -21,6 +26,4 @@ public final class TokenAttributes {
 
   /** Token 类型 Value - Refresh Token */
   public static final String REFRESH_TOKEN = "refresh";
-
-  private TokenAttributes() {}
 }
