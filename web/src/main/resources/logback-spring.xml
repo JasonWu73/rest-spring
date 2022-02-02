@@ -46,7 +46,7 @@
 
   <logger name="org.springframework" level="DEBUG"/>
 
-  <root level="DEBUG">
+  <root level="INFO">
     <!-- 控制台输出直接使用 Spring Boot 的配置 -->
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="LOG_FILE"/>
