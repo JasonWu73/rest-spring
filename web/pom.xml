@@ -31,7 +31,7 @@
 
   <build>
     <plugins>
-      <!-- Spring Boot Maven 插件，打包项目为单一、可运行 Jar -->
+      <!-- Spring Boot Maven 插件, 打包项目为单一, 可运行 Jar -->
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
