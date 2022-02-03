@@ -1,7 +1,9 @@
 package net.wuxianjie.core.config;
 
+import net.wuxianjie.core.constant.BeanQualifiers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,15 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = CoreConfig.class)
 class CoreConfigTest {
 
-  private static final String SECRET_KEY = "6/ATA2JKtDzT0jhs+loVxzaGiwROIn4bThvdhAIn5wo=";
-  private static final String ALLOWED_ANT_PATHS = "/test-1, /test-2";
-
-  @Autowired private String jwtSecretKey;
-  @Autowired private String allowedAntPaths;
+  @Autowired @Qualifier(BeanQualifiers.JWT_SIGNING_KEY) private String jwtSigningKey;
+  @Autowired @Qualifier(BeanQualifiers.ALLOWED_ANT_PATHS) private String allowedAntPaths;
 
   @Test
   void whenFactoryProvidedThenYamlPropertiesInjected() {
-    assertEquals(SECRET_KEY, jwtSecretKey);
-    assertEquals(ALLOWED_ANT_PATHS, allowedAntPaths);
+    assertEquals(CoreProperties.JWT_SIGNING_KEY, jwtSigningKey);
+    assertEquals(CoreProperties.ALLOWED_ANT_PATHS, allowedAntPaths);
   }
 }

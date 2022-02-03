@@ -34,7 +34,7 @@ class PasswordEncoderTest {
   void encodePasswordShouldNotReturnNull() {
     encodedPassword = passwordEncoder.encode(RAW_PASSWORD);
     assertNotNull(encodedPassword);
-    log.info("原密码：{}，编码后为：{}", RAW_PASSWORD, encodedPassword);
+    log.info("原密码: {}，编码后为: {}", RAW_PASSWORD, encodedPassword);
   }
 
   @Test

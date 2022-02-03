@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * 模块主配置类
@@ -43,5 +45,15 @@ public class CoreConfig {
   @Bean(BeanQualifiers.ALLOWED_ANT_PATHS)
   public String allowedAntPaths() {
     return allowedAntPaths;
+  }
+
+  /**
+   * 密码编码器
+   *
+   * @return 密码编码器
+   */
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }
