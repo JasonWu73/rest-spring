@@ -3,18 +3,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>net.wuxianjie</groupId>
     <artifactId>rest-spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
+  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>core</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <description>核心模块，包含 Token 鉴权，REST API 统一结果封装等</description>
+  <description>核心模块, 包含 Token 鉴权, REST API 统一结果封装等</description>
 
   <dependencies>
     <!-- Java工具类库 Hutool -->
