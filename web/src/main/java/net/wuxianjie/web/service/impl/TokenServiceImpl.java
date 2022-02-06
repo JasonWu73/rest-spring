@@ -1,4 +1,4 @@
-package net.wuxianjie.web.service;
+package net.wuxianjie.web.service.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.NonNull;
