@@ -1,6 +1,6 @@
 core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /anonymous
+  allowed-ant-paths: /auth-resources/public
 
 server:
   port: 8080
@@ -33,7 +33,7 @@ spring:
 
 mybatis:
   # 配置 mapper.xml 中 `resultType` 无需写明类的完全限定名
-  type-aliases-package: net.wuxianjie.web.model.entity
+  type-aliases-package: net.wuxianjie.web.domain
   configuration:
     map-underscore-to-camel-case: true
     default-fetch-size: 100

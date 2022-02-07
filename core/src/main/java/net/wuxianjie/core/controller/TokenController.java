@@ -3,7 +3,7 @@ package net.wuxianjie.core.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.core.model.dto.TokenDto;
+import net.wuxianjie.core.domain.Token;
 import net.wuxianjie.core.service.TokenService;
 import net.wuxianjie.core.constant.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class TokenController {
    * @return Token
    */
   @PostMapping(Mappings.ACCESS_TOKEN)
-  public TokenDto createToken(@RequestBody @Valid createTokenQuery query) {
+  public Token createToken(@RequestBody @Valid createTokenQuery query) {
     return tokenService.createToken(query.getAccountName(), query.getAccountPassword());
   }
 
@@ -47,7 +47,7 @@ public class TokenController {
    * @return Token
    */
   @GetMapping(Mappings.REFRESH_TOKEN)
-  public TokenDto updateToken(
+  public Token updateToken(
       @NotBlank(message = "Refresh Token 不能为空") String token) {
     return tokenService.updateToken(token);
   }

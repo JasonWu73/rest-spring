@@ -2,8 +2,7 @@ package net.wuxianjie.core.filter;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.core.model.dto.RestDto;
-import net.wuxianjie.core.constant.Mappings;
+import net.wuxianjie.core.domain.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -48,8 +47,8 @@ public class NonControllerErrorController implements ErrorController {
    * @return 包含错误信息的响应体
    */
   @ResponseBody
-  @RequestMapping(Mappings.ERROR)
-  public ResponseEntity<RestDto<Void>> handleError(final WebRequest request) {
+  @RequestMapping("/error")
+  public ResponseEntity<RestResponse<Void>> handleError(final WebRequest request) {
 
     final Map<String, Object> errorMap = attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
 

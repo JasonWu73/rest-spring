@@ -1,7 +1,7 @@
 package net.wuxianjie.core.util;
 
 import lombok.NonNull;
-import net.wuxianjie.core.model.dto.CachedTokenDto;
+import net.wuxianjie.core.domain.CachedToken;
 import org.springframework.security.core.Authentication;
 
 /**
@@ -17,8 +17,8 @@ public class AuthUtils {
    * @param auth 可由 Spring Controller 方法自动注入参数获得
    * @return 程序内部的 Token 数据传输对象
    */
-  public static CachedTokenDto loadToken(@NonNull Authentication auth) {
+  public static CachedToken loadToken(@NonNull Authentication auth) {
     final Object principal = auth.getPrincipal();
-    return (CachedTokenDto) principal;
+    return (CachedToken) principal;
   }
 }

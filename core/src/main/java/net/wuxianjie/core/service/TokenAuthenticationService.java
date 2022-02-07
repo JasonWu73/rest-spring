@@ -1,7 +1,7 @@
 package net.wuxianjie.core.service;
 
 import lombok.NonNull;
-import net.wuxianjie.core.model.dto.CachedTokenDto;
+import net.wuxianjie.core.domain.CachedToken;
 
 /**
  * Token 鉴权认证机制业务逻辑接口
@@ -16,5 +16,5 @@ public interface TokenAuthenticationService {
    * @param accessToken Access Token
    * @return 认证后的 Token 数据
    */
-  CachedTokenDto authenticate(@NonNull final String accessToken);
+  CachedToken authenticate(@NonNull final String accessToken);
 }

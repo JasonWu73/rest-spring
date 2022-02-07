@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Mappings {
 
-  /** Spring Boot 白标签错误页请求路径 */
-  public static final String ERROR = "/error";
-
   /** 获取 Access Token */
   public static final String ACCESS_TOKEN = "/access_token";
 

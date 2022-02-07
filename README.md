@@ -35,11 +35,7 @@ Java 源码目录:
 ├── filter # 存放过滤器, 拦截器相关代码
 ├── mapper # 存放 MyBatis SQL 映射器 (数据访问层 (DAO))
 │   └── UserMapper.java #  MyBatis 接口以 `Mapper` 结尾
-├── model # 存放数据模型类
-│   ├── dto # 存放数据传输对象类, 用于 Service 层处理
-│       ├── UserDto.java # 以 `Dto` 结尾
-│   └── entity # 存放数据库实体映射类, 用于 DAO 层处理
-│       └──  UserEntity.java # 以 `Entity` 结尾
+├── domain # 存放领域模型类, 可作为 MyBatis 映射器的结果对象
 ├── service # 存放业务逻辑接口及实现类
 │   ├── impl # 存放数据库实体映射类
     │   ├── UserServiceImpl.java # 接口实现类以 `Impl` 结尾
@@ -54,7 +50,6 @@ Java 源码目录:
 - `Controller` 层里只编写参数校验代码, 业务逻辑全部放到 `Service` 层代码中去做
 - `Service` 层做实际业务逻辑, 可以按照功能模块做好定义和区分, 相互可以调用
 - 功能模块 `Service` 之间引用时, 不要渗透到 `DAO` 层 (或者 `mapper` 层), 基于 `Service` 层进行调用和复用比较合理
-- 业务逻辑层 `Service` 和数据库 `DAO` 层的操作对象不要混用. `Controller` 层的数据对象不要直接渗透到 `DAO` 层 (或者 `mapper` 层); 同理数据表实体对象 `Entity` 也不要直接传到 `Controller` 层进行输出或展示
 
 ## Final 变量
 
@@ -126,6 +121,7 @@ class Foo {
 
 ### 命名规范
 
+- URL: 全部小写, 多个单词用中划线 `-` 分隔
 - 项目名: 全部小写, 多个单词用中划线 `-` 分隔
   - 如: `spring-boot-starter-json`
 - 包名: 全部小写, 多个名称 (若语义需包含多个单词则直接连接到一起即可) 使用英文点 `.` 分隔
@@ -203,9 +199,27 @@ class Foo {
     - `remove` 为前缀: 删除
     - `from` 为中部: 从既有的某物新建, 或是从其他的数据新建. 如: `fromConfig`
     - `to` 为前缀: 转换. 如: `toString`
+  - 与数据库相关的方法:
+    - `addXxx`: 新增
+    - `deleteXxxByXxx`: 删除
+    - `updateXxx`: 更新
+    - `queryXxxByXxx`: 查询
 - 变量名: 同方法名. 如: `JsonObjectRequest`
   - POJO 中的布尔变量一律不要加 `is` 前缀, 数据库中的布尔字段全部都要加 `is_` 前缀
 - 常量名: 全部大写，多个单词用下划线 `_` 分隔. 如: `INTERNAL_SERVER_ERROR`
   - 全局常量: `public static final`
   - 类内常量: `private static final`
   - 局部常量 (方法内或参数): 同变量名
+
+### 单复数
+
+单数:
+- 项目名
+- 包名
+- 类名
+
+复数:
+- 数据库表
+
+按实际情况使用单复数:
+- URL

@@ -1,4 +1,4 @@
-package net.wuxianjie.core.model.dto;
+package net.wuxianjie.core.domain;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import lombok.Data;
  * @author 吴仙杰
  */
 @Data
-public class CachedTokenDto {
+public class CachedToken {
 
   /** 用于访问接口的 Access Token */
   private String accessToken;

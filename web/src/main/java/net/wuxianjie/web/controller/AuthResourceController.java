@@ -1,13 +1,13 @@
 package net.wuxianjie.web.controller;
 
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.model.dto.CachedTokenDto;
+import net.wuxianjie.core.domain.CachedToken;
 import net.wuxianjie.core.util.AuthUtils;
-import net.wuxianjie.web.constant.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -16,13 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 吴仙杰
  */
 @RestController
+@RequestMapping("/auth-resources")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthResourceController {
 
   /**
    * 匿名用户
    */
-  @GetMapping(Mappings.ANONYMOUS)
+  @GetMapping("public")
   public String loadAnonymous() {
     return "您好: 匿名用户, 您正在访问任何人都可访问的资源";
   }
@@ -32,9 +33,9 @@ public class AuthResourceController {
    *
    * @param auth 通过身份认证后的本地账号信息
    */
-  @GetMapping(Mappings.GUEST)
+  @GetMapping("guest")
   public String loadGuest(Authentication auth) {
-    final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
+    final CachedToken tokenDto = AuthUtils.loadToken(auth);
     return String.format("您好: %s, 您正在访问只要通过身份认证后即可访问的资源", tokenDto.getAccountName());
   }
 
@@ -44,9 +45,9 @@ public class AuthResourceController {
    * @param auth 通过身份认证后的本地账号信息
    */
   @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-  @GetMapping(Mappings.USER)
+  @GetMapping("user")
   public String loadUser(Authentication auth) {
-    final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
+    final CachedToken tokenDto = AuthUtils.loadToken(auth);
     return String.format("您好: %s, 您正在访问 USER 角色才可访问的资源", tokenDto.getAccountName());
   }
 
@@ -56,9 +57,9 @@ public class AuthResourceController {
    * @param auth 通过身份认证后的本地账号信息
    */
   @PreAuthorize("hasRole('ADMIN')")
-  @GetMapping(Mappings.ADMIN)
+  @GetMapping("admin")
   public String loadAdmin(Authentication auth) {
-    final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
+    final CachedToken tokenDto = AuthUtils.loadToken(auth);
     return String.format("您好: %s, 您正在访问 ADMIN 角色才可访问的资源", tokenDto.getAccountName());
   }
 }

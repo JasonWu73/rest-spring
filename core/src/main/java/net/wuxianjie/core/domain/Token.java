@@ -1,18 +1,18 @@
-package net.wuxianjie.core.model.dto;
+package net.wuxianjie.core.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 返回给前端的 Token 数据传输对象
+ * 返回给前端的 Token 数据
  *
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenDto {
+public class Token {
 
   /** Access Token 的有效期 (秒为单位) */
   private int expiresIn;

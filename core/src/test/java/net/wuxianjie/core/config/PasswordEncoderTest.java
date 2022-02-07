@@ -24,7 +24,7 @@ class PasswordEncoderTest {
 
   private static final String RAW_PASSWORD = "123";
 
-  private static String encodedPassword = "$2a$10$9Tq5H9wCOiRg97zR5K.6ye.5TIAQUVhDPFhm5YsbvSgpJhwTj3.yW";
+  private static String encodedPassword = "$2a$10$gJVQEiowl350wLSQLptyB.PbdP2AVXEOxulYgwwZfooW0IhkMgLp.";
 
   @Autowired
   private PasswordEncoder passwordEncoder;

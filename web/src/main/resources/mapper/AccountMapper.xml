@@ -3,7 +3,15 @@
 
 <mapper namespace="net.wuxianjie.web.mapper.AccountMapper">
 
-  <select id="findByName" resultType="AccountEntity">
-    SELECT id, name, password, roles FROM account WHERE name = #{name}
+  <select id="queryAccountByUserName" resultType="Account">
+    SELECT
+           id AS accountId,
+           name AS accountName,
+           password AS accountPassword,
+           roles AS accountRoles
+    FROM
+         user
+    WHERE
+          name = #{name}
   </select>
 </mapper>

@@ -1,16 +1,16 @@
-package net.wuxianjie.core.model.dto;
+package net.wuxianjie.core.domain;
 
 import lombok.Data;
 import net.wuxianjie.core.util.ResponseStatus;
 
 /**
- * REST API 统一响应结果数据传输对象
+ * REST API 统一响应数据结果
  *
  * @param <T> 主要数据结果的类类型
  * @author 吴仙杰
  */
 @Data
-public class RestDto<T> {
+public class RestResponse<T> {
 
   /**
    * 本次请求的服务器响应状态。

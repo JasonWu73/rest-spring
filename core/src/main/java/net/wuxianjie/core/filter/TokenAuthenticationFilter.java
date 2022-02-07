@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.constant.Prefixes;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.dto.RestDto;
-import net.wuxianjie.core.model.dto.CachedTokenDto;
+import net.wuxianjie.core.domain.RestResponse;
+import net.wuxianjie.core.domain.CachedToken;
 import net.wuxianjie.core.service.TokenAuthenticationService;
 import net.wuxianjie.core.util.ResponseResultWrappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     try {
-      final CachedTokenDto tokenDto = tokenAuthenticationService.authenticate(token);
+      final CachedToken tokenDto = tokenAuthenticationService.authenticate(token);
 
       login2SpringSecurity(tokenDto);
     }
@@ -89,7 +89,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     return bearerHeader.substring(Prefixes.AUTHORIZATION_BEARER.length());
   }
 
-  private void login2SpringSecurity(CachedTokenDto tokenDto) {
+  private void login2SpringSecurity(CachedToken tokenDto) {
     // 注意: Spring Security 要求角色名必须是大写, 且以 `ROLE_` 为前缀
     final String roles = Arrays.stream(tokenDto.getRoles().split(","))
         .reduce("", (s, s2) -> {
@@ -109,7 +109,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private void send2Response(final HttpServletResponse response, final String message, final HttpStatus httpStatus) throws IOException {
 
-    final RestDto<Void> result = ResponseResultWrappers.fail(message);
+    final RestResponse<Void> result = ResponseResultWrappers.fail(message);
 
     //noinspection deprecation
     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

@@ -1,7 +1,7 @@
 package net.wuxianjie.core.service;
 
 import lombok.NonNull;
-import net.wuxianjie.core.model.dto.TokenDto;
+import net.wuxianjie.core.domain.Token;
 
 /**
  * Token 鉴权认证 - Token 续期策略
@@ -26,7 +26,7 @@ public interface TokenService {
    * @param accountPassword 账号密码
    * @return Token
    */
-  TokenDto createToken(@NonNull final String accountName, @NonNull final String accountPassword);
+  Token createToken(@NonNull final String accountName, @NonNull final String accountPassword);
 
   /**
    * 刷新 Access Token. 若刷新成功, 则原 Token 将不可用
@@ -34,5 +34,5 @@ public interface TokenService {
    * @param refreshToken 用于刷新的 Refresh Token
    * @return Token
    */
-  TokenDto updateToken(@NonNull final String refreshToken);
+  Token updateToken(@NonNull final String refreshToken);
 }

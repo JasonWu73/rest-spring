@@ -1,6 +1,6 @@
 package net.wuxianjie.core.util;
 
-import net.wuxianjie.core.model.dto.RestDto;
+import net.wuxianjie.core.domain.RestResponse;
 
 /**
  * REST API 统一结果封装类。
@@ -16,8 +16,8 @@ public final class ResponseResultWrappers {
    * @param <T> 数据结果的具体类型
    * @return 服务器响应的结果对象
    */
-  public static <T> RestDto<T> success(final T data) {
-    final RestDto<T> result = new RestDto<>();
+  public static <T> RestResponse<T> success(final T data) {
+    final RestResponse<T> result = new RestResponse<>();
 
     result.setStatus(ResponseStatus.SUCCESS);
     result.setData(data);
@@ -31,8 +31,8 @@ public final class ResponseResultWrappers {
    * @param failMsg 说明请求为何失败的提示信息
    * @return 服务器响应的结果对象
    */
-  public static RestDto<Void> fail(final String failMsg) {
-    final RestDto<Void> result = new RestDto<>();
+  public static RestResponse<Void> fail(final String failMsg) {
+    final RestResponse<Void> result = new RestResponse<>();
 
     result.setStatus(ResponseStatus.FAIL);
     result.setMessage(failMsg);

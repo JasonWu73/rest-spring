@@ -5,13 +5,13 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.constant.BeanQualifiers;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.dto.CachedTokenDto;
-import net.wuxianjie.core.model.dto.TokenDto;
+import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.domain.Token;
 import net.wuxianjie.core.service.TokenService;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.constant.TokenAttributes;
+import net.wuxianjie.web.domain.Account;
 import net.wuxianjie.web.mapper.AccountMapper;
-import net.wuxianjie.web.model.entity.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,34 +30,38 @@ import java.util.Map;
 public class TokenServiceImpl implements TokenService {
 
   @Qualifier(BeanQualifiers.JWT_SIGNING_KEY) private final String jwtSigningKey;
-  private final Cache<String, CachedTokenDto> tokenCache;
+  private final Cache<String, CachedToken> tokenCache;
   private final PasswordEncoder passwordEncoder;
   private final AccountMapper accountMapper;
 
   @Override
-  public TokenDto createToken(@NonNull final String accountName, @NonNull final String accountPassword) {
+  public Token createToken(@NonNull final String accountName, @NonNull final String accountPassword) {
     // 根据账号名从数据库查询账号信息
-    final AccountEntity account = loadAccount(accountName);
+    final Account account = loadAccount(accountName);
+
+    if (account == null) {
+      throw new TokenAuthenticationException("账号名或密码错误");
+    }
 
     // 判断密码是否正确
-    final boolean rightedPassword = isRightPassword(accountName, accountPassword);
+    final boolean rightedPassword = isRightPassword(accountPassword, account.getAccountPassword());
 
-    if (account == null || !rightedPassword) {
+    if (!rightedPassword) {
       throw new TokenAuthenticationException("账号名或密码错误");
     }
 
     // 构造写入缓存中的 Token 数据
-    final CachedTokenDto cachedToken = new CachedTokenDto();
-    cachedToken.setAccountId(account.getId());
-    cachedToken.setAccountName(account.getName());
-    cachedToken.setRoles(account.getRoles());
+    final CachedToken cachedToken = new CachedToken();
+    cachedToken.setAccountId(account.getAccountId());
+    cachedToken.setAccountName(account.getAccountName());
+    cachedToken.setRoles(account.getAccountRoles());
 
     // 生成 Access Token 与 Refresh Token
     return generateToken(cachedToken);
   }
 
   @Override
-  public TokenDto updateToken(@NonNull final String refreshToken) {
+  public Token updateToken(@NonNull final String refreshToken) {
     // 解析 Token
     final Map<String, Object> payload = JwtUtils.verifyAndParseToken(jwtSigningKey, refreshToken);
     final String accountName = (String) payload.get(TokenAttributes.TOKEN_ACCOUNT);
@@ -68,7 +72,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 从缓存中查询 Refresh Token
-    final CachedTokenDto cachedToken = tokenCache.getIfPresent(accountName);
+    final CachedToken cachedToken = tokenCache.getIfPresent(accountName);
 
     // 核验缓存中的 Refresh Token 与传入的 Refresh Token
     if (cachedToken == null || !cachedToken.getRefreshToken().equals(refreshToken)) {
@@ -76,22 +80,22 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 查询并更新程序内部的 Token 数据
-    final AccountEntity account = loadAccount(accountName);
-    cachedToken.setRoles(account.getRoles());
+    final Account account = loadAccount(accountName);
+    cachedToken.setRoles(account.getAccountRoles());
 
     // 生成 Access Token 与 Refresh Token
     return generateToken(cachedToken);
   }
 
-  private AccountEntity loadAccount(final String accountName) {
-    return accountMapper.findByName(accountName);
+  private Account loadAccount(final String accountName) {
+    return accountMapper.queryAccountByUserName(accountName);
   }
 
   private boolean isRightPassword(final String rawPassword, final String encodedPassword) {
-    return !passwordEncoder.matches(rawPassword, encodedPassword);
+    return passwordEncoder.matches(rawPassword, encodedPassword);
   }
 
-  private TokenDto generateToken(final CachedTokenDto tokenDto) {
+  private Token generateToken(final CachedToken tokenDto) {
 
     final Map<String, Object> jwtPayload = new HashMap<>();
     jwtPayload.put(TokenAttributes.TOKEN_ACCOUNT, tokenDto.getAccountName());
@@ -106,7 +110,7 @@ public class TokenServiceImpl implements TokenService {
     // 写入缓存
     tokenCache.put(tokenDto.getAccountName(), tokenDto);
 
-    return new TokenDto(TokenAttributes.TOKEN_EXPIRES_IN_SECONDS, accessToken, refreshToken);
+    return new Token(TokenAttributes.TOKEN_EXPIRES_IN_SECONDS, accessToken, refreshToken);
   }
 
   private String generateToken(final Map<String, Object> jwtPayload, final String tokenType) {
