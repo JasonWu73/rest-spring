@@ -17,12 +17,12 @@ public class AccountEntity {
   /** 账号 ID */
   private Integer id;
 
-  /** 用户名 */
+  /** 账号名称 */
   private String name;
 
-  /** 密码 */
+  /** 账号密码 */
   private String password;
 
-  /** 角色字符串, 以 {@code ,} 分隔, 全部为小写字母, 且不包含 {@code ROLE_} 前缀 */
+  /** 账号角色, 以 {@code ,} 分隔, 全部为小写字母, 且不包含 {@code ROLE_} 前缀 */
   private String roles;
 }

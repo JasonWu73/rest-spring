@@ -23,12 +23,8 @@
   </modules>
 
   <properties>
-    <!-- 设置项目所使用的 JDK 版本 -->
+    <!-- 设置 Spring Boot Maven 插件所使用的 JDK 版本, 默认使用 UTF-8 编码 -->
     <java.version>11</java.version>
-
-    <!-- 配置 UTF-8 编码 -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!-- === 设置依赖库版本 === -->
     <my.core.version>0.0.1-SNAPSHOT</my.core.version>
@@ -36,6 +32,7 @@
 
     <jjwt.version>0.11.2</jjwt.version>
     <hutool.version>5.7.20</hutool.version>
+    <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
   </properties>
 
   <dependencyManagement>
@@ -45,6 +42,13 @@
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-all</artifactId>
         <version>${hutool.version}</version>
+      </dependency>
+
+      <!-- Spring Boot 整合 MyBatis -->
+      <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>${mybatis-spring-boot-starter.version}</version>
       </dependency>
 
       <!-- === JWT === -->

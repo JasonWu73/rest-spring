@@ -23,7 +23,7 @@ Java 源码目录:
 ├── Application.java # Spring Boot 启动类
 ├── annotation # 存放自定义注解
 ├── aspect # 存放切面代码
-├── config # 存放配置类
+├── config # 存放自定义配置类
 │   └── CaffeineCacheConfig.java # 配置类以 `Config` 结尾
 ├── constant # 存放常量、枚举类
 │   ├── ErrorCodeEnum # 枚举类以 `Enum` 结尾
@@ -33,7 +33,7 @@ Java 源码目录:
 ├── exception # 存放自定义异常类
 │   └── TokenAuthException.java # 异常类以 `Exception` 结尾
 ├── filter # 存放过滤器, 拦截器相关代码
-├── mapper # 存放数据访问层接口 (基于 MyBatis)
+├── mapper # 存放 MyBatis SQL 映射器 (数据访问层 (DAO))
 │   └── UserMapper.java #  MyBatis 接口以 `Mapper` 结尾
 ├── model # 存放数据模型类
 │   ├── dto # 存放数据传输对象类, 用于 Service 层处理

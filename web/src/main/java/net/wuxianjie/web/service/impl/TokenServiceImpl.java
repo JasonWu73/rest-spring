@@ -10,6 +10,7 @@ import net.wuxianjie.core.model.dto.TokenDto;
 import net.wuxianjie.core.service.TokenService;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.constant.TokenAttributes;
+import net.wuxianjie.web.mapper.AccountMapper;
 import net.wuxianjie.web.model.entity.AccountEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,37 +29,31 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenServiceImpl implements TokenService {
 
-  /** 加密后的测试密码 ({@code 123}) */
-  private static final String ENCODED_PASSWORD = "$2a$10$9Tq5H9wCOiRg97zR5K.6ye.5TIAQUVhDPFhm5YsbvSgpJhwTj3.yW";
-
-  /** 模块数据库中数据 */
-  private static final Map<String, AccountEntity> users = new HashMap<>() {{
-    put("guest", new AccountEntity(1, "guest", ENCODED_PASSWORD, ""));
-    put("user", new AccountEntity(2, "user", ENCODED_PASSWORD, "user"));
-    put("admin", new AccountEntity(3, "admin", ENCODED_PASSWORD, "user,admin"));
-  }};
-
   @Qualifier(BeanQualifiers.JWT_SIGNING_KEY) private final String jwtSigningKey;
   private final Cache<String, CachedTokenDto> tokenCache;
   private final PasswordEncoder passwordEncoder;
+  private final AccountMapper accountMapper;
 
   @Override
   public TokenDto createToken(@NonNull final String accountName, @NonNull final String accountPassword) {
-    // 根据账号名从数据库查询账号信息，并判断密码是否正确
-    final AccountEntity userInDb = getAccount(accountName, accountPassword);
+    // 根据账号名从数据库查询账号信息
+    final AccountEntity account = loadAccount(accountName);
 
-    if (userInDb == null) {
+    // 判断密码是否正确
+    final boolean rightedPassword = isRightPassword(accountName, accountPassword);
+
+    if (account == null || !rightedPassword) {
       throw new TokenAuthenticationException("账号名或密码错误");
     }
 
     // 构造写入缓存中的 Token 数据
-    final CachedTokenDto tokenDto = new CachedTokenDto();
-    tokenDto.setAccountId(userInDb.getId());
-    tokenDto.setAccountName(userInDb.getName());
-    tokenDto.setRoles(userInDb.getRoles());
+    final CachedTokenDto cachedToken = new CachedTokenDto();
+    cachedToken.setAccountId(account.getId());
+    cachedToken.setAccountName(account.getName());
+    cachedToken.setRoles(account.getRoles());
 
     // 生成 Access Token 与 Refresh Token
-    return generateToken(tokenDto);
+    return generateToken(cachedToken);
   }
 
   @Override
@@ -81,22 +76,19 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 查询并更新程序内部的 Token 数据
-    final AccountEntity account = users.get(accountName);
+    final AccountEntity account = loadAccount(accountName);
     cachedToken.setRoles(account.getRoles());
 
     // 生成 Access Token 与 Refresh Token
     return generateToken(cachedToken);
   }
 
-  private AccountEntity getAccount(final String accountName, final String accountPassword) {
+  private AccountEntity loadAccount(final String accountName) {
+    return accountMapper.findByName(accountName);
+  }
 
-    final AccountEntity user = users.get(accountName);
-
-    if (user == null || !passwordEncoder.matches(accountPassword, user.getPassword())) {
-      return null;
-    }
-
-    return user;
+  private boolean isRightPassword(final String rawPassword, final String encodedPassword) {
+    return !passwordEncoder.matches(rawPassword, encodedPassword);
   }
 
   private TokenDto generateToken(final CachedTokenDto tokenDto) {

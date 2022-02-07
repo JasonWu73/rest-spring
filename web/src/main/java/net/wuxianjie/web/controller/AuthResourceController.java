@@ -24,7 +24,7 @@ public class AuthResourceController {
    */
   @GetMapping(Mappings.ANONYMOUS)
   public String loadAnonymous() {
-    return "任何人都可访问的资源";
+    return "您好: 匿名用户, 您正在访问任何人都可访问的资源";
   }
 
   /**
@@ -35,7 +35,7 @@ public class AuthResourceController {
   @GetMapping(Mappings.GUEST)
   public String loadGuest(Authentication auth) {
     final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
-    return String.format("您好 %s, 您正在访问只要通过身份认证后即可访问的资源", tokenDto.getAccountName());
+    return String.format("您好: %s, 您正在访问只要通过身份认证后即可访问的资源", tokenDto.getAccountName());
   }
 
   /**
@@ -47,7 +47,7 @@ public class AuthResourceController {
   @GetMapping(Mappings.USER)
   public String loadUser(Authentication auth) {
     final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
-    return String.format("您好 %s, 您正在访问 USER 角色才可访问的资源", tokenDto.getAccountName());
+    return String.format("您好: %s, 您正在访问 USER 角色才可访问的资源", tokenDto.getAccountName());
   }
 
   /**
@@ -59,6 +59,6 @@ public class AuthResourceController {
   @GetMapping(Mappings.ADMIN)
   public String loadAdmin(Authentication auth) {
     final CachedTokenDto tokenDto = AuthUtils.loadToken(auth);
-    return String.format("您好 %s, 您正在访问 ADMIN 角色才可访问的资源", tokenDto.getAccountName());
+    return String.format("您好: %s, 您正在访问 ADMIN 角色才可访问的资源", tokenDto.getAccountName());
   }
 }
