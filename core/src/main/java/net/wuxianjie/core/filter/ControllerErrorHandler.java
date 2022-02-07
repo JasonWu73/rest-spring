@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.InternalServerException;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.ResponseResult;
+import net.wuxianjie.core.model.dto.RestDto;
 import net.wuxianjie.core.util.ResponseResultWrappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +47,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-  public ResponseEntity<ResponseResult<Void>> handleMimeNotSupported(final HttpMediaTypeNotSupportedException e) {
+  public ResponseEntity<RestDto<Void>> handleMimeNotSupported(final HttpMediaTypeNotSupportedException e) {
     log.warn("请求的内容类型不支持: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail(e.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
   }
@@ -59,7 +59,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  public ResponseEntity<ResponseResult<Void>> handleMethodNotSupported(final HttpRequestMethodNotSupportedException e) {
+  public ResponseEntity<RestDto<Void>> handleMethodNotSupported(final HttpRequestMethodNotSupportedException e) {
     log.warn("请求的方法不支持: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail(e.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
   }
@@ -71,7 +71,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(MissingRequestHeaderException.class)
-  public ResponseEntity<ResponseResult<Void>> handleMissingRequestHeader(final MissingRequestHeaderException e) {
+  public ResponseEntity<RestDto<Void>> handleMissingRequestHeader(final MissingRequestHeaderException e) {
     log.warn("缺少必要的请求头: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail("缺少必要的请求头"), HttpStatus.BAD_REQUEST);
   }
@@ -83,7 +83,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ResponseResult<Void>> handleArgumentNotValid(final MethodArgumentNotValidException e) {
+  public ResponseEntity<RestDto<Void>> handleArgumentNotValid(final MethodArgumentNotValidException e) {
     final List<String> logErrors = new ArrayList<>();
     final List<String> responseErrors = new ArrayList<>();
 
@@ -117,7 +117,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ResponseResult<Void>> handleConstraintViolation(final ConstraintViolationException e) {
+  public ResponseEntity<RestDto<Void>> handleConstraintViolation(final ConstraintViolationException e) {
     final List<String> logErrors = new ArrayList<>();
     final List<String> responseErrors = new ArrayList<>();
 
@@ -140,7 +140,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(AccessDeniedException.class)
-  public ResponseEntity<ResponseResult<Void>> handleAccessDeniedHandler() {
+  public ResponseEntity<RestDto<Void>> handleAccessDeniedHandler() {
     return new ResponseEntity<>(ResponseResultWrappers.fail("无访问权限"), HttpStatus.FORBIDDEN);
   }
 
@@ -151,7 +151,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(TokenAuthenticationException.class)
-  public ResponseEntity<ResponseResult<Void>> handleAuthentication(final TokenAuthenticationException e) {
+  public ResponseEntity<RestDto<Void>> handleAuthentication(final TokenAuthenticationException e) {
     log.warn("身份认证失败: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail(e.getMessage()), HttpStatus.UNAUTHORIZED);
   }
@@ -163,7 +163,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(BadRequestException.class)
-  public ResponseEntity<ResponseResult<Void>> handleBadRequest(final BadRequestException e) {
+  public ResponseEntity<RestDto<Void>> handleBadRequest(final BadRequestException e) {
     log.warn("客户端请求有误: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail(e.getMessage()), HttpStatus.BAD_REQUEST);
   }
@@ -174,7 +174,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(InternalServerException.class)
-  public ResponseEntity<ResponseResult<Void>> handleInternalServer(final InternalServerException e) {
+  public ResponseEntity<RestDto<Void>> handleInternalServer(final InternalServerException e) {
     log.warn("服务器端有误: {}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrappers.fail(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
   }
@@ -186,7 +186,7 @@ public class ControllerErrorHandler {
    * @return 包含 HTTP 状态码的响应体
    */
   @ExceptionHandler(Throwable.class)
-  public ResponseEntity<ResponseResult<Void>> handleThrowable(final Throwable e) {
+  public ResponseEntity<RestDto<Void>> handleThrowable(final Throwable e) {
     log.error("默认异常处理", e);
     final String error = e.getMessage() == null ? "无法定位异常详细信息" : e.getMessage();
     return new ResponseEntity<>(ResponseResultWrappers.fail(error), HttpStatus.INTERNAL_SERVER_ERROR);

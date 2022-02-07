@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.constant.Prefixes;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.ResponseResult;
+import net.wuxianjie.core.model.dto.RestDto;
 import net.wuxianjie.core.model.dto.CachedTokenDto;
 import net.wuxianjie.core.service.TokenAuthenticationService;
 import net.wuxianjie.core.util.ResponseResultWrappers;
@@ -109,7 +109,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private void send2Response(final HttpServletResponse response, final String message, final HttpStatus httpStatus) throws IOException {
 
-    final ResponseResult<Void> result = ResponseResultWrappers.fail(message);
+    final RestDto<Void> result = ResponseResultWrappers.fail(message);
 
     //noinspection deprecation
     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

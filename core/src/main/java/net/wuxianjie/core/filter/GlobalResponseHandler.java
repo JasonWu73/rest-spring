@@ -3,7 +3,7 @@ package net.wuxianjie.core.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.model.ResponseResult;
+import net.wuxianjie.core.model.dto.RestDto;
 import net.wuxianjie.core.util.ResponseResultWrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -43,7 +43,7 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
       }
     }
 
-    if (body instanceof ResponseResult || body instanceof ResponseEntity) {
+    if (body instanceof RestDto || body instanceof ResponseEntity) {
       return body;
     }
 

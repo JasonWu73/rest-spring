@@ -2,7 +2,7 @@ package net.wuxianjie.core.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.model.ResponseResult;
+import net.wuxianjie.core.model.dto.RestDto;
 import net.wuxianjie.core.util.ResponseResultWrappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint 
   @Override
   public void commence(final HttpServletRequest request,final HttpServletResponse response, final AuthenticationException authException) throws IOException {
 
-    final ResponseResult<Void> result = ResponseResultWrappers.fail("身份认证失败");
+    final RestDto<Void> result = ResponseResultWrappers.fail("身份认证失败");
 
     //noinspection deprecation
     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
