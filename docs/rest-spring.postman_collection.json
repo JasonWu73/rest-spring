@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"accountName\": \"admin\",\n  \"accountPassword\": \"123\"\n}",
+							"raw": "{\n  \"accountName\": \"管理员\",\n  \"accountPassword\": \"123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -144,7 +144,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/anonymous",
+							"raw": "http://127.0.0.1:8080/auth-resources/public",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -154,7 +154,8 @@
 							],
 							"port": "8080",
 							"path": [
-								"anonymous"
+								"auth-resources",
+								"public"
 							]
 						}
 					},
@@ -190,7 +191,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/guest",
+							"raw": "http://127.0.0.1:8080/auth-resources/guest",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -200,6 +201,7 @@
 							],
 							"port": "8080",
 							"path": [
+								"auth-resources",
 								"guest"
 							]
 						}
@@ -236,7 +238,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/user",
+							"raw": "http://127.0.0.1:8080/auth-resources/user",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -246,6 +248,7 @@
 							],
 							"port": "8080",
 							"path": [
+								"auth-resources",
 								"user"
 							]
 						}
@@ -282,7 +285,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/admin",
+							"raw": "http://127.0.0.1:8080/auth-resources/admin",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -292,6 +295,7 @@
 							],
 							"port": "8080",
 							"path": [
+								"auth-resources",
 								"admin"
 							]
 						}
