@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 
 /**
- * 基于本地缓存实现 Token 鉴权认证
+ * 基于本地缓存实现Token鉴权认证
  *
  * @author 吴仙杰
  */
@@ -29,16 +29,16 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
   @Override
   public CachedToken authenticate(@NonNull final String accessToken) {
-    // 解析 Token
+    // 解析Token
     final Map<String, Object> payload = JwtUtils.verifyAndParseToken(jwtSigningKey, accessToken);
     final String username = (String) payload.get(TokenAttributes.TOKEN_ACCOUNT);
 
-    // 获取缓存中的 Access Token
+    // 获取缓存中的Access Token
     final CachedToken tokenDto = tokenCache.getIfPresent(username);
 
-    // 核验缓存中的 Access Token 与传入的 Access Token
+    // 核验缓存中的Access Token与传入的Access Token
     if (tokenDto == null || !tokenDto.getAccessToken().equals(accessToken)) {
-      throw new TokenAuthenticationException("Token 已过期");
+      throw new TokenAuthenticationException("Token已过期");
     }
 
     return tokenDto;

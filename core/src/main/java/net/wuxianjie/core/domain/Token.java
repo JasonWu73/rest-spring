@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 返回给前端的 Token 数据
+ * 返回给前端的Token数据
  *
  * @author 吴仙杰
  */
@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Token {
 
-  /** Access Token 的有效期 (秒为单位) */
+  /** Access Token的有效期（以秒为单位） */
   private int expiresIn;
 
-  /** 用于访问接口的 Access Token */
+  /** 用于访问接口的Access Token */
   private String accessToken;
 
-  /** 只用于刷新的 Refresh Token */
+  /** 只用于刷新的Refresh Token */
   private String refreshToken;
 }

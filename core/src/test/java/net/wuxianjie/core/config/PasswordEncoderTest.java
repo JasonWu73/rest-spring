@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 测试密码编码。
+ * 测试密码编码
  *
  * @author 吴仙杰
  */
@@ -24,7 +24,7 @@ class PasswordEncoderTest {
 
   private static final String RAW_PASSWORD = "123";
 
-  private static String encodedPassword = "$2a$10$gJVQEiowl350wLSQLptyB.PbdP2AVXEOxulYgwwZfooW0IhkMgLp.";
+  private static String encodedPassword = CoreProperties.JWT_SIGNING_KEY;
 
   @Autowired
   private PasswordEncoder passwordEncoder;
@@ -34,7 +34,7 @@ class PasswordEncoderTest {
   void encodePasswordShouldNotReturnNull() {
     encodedPassword = passwordEncoder.encode(RAW_PASSWORD);
     assertNotNull(encodedPassword);
-    log.info("原密码: {}，编码后为: {}", RAW_PASSWORD, encodedPassword);
+    log.info("原密码：{}，编码后为：{}", RAW_PASSWORD, encodedPassword);
   }
 
   @Test

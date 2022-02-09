@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Prefixes {
 
-  /** 请求头中携带 Access Token 的前缀: {@code Authorization: Bearer {{accessToken}}} */
+  /** 请求头中携带Access Token的前缀：{@code Authorization: Bearer {{accessToken}}} */
   public static final String AUTHORIZATION_BEARER = "Bearer ";
 
-  /** Spring Security 角色的前缀 */
+  /** Spring Security角色的前缀 */
   public static final String ROLES = "ROLE_";
 }

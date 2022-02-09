@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 配置 Caffeine 本地缓存
+ * 配置Caffeine本地缓存
  *
  * @author 吴仙杰
  */
@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit;
 public class CaffeineCacheConfig {
 
   /**
-   * 配置 Token 专用缓存
+   * 配置Token专用缓存
    *
-   * @return Token 专用缓存
+   * @return Token专用缓存
    */
   @Bean
   public Cache<String, CachedToken> tokenCache() {

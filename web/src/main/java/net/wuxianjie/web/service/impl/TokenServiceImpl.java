@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 基于本地缓存实现 Token 生成与刷新
+ * 基于本地缓存实现Token生成与刷新
  *
  * @author 吴仙杰
  */
@@ -50,45 +50,45 @@ public class TokenServiceImpl implements TokenService {
       throw new TokenAuthenticationException("账号名或密码错误");
     }
 
-    // 构造写入缓存中的 Token 数据
+    // 构造写入缓存中的Token数据
     final CachedToken cachedToken = new CachedToken();
     cachedToken.setAccountId(account.getAccountId());
     cachedToken.setAccountName(account.getAccountName());
     cachedToken.setRoles(account.getAccountRoles());
 
-    // 生成 Access Token 与 Refresh Token
+    // 生成Access Token与Refresh Token
     return generateToken(cachedToken);
   }
 
   @Override
   public Token updateToken(@NonNull final String refreshToken) {
-    // 解析 Token
+    // 解析Token
     final Map<String, Object> payload = JwtUtils.verifyAndParseToken(jwtSigningKey, refreshToken);
     final String accountName = (String) payload.get(TokenAttributes.TOKEN_ACCOUNT);
     final String tokenType = (String) payload.get(TokenAttributes.TOKEN_TYPE);
 
     if (!tokenType.equals(TokenAttributes.REFRESH_TOKEN)) {
-      throw new TokenAuthenticationException("Token 类型错误");
+      throw new TokenAuthenticationException("Token类型错误");
     }
 
-    // 从缓存中查询 Refresh Token
+    // 从缓存中查询Refresh Token
     final CachedToken cachedToken = tokenCache.getIfPresent(accountName);
 
-    // 核验缓存中的 Refresh Token 与传入的 Refresh Token
+    // 核验缓存中的Refresh Token与传入的Refresh Token
     if (cachedToken == null || !cachedToken.getRefreshToken().equals(refreshToken)) {
-      throw new TokenAuthenticationException("Token 已过期");
+      throw new TokenAuthenticationException("Token已过期");
     }
 
-    // 查询并更新程序内部的 Token 数据
+    // 查询并更新程序内部的Token数据
     final Account account = loadAccount(accountName);
     cachedToken.setRoles(account.getAccountRoles());
 
-    // 生成 Access Token 与 Refresh Token
+    // 生成Access Token与Refresh Token
     return generateToken(cachedToken);
   }
 
   private Account loadAccount(final String accountName) {
-    return accountMapper.queryAccountByUserName(accountName);
+    return accountMapper.findAccountByUserName(accountName);
   }
 
   private boolean isRightPassword(final String rawPassword, final String encodedPassword) {
@@ -103,7 +103,7 @@ public class TokenServiceImpl implements TokenService {
     final String accessToken = generateToken(jwtPayload, TokenAttributes.ACCESS_TOKEN);
     final String refreshToken = generateToken(jwtPayload, TokenAttributes.REFRESH_TOKEN);
 
-    // 完善 Token 数据
+    // 完善Token数据
     tokenDto.setAccessToken(accessToken);
     tokenDto.setRefreshToken(refreshToken);
 

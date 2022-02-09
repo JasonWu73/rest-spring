@@ -1,4 +1,4 @@
-package net.wuxianjie.core.filter;
+package net.wuxianjie.core.security;
 
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,7 +9,7 @@ import net.wuxianjie.core.exception.TokenAuthenticationException;
 import net.wuxianjie.core.domain.RestResponse;
 import net.wuxianjie.core.domain.CachedToken;
 import net.wuxianjie.core.service.TokenAuthenticationService;
-import net.wuxianjie.core.util.ResponseResultWrappers;
+import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,12 +26,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
- * 实现 Token 鉴权认证机制的过滤器
+ * 实现Token鉴权认证机制的过滤器
  *
  * @author 吴仙杰
  */
@@ -59,7 +57,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       login2SpringSecurity(tokenDto);
     }
     catch (TokenAuthenticationException e) {
-      // 清除当前线程中的 Spring Security 上下文内容
+      // 清除当前线程中的Spring Security上下文内容
       SecurityContextHolder.clearContext();
 
       send2Response(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -68,7 +66,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     catch (Throwable e) {
       log.warn(e.getMessage(), e);
 
-      // 清除当前线程中的 Spring Security 上下文内容
+      // 清除当前线程中的Spring Security上下文内容
       SecurityContextHolder.clearContext();
 
       send2Response(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -90,17 +88,22 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   }
 
   private void login2SpringSecurity(CachedToken tokenDto) {
-    // 注意: Spring Security 要求角色名必须是大写, 且以 `ROLE_` 为前缀
-    final String roles = Arrays.stream(tokenDto.getRoles().split(","))
-        .reduce("", (s, s2) -> {
-          if (StrUtil.isNotEmpty(s)) {
-          return s + "," + Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
-        }
+    final List<GrantedAuthority> authorities;
+    if (StrUtil.isNotEmpty(tokenDto.getRoles())) {
+      // Spring Security要求角色名必须是大写，且以`ROLE_`为前缀
+      final String roles = Arrays.stream(tokenDto.getRoles().split(","))
+          .reduce("", (s, s2) -> {
+            if (StrUtil.isNotEmpty(s)) {
+              return s + "," + Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
+            }
 
-        return Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
-      });
+            return Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
+          });
 
-    final List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+      authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+    } else {
+      authorities = Collections.emptyList();
+    }
 
     final UsernamePasswordAuthenticationToken passedToken = new UsernamePasswordAuthenticationToken(tokenDto, null, authorities);
 
@@ -109,7 +112,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private void send2Response(final HttpServletResponse response, final String message, final HttpStatus httpStatus) throws IOException {
 
-    final RestResponse<Void> result = ResponseResultWrappers.fail(message);
+    final RestResponse<Void> result = ResponseResultWrapper.fail(message);
 
     //noinspection deprecation
     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

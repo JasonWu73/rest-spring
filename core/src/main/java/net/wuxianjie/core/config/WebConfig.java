@@ -6,7 +6,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
- * Spring MVC 配置类
+ * Spring MVC配置类
  *
  * @author 吴仙杰
  */
@@ -15,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void configureContentNegotiation(final ContentNegotiationConfigurer configurer) {
-    // 因为实现的是前后端分离项目, 故设置后端全局返回类型为 JSON
+    // 因为实现的是前后端分离项目，故设置后端全局返回类型为JSON
     configurer.defaultContentType(MediaType.APPLICATION_JSON);
   }
 }

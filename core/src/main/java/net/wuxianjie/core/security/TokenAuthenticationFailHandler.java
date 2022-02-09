@@ -1,9 +1,9 @@
-package net.wuxianjie.core.filter;
+package net.wuxianjie.core.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.domain.RestResponse;
-import net.wuxianjie.core.util.ResponseResultWrappers;
+import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * 处理 Spring Security 401
+ * 处理Spring Security 401，即身份认证不通过
  *
  * @author 吴仙杰
  */
@@ -27,9 +27,10 @@ public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint 
   private final ObjectMapper objectMapper;
 
   @Override
-  public void commence(final HttpServletRequest request,final HttpServletResponse response, final AuthenticationException authException) throws IOException {
+  public void commence(final HttpServletRequest request,final HttpServletResponse response, final AuthenticationException authException)
+      throws IOException {
 
-    final RestResponse<Void> result = ResponseResultWrappers.fail("身份认证失败");
+    final RestResponse<Void> result = ResponseResultWrapper.fail("身份认证失败");
 
     //noinspection deprecation
     response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);

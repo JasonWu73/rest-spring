@@ -15,33 +15,34 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * JWT (JSON Web TOKEN) 工具类
+ * JWT（JSON Web TOKEN）工具类
  *
  * @author 吴仙杰
  */
 public class JwtUtils {
 
   /**
-   * 生成 JWT 签名密钥
+   * 生成JWT签名密钥
    *
-   * @return JWT 签名密钥
+   * @return JWT签名密钥
    */
   public static String generateSingingKey() {
-
     final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     return Encoders.BASE64.encode(secretKey.getEncoded());
   }
 
   /**
-   * 生成 Token
+   * 生成Token
    *
-   * @param singingKey JWT 签名密钥
+   * @param singingKey JWT签名密钥
    * @param payload JWT Payload
    * @param expiresInSeconds 多少秒后过期
    * @return JSON Web Token
    */
-  public static String generateToken(@NonNull final String singingKey, @NonNull final Map<String, Object> payload, int expiresInSeconds) {
-
+  public static String generateToken(
+      @NonNull final String singingKey,
+      @NonNull final Map<String, Object> payload,
+      int expiresInSeconds) {
     return Jwts.builder()
         .setClaims(payload)
         .setNotBefore(new Date())
@@ -51,15 +52,15 @@ public class JwtUtils {
   }
 
   /**
-   * 验证并解析 Token
+   * 验证并解析Token
    *
-   * @param secretKey JWT 签名密钥
+   * @param secretKey JWT签名密钥
    * @param jwt JSON Web Token
    * @return JWT payload
-   * @throws TokenAuthenticationException 若 Token 验证失败
+   * @throws TokenAuthenticationException 若Token验证失败
    */
-  public static Map<String, Object> verifyAndParseToken(@NonNull final String secretKey, @NonNull final String jwt) throws TokenAuthenticationException {
-
+  public static Map<String, Object> verifyAndParseToken(@NonNull final String secretKey, @NonNull final String jwt)
+      throws TokenAuthenticationException {
     try {
       final Jws<Claims> jws = Jwts.parserBuilder()
         .setSigningKey(Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey)))
@@ -71,16 +72,13 @@ public class JwtUtils {
       return toMap(claims);
     }
     catch (MalformedJwtException e) {
-      final String message = String.format("Token 格式错误 - %s", e.getMessage());
-      throw new TokenAuthenticationException(message, e);
+      throw new TokenAuthenticationException("Token格式错误", e);
     }
     catch (SignatureException e) {
-      final String message = String.format("Token 签名错误 - %s", e.getMessage());
-      throw new TokenAuthenticationException(message, e);
+      throw new TokenAuthenticationException("Token签名错误", e);
     }
     catch (ExpiredJwtException e) {
-      final String message = String.format("Token 已过期 - %s", e.getMessage());
-      throw new TokenAuthenticationException(message, e);
+      throw new TokenAuthenticationException("Token已过期", e);
     }
   }
 

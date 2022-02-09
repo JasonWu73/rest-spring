@@ -3,13 +3,13 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.6.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.wuxianjie</groupId>
   <artifactId>rest-spring</artifactId>
@@ -23,13 +23,12 @@
   </modules>
 
   <properties>
-    <!-- 设置 Spring Boot Maven 插件所使用的 JDK 版本, 默认使用 UTF-8 编码 -->
+    <!-- 设置Spring Boot Maven插件所使用的JDK版本，默认使用UTF-8编码 -->
     <java.version>11</java.version>
 
-    <!-- === 设置依赖库版本 === -->
+    <!-- 设置依赖库版本 -->
     <my.core.version>0.0.1-SNAPSHOT</my.core.version>
     <my.elasticsearch.version>0.0.1-SNAPSHOT</my.elasticsearch.version>
-
     <jjwt.version>0.11.2</jjwt.version>
     <hutool.version>5.7.20</hutool.version>
     <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
@@ -37,21 +36,21 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- Java工具类库 Hutool -->
+      <!-- Java工具类库Hutool -->
       <dependency>
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-all</artifactId>
         <version>${hutool.version}</version>
       </dependency>
 
-      <!-- Spring Boot 整合 MyBatis -->
+      <!-- Spring Boot整合MyBatis -->
       <dependency>
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
         <version>${mybatis-spring-boot-starter.version}</version>
       </dependency>
 
-      <!-- === JWT === -->
+      <!-- JWT -->
       <dependency>
         <groupId>io.jsonwebtoken</groupId>
         <artifactId>jjwt-api</artifactId>

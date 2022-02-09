@@ -1,10 +1,10 @@
-package net.wuxianjie.core.filter;
+package net.wuxianjie.core.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.domain.RestResponse;
-import net.wuxianjie.core.util.ResponseResultWrappers;
+import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 /**
- * 实现 REST API 统一响应结果
+ * 实现REST API统一响应结果
  *
  * @author 吴仙杰
  */
@@ -37,9 +37,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
     // 解决控制器方法返回字符串时转换异常的问题
     if (body instanceof String) {
       try {
-        return objectMapper.writeValueAsString(ResponseResultWrappers.success(body));
+        return objectMapper.writeValueAsString(ResponseResultWrapper.success(body));
       } catch (JsonProcessingException e) {
-        throw new RuntimeException("统一响应结果处理，JSON 序列化字符串失败", e);
+        throw new RuntimeException("统一响应结果处理，JSON序列化字符串失败", e);
       }
     }
 
@@ -47,6 +47,6 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
       return body;
     }
 
-    return ResponseResultWrappers.success(body);
+    return ResponseResultWrapper.success(body);
   }
 }

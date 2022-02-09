@@ -6,17 +6,17 @@
 	},
 	"item": [
 		{
-			"name": "Token 鉴权认证接口",
+			"name": "Token鉴权认证接口",
 			"item": [
 				{
-					"name": "获取 Access Token",
+					"name": "获取Access Token",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.status === 'success') {",
+									"if (jsonData.error === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -55,14 +55,14 @@
 					"response": []
 				},
 				{
-					"name": "刷新 Access Token",
+					"name": "刷新Access Token",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.status === 'success') {",
+									"if (jsonData.error === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -82,7 +82,7 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/refresh_token?token={{refreshToken}}",
+							"raw": "http://127.0.0.1:8080/refresh_token/{{refreshToken}}",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -92,18 +92,8 @@
 							],
 							"port": "8080",
 							"path": [
-								"refresh_token"
-							],
-							"query": [
-								{
-									"key": "token",
-									"value": "{{accessToken}}",
-									"disabled": true
-								},
-								{
-									"key": "token",
-									"value": "{{refreshToken}}"
-								}
+								"refresh_token",
+								"{{refreshToken}}"
 							]
 						}
 					},
@@ -115,7 +105,7 @@
 			"name": "权限测试接口",
 			"item": [
 				{
-					"name": "请求匿名资源",
+					"name": "请求游客资源",
 					"event": [
 						{
 							"listen": "test",
@@ -209,7 +199,7 @@
 					"response": []
 				},
 				{
-					"name": "请求用户资源",
+					"name": "请求仅用户可用资源",
 					"event": [
 						{
 							"listen": "test",
@@ -231,6 +221,18 @@
 								"key": "Authorization",
 								"value": "Bearer {{accessToken}}",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwiYWNjb3VudCI6IueuoeeQhuWRmCIsIm5iZiI6MTY0NDQwMzkyMywiZXhwIjoxNjQ0NDA1NzIzfQ.-wqHFrOphopdSa6Dbj0n70-EQZXxAtmvicnbLgLxbtM",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiJ9.eyJ0eXBlIjoiYWNjZXNzIiwiYWNjb3VudCI6IuaZrumAmueUqOaItyIsIm5iZiI6MTY0NDQwMzk0NywiZXhwIjoxNjQ0NDA1NzQ3fQ.tSfVfM9GIx2V9Vtb80b5Zut6qO-QkpNnIsniFxinB54",
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"body": {
@@ -256,7 +258,7 @@
 					"response": []
 				},
 				{
-					"name": "请求管理资源",
+					"name": "请求仅管理员可用资源",
 					"event": [
 						{
 							"listen": "test",
@@ -297,6 +299,53 @@
 							"path": [
 								"auth-resources",
 								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "请求用户管理皆可用资源",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/auth-resources/user-admin",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"auth-resources",
+								"user-admin"
 							]
 						}
 					},

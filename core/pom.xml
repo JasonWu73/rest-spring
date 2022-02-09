@@ -3,20 +3,20 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
   http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>net.wuxianjie</groupId>
     <artifactId>rest-spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
 
   <artifactId>core</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <description>核心模块, 包含 Token 鉴权, REST API 统一结果封装等</description>
+  <description>核心模块，包含Token鉴权，REST API统一结果封装等</description>
 
   <dependencies>
-    <!-- Java工具类库 Hutool -->
+    <!-- Java工具类库Hutool -->
     <dependency>
       <groupId>cn.hutool</groupId>
       <artifactId>hutool-all</artifactId>
@@ -52,7 +52,13 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
 
-    <!-- === JWT === -->
+    <!-- JDBC，默认使用HikariCP作为数据库连接池 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+
+    <!-- JWT  -->
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-api</artifactId>

@@ -15,23 +15,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PagingData<T> {
 
-  /**
-   * 总条数。
-   */
+  /** 数据总条数 */
   private long total;
 
-  /**
-   * 当前页码。
-   */
+  /** 当前页码 */
   private int current;
 
-  /**
-   * 每页条数。
-   */
+  /** 每页条数 */
   private int size;
 
-  /**
-   * 具体数据列表。
-   */
+  /** 具体数据列表 */
   private T list;
 }

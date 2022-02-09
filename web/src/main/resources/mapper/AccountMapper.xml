@@ -3,7 +3,7 @@
 
 <mapper namespace="net.wuxianjie.web.mapper.AccountMapper">
 
-  <select id="queryAccountByUserName" resultType="Account">
+  <select id="findAccountByUserName" resultType="Account">
     SELECT
            id AS accountId,
            name AS accountName,

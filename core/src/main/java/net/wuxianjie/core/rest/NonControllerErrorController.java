@@ -1,9 +1,9 @@
-package net.wuxianjie.core.filter;
+package net.wuxianjie.core.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.domain.RestResponse;
-import net.wuxianjie.core.util.ResponseResultWrappers;
+import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
@@ -19,15 +19,15 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 定制 Spring Boot 白标签错误页 (Whitelabel Error Page)
+ * 定制Spring Boot白标签错误页（Whitelabel Error Page）
  *
- * <p>{@code @ControllerAdvice} 与 {@code @ExceptionHandler} 配合, 只能处理控制器抛出的异常, 此时请求已进入控制器</p>
+ * <p>{@code @ControllerAdvice}与{@code @ExceptionHandler}配合，只能处理控制器抛出的异常，此时请求已进入控制器</p>
  *
- * <p>实现 {@code ErrorController} 接口, 则可以处理所有异常, 包括未进入控制器的错误, 比如404</p>
+ * <p>实现{@code ErrorController}接口，则可以处理所有异常，包括未进入控制器的错误，比如404</p>
  *
- * <p>如果 {@code @ControllerAdvice} 与 {@code ErrorController} 实现类同时存在,
- * 则 {@code @ControllerAdvice} 方式处理控制器抛出的异常,
- * {@code ErrorController} 实现类处理未进入控制器的异常</p>
+ * <p>如果{@code @ControllerAdvice}与{@code ErrorController}实现类同时存在，
+ * 则{@code @ControllerAdvice}方式处理控制器抛出的异常，
+ * {@code ErrorController}实现类处理未进入控制器的异常</p>
  *
  * @author 吴仙杰
  * @see <a href="https://www.baeldung.com/spring-boot-custom-error-page">Spring Boot: Customize Whitelabel Error Page | Baeldung</a>
@@ -37,28 +37,27 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class NonControllerErrorController implements ErrorController {
 
-  /** Spring Boot 记录下来的错误属性 */
+  /** Spring Boot记录下来的错误属性 */
   private final ErrorAttributes attributes;
 
   /**
-   * 作为纯后端 REST API 服务, 不论客户端请求的是页面还是数据, 都返回 JSON 字符串
+   * 作为纯后端REST API服务，不论客户端请求的是页面还是数据，都返回JSON字符串
    *
-   * @param request 网络请求, 用于访问一般的请求元数据, 而不是用于实际处理请求
+   * @param request 网络请求，用于访问一般的请求元数据，而不是用于实际处理请求
    * @return 包含错误信息的响应体
    */
   @ResponseBody
   @RequestMapping("/error")
   public ResponseEntity<RestResponse<Void>> handleError(final WebRequest request) {
-
     final Map<String, Object> errorMap = attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
     final Integer status = (Integer) errorMap.get("status");
     final String error = (String) errorMap.get("error");
 
     if (status == HttpStatus.NOT_FOUND.value()) {
-      log.warn("全局404处理: {}", errorMap);
+      log.warn("全局404处理：{}", errorMap);
     } else {
-      log.error("全局异常处理: {}", errorMap);
+      log.error("全局异常处理：{}", errorMap);
     }
 
     HttpStatus httpStatus;
@@ -70,6 +69,6 @@ public class NonControllerErrorController implements ErrorController {
       httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
     }
 
-    return new ResponseEntity<>(ResponseResultWrappers.fail(error), httpStatus);
+    return new ResponseEntity<>(ResponseResultWrapper.fail(error), httpStatus);
   }
 }

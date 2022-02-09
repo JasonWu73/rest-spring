@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- * REST API 服务
+ * REST API服务
  *
  * @author 吴仙杰
  */
