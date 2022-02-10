@@ -2,6 +2,7 @@ package net.wuxianjie.core.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.domain.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.io.IOException;
  *
  * @author 吴仙杰
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint {
@@ -27,8 +29,8 @@ public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint 
   private final ObjectMapper objectMapper;
 
   @Override
-  public void commence(final HttpServletRequest request,final HttpServletResponse response, final AuthenticationException authException)
-      throws IOException {
+  public void commence(final HttpServletRequest request,final HttpServletResponse response, final AuthenticationException authException) throws IOException {
+    log.warn("身份认证失败：{}", authException.getMessage());
 
     final RestResponse<Void> result = ResponseResultWrapper.fail("身份认证失败");
 

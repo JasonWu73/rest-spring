@@ -15,5 +15,5 @@ public interface TokenAuthenticationService {
    * @param accessToken Access Token
    * @return 认证后的Token数据
    */
-  CachedToken authenticate(final String accessToken);
+  CachedToken authenticate(String accessToken);
 }

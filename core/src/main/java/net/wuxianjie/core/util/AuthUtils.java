@@ -1,5 +1,7 @@
 package net.wuxianjie.core.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.wuxianjie.core.domain.CachedToken;
 import org.springframework.security.core.Authentication;
@@ -9,6 +11,7 @@ import org.springframework.security.core.Authentication;
  *
  * @author 吴仙杰
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthUtils {
 
   /**

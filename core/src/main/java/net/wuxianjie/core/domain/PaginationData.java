@@ -13,16 +13,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagingData<T> {
+public class PaginationData<T> {
 
   /** 数据总条数 */
   private long total;
 
   /** 当前页码 */
-  private int current;
+  private int pageNo;
 
   /** 每页条数 */
-  private int size;
+  private int pageSize;
 
   /** 具体数据列表 */
   private T list;

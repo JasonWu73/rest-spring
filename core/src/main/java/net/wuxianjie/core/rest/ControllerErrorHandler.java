@@ -15,6 +15,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -74,6 +75,15 @@ public class ControllerErrorHandler {
   public ResponseEntity<RestResponse<Void>> handleMissingRequestHeader(final MissingRequestHeaderException e) {
     log.warn("缺少必要的请求头：{}", e.getMessage());
     return new ResponseEntity<>(ResponseResultWrapper.fail("缺少必要的请求头"), HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(MissingServletRequestParameterException.class)
+  public ResponseEntity<RestResponse<Void>> handleMissingParameter(final MissingServletRequestParameterException e) {
+    final String parameterName = e.getParameterName();
+    final String parameterType = e.getParameterType();
+    log.warn("缺少必填参数：{}，类型为{}", parameterName, parameterType);
+    return new ResponseEntity<>(ResponseResultWrapper
+        .fail(String.format("%s是必填参数", parameterName)), HttpStatus.BAD_REQUEST);
   }
 
   /**

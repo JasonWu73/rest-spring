@@ -5,24 +5,21 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 账号信息
+ * 用户信息
  *
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Account {
+public class User {
 
-  /** 账号ID */
-  private Integer accountId;
+  /** 用户ID */
+  private Integer userId;
 
-  /** 账号名称 */
-  private String accountName;
-
-  /** 账号密码 */
-  private String accountPassword;
+  /** 用户名 */
+  private String username;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
-  private String accountRoles;
+  private String roles;
 }

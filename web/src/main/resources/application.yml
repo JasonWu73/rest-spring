@@ -37,3 +37,6 @@ mybatis:
   # `#{}`：占位符，防止SQL注入风险（会在替换占位符时首尾添加上单引号`'xxx'`）
   # `${}`：替换符，列名表名灵活替换
   mapper-locations: classpath:mapper/*.xml
+  configuration:
+    # 打印 SQL
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

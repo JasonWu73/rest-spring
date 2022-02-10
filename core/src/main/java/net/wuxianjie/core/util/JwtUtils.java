@@ -6,6 +6,8 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
 
@@ -19,6 +21,7 @@ import java.util.Map;
  *
  * @author 吴仙杰
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
 
   /**

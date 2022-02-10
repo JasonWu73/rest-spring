@@ -1,5 +1,7 @@
 package net.wuxianjie.core.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import net.wuxianjie.core.constant.ErrorCode;
 import net.wuxianjie.core.domain.RestResponse;
 
@@ -8,6 +10,7 @@ import net.wuxianjie.core.domain.RestResponse;
  *
  * @author 吴仙杰
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ResponseResultWrapper {
 
   /**

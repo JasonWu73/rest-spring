@@ -2,6 +2,7 @@ package net.wuxianjie.core.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.domain.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,19 @@ import java.io.IOException;
  *
  * @author 吴仙杰
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
-
   private final ObjectMapper objectMapper;
 
   @Override
-  public void handle(final HttpServletRequest request, final HttpServletResponse response,
-                     final AccessDeniedException accessDeniedException)
-      throws IOException {
+  public void handle(
+      final HttpServletRequest request,
+      final HttpServletResponse response,
+      final AccessDeniedException accessDeniedException) throws IOException {
+    log.warn("权限认证失败：{}", accessDeniedException.getMessage());
+
     final RestResponse<Void> result = ResponseResultWrapper.fail("无访问权限");
 
     //noinspection deprecation

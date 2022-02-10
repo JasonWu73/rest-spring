@@ -18,13 +18,13 @@ import net.wuxianjie.core.domain.Token;
 public interface TokenService {
 
   /**
-   * 获取Access Token。若用户已存在Token，则返回该Token；否则，返回一个新生成的Token
+   * 获取Access Token。若用户已存在Token，则返回该Token；否则返回一个新生成的Token
    *
    * @param accountName 账号名称
    * @param accountPassword 账号密码
    * @return Token
    */
-  Token createToken(final String accountName, final String accountPassword);
+  Token createToken(String accountName, String accountPassword);
 
   /**
    * 刷新Access Token。若刷新成功，则原Token将不可用
@@ -32,5 +32,5 @@ public interface TokenService {
    * @param refreshToken 用于刷新的Refresh Token
    * @return Token
    */
-  Token updateToken(final String refreshToken);
+  Token updateToken(String refreshToken);
 }

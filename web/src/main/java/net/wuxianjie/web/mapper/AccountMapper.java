@@ -4,7 +4,7 @@ import net.wuxianjie.web.domain.Account;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * 账号相关数据的SQL映射器
+ * 账号数据的SQL映射器
  *
  * @author 吴仙杰
  * @see <a href="https://www.baeldung.com/mybatis">Quick Guide to MyBatis | Baeldung</a>

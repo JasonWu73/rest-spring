@@ -24,7 +24,7 @@ public class TokenController {
   private final TokenService tokenService;
 
 /**
-   * 获取Access Token。若用户已存在Token，则返回该Token；否则，返回一个新生成的Token
+   * 获取Access Token。若用户已存在Token，则返回该Token；否则返回一个新生成的Token
    *
    * @param query 请求参数
    * @return Token
