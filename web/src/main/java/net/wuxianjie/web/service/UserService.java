@@ -31,4 +31,12 @@ public interface UserService {
    * @return 新增结果
    */
   WroteDb saveUser(UserController.UserToAdd userToAdd);
+
+  /**
+   * 修改用户
+   *
+   * @param userToUpdate 用户的最新数据
+   * @return 更新结果
+   */
+  WroteDb updateUser(UserController.UserToUpdate userToUpdate);
 }

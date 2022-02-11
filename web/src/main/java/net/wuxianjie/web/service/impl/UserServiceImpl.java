@@ -3,6 +3,7 @@ package net.wuxianjie.web.service.impl;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.exception.DataConflictException;
 import net.wuxianjie.core.model.PaginationData;
+import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.controller.UserController;
 import net.wuxianjie.web.mapper.UserMapper;
 import net.wuxianjie.web.model.User;
@@ -52,5 +53,37 @@ public class UserServiceImpl implements UserService {
     final int addedNum = userMapper.addUser(userToAdd);
 
     return new WroteDb(addedNum, "新增用户成功");
+  }
+
+  @Override
+  @Transactional
+  public WroteDb updateUser(@NotNull final UserController.UserToUpdate userToUpdate) {
+    // 获取库中的用户数据
+    final User user = userMapper.findUserByUserId(userToUpdate.getUserId());
+
+    final boolean needsUpdate = shouldUpdateAndSetNull4NotNeeded(user, userToUpdate);
+
+    if (needsUpdate) {
+      final int updatedNum = userMapper.updateUser(userToUpdate);
+      return new WroteDb(updatedNum, "更新用户成功");
+    }
+
+    return new WroteDb(0, "无需更新用户");
+  }
+
+  /**
+   * 判断是否需要更新数据库中数据，并将不需要更新的字段设置为null
+   */
+  private boolean shouldUpdateAndSetNull4NotNeeded(final User user, final UserController.UserToUpdate userToUpdate) {
+    boolean needsUpdate = false;
+
+    final boolean isSameRoles = StringUtils.isNullEquals(user.getRoles(), userToUpdate.getRoles());
+    if (userToUpdate.getRoles() != null && !isSameRoles) {
+      needsUpdate = true;
+    } else {
+      userToUpdate.setRoles(null);
+    }
+
+    return needsUpdate;
   }
 }

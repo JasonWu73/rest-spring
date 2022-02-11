@@ -16,6 +16,14 @@ import java.util.List;
 public interface UserMapper {
 
   /**
+   * 根据用户ID获取特定用户数据
+   *
+   * @param userId 用户ID
+   * @return 特定用户数据
+   */
+  User findUserByUserId(int userId);
+
+  /**
    * 根据用户名查询用户数据
    *
    * @param from 从哪条数据开始（即{@code pageNo x pageSize}）
@@ -40,4 +48,12 @@ public interface UserMapper {
    * @return 新增的行数
    */
   int addUser(UserController.UserToAdd userToAdd);
+
+  /**
+   * 更新用户
+   *
+   * @param userToUpdate 用户的最新数据
+   * @return 更新的行数
+   */
+  int updateUser(UserController.UserToUpdate userToUpdate);
 }

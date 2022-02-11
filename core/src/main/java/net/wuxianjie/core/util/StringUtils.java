@@ -1,7 +1,10 @@
 package net.wuxianjie.core.util;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 /**
  * 字符口中工具类
@@ -29,5 +32,30 @@ public class StringUtils {
     }
 
     return "%" + trimmed + "%";
+  }
+
+  /**
+   * 忽略{@code null}判断两个字符串值是否相等，即认为{@code null}和空字符串相等
+   *
+   * <p>例：</p>
+   * <ul>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull(null, null)     // true}</li>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull(null, "")       // true}</li>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull("abc", "abc")    // true}</li>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull(null, " \t\n")  // false}</li>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull(null, " ")  // false}</li>
+   *     <li>{@code StringUtils.isEqualsIgnoreNull("abc", "abc ")    // false}</li>
+   * </ul>
+   *
+   * @param s1 用于比较的字符串
+   * @param s2 用于比较的字符串
+   * @return 若两个字符串值相等则返回true，否则返回false
+   */
+  public static boolean isNullEquals(final String s1, final String s2) {
+    if (StrUtil.isEmpty(s1) && StrUtil.isEmpty(s2)) {
+      return true;
+    }
+
+    return Objects.equals(s1, s2);
   }
 }

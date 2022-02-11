@@ -65,6 +65,54 @@ public class UserController {
     return userService.saveUser(userToAdd);
   }
 
+  /**
+   * 更新用户
+   *
+   * @param userId 需要更新的用户ID
+   * @param userToUpdate 用户的最新数据
+   * @return 更新结果
+   */
+  @PutMapping("/user/{userId:\\d+}")
+  public WroteDb updateUser(@PathVariable final int userId,
+                            @RequestBody final UserToUpdate userToUpdate){
+    final String roleStr = toDistinctAndDeduplicateAndLowerCaseRoles(userToUpdate.getRoles());
+    validateRoles(roleStr);
+    userToUpdate.setUserId(userId);
+    userToUpdate.setRoles(roleStr);
+    return userService.updateUser(userToUpdate);
+  }
+
+  @Data
+  public static class UserToAdd {
+
+    /** 用户名 */
+    @NotBlank(message = "用户名不能为空")
+    @Length(min = 2, max = 25, message = "用户名长度在2到25个字符之间")
+    @Pattern(regexp = "^[\\u4E00-\\u9FA5A-Za-z0-9_]{2,}$", message = "用户名只能包含汉字、字母、数字和下划线")
+    private String username;
+
+    /** 登录密码 */
+    @NotBlank(message = "密码不能为空")
+    @Length(min = 3, max = 25, message = "密码长度在3到25个字符之间")
+    private String password;
+
+    /** 用户所拥有的角色，以{@code ,}分隔，仅支持{@link AuthRole#value()} */
+    private String roles;
+  }
+
+  /**
+   * 最新的用户数据。若某字段值为null，则代表该字段无需更新
+   */
+  @Data
+  public static class UserToUpdate {
+
+    /** 需要更新的用户ID */
+    private int userId;
+
+    /** 用户更新后所拥有的角色，以{@code ,}分隔，仅支持{@link AuthRole#value()} */
+    private String roles;
+  }
+
   private void validateRoles(final String roles) {
     if (StrUtil.isEmpty(roles)) {
       return;
@@ -97,23 +145,5 @@ public class UserController {
 
           return appendStr;
         });
-  }
-
-  @Data
-  public static class UserToAdd {
-
-    /** 用户名 */
-    @NotBlank(message = "用户名不能为空")
-    @Length(min = 2, max = 25, message = "用户名长度在2到25个字符之间")
-    @Pattern(regexp = "^[\\u4E00-\\u9FA5A-Za-z0-9_]{2,}$", message = "用户名只能包含汉字、字母、数字和下划线")
-    private String username;
-
-    /** 登录密码 */
-    @NotBlank(message = "密码不能为空")
-    @Length(min = 3, max = 25, message = "密码长度在3到25个字符之间")
-    private String password;
-
-    /** 用户所拥有的角色，以{@code ,}分隔，仅支持{@link AuthRole#value()} */
-    private String roles;
   }
 }
