@@ -2,7 +2,7 @@ package net.wuxianjie.core.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.core.domain.RestResponse;
+import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;

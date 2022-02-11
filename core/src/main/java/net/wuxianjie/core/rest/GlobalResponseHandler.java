@@ -3,7 +3,7 @@ package net.wuxianjie.core.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.domain.RestResponse;
+import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;

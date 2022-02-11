@@ -14,7 +14,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Inherited
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole(T(net.wuxianjie.core.constant.AuthRole).USER.value())")
+@PreAuthorize("hasRole(T(net.wuxianjie.core.constant.AuthRole).USER.value().toUpperCase())")
 public @interface User {
 
 }

@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.constant.BeanQualifiers;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.CachedToken;
 import net.wuxianjie.core.service.TokenAuthenticationService;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.constant.TokenAttributes;

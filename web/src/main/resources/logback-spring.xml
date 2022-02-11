@@ -44,6 +44,7 @@
 
   <!-- `additivity="false"`：不要追加日志输出至`<root>` -->
   <logger name="org.springframework.transaction" level="TRACE" additivity="false">
+    <!-- 查看Spring事务管理是否开启 -->
     <appender-ref ref="CONSOLE"/>
   </logger>
 

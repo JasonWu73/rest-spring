@@ -1,4 +1,4 @@
-package net.wuxianjie.core.domain;
+package net.wuxianjie.core.model;
 
 import lombok.Data;
 import net.wuxianjie.core.constant.ErrorCode;
@@ -16,7 +16,7 @@ public class RestResponse<T> {
   private ErrorCode error;
 
   /** 失败时提示信息，当仅且当返回错误结果时才存在 */
-  private String message;
+  private String errMsg;
 
   /** 主要数据结果 */
   private T data;

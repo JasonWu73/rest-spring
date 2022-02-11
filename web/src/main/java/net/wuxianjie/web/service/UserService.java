@@ -1,7 +1,9 @@
 package net.wuxianjie.web.service;
 
-import net.wuxianjie.core.domain.PaginationData;
-import net.wuxianjie.web.domain.User;
+import net.wuxianjie.core.model.PaginationData;
+import net.wuxianjie.web.controller.UserController;
+import net.wuxianjie.web.model.User;
+import net.wuxianjie.web.model.WroteDb;
 
 import java.util.List;
 
@@ -21,4 +23,12 @@ public interface UserService {
    * @return 用户分页数据
    */
   PaginationData<List<User>> loadUsers(Integer pageNo, Integer pageSize, String fuzzyUsername);
+
+  /**
+   * 新增用户
+   *
+   * @param userToAdd 需要入库的用户数据
+   * @return 新增结果
+   */
+  WroteDb saveUser(UserController.UserToAdd userToAdd);
 }

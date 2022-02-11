@@ -2,7 +2,7 @@ package net.wuxianjie.web.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.CachedToken;
 import net.wuxianjie.web.constant.TokenAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

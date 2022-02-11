@@ -5,12 +5,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.constant.BeanQualifiers;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.domain.CachedToken;
-import net.wuxianjie.core.domain.Token;
+import net.wuxianjie.core.model.CachedToken;
+import net.wuxianjie.core.model.Token;
 import net.wuxianjie.core.service.TokenService;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.constant.TokenAttributes;
-import net.wuxianjie.web.domain.Account;
+import net.wuxianjie.web.model.Account;
 import net.wuxianjie.web.mapper.AccountMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,20 +95,20 @@ public class TokenServiceImpl implements TokenService {
     return passwordEncoder.matches(rawPassword, encodedPassword);
   }
 
-  private Token generateToken(final CachedToken tokenDto) {
+  private Token generateToken(final CachedToken cachedToken) {
 
     final Map<String, Object> jwtPayload = new HashMap<>();
-    jwtPayload.put(TokenAttributes.TOKEN_ACCOUNT, tokenDto.getAccountName());
+    jwtPayload.put(TokenAttributes.TOKEN_ACCOUNT, cachedToken.getAccountName());
 
     final String accessToken = generateToken(jwtPayload, TokenAttributes.ACCESS_TOKEN);
     final String refreshToken = generateToken(jwtPayload, TokenAttributes.REFRESH_TOKEN);
 
     // 完善Token数据
-    tokenDto.setAccessToken(accessToken);
-    tokenDto.setRefreshToken(refreshToken);
+    cachedToken.setAccessToken(accessToken);
+    cachedToken.setRefreshToken(refreshToken);
 
     // 写入缓存
-    tokenCache.put(tokenDto.getAccountName(), tokenDto);
+    tokenCache.put(cachedToken.getAccountName(), cachedToken);
 
     return new Token(TokenAttributes.TOKEN_EXPIRES_IN_SECONDS, accessToken, refreshToken);
   }

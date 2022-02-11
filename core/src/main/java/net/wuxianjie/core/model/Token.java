@@ -1,4 +1,4 @@
-package net.wuxianjie.core.domain;
+package net.wuxianjie.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

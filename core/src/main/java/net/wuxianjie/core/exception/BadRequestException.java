@@ -1,7 +1,7 @@
 package net.wuxianjie.core.exception;
 
 /**
- * 用于指明是客户端请求有误才导出服务不可用的异常
+ * 表示客户端请求有误才导出服务不可用的异常，对应400 HTTP状态码
  *
  * @author 吴仙杰
  */

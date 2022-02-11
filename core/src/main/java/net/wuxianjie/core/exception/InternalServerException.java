@@ -1,7 +1,7 @@
 package net.wuxianjie.core.exception;
 
 /**
- * 用于指明是程序内部有问题才导致服务不可用的异常
+ * 表示程序内部有问题才导致服务不可用的异常，对应500 HTTP状态码
  *
  * @author 吴仙杰
  */

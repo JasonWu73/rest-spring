@@ -1,6 +1,6 @@
 package net.wuxianjie.core.service;
 
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.CachedToken;
 
 /**
  * Token鉴权认证机制业务逻辑接口

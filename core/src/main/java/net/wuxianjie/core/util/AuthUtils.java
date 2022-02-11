@@ -3,7 +3,7 @@ package net.wuxianjie.core.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.CachedToken;
 import org.springframework.security.core.Authentication;
 
 /**

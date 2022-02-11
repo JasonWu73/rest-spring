@@ -1,6 +1,7 @@
 package net.wuxianjie.web.mapper;
 
-import net.wuxianjie.web.domain.User;
+import net.wuxianjie.web.controller.UserController;
+import net.wuxianjie.web.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -30,5 +31,13 @@ public interface UserMapper {
    * @param username 支持数据库模糊查询的用户名
    * @return 过滤后的总记录数
    */
-  int findUserCount(String username);
+  int findUserCountByUsername(String username);
+
+  /**
+   * 新增用户
+   *
+   * @param userToAdd 需要入库的用户数据
+   * @return 新增的行数
+   */
+  int addUser(UserController.UserToAdd userToAdd);
 }

@@ -3,7 +3,7 @@ package net.wuxianjie.core.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.core.domain.RestResponse;
+import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package net.wuxianjie.core.service;
 
-import net.wuxianjie.core.domain.Token;
+import net.wuxianjie.core.model.Token;
 
 /**
  * Token鉴权认证-Token续期策略

@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="net.wuxianjie.web.mapper.AccountMapper">
-
   <select id="findAccountByUserName" resultType="Account">
     SELECT
-           id AS accountId,
-           name AS accountName,
-           password AS accountPassword,
-           roles AS accountRoles
+      id AS accountId,
+      name AS accountName,
+      password AS accountPassword,
+      roles AS accountRoles
     FROM
-         user
+      user
     WHERE
-          name = #{name}
+      name = #{name}
   </select>
 </mapper>

@@ -1,7 +1,7 @@
 package net.wuxianjie.core.exception;
 
 /**
- * 用于Token身份认证失败时的异常类
+ * 表示Token身份认证失败的异常，对应401 HTTP状态码
  *
  * @author 吴仙杰
  */

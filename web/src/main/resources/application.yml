@@ -1,6 +1,6 @@
 core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /auth-resources/public
+  allowed-ant-paths: /auth-resource/public
 server:
   port: 8080
   # 在响应头中添加返回数据所使用的字符集
@@ -33,10 +33,10 @@ mybatis:
   # 若有POJO类上有`@Alias("xxx")`注解，则别名为该注解值
   # MyBatis内置类型别名，可查看`TypeAliasRegistry`
   # 此外，MyBatis内置类型处理器，可查看`TypeHandlerRegistry`
-  type-aliases-package: net.wuxianjie.web.domain
+  type-aliases-package: net.wuxianjie.web.model
   # `#{}`：占位符，防止SQL注入风险（会在替换占位符时首尾添加上单引号`'xxx'`）
   # `${}`：替换符，列名表名灵活替换
   mapper-locations: classpath:mapper/*.xml
-  configuration:
+  # configuration:
     # 打印 SQL
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

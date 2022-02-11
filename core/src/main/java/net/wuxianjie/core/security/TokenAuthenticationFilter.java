@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.constant.Prefixes;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.domain.RestResponse;
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.RestResponse;
+import net.wuxianjie.core.model.CachedToken;
 import net.wuxianjie.core.service.TokenAuthenticationService;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,17 +87,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     return bearerHeader.substring(Prefixes.AUTHORIZATION_BEARER.length());
   }
 
-  private void login2SpringSecurity(CachedToken tokenDto) {
+  private void login2SpringSecurity(CachedToken cachedToken) {
     final List<GrantedAuthority> authorities;
-    if (StrUtil.isNotEmpty(tokenDto.getRoles())) {
+    if (StrUtil.isNotEmpty(cachedToken.getRoles())) {
       // Spring Security要求角色名必须是大写，且以`ROLE_`为前缀
-      final String roles = Arrays.stream(tokenDto.getRoles().split(","))
+      final String roles = Arrays.stream(cachedToken.getRoles().split(","))
           .reduce("", (s, s2) -> {
             if (StrUtil.isNotEmpty(s)) {
-              return s + "," + Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
+              return s + "," + Prefixes.ROLES + s2.trim().toUpperCase();
             }
 
-            return Prefixes.ROLES + s2.trim().toUpperCase(Locale.ROOT);
+            return Prefixes.ROLES + s2.trim().toUpperCase();
           });
 
       authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
@@ -105,7 +105,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       authorities = Collections.emptyList();
     }
 
-    final UsernamePasswordAuthenticationToken passedToken = new UsernamePasswordAuthenticationToken(tokenDto, null, authorities);
+    final UsernamePasswordAuthenticationToken passedToken = new UsernamePasswordAuthenticationToken(cachedToken, null, authorities);
 
     SecurityContextHolder.getContext().setAuthentication(passedToken);
   }

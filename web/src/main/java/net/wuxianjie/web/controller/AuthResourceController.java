@@ -5,7 +5,7 @@ import net.wuxianjie.core.annotation.Admin;
 import net.wuxianjie.core.annotation.User;
 import net.wuxianjie.core.annotation.UserOrAdmin;
 import net.wuxianjie.core.constant.AuthRole;
-import net.wuxianjie.core.domain.CachedToken;
+import net.wuxianjie.core.model.CachedToken;
 import net.wuxianjie.core.util.AuthUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author 吴仙杰
  */
 @RestController
-@RequestMapping("/auth-resources")
+@RequestMapping("/auth-resource")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthResourceController {
 
@@ -74,7 +74,7 @@ public class AuthResourceController {
    * @param auth 通过身份认证后的本地账号信息
    */
   @UserOrAdmin
-  @GetMapping("user-admin")
+  @GetMapping("user-or-admin")
   public String loadUserOrAdmin(Authentication auth) {
     final CachedToken tokenDto = AuthUtils.loadToken(auth);
     return String.format("您好：%s，您正在访问拥有【%s或%s】角色才可访问的资源",

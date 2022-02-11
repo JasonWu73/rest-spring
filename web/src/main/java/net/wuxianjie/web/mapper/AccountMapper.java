@@ -1,6 +1,6 @@
 package net.wuxianjie.web.mapper;
 
-import net.wuxianjie.web.domain.Account;
+import net.wuxianjie.web.model.Account;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

@@ -2,7 +2,7 @@ package net.wuxianjie.core.controller;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.domain.Token;
+import net.wuxianjie.core.model.Token;
 import net.wuxianjie.core.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -30,7 +30,7 @@ public class TokenController {
    * @return Token
    */
   @PostMapping("/access_token")
-  public Token createToken(@RequestBody @Valid createTokenQuery query) {
+  public Token createToken(@Valid @RequestBody final Query query) {
     return tokenService.createToken(query.getAccountName(), query.getAccountPassword());
   }
 
@@ -41,18 +41,21 @@ public class TokenController {
    * @return Token
    */
   @GetMapping("/refresh_token/{refreshToken}")
-  public Token updateToken(@NotBlank(message = "Refresh Token不能为空") @PathVariable String refreshToken) {
+  public Token updateToken(
+      @NotBlank(message = "Refresh Token不能为空")
+      @PathVariable
+      final String refreshToken) {
     return tokenService.updateToken(refreshToken);
   }
 
   @Data
-  private static class createTokenQuery {
+  private static class Query {
 
-    /** 账号名称，非空 */
+    /** 账号名称，必填 */
     @NotBlank(message = "账号不能为空")
     private String accountName;
 
-    /** 账号密码，非空 */
+    /** 账号密码，必填 */
     @NotBlank(message = "密码不能为空")
     private String accountPassword;
   }

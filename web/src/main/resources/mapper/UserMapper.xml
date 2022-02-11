@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
-
-  <select id="findUsersPaginationByUsername" resultType="User">
-    SELECT
-           id AS userId,
-           name AS username,
-           roles
-    FROM
-         user
+  <sql id="findUsersPaginationByUsernameWhereClause">
     <where>
-      <if test="username != null and username.length() != 0">
+      <if test="username != null and username != ''">
         name LIKE #{username}
       </if>
     </where>
+  </sql>
+
+  <select id="findUsersPaginationByUsername" resultType="User">
+    SELECT
+      id AS userId,
+      name AS username,
+      IFNULL(roles, '') AS roles
+    FROM
+      user
+    <include refid="findUsersPaginationByUsernameWhereClause"/>
     LIMIT #{from}, #{pageSize}
   </select>
 
-  <select id="findUserCount" resultType="int">
-    SELECT COUNT(1) FROM user
+  <select id="findUserCountByUsername" resultType="int">
+    SELECT
+      COUNT(1)
+    FROM
+      user
+    <include refid="findUsersPaginationByUsernameWhereClause"/>
   </select>
+
+  <insert id="addUser">
+    INSERT INTO user (name, password, roles)
+    VALUES (#{username}, #{password}, #{roles})
+  </insert>
 </mapper>

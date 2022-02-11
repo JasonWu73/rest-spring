@@ -1,25 +1,28 @@
-package net.wuxianjie.web.domain;
+package net.wuxianjie.web.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 用户信息
+ * 账号信息
  *
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Account {
 
-  /** 用户ID */
-  private Integer userId;
+  /** 账号ID */
+  private Integer accountId;
 
-  /** 用户名 */
-  private String username;
+  /** 账号名称 */
+  private String accountName;
+
+  /** 账号密码 */
+  private String accountPassword;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
-  private String roles;
+  private String accountRoles;
 }

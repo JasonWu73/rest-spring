@@ -3,7 +3,7 @@ package net.wuxianjie.core.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.core.constant.ErrorCode;
-import net.wuxianjie.core.domain.RestResponse;
+import net.wuxianjie.core.model.RestResponse;
 
 /**
  * REST API统一结果封装类
@@ -36,7 +36,7 @@ public final class ResponseResultWrapper {
   public static RestResponse<Void> fail(final String failMsg) {
     final RestResponse<Void> result = new RestResponse<>();
     result.setError(ErrorCode.FAIL);
-    result.setMessage(failMsg);
+    result.setErrMsg(failMsg);
     return result;
   }
 }
