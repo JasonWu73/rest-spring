@@ -44,7 +44,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 判断密码是否正确
-    final boolean rightedPassword = isRightPassword(accountPassword, account.getAccountPassword());
+    final boolean rightedPassword = isRightPassword(accountPassword, account.getPassword());
 
     if (!rightedPassword) {
       throw new TokenAuthenticationException("账号名或密码错误");
@@ -52,9 +52,9 @@ public class TokenServiceImpl implements TokenService {
 
     // 构造写入缓存中的Token数据
     final CachedToken cachedToken = new CachedToken();
-    cachedToken.setAccountId(account.getAccountId());
-    cachedToken.setAccountName(account.getAccountName());
-    cachedToken.setRoles(account.getAccountRoles());
+    cachedToken.setAccountId(account.getId());
+    cachedToken.setAccountName(account.getName());
+    cachedToken.setRoles(account.getRoles());
 
     // 生成Access Token与Refresh Token
     return generateToken(cachedToken);
@@ -81,7 +81,7 @@ public class TokenServiceImpl implements TokenService {
 
     // 查询并更新程序内部的Token数据
     final Account account = loadAccount(accountName);
-    cachedToken.setRoles(account.getAccountRoles());
+    cachedToken.setRoles(account.getRoles());
 
     // 生成Access Token与Refresh Token
     return generateToken(cachedToken);

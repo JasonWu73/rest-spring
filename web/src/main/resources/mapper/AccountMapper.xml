@@ -3,10 +3,10 @@
 <mapper namespace="net.wuxianjie.web.mapper.AccountMapper">
   <select id="findAccountByUserName" resultType="Account">
     SELECT
-      id AS accountId,
-      name AS accountName,
-      password AS accountPassword,
-      roles AS accountRoles
+      id,
+      name,
+      password,
+      roles
     FROM
       user
     WHERE

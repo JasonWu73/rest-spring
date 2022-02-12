@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WroteDb {
+public class Wrote2Database {
 
   /** 数据库中受影响的行数 */
   private Integer affectedNum;

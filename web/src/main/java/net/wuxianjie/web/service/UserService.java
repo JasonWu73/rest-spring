@@ -3,7 +3,7 @@ package net.wuxianjie.web.service;
 import net.wuxianjie.core.model.PaginationData;
 import net.wuxianjie.web.controller.UserController;
 import net.wuxianjie.web.model.User;
-import net.wuxianjie.web.model.WroteDb;
+import net.wuxianjie.web.model.Wrote2Database;
 
 import java.util.List;
 
@@ -28,31 +28,31 @@ public interface UserService {
    * 新增用户
    *
    * @param userToAdd 需要入库的用户数据
-   * @return 新增操作执行的情况
+   * @return 新增操作的执行情况
    */
-  WroteDb saveUser(UserController.UserToAdd userToAdd);
+  Wrote2Database saveUser(UserController.UserToAdd userToAdd);
 
   /**
    * 修改用户
    *
    * @param userToUpdate 用户的最新数据
-   * @return 更新操作执行的情况
+   * @return 更新操作的执行情况
    */
-  WroteDb updateUser(UserController.UserToUpdate userToUpdate);
+  Wrote2Database updateUser(UserController.UserToUpdate userToUpdate);
 
   /**
    * 修改密码
    *
    * @param passwordToUpdate 需要更新的密码
-   * @return 修改密码操作执行的情况
+   * @return 修改密码操作的执行情况
    */
-  WroteDb updatePassword(UserController.PasswordToUpdate passwordToUpdate);
+  Wrote2Database updatePassword(UserController.PasswordToUpdate passwordToUpdate);
 
   /**
    * 删除用户
    *
    * @param userId 需要删除的用户ID
-   * @return 删除操作执行的情况
+   * @return 删除操作的执行情况
    */
-  WroteDb removeUser(int userId);
+  Wrote2Database removeUser(int userId);
 }

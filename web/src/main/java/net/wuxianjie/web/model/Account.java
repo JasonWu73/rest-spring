@@ -14,15 +14,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Account {
 
-  /** 账号ID */
-  private Integer accountId;
+  /** 账号ID，即用户ID */
+  private Integer id;
 
-  /** 账号名称 */
-  private String accountName;
+  /** 账号名称，即用户名 */
+  private String name;
 
   /** 账号密码 */
-  private String accountPassword;
+  private String password;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
-  private String accountRoles;
+  private String roles;
 }

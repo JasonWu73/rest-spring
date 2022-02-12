@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import net.wuxianjie.core.constant.CommonValues;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.InitBinder;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -53,7 +55,7 @@ public class JacksonConfig {
       // 设置中国时区，非默认的UTC
       builder.timeZone(CommonValues.CHINA_TIME_ZONE);
       // 设置`Date`日期字符串格式
-      builder.simpleDateFormat(CommonValues.DATE_TIME_FORMAT);
+      builder.serializers(new DateSerializer(false, new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
       // 设置Java 8 `LocalDate`序列化后的日期字符串格式
       builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
       // 设置Java 8 `LocalDateTime`序列化后的日期时间字符串格式
@@ -70,9 +72,9 @@ public class JacksonConfig {
       // 在反序列化时去除字符串首尾空格
       builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
         @Override
-        public String deserialize(final JsonParser jsonParser, final DeserializationContext ctx) throws IOException {
+        public String deserialize(final JsonParser p, final DeserializationContext ctx) throws IOException {
           // 去除前后空格
-          return StrUtil.trim(jsonParser.getValueAsString());
+          return StrUtil.trim(p.getValueAsString());
         }
       });
     };

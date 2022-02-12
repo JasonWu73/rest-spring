@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 用户信息
  *
@@ -15,10 +17,13 @@ import lombok.NoArgsConstructor;
 public class User {
 
   /** 用户ID */
-  private Integer userId;
+  private Integer id;
+
+  /** 最近用户信息的修改时间 */
+  private LocalDateTime modifyTime;
 
   /** 用户名 */
-  private String username;
+  private String name;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
   private String roles;

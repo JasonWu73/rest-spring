@@ -26,6 +26,7 @@ Java源码目录：
 ├── config # 存放自定义配置类，以`Config`结尾
 ├── constant # 存放常量、枚举类
 ├── controller # 存放控制器类，以`Controller`结尾
+├── handler # 存放MyBatis类型转换器
 ├── exception # 存放自定义异常类，以`Exception`结尾
 ├── rest # 存放完成REST API统一异常处理及结果封装的实现
 ├── security # 存放Token 鉴权认证机制的实现
@@ -128,29 +129,24 @@ class Foo {
   - 接口实现类：以要实现的接口开头，再以`Impl`结尾
   - MyBatis SQL映射器：以`Mapper`结尾
 - 方法名：首字母小写，多个单词组成时，后续单词首字母都要大写，其余都为小写（不考虑是否为特有名词缩写）
-  - 用来判断真伪的方法：
-    - `is`为前缀：是否符合预期
-    - `can`为前缀：能否执行预期操作
-    - `should`为前缀：应不应该进行某种操作
-    - `has`为前缀：是否持有预期数据
-  - 与数据相关的方法：
-    - `validate`为前缀：数据校验
-    - `initial`为前缀：初始化数据
-    - `create`为前缀：新创建，并方法内涉及存储
-    - `generate`为前缀：新创建，但方法内不涉及存储
-    - `save`为前缀：持久化保存
-    - `load`为前缀：读取
-    - `fetch`为前缀：从第三方读取
-    - `update`为前缀：更新
-    - `remove`为前缀：删除
-    - `to`为前缀：转换为指定类型数据返回
-  - DAO层（Mapper）的方法：
-    - `addXxx`：新增
-    - `deleteXxxByXxx`：删除
+  - 判断真伪的方法：
+    - `isXxx`：是否符合预期
+    - `needsXxx`：是否需要执行某种操作
+    - `hasXxx`：是否包含某种状态
+  - 数据相关的方法：
+    - `getXxx`：查询、获取
+    - `countXxx`：统计总数
+    - `saveXxx`：新增、保存
     - `updateXxx`：更新
-    - `findXxxByXxx`：查询
+    - `deleteXxx`：删除
+    - `initialXxx`：初始化数据，无返回值
+    - `generateXxx`：生成数据，有返回值
+    - `makeXxx`：对入参数据进行改造
+    - `toXxx`：转换为指定类型数据返回
 - 变量名：同方法名
   - POJO中的布尔变量一律不要加`is`前缀，数据库中的布尔字段全部都要加`is_`前缀
+  - 常用命名：
+    - `xxxToXxx`：什么用于什么
 - 常量名：全部大写，多个单词用下划线`_`分隔
   - 全局常量：`public static final`
   - 类内常量：`private static final`

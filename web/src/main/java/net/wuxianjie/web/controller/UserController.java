@@ -9,7 +9,7 @@ import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.model.PaginationData;
 import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.model.User;
-import net.wuxianjie.web.model.WroteDb;
+import net.wuxianjie.web.model.Wrote2Database;
 import net.wuxianjie.web.service.UserService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,11 +55,11 @@ public class UserController {
    * 新增用户
    *
    * @param userToAdd 需要入库的用户数据
-   * @return 新增操作执行的情况
+   * @return 新增操作的执行情况
    */
   @Admin
   @PostMapping("/user")
-  public WroteDb saveUser(@Valid @RequestBody final UserToAdd userToAdd) {
+  public Wrote2Database saveUser(@Valid @RequestBody final UserToAdd userToAdd) {
     final String roles = toDistinctAndDeduplicateAndLowerCaseRoles(userToAdd.getRoles());
     validateRoles(roles);
     userToAdd.setRoles(roles);
@@ -73,12 +73,12 @@ public class UserController {
    *
    * @param userId 需要更新的用户ID
    * @param userToUpdate 用户的最新数据
-   * @return 更新操作执行的情况
+   * @return 更新操作的执行情况
    */
   @Admin
   @PutMapping("/user/{userId:\\d+}")
-  public WroteDb updateUser(@PathVariable final int userId,
-                            @Valid @RequestBody final UserToUpdate userToUpdate){
+  public Wrote2Database updateUser(@PathVariable final int userId,
+                                   @Valid @RequestBody final UserToUpdate userToUpdate){
     final String roleStr = toDistinctAndDeduplicateAndLowerCaseRoles(userToUpdate.getRoles());
     validateRoles(roleStr);
     userToUpdate.setUserId(userId);
@@ -91,11 +91,11 @@ public class UserController {
    *
    * @param userId 需要更新的用户ID
    * @param passwordToUpdate 需要更新的密码
-   * @return 修改密码操作执行的情况
+   * @return 修改密码操作的执行情况
    */
   @PutMapping("/password/{userId:\\d+}")
-  public WroteDb updatePassword(@PathVariable final int userId,
-                            @Valid @RequestBody final PasswordToUpdate passwordToUpdate){
+  public Wrote2Database updatePassword(@PathVariable final int userId,
+                                       @Valid @RequestBody final PasswordToUpdate passwordToUpdate){
     if (passwordToUpdate.getOldPassword().equals(passwordToUpdate.getNewPassword())) {
       throw new BadRequestException("新旧密码不能相同");
     }
@@ -108,11 +108,11 @@ public class UserController {
    * 删除用户
    *
    * @param userId 需要删除的用户ID
-   * @return 删除操作执行的情况
+   * @return 删除操作的执行情况
    */
   @Admin
   @DeleteMapping("/user/{userId:\\d+}")
-  public WroteDb removeUser(@PathVariable final int userId) {
+  public Wrote2Database removeUser(@PathVariable final int userId) {
     return userService.removeUser(userId);
   }
 
@@ -183,7 +183,7 @@ public class UserController {
 
   private String toDistinctAndDeduplicateAndLowerCaseRoles(final String roles) {
     if (StrUtil.isEmpty(roles)) {
-      return null;
+      return roles;
     }
 
     return Arrays.stream(roles.split(","))

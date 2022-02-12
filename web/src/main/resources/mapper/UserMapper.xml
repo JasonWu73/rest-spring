@@ -11,10 +11,10 @@
 
   <select id="findAccountByUserId" resultType="Account">
     SELECT
-      id AS accountId,
-      name AS accountName,
-      password AS accountPassword,
-      roles AS accountRoles
+      id,
+      name,
+      password,
+      roles
     FROM
       user
     WHERE
@@ -23,12 +23,14 @@
 
   <select id="findUsersPaginationByUsername" resultType="User">
     SELECT
-      id AS userId,
-      name AS username,
+      id,
+      STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
+      name,
       IFNULL(roles, '') AS roles
     FROM
       user
     <include refid="findUsersPaginationByUsernameWhereClause"/>
+    ORDER BY modify_time DESC
     LIMIT #{from}, #{pageSize}
   </select>
 
@@ -51,7 +53,7 @@
     UPDATE user
     <set>
       modify_time = datetime(CURRENT_TIMESTAMP, 'localtime'),
-      <if test="password != null">password = #{password}</if>
+      <if test="password != null">password = #{password},</if>
       <if test="roles != null">roles = #{roles}</if>
     </set>
     WHERE id = #{userId}

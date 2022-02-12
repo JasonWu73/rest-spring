@@ -43,10 +43,10 @@
   </appender>
 
   <!-- `additivity="false"`：不要追加日志输出至`<root>` -->
-  <logger name="org.springframework.transaction" level="TRACE" additivity="false">
-    <!-- 查看Spring事务管理是否开启 -->
+  <!--<logger name="org.springframework.transaction" level="TRACE" additivity="false">
+    &lt;!&ndash; 查看Spring事务管理是否开启 &ndash;&gt;
     <appender-ref ref="CONSOLE"/>
-  </logger>
+  </logger>-->
 
   <root level="INFO">
     <!-- 控制台输出直接使用Spring Boot的配置 -->

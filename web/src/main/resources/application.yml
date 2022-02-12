@@ -28,15 +28,19 @@ spring:
       # 从连接池返回的连接的默认自动提交行为
       auto-commit: true
 mybatis:
-  # 配置`xxxMapper.xml`中`resultType`类别名的包名，即可无需写全限定类名
+  # 配置`xxxMapper.xml`中`resultType`类型别名的包名，即可无需写全限定类名
   # 在没有注解的情况下，会使用POJO的首字母小写的非限定类名来作为它的别名
   # 若有POJO类上有`@Alias("xxx")`注解，则别名为该注解值
   # MyBatis内置类型别名，可查看`TypeAliasRegistry`
   # 此外，MyBatis内置类型处理器，可查看`TypeHandlerRegistry`
   type-aliases-package: net.wuxianjie.web.model
+  # 类型转换器的包
+  type-handlers-package: net.wuxianjie.web.handler
   # `#{}`：占位符，防止SQL注入风险（会在替换占位符时首尾添加上单引号`'xxx'`）
   # `${}`：替换符，列名表名灵活替换
   mapper-locations: classpath:mapper/*.xml
   configuration:
+    # 自动将带有下划线的表字段映射为驼峰格式的实体类属性
+    map-underscore-to-camel-case: true
     # 打印 SQL
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
