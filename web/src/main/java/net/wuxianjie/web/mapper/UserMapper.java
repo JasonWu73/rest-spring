@@ -1,6 +1,7 @@
 package net.wuxianjie.web.mapper;
 
 import net.wuxianjie.web.controller.UserController;
+import net.wuxianjie.web.model.Account;
 import net.wuxianjie.web.model.User;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,12 +17,12 @@ import java.util.List;
 public interface UserMapper {
 
   /**
-   * 根据用户ID获取特定用户数据
+   * 根据用户ID获取特定账户数据（包含密码的用户数据）
    *
    * @param userId 用户ID
-   * @return 特定用户数据
+   * @return 特定账户数据（包含密码的用户数据）
    */
-  User findUserByUserId(int userId);
+  Account findAccountByUserId(int userId);
 
   /**
    * 根据用户名查询用户数据
@@ -56,4 +57,12 @@ public interface UserMapper {
    * @return 更新的行数
    */
   int updateUser(UserController.UserToUpdate userToUpdate);
+
+  /**
+   * 删除用户
+   *
+   * @param userId 需要删除的用户ID
+   * @return 删除的行数
+   */
+  int deleteUserByUserId(int userId);
 }

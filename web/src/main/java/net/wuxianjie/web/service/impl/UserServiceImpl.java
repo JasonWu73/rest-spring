@@ -6,6 +6,7 @@ import net.wuxianjie.core.model.PaginationData;
 import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.controller.UserController;
 import net.wuxianjie.web.mapper.UserMapper;
+import net.wuxianjie.web.model.Account;
 import net.wuxianjie.web.model.User;
 import net.wuxianjie.web.model.WroteDb;
 import net.wuxianjie.web.service.UserService;
@@ -46,7 +47,7 @@ public class UserServiceImpl implements UserService {
       throw new DataConflictException("已存在相同用户名");
     }
 
-    // 编码密码
+    // 编码明文密码
     final String encodedPassword = passwordEncoder.encode(userToAdd.getPassword());
     userToAdd.setPassword(encodedPassword);
 
@@ -59,11 +60,11 @@ public class UserServiceImpl implements UserService {
   @Transactional
   public WroteDb updateUser(@NotNull final UserController.UserToUpdate userToUpdate) {
     // 获取库中的用户数据
-    final User user = userMapper.findUserByUserId(userToUpdate.getUserId());
+    final Account account = userMapper.findAccountByUserId(userToUpdate.getUserId());
 
-    final boolean needsUpdate = shouldUpdateAndSetNull4NotNeeded(user, userToUpdate);
+    final boolean shouldUpdate = shouldUpdateAndSetNull4NotNeeded(account, userToUpdate);
 
-    if (needsUpdate) {
+    if (shouldUpdate) {
       final int updatedNum = userMapper.updateUser(userToUpdate);
       return new WroteDb(updatedNum, "更新用户成功");
     }
@@ -71,19 +72,37 @@ public class UserServiceImpl implements UserService {
     return new WroteDb(0, "无需更新用户");
   }
 
+  @Override
+  @Transactional
+  public WroteDb removeUser(final int userId) {
+    final int deletedNum = userMapper.deleteUserByUserId(userId);
+    return new WroteDb(deletedNum, deletedNum == 0 ? "无需删除用户" : "删除用户成功");
+  }
+
   /**
    * 判断是否需要更新数据库中数据，并将不需要更新的字段设置为null
    */
-  private boolean shouldUpdateAndSetNull4NotNeeded(final User user, final UserController.UserToUpdate userToUpdate) {
-    boolean needsUpdate = false;
+  private boolean shouldUpdateAndSetNull4NotNeeded(final Account account, final UserController.UserToUpdate userToUpdate) {
+    boolean shouldUpdate = false;
 
-    final boolean isSameRoles = StringUtils.isNullEquals(user.getRoles(), userToUpdate.getRoles());
+    final boolean isSamePassword = userToUpdate.getPassword() != null && passwordEncoder.matches(userToUpdate.getPassword(), account.getAccountPassword());
+    if (userToUpdate.getPassword() != null && !isSamePassword) {
+      shouldUpdate = true;
+
+      // 编码明文密码
+      final String encodedPassword = passwordEncoder.encode(userToUpdate.getPassword());
+      userToUpdate.setPassword(encodedPassword);
+    } else {
+      userToUpdate.setPassword(null);
+    }
+
+    final boolean isSameRoles = StringUtils.isNullEquals(account.getAccountRoles(), userToUpdate.getRoles());
     if (userToUpdate.getRoles() != null && !isSameRoles) {
-      needsUpdate = true;
+      shouldUpdate = true;
     } else {
       userToUpdate.setRoles(null);
     }
 
-    return needsUpdate;
+    return shouldUpdate;
   }
 }

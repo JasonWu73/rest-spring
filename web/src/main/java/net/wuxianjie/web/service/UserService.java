@@ -28,7 +28,7 @@ public interface UserService {
    * 新增用户
    *
    * @param userToAdd 需要入库的用户数据
-   * @return 新增结果
+   * @return 新增操作执行的情况
    */
   WroteDb saveUser(UserController.UserToAdd userToAdd);
 
@@ -36,7 +36,15 @@ public interface UserService {
    * 修改用户
    *
    * @param userToUpdate 用户的最新数据
-   * @return 更新结果
+   * @return 更新操作执行的情况
    */
   WroteDb updateUser(UserController.UserToUpdate userToUpdate);
+
+  /**
+   * 删除用户
+   *
+   * @param userId 需要删除的用户ID
+   * @return 删除操作执行的情况
+   */
+  WroteDb removeUser(int userId);
 }

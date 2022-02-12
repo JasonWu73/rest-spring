@@ -15,7 +15,7 @@ public class RestResponse<T> {
   /** 本次请求的error code */
   private ErrorCode error;
 
-  /** 失败时提示信息，当仅且当返回错误结果时才存在 */
+  /** 失败时提示消息，当仅且当返回错误结果时才存在 */
   private String errMsg;
 
   /** 主要数据结果 */

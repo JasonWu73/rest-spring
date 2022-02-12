@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class WroteDb {
 
-  /** 数据库影响的行数 */
+  /** 数据库中受影响的行数 */
   private Integer affectedNum;
 
   /** 针对本次操作的结果说明 */

@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
-  <sql id="findUserSelectClause">
-    SELECT
-      id AS userId,
-      name AS username,
-      IFNULL(roles, '') AS roles
-    FROM
-      user
-  </sql>
-
   <sql id="findUsersPaginationByUsernameWhereClause">
     <where>
       <if test="username != null and username != ''">
@@ -18,14 +9,25 @@
     </where>
   </sql>
 
-  <select id="findUserByUserId" resultType="User">
-    <include refid="findUserSelectClause"/>
+  <select id="findAccountByUserId" resultType="Account">
+    SELECT
+      id AS accountId,
+      name AS accountName,
+      password AS accountPassword,
+      roles AS accountRoles
+    FROM
+      user
     WHERE
       id = #{userId}
   </select>
 
   <select id="findUsersPaginationByUsername" resultType="User">
-    <include refid="findUserSelectClause"/>
+    SELECT
+      id AS userId,
+      name AS username,
+      IFNULL(roles, '') AS roles
+    FROM
+      user
     <include refid="findUsersPaginationByUsernameWhereClause"/>
     LIMIT #{from}, #{pageSize}
   </select>
@@ -49,8 +51,13 @@
     UPDATE user
     <set>
       modify_time=datetime(CURRENT_TIMESTAMP, 'localtime'),
+      <if test="password != null">password = #{password}</if>
       <if test="roles != null">roles = #{roles}</if>
     </set>
     WHERE id = #{userId}
   </update>
+
+  <delete id="deleteUserByUserId">
+    DELETE FROM user WHERE id = #{userId}
+  </delete>
 </mapper>
