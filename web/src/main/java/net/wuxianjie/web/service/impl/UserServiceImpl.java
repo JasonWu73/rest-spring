@@ -1,6 +1,7 @@
 package net.wuxianjie.web.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.DataConflictException;
 import net.wuxianjie.core.model.PaginationData;
 import net.wuxianjie.core.util.StringUtils;
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
     final String encodedPassword = passwordEncoder.encode(userToAdd.getPassword());
     userToAdd.setPassword(encodedPassword);
 
+    // 入库
     final int addedNum = userMapper.addUser(userToAdd);
 
     return new WroteDb(addedNum, "新增用户成功");
@@ -59,17 +61,48 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional
   public WroteDb updateUser(@NotNull final UserController.UserToUpdate userToUpdate) {
-    // 获取库中的用户数据
+    // 若库中不存在该用户ID的数据，则直接退出方法
     final Account account = userMapper.findAccountByUserId(userToUpdate.getUserId());
 
+    if (account == null) {
+      throw new BadRequestException("用户ID不存在");
+    }
+
+    // 判断数据是否需要更新，并将不需要更新的数据设置为null
     final boolean shouldUpdate = shouldUpdateAndSetNull4NotNeeded(account, userToUpdate);
 
+    // 入库
     if (shouldUpdate) {
       final int updatedNum = userMapper.updateUser(userToUpdate);
       return new WroteDb(updatedNum, "更新用户成功");
     }
 
     return new WroteDb(0, "无需更新用户");
+  }
+
+  @Override
+  public WroteDb updatePassword(@NotNull final UserController.PasswordToUpdate passwordToUpdate) {
+    // 若库中不存在该用户ID的数据，则直接退出方法
+    final Account account = userMapper.findAccountByUserId(passwordToUpdate.getUserId());
+
+    if (account == null) {
+      throw new BadRequestException("用户ID不存在");
+    }
+
+    // 若旧密码与库中的密码不匹配，则直接退出方法
+    final boolean isRightOldPassword = passwordEncoder.matches(passwordToUpdate.getOldPassword(), account.getAccountPassword());
+
+    if (!isRightOldPassword) {
+      throw new BadRequestException("旧密码错误");
+    }
+
+    // 编码明文新密码
+    final String encodedNewPassword = passwordEncoder.encode(passwordToUpdate.getNewPassword());
+
+    // 入库
+    final int updatedNum = userMapper.updatePassword(passwordToUpdate.getUserId(), encodedNewPassword);
+
+    return new WroteDb(updatedNum, "修改密码成功");
   }
 
   @Override

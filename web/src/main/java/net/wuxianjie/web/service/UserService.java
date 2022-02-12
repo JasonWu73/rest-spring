@@ -41,6 +41,14 @@ public interface UserService {
   WroteDb updateUser(UserController.UserToUpdate userToUpdate);
 
   /**
+   * 修改密码
+   *
+   * @param passwordToUpdate 需要更新的密码
+   * @return 修改密码操作执行的情况
+   */
+  WroteDb updatePassword(UserController.PasswordToUpdate passwordToUpdate);
+
+  /**
    * 删除用户
    *
    * @param userId 需要删除的用户ID

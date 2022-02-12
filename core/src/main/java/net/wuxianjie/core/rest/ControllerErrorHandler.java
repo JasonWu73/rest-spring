@@ -290,7 +290,7 @@ public class ControllerErrorHandler {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    final String error = e.getMessage() == null ? "无法定位异常详细信息" : e.getMessage();
+    final String error = e.getMessage() == null ? "null空指针异常" : e.getMessage();
     return new ResponseEntity<>(ResponseResultWrapper.fail(error), HttpStatus.INTERNAL_SERVER_ERROR);
   }
 

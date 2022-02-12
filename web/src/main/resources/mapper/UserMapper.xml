@@ -50,10 +50,18 @@
   <update id="updateUser">
     UPDATE user
     <set>
-      modify_time=datetime(CURRENT_TIMESTAMP, 'localtime'),
+      modify_time = datetime(CURRENT_TIMESTAMP, 'localtime'),
       <if test="password != null">password = #{password}</if>
       <if test="roles != null">roles = #{roles}</if>
     </set>
+    WHERE id = #{userId}
+  </update>
+
+  <update id="updatePassword">
+    UPDATE user
+    SET
+      modify_time = datetime(CURRENT_TIMESTAMP, 'localtime'),
+      password = #{password}
     WHERE id = #{userId}
   </update>
 

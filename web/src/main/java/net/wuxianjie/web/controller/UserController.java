@@ -87,6 +87,24 @@ public class UserController {
   }
 
   /**
+   * 修改密码
+   *
+   * @param userId 需要更新的用户ID
+   * @param passwordToUpdate 需要更新的密码
+   * @return 修改密码操作执行的情况
+   */
+  @PutMapping("/password/{userId:\\d+}")
+  public WroteDb updatePassword(@PathVariable final int userId,
+                            @Valid @RequestBody final PasswordToUpdate passwordToUpdate){
+    if (passwordToUpdate.getOldPassword().equals(passwordToUpdate.getNewPassword())) {
+      throw new BadRequestException("新旧密码不能相同");
+    }
+
+    passwordToUpdate.setUserId(userId);
+    return userService.updatePassword(passwordToUpdate);
+  }
+
+  /**
    * 删除用户
    *
    * @param userId 需要删除的用户ID
@@ -131,6 +149,23 @@ public class UserController {
 
     /** 用户更新后所拥有的角色，以{@code ,}分隔，仅支持{@link AuthRole#value()} */
     private String roles;
+  }
+
+  @Data
+  public static class PasswordToUpdate {
+
+    /** 需要更新的用户ID */
+    private int userId;
+
+    /** 旧密码 */
+    @NotBlank(message = "旧密码不能为空")
+    @Length(min = 3, max = 25, message = "密码长度需在3到25个字符之间")
+    private String oldPassword;
+
+    /** 新密码 */
+    @NotBlank(message = "新密码不能为空")
+    @Length(min = 3, max = 25, message = "密码长度需在3到25个字符之间")
+    private String newPassword;
   }
 
   private void validateRoles(final String roles) {

@@ -59,6 +59,15 @@ public interface UserMapper {
   int updateUser(UserController.UserToUpdate userToUpdate);
 
   /**
+   * 修改密码
+   *
+   * @param userId 需要修改密码的用户ID
+   * @param password 编码后的密码
+   * @return 更新的行数
+   */
+  int updatePassword(int userId, String password);
+
+  /**
    * 删除用户
    *
    * @param userId 需要删除的用户ID
