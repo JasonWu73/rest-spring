@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Spring Boot默认只加载application.yml（或application.properties）外部配置文件，有两种解决方式：
+1、在application.yml中指定`logging.config`
+2、在命令行中使用`logging.config`
+-->
 <configuration>
   <!-- 加载Spring Boot配置 -->
   <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
   <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
   <!-- 配置属性 -->
-  <!-- 日志文件的存放目录（绝对或相对路径） -->
-  <property name="LOG_FILE_DIR" value="logs/"/>
+  <!-- 日志文件的存放目录（绝对或相对路径，目录分隔符都使用/，哪怕是Windows，如`D:/Test/logs`）
+  生产环境下推荐使用绝对路径，否则日志生成目录会随着项目启动位置的不同而不同 -->
+  <property name="LOG_FILE_DIR" value="logs"/>
   <!-- 日志文件的名称（不包含扩展名`.log`） -->
   <property name="LOG_FILE_NAME" value="app"/>
   <!-- 每个文件大小的最大估值（非精确值，可以是以字节、KB、MB或GB为单位，默认以字节为单位） -->
@@ -18,7 +24,7 @@
 
   <!-- 记录日志文件 -->
   <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>${LOG_FILE_DIR}${LOG_FILE_NAME}.log</file>
+    <file>${LOG_FILE_DIR}/${LOG_FILE_NAME}.log</file>
     <encoder>
       <!-- 使用Spring Boot的配置 -->
       <pattern>${FILE_LOG_PATTERN}</pattern>
@@ -48,6 +54,7 @@
     <appender-ref ref="CONSOLE"/>
   </logger>-->
 
+  <!-- 生产环境下，推荐使用WARN级别日志 -->
   <root level="INFO">
     <!-- 控制台输出直接使用Spring Boot的配置 -->
     <appender-ref ref="CONSOLE"/>

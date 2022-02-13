@@ -1,3 +1,4 @@
+# 部署时，将application.yml放于Jar同级目录的config子目录下
 core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
   allowed-ant-paths: /auth-resource/public
@@ -11,6 +12,8 @@ server:
       force: true
 spring:
   datasource:
+    # 生产环境下推荐使用绝对路径数据库，如`D:\Test\app.db`
+    # 如Windows任务计划程序并不是在项目目录执行脚本，故会导致读取不到数据库
     url: jdbc:sqlite:app.db
     # Spring Boot 2.0及以上版本，Spring Boot默认会使用`HikariDataSource`
     hikari:
@@ -44,3 +47,10 @@ mybatis:
     map-underscore-to-camel-case: true
     # 打印 SQL
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# Spring Boot默认只加载application.yml（或application.properties）外部配置文件，有两种解决方式：
+# 1、在application.yml中指定`logging.config: config/logback-spring.xml`
+# 2、在命令行中使用`--logging.config=config/logback-spring.xml`
+# 此外，若在非当前Jar所在目录运行项目，则还需要指明配置文件的绝对路径
+# `java -jar xx.jar --spring.config.location=file:D:\Test\config\application.yml`
+#logging:
+#  config: file:D:\Test\config\logback-spring.xml
