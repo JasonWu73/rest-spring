@@ -12,7 +12,7 @@ import net.wuxianjie.core.constant.ErrorCode;
 @Data
 public class RestResponse<T> {
 
-  /** 本次请求的error code */
+  /** 本次请求的错误码 */
   private ErrorCode error;
 
   /** 失败时提示消息，当仅且当返回错误结果时才存在 */

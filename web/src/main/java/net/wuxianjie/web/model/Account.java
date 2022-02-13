@@ -15,10 +15,10 @@ import lombok.NoArgsConstructor;
 public class Account {
 
   /** 账号ID，即用户ID */
-  private Integer id;
+  private Integer accountId;
 
   /** 账号名称，即用户名 */
-  private String name;
+  private String accountName;
 
   /** 账号密码 */
   private String password;

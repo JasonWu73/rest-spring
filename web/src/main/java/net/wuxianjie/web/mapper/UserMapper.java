@@ -1,9 +1,11 @@
 package net.wuxianjie.web.mapper;
 
+import net.wuxianjie.core.model.PaginationQuery;
 import net.wuxianjie.web.controller.UserController;
 import net.wuxianjie.web.model.Account;
 import net.wuxianjie.web.model.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -11,49 +13,48 @@ import java.util.List;
  * 用户数据的SQL映射器
  *
  * @author 吴仙杰
- * @see <a href="https://www.baeldung.com/mybatis">Quick Guide to MyBatis | Baeldung</a>
  */
 @Mapper
 public interface UserMapper {
 
   /**
-   * 根据用户ID获取特定账户数据（包含密码的用户数据）
+   * 根据用户ID获取指定的账号数据（包含密码的用户数据）
    *
    * @param userId 用户ID
-   * @return 特定账户数据（包含密码的用户数据）
+   * @return 账号数据（包含密码的用户数据）
    */
-  Account findAccountByUserId(int userId);
+  Account getAccount(int userId);
 
   /**
-   * 根据用户名查询用户数据
+   * 根据分页条件及用户名从数据库中获取用户列表数据
    *
-   * @param from 从哪条数据开始（即{@code pageNo x pageSize}）
-   * @param pageSize 每页条数
-   * @param username 支持数据库模糊查询的用户名
-   * @return 用户分页数据
+   * @param pagination 分页条件，非空
+   * @param fuzzyUsername 支持数据库模糊查询的用户名，null代表不使用该查询条件
+   * @return 用户列表分页数据
    */
-  List<User> findUsersPaginationByUsername(Integer from, Integer pageSize, String username);
+  List<User> getUsers(@Param("page") PaginationQuery pagination,
+                      @Param("username") String fuzzyUsername);
 
   /**
-   * 根据用户名查询用户总记录数
+   * 根据用户名从数据库中统计用户总数
    *
-   * @param username 支持数据库模糊查询的用户名
-   * @return 过滤后的总记录数
+   * @param fuzzyUsername 支持数据库模糊查询的用户名，null代表不使用该查询条件
+   * @return 用户总数
    */
-  int findUserCountByUsername(String username);
+  int countUser(String fuzzyUsername);
 
   /**
    * 新增用户
    *
-   * @param userToAdd 需要入库的用户数据
+   * @param userToAdd 需要新增的用户数据，非空
    * @return 新增的行数
    */
-  int addUser(UserController.UserToAdd userToAdd);
+  int saveUser(UserController.UserToAdd userToAdd);
 
   /**
    * 更新用户
    *
-   * @param userToUpdate 用户的最新数据
+   * @param userToUpdate 用户的最新数据，非空
    * @return 更新的行数
    */
   int updateUser(UserController.UserToUpdate userToUpdate);
@@ -61,8 +62,8 @@ public interface UserMapper {
   /**
    * 修改密码
    *
-   * @param userId 需要修改密码的用户ID
-   * @param password 编码后的密码
+   * @param userId 需要修改密码的用户ID，非空
+   * @param password 编码后的密码，非空
    * @return 更新的行数
    */
   int updatePassword(int userId, String password);
@@ -70,8 +71,8 @@ public interface UserMapper {
   /**
    * 删除用户
    *
-   * @param userId 需要删除的用户ID
+   * @param userId 需要删除的用户ID，非空
    * @return 删除的行数
    */
-  int deleteUserByUserId(int userId);
+  int deleteUser(int userId);
 }

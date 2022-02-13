@@ -37,7 +37,7 @@ public class TokenServiceImpl implements TokenService {
   @Override
   public Token createToken(@NonNull final String accountName, @NonNull final String accountPassword) {
     // 根据账号名从数据库查询账号信息
-    final Account account = loadAccount(accountName);
+    final Account account = getAccount(accountName);
 
     if (account == null) {
       throw new TokenAuthenticationException("账号名或密码错误");
@@ -52,8 +52,8 @@ public class TokenServiceImpl implements TokenService {
 
     // 构造写入缓存中的Token数据
     final CachedToken cachedToken = new CachedToken();
-    cachedToken.setAccountId(account.getId());
-    cachedToken.setAccountName(account.getName());
+    cachedToken.setAccountId(account.getAccountId());
+    cachedToken.setAccountName(account.getAccountName());
     cachedToken.setRoles(account.getRoles());
 
     // 生成Access Token与Refresh Token
@@ -80,15 +80,15 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 查询并更新程序内部的Token数据
-    final Account account = loadAccount(accountName);
+    final Account account = getAccount(accountName);
     cachedToken.setRoles(account.getRoles());
 
     // 生成Access Token与Refresh Token
     return generateToken(cachedToken);
   }
 
-  private Account loadAccount(final String accountName) {
-    return accountMapper.findAccountByUserName(accountName);
+  private Account getAccount(final String accountName) {
+    return accountMapper.getAccount(accountName);
   }
 
   private boolean isRightPassword(final String rawPassword, final String encodedPassword) {

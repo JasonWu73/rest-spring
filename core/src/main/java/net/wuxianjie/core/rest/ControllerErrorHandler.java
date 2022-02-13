@@ -7,6 +7,7 @@ import net.wuxianjie.core.exception.InternalServerException;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
 import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
+import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -127,7 +128,7 @@ public class ControllerErrorHandler {
     }
 
     return new ResponseEntity<>(ResponseResultWrapper
-        .fail(String.format("%s是必填参数", parameterName)), HttpStatus.BAD_REQUEST);
+        .fail(String.format("缺少必填参数：%s", parameterName)), HttpStatus.BAD_REQUEST);
   }
 
   /**
@@ -263,6 +264,23 @@ public class ControllerErrorHandler {
     }
 
     return new ResponseEntity<>(ResponseResultWrapper.fail(e.getMessage()),
+        HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  /**
+   * Dao层异常处理
+   */
+  @ExceptionHandler(UncategorizedDataAccessException.class)
+  public ResponseEntity<RestResponse<Void>> handleUncategorizedDataAccessException(
+      final UncategorizedDataAccessException e,
+      final WebRequest request) {
+    log.error("数据库操作异常", e);
+
+    if (shouldNotJsonResponse(request)) {
+      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    return new ResponseEntity<>(ResponseResultWrapper.fail("数据库操作异常"),
         HttpStatus.INTERNAL_SERVER_ERROR);
   }
 

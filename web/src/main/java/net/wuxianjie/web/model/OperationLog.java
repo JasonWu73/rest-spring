@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class OperationLog {
 
-  /** 日志ID */
+  /** 操作日志ID */
   private Integer operationLogId;
 
   /** 日志的操作时间 */

@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * Token属性常量
+ * 与Token属性相关的常量类
  *
  * @author 吴仙杰
  */

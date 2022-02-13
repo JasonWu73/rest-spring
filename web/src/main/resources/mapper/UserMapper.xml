@@ -1,73 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
-  <sql id="findUsersPaginationByUsernameWhereClause">
-    <where>
-      <if test="username != null and username != ''">
-        name LIKE #{username}
-      </if>
-    </where>
-  </sql>
-
-  <select id="findAccountByUserId" resultType="Account">
+  <select id="getAccount" resultType="Account">
     SELECT
-      id,
-      name,
+      user_id AS accountId,
+      username AS accountName,
       password,
       roles
     FROM
       user
     WHERE
-      id = #{userId}
+      user_id = #{userId}
   </select>
 
-  <select id="findUsersPaginationByUsername" resultType="User">
+  <select id="getUsers" resultType="User">
     SELECT
-      id,
+      user_id,
       STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-      name,
+      username,
       IFNULL(roles, '') AS roles
     FROM
       user
-    <include refid="findUsersPaginationByUsernameWhereClause"/>
+    <where>
+      <if test="username != null">
+        username LIKE #{username}
+      </if>
+    </where>
     ORDER BY modify_time DESC
-    LIMIT #{from}, #{pageSize}
+    LIMIT #{page.offset}, #{page.pageSize}
   </select>
 
-  <select id="findUserCountByUsername" resultType="int">
+  <select id="countUser" resultType="int">
     SELECT
       COUNT(1)
     FROM
       user
-    <include refid="findUsersPaginationByUsernameWhereClause"/>
+    <where>
+      <if test="username != null">
+        username LIKE #{username}
+      </if>
+    </where>
   </select>
 
-  <insert id="addUser">
-    INSERT INTO user (create_time, modify_time,
-                      name, password, roles)
-    VALUES (datetime(CURRENT_TIMESTAMP, 'localtime'), datetime(CURRENT_TIMESTAMP, 'localtime'),
+  <insert id="saveUser">
+    INSERT INTO user (create_time, modify_time, username, password, roles)
+    VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+            DATETIME(CURRENT_TIMESTAMP, 'localtime'),
             #{username}, #{password}, #{roles})
   </insert>
 
   <update id="updateUser">
     UPDATE user
     <set>
-      modify_time = datetime(CURRENT_TIMESTAMP, 'localtime'),
+      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
       <if test="password != null">password = #{password},</if>
       <if test="roles != null">roles = #{roles}</if>
     </set>
-    WHERE id = #{userId}
+    WHERE user_id = #{userId}
   </update>
 
   <update id="updatePassword">
     UPDATE user
     SET
-      modify_time = datetime(CURRENT_TIMESTAMP, 'localtime'),
+      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
       password = #{password}
-    WHERE id = #{userId}
+    WHERE user_id = #{userId}
   </update>
 
-  <delete id="deleteUserByUserId">
-    DELETE FROM user WHERE id = #{userId}
+  <delete id="deleteUser">
+    DELETE FROM user WHERE user_id = #{userId}
   </delete>
 </mapper>

@@ -93,11 +93,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       // Spring Security要求角色名必须是大写，且以`ROLE_`为前缀
       final String roles = Arrays.stream(cachedToken.getRoles().split(","))
           .reduce("", (s, s2) -> {
+            final String appended = s2.trim().toUpperCase();
+
             if (StrUtil.isNotEmpty(s)) {
-              return s + "," + Prefixes.ROLES + s2.trim().toUpperCase();
+              return s + "," + Prefixes.ROLES + appended;
             }
 
-            return Prefixes.ROLES + s2.trim().toUpperCase();
+            return Prefixes.ROLES + appended;
           });
 
       authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);

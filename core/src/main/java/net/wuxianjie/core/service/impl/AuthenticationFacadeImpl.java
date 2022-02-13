@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationFacadeImpl implements AuthenticationFacade {
 
   @Override
-  public CachedToken loadCacheToken() {
+  public CachedToken getCacheToken() {
     final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication instanceof AnonymousAuthenticationToken) {

@@ -21,7 +21,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
- * 关于操作日志相关的REST API控制器
+ * 操作日志REST API控制器
  *
  * @author 吴仙杰
  */
@@ -36,9 +36,9 @@ public class OperationLogController {
   /**
    * 根据分页条件及时间段获取操作日志列表数据
    *
-   * @param pagination 分页条件，非空
-   * @param startDate 开始日期（包含），非空，格式为yyyy-MM-dd
-   * @param endDate 结束日期（包含），非空，格式为yyyy-MM-dd
+   * @param pagination 分页条件，必填
+   * @param startDate 开始日期（包含），必填，格式为yyyy-MM-dd，例如：2022-02-10
+   * @param endDate 结束日期（包含），必填，格式为yyyy-MM-dd，例如：2022-02-12
    * @return 操作日志列表分页数据
    */
   @Admin
@@ -47,11 +47,14 @@ public class OperationLogController {
       @Valid
       final PaginationQuery pagination,
       @NotNull(message = "开始日期不能为空")
-      @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "开始日期格式错误")
+      @Pattern(message = "开始日期格式错误", regexp = "^\\d{4}-\\d{2}-\\d{2}$")
       final String startDate,
       @NotNull(message = "结束日期不能为空")
-      @Pattern(regexp = "^\\d{4}-\\d{2}-\\d{2}$", message = "结束日期格式错误")
+      @Pattern(message = "结束日期格式错误", regexp = "^\\d{4}-\\d{2}-\\d{2}$")
       final String endDate) {
+    // 完善分页条件
+    pagination.setOffset();
+
     // 从日期字符串解析得到日期对象
     final LocalDate startLocalDate = LocalDate.parse(startDate);
     final LocalDate endLocalDate = LocalDate.parse(endDate);
@@ -64,9 +67,6 @@ public class OperationLogController {
     // 分别获取开始日期的一天开始时间和结束日期的一天结束时间
     final LocalDateTime startTime = startLocalDate.atStartOfDay();
     final LocalDateTime endTime = endLocalDate.atTime(LocalTime.MAX);
-
-    // 完善分页条件
-    pagination.setOffset();
 
     // 根据分页条件、开始时间和结束时间获取操作日志列表
     return logService.getOperationLogs(pagination, startTime, endTime);

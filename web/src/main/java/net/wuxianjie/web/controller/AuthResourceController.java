@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Token鉴权认证机制下的资源访问测试控制器
+ * 关于对Token鉴权认证机制进行测试的REST API控制器
  *
  * @author 吴仙杰
  */
@@ -24,51 +24,51 @@ public class AuthResourceController {
   private final AuthenticationFacade authentication;
 
   /**
-   * 游客、匿名用户，即不用身份认证就可以访问
+   * 游客（匿名用户）可访问，即无需身份认证即可访问
    */
   @GetMapping("public")
-  public String loadAnonymous() {
-    return String.format("您好：%s！您正在访问任何人都可访问的资源",
-        authentication.loadCacheToken().getAccountName());
+  public String getAnonymousResource() {
+    return String.format("您好：%s！您正在访问无需身份认证即可访问的资源",
+        authentication.getCacheToken().getAccountName());
   }
 
   /**
-   * 来宾（角色为空的用户），即任何通过身份认证的用户都可访问
+   * 来宾（角色为空的用户），即只要通过身份认证即可访问
    */
   @GetMapping("guest")
-  public String loadGuest() {
-    return String.format("您好：%s，您正在访问只要通过身份认证后即可访问的资源",
-        authentication.loadCacheToken().getAccountName());
+  public String getGuestResource() {
+    return String.format("您好：%s，您正在访问只要通过身份认证即可访问的资源",
+        authentication.getCacheToken().getAccountName());
   }
 
   /**
-   * 仅普通用户可以访问
+   * 通过身份认证，且必须拥有普通用户角色才能访问
    */
   @User
   @GetMapping("user")
-  public String loadUser() {
-    return String.format("您好：%s，您正在访问需要拥有【%s】角色才可访问的资源",
-        authentication.loadCacheToken().getAccountName(), AuthRole.USER.value());
+  public String getUserResource() {
+    return String.format("您好：%s，您正在访问必须拥有【%s】角色才可访问的资源",
+        authentication.getCacheToken().getAccountName(), AuthRole.USER.value());
   }
 
   /**
-   * 仅管理员可访问
+   * 通过身份认证，且必须拥有管理员角色才能访问
    */
   @Admin
   @GetMapping("admin")
-  public String loadAdmin() {
-    return String.format("您好：%s，您正在访问拥有【%s】角色才可访问的资源",
-        authentication.loadCacheToken().getAccountName(), AuthRole.ADMIN.value());
+  public String getAdminResource() {
+    return String.format("您好：%s，您正在访问必须拥有【%s】角色才可访问的资源",
+        authentication.getCacheToken().getAccountName(), AuthRole.ADMIN.value());
   }
 
   /**
-   * 普通用户或管理员都可访问
+   * 通过身份认证，且必须拥有普通用户或管理员角色才能访问
    */
   @UserOrAdmin
   @GetMapping("user-or-admin")
-  public String loadUserOrAdmin() {
-    return String.format("您好：%s，您正在访问拥有【%s或%s】角色才可访问的资源",
-        authentication.loadCacheToken().getAccountName(),
+  public String getUserOrAdmin() {
+    return String.format("您好：%s，您正在访问只要拥有【%s或%s】一种角色才可访问的资源",
+        authentication.getCacheToken().getAccountName(),
         AuthRole.USER.value(), AuthRole.ADMIN.value());
   }
 }

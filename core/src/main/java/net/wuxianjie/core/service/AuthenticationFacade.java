@@ -15,5 +15,5 @@ public interface AuthenticationFacade {
    *
    * @return 缓存中的Token数据
    */
-  CachedToken loadCacheToken();
+  CachedToken getCacheToken();
 }

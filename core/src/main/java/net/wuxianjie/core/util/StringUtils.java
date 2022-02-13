@@ -18,19 +18,17 @@ public class StringUtils {
    *  去除字符串的首尾空白字符，再将其转换为支持数据库模糊搜索的字符串（{@code "%str%"}）
    *
    * @param str 需要转换的字符串
-   * @return 若str为null，则返回null；若str为空白字符串，则返回空字符串；若str包含非空字符，则返回%str%形式字符串（已去除str的首尾空格）
+   * @return 若str为null或为空白字符串，则返回null；若str包含非空字符，则返回%str%形式字符串（已去除str的首尾空格）
    */
   public static String generateDbFuzzyStr(final String str) {
-    if (str == null) {
+    // 除去字符串头尾部的空白，如果字符串是null或者""，返回null
+    final String trimmed = StrUtil.trimToNull(str);
+
+    if (trimmed == null) {
       return null;
     }
 
-    final String trimmed = str.trim();
-
-    if (trimmed.length() == 0) {
-      return str;
-    }
-
+    // 构造用于数据库LIKE的模糊查询值
     return "%" + trimmed + "%";
   }
 

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 旧版本的MyBatis LocalDateTime类型转换器，这是在SQLite JDBC4不支持{@code LocalDateTime}转换的解决方式
+ * MyBatis LocalDateTime的类型转换器，这是在SQLite JDBC4不支持{@code LocalDateTime}转换的解决方式
  *
  * @author 吴仙杰
  * @see <a href="https://github.com/mybatis/mybatis-3/issues/1644">LocalDateTimeTypeHandler failing with TIMESTAMPTZ · Issue #1644 · mybatis/mybatis-3</a>

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 关于操作日志相关的业务接口
+ * 操作日志业务逻辑接口
  *
  * @author 吴仙杰
  */
@@ -30,8 +30,8 @@ public interface OperationLogService {
    * 新增操作日志
    *
    * @param operationTime 操作的时间，非空
-   * @param message 操作的详细说明，如新增/删除了什么、将什么修改为什么，非空
-   * @return 数据库的新增结果
+   * @param message 操作的详细说明，非空。需指明具体操作内容，如新增/删除了什么、将什么修改为什么
+   * @return 数据库的写入情况及说明
    */
   @SuppressWarnings("UnusedReturnValue")
   Wrote2Database saveOperationLog(LocalDateTime operationTime, String message);

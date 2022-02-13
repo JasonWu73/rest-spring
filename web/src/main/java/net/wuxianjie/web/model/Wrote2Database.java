@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 数据库写操作（新增、删除、修改）后的结果
+ * 数据库写操作（新增、删除、修改）的执行结果
  *
  * @author 吴仙杰
  */

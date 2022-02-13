@@ -17,13 +17,13 @@ import java.time.LocalDateTime;
 public class User {
 
   /** 用户ID */
-  private Integer id;
+  private Integer userId;
 
-  /** 最近用户信息的修改时间 */
+  /** 修改时间 */
   private LocalDateTime modifyTime;
 
   /** 用户名 */
-  private String name;
+  private String username;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
   private String roles;

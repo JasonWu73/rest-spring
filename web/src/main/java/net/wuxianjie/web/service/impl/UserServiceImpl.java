@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.DataConflictException;
 import net.wuxianjie.core.model.PaginationData;
+import net.wuxianjie.core.model.PaginationQuery;
 import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.controller.UserController;
 import net.wuxianjie.web.mapper.UserMapper;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 实现系统可登录用户的业务操作
+ * 实现用户管理业务逻辑
  *
  * @author 吴仙杰
  */
@@ -36,30 +37,34 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public PaginationData<List<User>> loadUsers(@NonNull final Integer pageNo, @NonNull final Integer pageSize, final String fuzzyUsername) {
-    final List<User> users = userMapper.findUsersPaginationByUsername(pageNo * pageSize, pageSize, fuzzyUsername);
-    final int total = userMapper.findUserCountByUsername(fuzzyUsername);
-    return new PaginationData<>(total, pageNo, pageSize, users);
+  public PaginationData<List<User>> getUsers(@NonNull final PaginationQuery pagination,
+                                             final String fuzzyUsername) {
+    // 根据分页条件及用户名从数据库中获取用户列表数据
+    final List<User> users = userMapper.getUsers(pagination, fuzzyUsername);
+
+    // 根据用户名从数据库中统计用户总数
+    final int total = userMapper.countUser(fuzzyUsername);
+    return new PaginationData<>(total, pagination.getPageNo(), pagination.getPageSize(), users);
   }
 
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database saveUser(@NonNull final UserController.UserToAdd userToAdd) {
-    // 若已存在同名用户，则拒绝添加
-    final int count = userMapper.findUserCountByUsername(userToAdd.getUsername());
+    // 若已存在同名用户，则直接退出
+    final int count = userMapper.countUser(userToAdd.getUsername());
 
     if (count > 0) {
       throw new DataConflictException("已存在相同用户名");
     }
 
-    // 编码明文密码
+    // 将明文密码编码为哈希值
     final String encodedPassword = passwordEncoder.encode(userToAdd.getPassword());
     userToAdd.setPassword(encodedPassword);
 
-    // 入库
-    final int addedNum = userMapper.addUser(userToAdd);
+    // 将用户数据插入数据库中
+    final int addedNum = userMapper.saveUser(userToAdd);
 
-    // 记录日志
+    // 记录操作日志
     final String logMessage = String.format("新增用户名为%s的用户", userToAdd.getUsername());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
@@ -69,23 +74,24 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database updateUser(@NonNull final UserController.UserToUpdate userToUpdate) {
-    // 若库中不存在该用户ID的数据，则直接退出方法
-    final Account account = userMapper.findAccountByUserId(userToUpdate.getUserId());
+    // 若库中不存在该用户ID的数据，则直接退出
+    final Account account = userMapper.getAccount(userToUpdate.getUserId());
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
     }
 
     // 判断数据是否需要更新
-    final boolean shouldUpdate = shouldUpdateUserInfo(account, userToUpdate);
-    // 将不需要更新的数据设置为null并返回详细日志
+    final boolean needsUpdate = needsUpdateUserInfo(account, userToUpdate);
+
+    // 将不需要更新的数据设置为null并返回详细操作日志
     final String updatedLog = makeNull4NotNeedUpdatedFiledAndReturnLog(account, userToUpdate);
 
-    if (shouldUpdate) {
-      // 入库
+    if (needsUpdate) {
+      // 更新数据库中的用户数据
       final int updatedNum = userMapper.updateUser(userToUpdate);
 
-      // 记录日志
+      // 记录操作日志
       final String logMessage = String.format("更新用户信息：%s", updatedLog);
       logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
@@ -98,28 +104,29 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database updatePassword(@NonNull final UserController.PasswordToUpdate passwordToUpdate) {
-    // 若库中不存在该用户ID的数据，则直接退出方法
-    final Account account = userMapper.findAccountByUserId(passwordToUpdate.getUserId());
+    // 若库中不存在该用户ID的数据，则直接退出
+    final Account account = userMapper.getAccount(passwordToUpdate.getUserId());
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
     }
 
-    // 若旧密码与库中的密码不匹配，则直接退出方法
-    final boolean isRightOldPassword = passwordEncoder.matches(passwordToUpdate.getOldPassword(), account.getPassword());
+    // 若旧密码与库中的密码不匹配，则直接退出
+    final boolean isRightOldPassword = passwordEncoder
+        .matches(passwordToUpdate.getOldPassword(), account.getPassword());
 
     if (!isRightOldPassword) {
       throw new BadRequestException("旧密码错误");
     }
 
-    // 编码明文新密码
+    // 将明文新密码编码为哈希值
     final String encodedNewPassword = passwordEncoder.encode(passwordToUpdate.getNewPassword());
 
-    // 入库
+    // 更新数据库中的密码
     final int updatedNum = userMapper.updatePassword(passwordToUpdate.getUserId(), encodedNewPassword);
 
-    // 记录日志
-    final String logMessage = String.format("修改用户名为%s的密码", account.getName());
+    // 记录操作日志
+    final String logMessage = String.format("修改用户名为%s的密码", account.getAccountName());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
     return new Wrote2Database(updatedNum, "修改密码成功");
@@ -129,23 +136,24 @@ public class UserServiceImpl implements UserService {
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database removeUser(final int userId) {
     // 若用户ID不存在，则直接返回
-    final Account account = userMapper.findAccountByUserId(userId);
+    final Account account = userMapper.getAccount(userId);
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
     }
 
-    // 入库
-    final int deletedNum = userMapper.deleteUserByUserId(userId);
+    // 从数据库中删除指定用户
+    final int deletedNum = userMapper.deleteUser(userId);
 
-    // 记录日志
-    final String logMessage = String.format("删除用户名为%s的用户", account.getName());
+    // 记录操作日志
+    final String logMessage = String.format("删除用户名为%s的用户", account.getAccountName());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
     return new Wrote2Database(deletedNum, "删除用户成功");
   }
 
-  private boolean shouldUpdateUserInfo(final Account account, final UserController.UserToUpdate userToUpdate) {
+  private boolean needsUpdateUserInfo(final Account account, final UserController.UserToUpdate userToUpdate) {
+    // 判断密码是否需要更改
     final boolean isSamePassword = userToUpdate.getPassword() != null
         && passwordEncoder.matches(userToUpdate.getPassword(), account.getPassword());
 
@@ -153,6 +161,7 @@ public class UserServiceImpl implements UserService {
       return true;
     }
 
+    // 判断角色是否需要更改
     final boolean isSameRoles = StringUtils.isNullEquals(account.getRoles(), userToUpdate.getRoles());
 
     return userToUpdate.getRoles() != null && !isSameRoles;
@@ -161,19 +170,21 @@ public class UserServiceImpl implements UserService {
   private String makeNull4NotNeedUpdatedFiledAndReturnLog(final Account account, final UserController.UserToUpdate userToUpdate) {
     final List<String> logBuilder = new ArrayList<>();
 
+    // 判断密码是否需要更改
     final boolean isSamePassword = userToUpdate.getPassword() != null
         && passwordEncoder.matches(userToUpdate.getPassword(), account.getPassword());
 
     if (userToUpdate.getPassword() != null && !isSamePassword) {
-      // 编码明文密码
+      // 将明文密码编码为哈希值
       final String encodedPassword = passwordEncoder.encode(userToUpdate.getPassword());
       userToUpdate.setPassword(encodedPassword);
 
-      logBuilder.add(String.format("重置了%s的密码", account.getName()));
+      logBuilder.add(String.format("重置了%s的密码", account.getAccountName()));
     } else if (userToUpdate.getPassword() != null){
       userToUpdate.setPassword(null);
     }
 
+    // 判断角色是否需要更改
     final boolean isSameRoles = StringUtils.isNullEquals(account.getRoles(), userToUpdate.getRoles());
 
     if (userToUpdate.getRoles() != null && !isSameRoles) {
@@ -183,6 +194,7 @@ public class UserServiceImpl implements UserService {
       userToUpdate.setRoles(null);
     }
 
+    // 返回详细操作日志
     return String.join("；", logBuilder);
   }
 }
