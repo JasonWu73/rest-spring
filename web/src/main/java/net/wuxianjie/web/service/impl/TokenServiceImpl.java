@@ -35,7 +35,7 @@ public class TokenServiceImpl implements TokenService {
   private final AccountMapper accountMapper;
 
   @Override
-  public Token createToken(@NonNull final String accountName, @NonNull final String accountPassword) {
+  public Token getToken(@NonNull final String accountName, @NonNull final String accountPassword) {
     // 根据账号名从数据库查询账号信息
     final Account account = getAccount(accountName);
 

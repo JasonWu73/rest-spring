@@ -140,8 +140,8 @@ class Foo {
     - `saveXxx`：新增、保存
     - `updateXxx`：更新
     - `deleteXxx`：删除
-    - `initialXxx`：初始化数据，无返回值
-    - `generateXxx`：生成数据，有返回值
+    - `initialXxx`：初始化数据
+    - `generateXxx`：生成数据
     - `makeXxx`：对入参数据进行改造
     - `toXxx`：转换为指定类型数据返回
     - `validateXxx`：校验参数，若不通过直接抛出异常或返回错误码

@@ -20,16 +20,16 @@ public interface TokenService {
   /**
    * 获取Access Token。若用户已存在Token，则返回该Token；否则返回一个新生成的Token
    *
-   * @param accountName 账号名称
-   * @param accountPassword 账号密码
+   * @param accountName 账号名称，非空
+   * @param accountPassword 账号密码，非空
    * @return Token
    */
-  Token createToken(String accountName, String accountPassword);
+  Token getToken(String accountName, String accountPassword);
 
   /**
    * 刷新Access Token。若刷新成功，则原Token将不可用
    *
-   * @param refreshToken 用于刷新的Refresh Token
+   * @param refreshToken 用于刷新的Refresh Token，非空
    * @return Token
    */
   Token updateToken(String refreshToken);
