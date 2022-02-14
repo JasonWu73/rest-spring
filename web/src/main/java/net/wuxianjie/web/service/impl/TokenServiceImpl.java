@@ -99,6 +99,7 @@ public class TokenServiceImpl implements TokenService {
 
     final Map<String, Object> jwtPayload = new HashMap<>();
     jwtPayload.put(TokenAttributes.TOKEN_ACCOUNT, cachedToken.getAccountName());
+    jwtPayload.put(TokenAttributes.TOKEN_ROLE, cachedToken.getRoles());
 
     final String accessToken = generateToken(jwtPayload, TokenAttributes.ACCESS_TOKEN);
     final String refreshToken = generateToken(jwtPayload, TokenAttributes.REFRESH_TOKEN);
@@ -114,9 +115,7 @@ public class TokenServiceImpl implements TokenService {
   }
 
   private String generateToken(final Map<String, Object> jwtPayload, final String tokenType) {
-
     jwtPayload.put(TokenAttributes.TOKEN_TYPE, tokenType);
-
     return JwtUtils.generateToken(jwtSigningKey, jwtPayload, TokenAttributes.TOKEN_EXPIRES_IN_SECONDS);
   }
 }

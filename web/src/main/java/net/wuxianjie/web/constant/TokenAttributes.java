@@ -17,6 +17,11 @@ public final class TokenAttributes {
   /** JWT中账号名称Key */
   public static final String TOKEN_ACCOUNT = "account";
 
+  /**
+   * JWT中角色Key
+   */
+  public static final String TOKEN_ROLE = "roles";
+
   /** JWT中Token类型Key */
   public static final String TOKEN_TYPE = "type";
 
