@@ -1,56 +1,103 @@
 {
 	"info": {
-		"_postman_id": "95ecff4e-acd8-41bd-9555-86f609f1f505",
-		"name": "rest-spring",
+		"_postman_id": "32f43490-38aa-467c-9c26-31af4b80e9c2",
+		"name": "rest-api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "权限测试接口",
+			"name": "开放接口",
 			"item": [
 				{
-					"name": "测试无认证权限",
-					"event": [
+					"name": "获取Token",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8080/auth-resource/public",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+							"name": "获取Access Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"if (jsonData.error === 0) {",
+											"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+											"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
 							],
-							"port": "8080",
-							"path": [
-								"auth-resource",
-								"public"
-							]
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"accountName\": \"  管理员   \",\n  \"accountPassword\": \" 123  \"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/access_token",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"access_token"
+									]
+								},
+								"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"accountName\": \"\", // 账号名，即用户名，必填\n  \"accountPassword\": \"\" // 登录密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token过期时间（以秒为单位）\n    \"accessToken\": \"\", // 用于认证鉴权的Token，即用于请求头`Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "刷新Access Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"const jsonData = pm.response.json();",
+											"if (jsonData.error === 0) {",
+											"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
+											"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{host}}/refresh_token/{{refreshToken}}",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"refresh_token",
+										"{{refreshToken}}"
+									]
+								},
+								"description": "# 请求参数\n\nRefresh Token已在URL路径中指明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token过期时间（以秒为单位）\n    \"accessToken\": \"\", // 用于认证鉴权的Token，即用于请求头`Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
-					"name": "测试仅认证空权限",
+					"name": "修改当前用户密码",
 					"event": [
 						{
 							"listen": "test",
@@ -62,11 +109,8 @@
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
 					"request": {
-						"method": "GET",
+						"method": "PUT",
 						"header": [
 							{
 								"key": "Authorization",
@@ -75,165 +119,24 @@
 							}
 						],
 						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
+							"mode": "raw",
+							"raw": "{\n  \"oldPassword\": \" 1234 \",\n  \"newPassword\": \" 123 \"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/auth-resource/guest",
-							"protocol": "http",
+							"raw": "{{host}}/password",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8080",
 							"path": [
-								"auth-resource",
-								"guest"
+								"password"
 							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "测试普通用户权限",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
 						},
-						"url": {
-							"raw": "http://127.0.0.1:8080/auth-resource/user",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8080",
-							"path": [
-								"auth-resource",
-								"user"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "测试管理员权限",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8080/auth-resource/admin",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8080",
-							"path": [
-								"auth-resource",
-								"admin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "测试普通用户或管理员权限",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{accessToken}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": []
-						},
-						"url": {
-							"raw": "http://127.0.0.1:8080/auth-resource/user-or-admin",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "8080",
-							"path": [
-								"auth-resource",
-								"user-or-admin"
-							]
-						}
+						"description": "# 请求参数\n\n需要修改密码的用户ID已在URL路径中指明。\n\nJSON请求体：\n\n```json\n{\n  \"oldPassword\": \"\", // 旧密码，必填，长度需在3到25个字符之间\n  \"newPassword\": \"\", // 新密码，必填，长度需在3到25个字符之间\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 修改密码操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
 					},
 					"response": []
 				}
@@ -275,15 +178,10 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8080/users?pageNo=0&pageSize=10&username=   ",
-									"protocol": "http",
+									"raw": "{{host}}/users?pageNo=0&pageSize=10&username=   ",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8080",
 									"path": [
 										"users"
 									],
@@ -341,15 +239,10 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8080/user",
-									"protocol": "http",
+									"raw": "{{host}}/user",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8080",
 									"path": [
 										"user"
 									]
@@ -390,15 +283,10 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8080/user/13",
-									"protocol": "http",
+									"raw": "{{host}}/user/13",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8080",
 									"path": [
 										"user",
 										"13"
@@ -440,15 +328,10 @@
 									}
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8080/user/13",
-									"protocol": "http",
+									"raw": "{{host}}/user/13",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8080",
 									"path": [
 										"user",
 										"13"
@@ -493,15 +376,10 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "http://127.0.0.1:8080/logs?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-02-12",
-									"protocol": "http",
+									"raw": "{{host}}/logs?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-02-12",
 									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
+										"{{host}}"
 									],
-									"port": "8080",
 									"path": [
 										"logs"
 									],
@@ -537,108 +415,10 @@
 			]
 		},
 		{
-			"name": "开放接口",
+			"name": "权限测试接口",
 			"item": [
 				{
-					"name": "获取Token",
-					"item": [
-						{
-							"name": "获取Access Token",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const jsonData = pm.response.json();",
-											"if (jsonData.error === 0) {",
-											"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
-											"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"accountName\": \"  管理员   \",\n  \"accountPassword\": \" 123  \"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8080/access_token",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8080",
-									"path": [
-										"access_token"
-									]
-								},
-								"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"accountName\": \"\", // 账号名，即用户名，必填\n  \"accountPassword\": \"\" // 登录密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token过期时间（以秒为单位）\n    \"accessToken\": \"\", // 用于认证鉴权的Token，即用于请求头`Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
-							},
-							"response": []
-						},
-						{
-							"name": "刷新Access Token",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											"const jsonData = pm.response.json();",
-											"if (jsonData.error === 0) {",
-											"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
-											"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
-											"}"
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "http://127.0.0.1:8080/refresh_token/{{refreshToken}}",
-									"protocol": "http",
-									"host": [
-										"127",
-										"0",
-										"0",
-										"1"
-									],
-									"port": "8080",
-									"path": [
-										"refresh_token",
-										"{{refreshToken}}"
-									]
-								},
-								"description": "# 请求参数\n\nRefresh Token已在URL路径中指明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token过期时间（以秒为单位）\n    \"accessToken\": \"\", // 用于认证鉴权的Token，即用于请求头`Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
-							},
-							"response": []
-						}
-					]
-				},
-				{
-					"name": "修改当前用户密码",
+					"name": "测试无认证权限",
 					"event": [
 						{
 							"listen": "test",
@@ -650,8 +430,47 @@
 							}
 						}
 					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
-						"method": "PUT",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{host}}/auth-resource/public",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth-resource",
+								"public"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "测试仅认证空权限",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
@@ -660,33 +479,169 @@
 							}
 						],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"oldPassword\": \" 1234 \",\n  \"newPassword\": \" 123 \"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"mode": "urlencoded",
+							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://127.0.0.1:8080/password",
-							"protocol": "http",
+							"raw": "{{host}}/auth-resource/guest",
 							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
+								"{{host}}"
 							],
-							"port": "8080",
 							"path": [
-								"password"
+								"auth-resource",
+								"guest"
 							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "测试普通用户权限",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
 						},
-						"description": "# 请求参数\n\n需要修改密码的用户ID已在URL路径中指明。\n\nJSON请求体：\n\n```json\n{\n  \"oldPassword\": \"\", // 旧密码，必填，长度需在3到25个字符之间\n  \"newPassword\": \"\", // 新密码，必填，长度需在3到25个字符之间\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 修改密码操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
+						"url": {
+							"raw": "{{host}}/auth-resource/user",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth-resource",
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "测试管理员权限",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{host}}/auth-resource/admin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth-resource",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "测试普通用户或管理员权限",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{host}}/auth-resource/user-or-admin",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"auth-resource",
+								"user-or-admin"
+							]
+						}
 					},
 					"response": []
 				}
 			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	],
 	"variable": [
@@ -697,6 +652,10 @@
 		{
 			"key": "refreshToken",
 			"value": ""
+		},
+		{
+			"key": "host",
+			"value": "http://127.0.0.1:8080"
 		}
 	]
 }
