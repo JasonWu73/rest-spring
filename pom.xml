@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-  https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -13,8 +12,8 @@
 
   <groupId>net.wuxianjie</groupId>
   <artifactId>rest-spring</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging> <!-- 表示用于定义子模块的父项目 -->
+  <version>0.0.1-SNAPSHOT</version>
 
   <!-- 定义子模块 -->
   <modules>
@@ -77,4 +76,18 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <!-- 配置下载及部署时的私有仓库 -->
+  <distributionManagement>
+    <snapshotRepository>
+      <id>maven-snapshots</id>
+      <name>Nexus 快照私有仓库</name>
+      <url>http://192.168.2.41:8081/repository/maven-snapshots/</url>
+    </snapshotRepository>
+    <repository>
+      <id>maven-releases</id>
+      <name>Nexus 正式私有仓库</name>
+      <url>http://192.168.2.41:8081/repository/maven-releases/</url>
+    </repository>
+  </distributionManagement>
 </project>
