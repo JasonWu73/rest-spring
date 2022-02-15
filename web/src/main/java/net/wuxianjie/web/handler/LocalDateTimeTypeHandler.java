@@ -3,6 +3,7 @@ package net.wuxianjie.web.handler;
 import net.wuxianjie.core.constant.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedJdbcTypes;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,9 @@ import java.time.format.DateTimeFormatter;
  *
  * @author 吴仙杰
  * @see <a href="https://github.com/mybatis/mybatis-3/issues/1644">LocalDateTimeTypeHandler failing with TIMESTAMPTZ · Issue #1644 · mybatis/mybatis-3</a>
+ * @see <a href="https://mybatis.org/mybatis-3/configuration.html">mybatis – MyBatis 3 | Configuration</a>
  */
+@MappedJdbcTypes(value = JdbcType.TIMESTAMP, includeNullJdbcType = true)
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
   @Override
