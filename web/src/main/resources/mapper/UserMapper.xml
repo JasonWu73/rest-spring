@@ -52,10 +52,10 @@
       username, hashed_password, roles
     )
     VALUES (
-             DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-             DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-             #{username}, #{password}, #{roles}
-           )
+      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+      #{username}, #{password}, #{roles}
+    )
   </insert>
 
   <update id="updateUser">

@@ -35,8 +35,8 @@
       user_id, username, message
     )
     VALUES (
-             STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
-             #{userId}, #{username}, #{message}
-           )
+      STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
+      #{userId}, #{username}, #{message}
+    )
   </insert>
 </mapper>
