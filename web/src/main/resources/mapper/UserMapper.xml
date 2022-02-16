@@ -6,11 +6,10 @@
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
 
   <select id="getAccount" resultType="Account">
-    SELECT
-      user_id AS accountId,
-      username AS accountName,
-      password,
-      roles
+    SELECT user_id AS accountId,
+           username AS accountName,
+           hashed_password AS hashedPassword,
+           roles
     FROM
       user
     WHERE
@@ -19,12 +18,12 @@
 
   <select id="getUsers" resultType="User">
     SELECT
-      user_id,
-      STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-      username,
-      IFNULL(roles, '') AS roles
+    user_id,
+    STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
+    username,
+    IFNULL(roles, '') AS roles
     FROM
-      user
+    user
     <where>
       <if test="username != null">
         username LIKE #{username}
@@ -36,9 +35,9 @@
 
   <select id="countUser" resultType="int">
     SELECT
-      COUNT(1)
+    COUNT(1)
     FROM
-      user
+    user
     <where>
       <if test="username != null">
         username LIKE #{username}
@@ -47,17 +46,23 @@
   </select>
 
   <insert id="saveUser">
-    INSERT INTO user (create_time, modify_time, username, password, roles)
-    VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            #{username}, #{password}, #{roles})
+    INSERT INTO user (
+      create_time,
+      modify_time,
+      username, hashed_password, roles
+    )
+    VALUES (
+             DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+             DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+             #{username}, #{password}, #{roles}
+           )
   </insert>
 
   <update id="updateUser">
     UPDATE user
     <set>
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      <if test="password != null">password = #{password},</if>
+      <if test="password != null">hashed_password = #{password},</if>
       <if test="roles != null">roles = #{roles}</if>
     </set>
     WHERE user_id = #{userId}
@@ -67,7 +72,7 @@
     UPDATE user
     SET
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      password = #{password}
+      hashed_password = #{password}
     WHERE user_id = #{userId}
   </update>
 

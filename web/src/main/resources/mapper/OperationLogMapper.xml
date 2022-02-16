@@ -7,9 +7,9 @@
 
   <select id="getOperationLogs" resultType="OperationLog">
     SELECT
-      operation_log_id,
-      operation_time,
-      user_id,
+      operation_log_id AS operationLogId,
+      operation_time AS operationTime,
+      user_id userId,
       username,
       message
     FROM
@@ -21,13 +21,22 @@
   </select>
 
   <select id="countOperationLog" resultType="int">
-    SELECT COUNT(1) FROM operation_log
+    SELECT
+      COUNT(1)
+    FROM
+      operation_log
     WHERE
       operation_time &gt;= #{startTime} AND operation_time &lt;= #{endTime}
   </select>
 
   <insert id="saveOperationLog">
-    INSERT INTO operation_log (operation_time, user_id, username, message)
-    VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}), #{userId}, #{username}, #{message})
+    INSERT INTO operation_log (
+      operation_time,
+      user_id, username, message
+    )
+    VALUES (
+             STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
+             #{userId}, #{username}, #{message}
+           )
   </insert>
 </mapper>

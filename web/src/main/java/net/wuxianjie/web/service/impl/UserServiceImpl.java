@@ -113,7 +113,7 @@ public class UserServiceImpl implements UserService {
 
     // 若旧密码与库中的密码不匹配，则直接退出
     final boolean isRightOldPassword = passwordEncoder
-        .matches(passwordToUpdate.getOldPassword(), account.getPassword());
+        .matches(passwordToUpdate.getOldPassword(), account.getHashedPassword());
 
     if (!isRightOldPassword) {
       throw new BadRequestException("旧密码错误");
@@ -155,7 +155,7 @@ public class UserServiceImpl implements UserService {
   private boolean needsUpdateUserInfo(final Account account, final UserController.UserToUpdate userToUpdate) {
     // 判断密码是否需要更改
     final boolean isSamePassword = userToUpdate.getPassword() != null
-        && passwordEncoder.matches(userToUpdate.getPassword(), account.getPassword());
+        && passwordEncoder.matches(userToUpdate.getPassword(), account.getHashedPassword());
 
     if (userToUpdate.getPassword() != null && !isSamePassword) {
       return true;
@@ -172,7 +172,7 @@ public class UserServiceImpl implements UserService {
 
     // 判断密码是否需要更改
     final boolean isSamePassword = userToUpdate.getPassword() != null
-        && passwordEncoder.matches(userToUpdate.getPassword(), account.getPassword());
+        && passwordEncoder.matches(userToUpdate.getPassword(), account.getHashedPassword());
 
     if (userToUpdate.getPassword() != null && !isSamePassword) {
       // 将明文密码编码为哈希值

@@ -9,7 +9,7 @@
     SELECT
       user_id AS accountId,
       username AS accountName,
-      password,
+      hashed_password AS hashedPassword,
       roles
     FROM
       user

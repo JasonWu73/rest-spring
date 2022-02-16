@@ -44,7 +44,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     // 判断密码是否正确
-    final boolean rightedPassword = isRightPassword(accountPassword, account.getPassword());
+    final boolean rightedPassword = isRightPassword(accountPassword, account.getHashedPassword());
 
     if (!rightedPassword) {
       throw new TokenAuthenticationException("账号名或密码错误");

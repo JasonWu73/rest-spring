@@ -43,8 +43,6 @@ mybatis:
   # `${}`：替换符，列名表名灵活替换
   mapper-locations: classpath:mapper/*.xml
   configuration:
-    # 自动将带有下划线的表字段映射为驼峰格式的实体类属性
-    map-underscore-to-camel-case: true
     # 打印 SQL
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 # Spring Boot默认只加载application.yml（或application.properties）外部配置文件，有两种解决方式：

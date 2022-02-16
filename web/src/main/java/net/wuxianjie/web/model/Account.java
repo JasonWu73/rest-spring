@@ -21,7 +21,7 @@ public class Account {
   private String accountName;
 
   /** 账号密码 */
-  private String password;
+  private String hashedPassword;
 
   /** 账号角色，以{@code ,}分隔，全部为小写字母，且不包含{@code ROLE_}前缀 */
   private String roles;
