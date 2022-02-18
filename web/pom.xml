@@ -48,6 +48,7 @@
   </dependencies>
 
   <build>
+    <finalName>web</finalName>
     <plugins>
       <!-- Spring Boot Maven插件，打包项目为单一，可运行Jar -->
       <plugin>

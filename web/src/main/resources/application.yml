@@ -43,3 +43,8 @@ mybatis:
   configuration:
     # 打印 SQL
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+# Spring Boot默认只加载application.yml（或application.properties）外部配置文件，有两种解决方式：
+# 在命令行中使用`--logging.config=file:./config/logback-spring.xml`
+# 或
+#logging:
+#  config: file:./config/logback-spring.xml
