@@ -10,8 +10,7 @@
   <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
   <!-- 配置属性 -->
-  <!-- 日志文件的存放目录（绝对或相对路径，目录分隔符都使用/，哪怕是Windows，如`D:/Test/logs`）
-  生产环境下推荐使用绝对路径，否则日志生成目录会随着项目启动位置的不同而不同 -->
+  <!-- 日志文件的存放目录，绝对或相对路径（注意：哪怕在Windows中也要使用`/`作为目录分隔符）-->
   <property name="LOG_FILE_DIR" value="logs"/>
   <!-- 日志文件的名称（不包含扩展名`.log`） -->
   <property name="LOG_FILE_NAME" value="app"/>
