@@ -2,7 +2,7 @@ core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
   allowed-ant-paths: /auth-resource/public
 server:
-  # HTTP服务的监听端口
+  # HTTP服务监听端口
   port: 8080
   servlet:
     encoding:

@@ -1,7 +1,7 @@
 <service>
-  <id>纯后端Web服务</id>
-  <name>纯后端Web服务</name>
-  <description>我的演示服务</description>
+  <id>REST API服务</id>
+  <name>REST API服务</name>
+  <description>我的REST API演示服务</description>
   <executable>java</executable>
   <arguments>-jar web.jar --logging.config=file:./config/logback-spring.xml</arguments>
   <logpath>logs</logpath>
