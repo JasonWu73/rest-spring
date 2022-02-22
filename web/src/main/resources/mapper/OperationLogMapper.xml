@@ -5,7 +5,7 @@
 
 <mapper namespace="net.wuxianjie.web.mapper.OperationLogMapper">
 
-  <select id="getOperationLogs" resultType="OperationLog">
+  <select id="findByPagination" resultType="OperationLog">
     SELECT
       operation_log_id AS operationLogId,
       operation_time AS operationTime,
@@ -20,7 +20,7 @@
     LIMIT #{page.offset}, #{page.pageSize}
   </select>
 
-  <select id="countOperationLog" resultType="int">
+  <select id="countByTime" resultType="int">
     SELECT
       COUNT(1)
     FROM
@@ -29,7 +29,7 @@
       operation_time &gt;= #{startTime} AND operation_time &lt;= #{endTime}
   </select>
 
-  <insert id="saveOperationLog">
+  <insert id="save">
     INSERT INTO operation_log (
       operation_time,
       user_id, username, message

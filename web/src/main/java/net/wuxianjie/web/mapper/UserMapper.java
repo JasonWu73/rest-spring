@@ -23,7 +23,7 @@ public interface UserMapper {
    * @param userId 用户ID
    * @return 账号数据（包含密码的用户数据）
    */
-  Account getAccount(int userId);
+  Account findById(int userId);
 
   /**
    * 根据分页条件及用户名从数据库中获取用户列表数据
@@ -32,8 +32,8 @@ public interface UserMapper {
    * @param fuzzyUsername 支持数据库模糊查询的用户名，null代表不使用该查询条件
    * @return 用户列表分页数据
    */
-  List<User> getUsers(@Param("page") PaginationQuery pagination,
-                      @Param("username") String fuzzyUsername);
+  List<User> findByPagination(@Param("page") PaginationQuery pagination,
+                              @Param("username") String fuzzyUsername);
 
   /**
    * 根据用户名从数据库中统计用户总数
@@ -41,7 +41,7 @@ public interface UserMapper {
    * @param fuzzyUsername 支持数据库模糊查询的用户名，null代表不使用该查询条件
    * @return 用户总数
    */
-  int countUser(String fuzzyUsername);
+  int countByUsername(String fuzzyUsername);
 
   /**
    * 新增用户
@@ -49,7 +49,7 @@ public interface UserMapper {
    * @param userToAdd 需要新增的用户数据，非空
    * @return 新增的行数
    */
-  int saveUser(UserController.UserToAdd userToAdd);
+  int save(UserController.UserToAdd userToAdd);
 
   /**
    * 更新用户
@@ -57,7 +57,7 @@ public interface UserMapper {
    * @param userToUpdate 用户的最新数据，非空
    * @return 更新的行数
    */
-  int updateUser(UserController.UserToUpdate userToUpdate);
+  int update(UserController.UserToUpdate userToUpdate);
 
   /**
    * 修改密码
@@ -66,7 +66,7 @@ public interface UserMapper {
    * @param password 编码后的密码，非空
    * @return 更新的行数
    */
-  int updatePassword(int userId, String password);
+  int updatePasswordById(int userId, String password);
 
   /**
    * 删除用户
@@ -74,5 +74,5 @@ public interface UserMapper {
    * @param userId 需要删除的用户ID，非空
    * @return 删除的行数
    */
-  int deleteUser(int userId);
+  int deleteById(int userId);
 }

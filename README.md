@@ -136,15 +136,20 @@ class Foo {
     - `canXxx`：是否能够执行某种操作
   - 数据相关的方法：
     - `getXxx`：查询、获取
+      - `findXxxByXxx`：DAO层查询
     - `countXxx`：统计总数
+      - `countXxxByXxx`：DAO层统计总数
     - `saveXxx`：新增、保存
     - `updateXxx`：更新
-    - `deleteXxx`：删除
+      - `updateXxxByXxx`：DAO层更新
+    - `removeXxx`：删除
+      - `deleteXxxByXxx`：DAO层删除
     - `initialXxx`：初始化数据
     - `generateXxx`：生成数据
     - `makeXxx`：对入参数据进行改造
     - `toXxx`：转换为指定类型数据返回
     - `validateXxx`：校验参数，若不通过直接抛出异常或返回错误码
+    - `onXxxx`：回调，如Web Hook
 - 变量名：同方法名
   - POJO中的布尔变量一律不要加`is`前缀，数据库中的布尔字段全部都要加`is_`前缀
   - 常用命名：

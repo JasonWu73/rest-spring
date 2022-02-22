@@ -40,10 +40,10 @@ public class UserServiceImpl implements UserService {
   public PaginationData<List<User>> getUsers(@NonNull final PaginationQuery pagination,
                                              final String fuzzyUsername) {
     // 根据分页条件及用户名从数据库中获取用户列表数据
-    final List<User> users = userMapper.getUsers(pagination, fuzzyUsername);
+    final List<User> users = userMapper.findByPagination(pagination, fuzzyUsername);
 
     // 根据用户名从数据库中统计用户总数
-    final int total = userMapper.countUser(fuzzyUsername);
+    final int total = userMapper.countByUsername(fuzzyUsername);
     return new PaginationData<>(total, pagination.getPageNo(), pagination.getPageSize(), users);
   }
 
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database saveUser(@NonNull final UserController.UserToAdd userToAdd) {
     // 若已存在同名用户，则直接退出
-    final int count = userMapper.countUser(userToAdd.getUsername());
+    final int count = userMapper.countByUsername(userToAdd.getUsername());
 
     if (count > 0) {
       throw new DataConflictException("已存在相同用户名");
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     userToAdd.setPassword(encodedPassword);
 
     // 将用户数据插入数据库中
-    final int addedNum = userMapper.saveUser(userToAdd);
+    final int addedNum = userMapper.save(userToAdd);
 
     // 记录操作日志
     final String logMessage = String.format("新增用户名为%s的用户", userToAdd.getUsername());
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database updateUser(@NonNull final UserController.UserToUpdate userToUpdate) {
     // 若库中不存在该用户ID的数据，则直接退出
-    final Account account = userMapper.getAccount(userToUpdate.getUserId());
+    final Account account = userMapper.findById(userToUpdate.getUserId());
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
 
     if (needsUpdate) {
       // 更新数据库中的用户数据
-      final int updatedNum = userMapper.updateUser(userToUpdate);
+      final int updatedNum = userMapper.update(userToUpdate);
 
       // 记录操作日志
       final String logMessage = String.format("更新用户信息：%s", updatedLog);
@@ -105,7 +105,7 @@ public class UserServiceImpl implements UserService {
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database updatePassword(@NonNull final UserController.PasswordToUpdate passwordToUpdate) {
     // 若库中不存在该用户ID的数据，则直接退出
-    final Account account = userMapper.getAccount(passwordToUpdate.getUserId());
+    final Account account = userMapper.findById(passwordToUpdate.getUserId());
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
@@ -123,7 +123,7 @@ public class UserServiceImpl implements UserService {
     final String encodedNewPassword = passwordEncoder.encode(passwordToUpdate.getNewPassword());
 
     // 更新数据库中的密码
-    final int updatedNum = userMapper.updatePassword(passwordToUpdate.getUserId(), encodedNewPassword);
+    final int updatedNum = userMapper.updatePasswordById(passwordToUpdate.getUserId(), encodedNewPassword);
 
     // 记录操作日志
     final String logMessage = String.format("修改用户名为%s的密码", account.getAccountName());
@@ -136,14 +136,14 @@ public class UserServiceImpl implements UserService {
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database removeUser(final int userId) {
     // 若用户ID不存在，则直接返回
-    final Account account = userMapper.getAccount(userId);
+    final Account account = userMapper.findById(userId);
 
     if (account == null) {
       throw new BadRequestException("用户ID不存在");
     }
 
     // 从数据库中删除指定用户
-    final int deletedNum = userMapper.deleteUser(userId);
+    final int deletedNum = userMapper.deleteById(userId);
 
     // 记录操作日志
     final String logMessage = String.format("删除用户名为%s的用户", account.getAccountName());

@@ -25,7 +25,7 @@ public interface OperationLogMapper {
    * @param endTime 结束日期（包含），非空
    * @return 操作日志列表分页数据
    */
-  List<OperationLog> getOperationLogs(
+  List<OperationLog> findByPagination(
       @Param("page") PaginationQuery pagination,
       LocalDateTime startTime, LocalDateTime endTime);
 
@@ -36,7 +36,7 @@ public interface OperationLogMapper {
    * @param endTime 结束日期（包含）
    * @return 操作日志总数
    */
-  int countOperationLog(LocalDateTime startTime, LocalDateTime endTime);
+  int countByTime(LocalDateTime startTime, LocalDateTime endTime);
 
   /**
    * 新增操作日志
@@ -44,5 +44,5 @@ public interface OperationLogMapper {
    * @param logToAdd 需要保存的操作日志
    * @return 数据库新增的行数
    */
-  int saveOperationLog(OperationLogServiceImpl.LogToAdd logToAdd);
+  int save(OperationLogServiceImpl.LogToAdd logToAdd);
 }

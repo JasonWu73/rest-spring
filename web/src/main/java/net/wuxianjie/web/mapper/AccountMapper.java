@@ -17,5 +17,5 @@ public interface AccountMapper {
    * @param accountName 账号名称，即用户名
    * @return 账号信息
    */
-  Account getAccount(String accountName);
+  Account findByAccountName(String accountName);
 }

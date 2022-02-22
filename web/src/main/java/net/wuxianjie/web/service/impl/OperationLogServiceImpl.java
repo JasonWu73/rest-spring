@@ -37,10 +37,10 @@ public class OperationLogServiceImpl implements OperationLogService {
       @NonNull final LocalDateTime startTime,
       @NonNull final LocalDateTime endTime) {
     // 根据分页条件、开始时间和结束时间从数据库中查询操作日志列表
-    final List<OperationLog> logs = logMapper.getOperationLogs(pagination, startTime, endTime);
+    final List<OperationLog> logs = logMapper.findByPagination(pagination, startTime, endTime);
 
     // 根据开始时间和结束时间从数据库中统计操作日志总数
-    final int total = logMapper.countOperationLog(startTime, endTime);
+    final int total = logMapper.countByTime(startTime, endTime);
 
     // 生成操作日志分页列表结果
     return new PaginationData<>(total, pagination.getPageNo(), pagination.getPageSize(), logs);
@@ -59,7 +59,7 @@ public class OperationLogServiceImpl implements OperationLogService {
     final LogToAdd logToAdd = new LogToAdd(userId, username, operationTime, message);
 
     // 将日志数据保存到数据库中
-    final int addedNum = logMapper.saveOperationLog(logToAdd);
+    final int addedNum = logMapper.save(logToAdd);
 
     return new Wrote2Database(addedNum, "新增日志成功");
   }

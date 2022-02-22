@@ -5,7 +5,7 @@
 
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
 
-  <select id="getAccount" resultType="Account">
+  <select id="findById" resultType="Account">
     SELECT user_id AS accountId,
            username AS accountName,
            hashed_password AS hashedPassword,
@@ -16,7 +16,7 @@
       user_id = #{userId}
   </select>
 
-  <select id="getUsers" resultType="User">
+  <select id="findByPagination" resultType="User">
     SELECT
     user_id,
     STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
@@ -33,7 +33,7 @@
     LIMIT #{page.offset}, #{page.pageSize}
   </select>
 
-  <select id="countUser" resultType="int">
+  <select id="countByUsername" resultType="int">
     SELECT
     COUNT(1)
     FROM
@@ -45,7 +45,7 @@
     </where>
   </select>
 
-  <insert id="saveUser">
+  <insert id="save">
     INSERT INTO user (
       create_time,
       modify_time,
@@ -58,7 +58,7 @@
     )
   </insert>
 
-  <update id="updateUser">
+  <update id="update">
     UPDATE user
     <set>
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
@@ -68,7 +68,7 @@
     WHERE user_id = #{userId}
   </update>
 
-  <update id="updatePassword">
+  <update id="updatePasswordById">
     UPDATE user
     SET
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
@@ -76,7 +76,7 @@
     WHERE user_id = #{userId}
   </update>
 
-  <delete id="deleteUser">
+  <delete id="deleteById">
     DELETE FROM user WHERE user_id = #{userId}
   </delete>
 </mapper>

@@ -88,7 +88,7 @@ public class TokenServiceImpl implements TokenService {
   }
 
   private Account getAccount(final String accountName) {
-    return accountMapper.getAccount(accountName);
+    return accountMapper.findByAccountName(accountName);
   }
 
   private boolean isRightPassword(final String rawPassword, final String encodedPassword) {
