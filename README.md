@@ -139,7 +139,8 @@ class Foo {
       - `findXxxByXxx`：DAO层查询
     - `countXxx`：统计总数
       - `countXxxByXxx`：DAO层统计总数
-    - `saveXxx`：新增、保存
+    - `saveXxx`：保存
+      - `addXxx`：DAO层新增
     - `updateXxx`：更新
       - `updateXxxByXxx`：DAO层更新
     - `removeXxx`：删除
