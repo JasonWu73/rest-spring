@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Database removeUser(final int userId) {
-    // 若用户ID不存在，则直接返回
+    // 若库中不存在该用户ID的数据，则直接退出
     final Account account = userMapper.findById(userId);
 
     if (account == null) {
