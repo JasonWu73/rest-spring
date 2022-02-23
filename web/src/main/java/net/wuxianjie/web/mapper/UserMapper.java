@@ -49,7 +49,7 @@ public interface UserMapper {
    * @param userToAdd 需要新增的用户数据，非空
    * @return 新增的行数
    */
-  int save(UserController.UserToAdd userToAdd);
+  int add(UserController.UserToAdd userToAdd);
 
   /**
    * 更新用户

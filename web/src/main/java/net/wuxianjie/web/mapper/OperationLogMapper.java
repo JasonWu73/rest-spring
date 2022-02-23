@@ -44,5 +44,5 @@ public interface OperationLogMapper {
    * @param logToAdd 需要保存的操作日志
    * @return 数据库新增的行数
    */
-  int save(OperationLogServiceImpl.LogToAdd logToAdd);
+  int add(OperationLogServiceImpl.LogToAdd logToAdd);
 }

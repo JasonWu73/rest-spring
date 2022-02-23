@@ -29,7 +29,7 @@
       operation_time &gt;= #{startTime} AND operation_time &lt;= #{endTime}
   </select>
 
-  <insert id="save">
+  <insert id="add">
     INSERT INTO operation_log (
       operation_time,
       user_id, username, message

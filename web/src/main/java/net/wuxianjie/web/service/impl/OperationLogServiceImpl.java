@@ -59,7 +59,7 @@ public class OperationLogServiceImpl implements OperationLogService {
     final LogToAdd logToAdd = new LogToAdd(userId, username, operationTime, message);
 
     // 将日志数据保存到数据库中
-    final int addedNum = logMapper.save(logToAdd);
+    final int addedNum = logMapper.add(logToAdd);
 
     return new Wrote2Database(addedNum, "新增日志成功");
   }

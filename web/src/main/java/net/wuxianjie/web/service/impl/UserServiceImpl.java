@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     userToAdd.setPassword(encodedPassword);
 
     // 将用户数据插入数据库中
-    final int addedNum = userMapper.save(userToAdd);
+    final int addedNum = userMapper.add(userToAdd);
 
     // 记录操作日志
     final String logMessage = String.format("新增用户【%s】", userToAdd.getUsername());
