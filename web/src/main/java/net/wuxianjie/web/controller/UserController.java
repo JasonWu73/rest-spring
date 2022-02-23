@@ -159,9 +159,9 @@ public class UserController {
     @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String password;
 
-    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin */
+    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin，不传或null则代表不修改用户角色 */
     @Pattern(message = "角色只能包含user或admin，且必须以英文逗号分隔",
-        regexp = "^(admin|user)(admin|user|,)*$")
+      regexp = "^(admin|user)(admin|user|,)*$")
     private String roles;
   }
 
