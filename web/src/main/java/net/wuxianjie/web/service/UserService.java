@@ -33,7 +33,7 @@ public interface UserService {
   Wrote2Database saveUser(UserController.UserToAdd userToAdd);
 
   /**
-   * 修改用户
+   * 更新用户
    *
    * @param userToUpdate 用户的最新数据，非空
    * @return 数据库的写入情况及说明
@@ -41,7 +41,7 @@ public interface UserService {
   Wrote2Database updateUser(UserController.UserToUpdate userToUpdate);
 
   /**
-   * 修改密码
+   * 更新密码
    *
    * @param passwordToUpdate 需要更新的密码，非空
    * @return 数据库的写入情况及说明
