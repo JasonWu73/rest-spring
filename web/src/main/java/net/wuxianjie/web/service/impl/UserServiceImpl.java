@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     final int addedNum = userMapper.save(userToAdd);
 
     // 记录操作日志
-    final String logMessage = String.format("新增用户名为%s的用户", userToAdd.getUsername());
+    final String logMessage = String.format("新增用户【%s】", userToAdd.getUsername());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
     return new Wrote2Database(addedNum, "新增用户成功");
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
       final int updatedNum = userMapper.update(userToUpdate);
 
       // 记录操作日志
-      final String logMessage = String.format("更新用户信息：%s", updatedLog);
+      final String logMessage = String.format("更新用户信息【%s】", updatedLog);
       logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
       return new Wrote2Database(updatedNum, "更新用户成功");
@@ -126,7 +126,7 @@ public class UserServiceImpl implements UserService {
     final int updatedNum = userMapper.updatePasswordById(passwordToUpdate.getUserId(), encodedNewPassword);
 
     // 记录操作日志
-    final String logMessage = String.format("修改用户名为%s的密码", account.getAccountName());
+    final String logMessage = String.format("修改用户【%s】的密码", account.getAccountName());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
     return new Wrote2Database(updatedNum, "修改密码成功");
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
     final int deletedNum = userMapper.deleteById(userId);
 
     // 记录操作日志
-    final String logMessage = String.format("删除用户名为%s的用户", account.getAccountName());
+    final String logMessage = String.format("删除用户【%s】", account.getAccountName());
     logService.saveOperationLog(LocalDateTime.now(), logMessage);
 
     return new Wrote2Database(deletedNum, "删除用户成功");
@@ -179,7 +179,7 @@ public class UserServiceImpl implements UserService {
       final String encodedPassword = passwordEncoder.encode(userToUpdate.getPassword());
       userToUpdate.setPassword(encodedPassword);
 
-      logBuilder.add(String.format("重置了%s的密码", account.getAccountName()));
+      logBuilder.add(String.format("重置用户【%s】的密码", account.getAccountName()));
     } else if (userToUpdate.getPassword() != null){
       userToUpdate.setPassword(null);
     }
@@ -188,8 +188,7 @@ public class UserServiceImpl implements UserService {
     final boolean isSameRoles = StringUtils.isNullEquals(account.getRoles(), userToUpdate.getRoles());
 
     if (userToUpdate.getRoles() != null && !isSameRoles) {
-      logBuilder.add(String.format("将角色从%s修改为%s",
-          account.getRoles(), userToUpdate.getRoles().isEmpty() ? "空" : userToUpdate.getRoles()));
+      logBuilder.add(String.format("将角色从【%s】修改为【%s】", account.getRoles(), userToUpdate.getRoles()));
     } else if (userToUpdate.getRoles() != null) {
       userToUpdate.setRoles(null);
     }
