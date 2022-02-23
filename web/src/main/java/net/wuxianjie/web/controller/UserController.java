@@ -175,7 +175,7 @@ public class UserController {
     private int userId;
 
     /** 重置后的新密码，长度需在3到25个字符之间，不传或null则代表不重置密码 */
-    @Length(min = 3, max = 25, message = "密码长度需在3到25个字符之间")
+    @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String password;
 
     /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin */
@@ -192,12 +192,12 @@ public class UserController {
 
     /** 旧密码，必填，长度需在3到25个字符之间 */
     @NotBlank(message = "旧密码不能为空")
-    @Length(min = 3, max = 25, message = "密码长度需在3到25个字符之间")
+    @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String oldPassword;
 
     /** 新密码，必填，长度需在3到25个字符之间 */
     @NotBlank(message = "新密码不能为空")
-    @Length(min = 3, max = 25, message = "密码长度需在3到25个字符之间")
+    @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String newPassword;
   }
 
