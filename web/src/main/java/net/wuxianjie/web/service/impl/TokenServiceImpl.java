@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.constant.BeanQualifiers;
+import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
 import net.wuxianjie.core.model.CachedToken;
 import net.wuxianjie.core.model.Token;
@@ -40,14 +41,14 @@ public class TokenServiceImpl implements TokenService {
     final Account account = getAccount(accountName);
 
     if (account == null) {
-      throw new TokenAuthenticationException("账号名或密码错误");
+      throw new BadRequestException("账号名或密码错误");
     }
 
     // 判断密码是否正确
     final boolean rightedPassword = isRightPassword(accountPassword, account.getHashedPassword());
 
     if (!rightedPassword) {
-      throw new TokenAuthenticationException("账号名或密码错误");
+      throw new BadRequestException("账号名或密码错误");
     }
 
     // 构造写入缓存中的Token数据
