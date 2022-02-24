@@ -1,16 +1,7 @@
 # 部署时，将application.yml放于Jar同级目录的config子目录下
-core:
-  jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /auth-resource/public
 server:
   # HTTP服务监听端口
   port: 8080
-  # 在响应头中添加返回数据所使用的字符集
-  # `Content-Type: application/json;charset=UTF-8`
-  servlet:
-    encoding:
-      charset: UTF-8
-      force: true
 spring:
   datasource:
     url: jdbc:sqlite:app.db
@@ -49,3 +40,6 @@ mybatis:
 # 或
 #logging:
 #  config: file:./config/logback-spring.xml
+core:
+  jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
+  allowed-ant-paths: /auth-resource/public

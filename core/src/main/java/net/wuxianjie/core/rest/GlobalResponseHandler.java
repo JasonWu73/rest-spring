@@ -22,6 +22,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @ControllerAdvice
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
   private final ObjectMapper objectMapper;
@@ -43,7 +44,9 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
       }
     }
 
-    if (body instanceof RestResponse || body instanceof ResponseEntity) {
+    if (body instanceof RestResponse
+      || body instanceof ResponseEntity
+      || body instanceof byte[]) {
       return body;
     }
 

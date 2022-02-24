@@ -1,13 +1,6 @@
-core:
-  jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /auth-resource/public
 server:
   # HTTP服务监听端口
   port: 8080
-  servlet:
-    encoding:
-      charset: UTF-8
-      force: true
 spring:
   datasource:
     url: jdbc:sqlite:app.db
@@ -22,3 +15,6 @@ mybatis:
   type-aliases-package: net.wuxianjie.web.model
   type-handlers-package: net.wuxianjie.web.handler
   mapper-locations: classpath:mapper/*.xml
+core:
+  jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
+  allowed-ant-paths: /auth-resource/public

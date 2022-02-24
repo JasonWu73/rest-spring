@@ -34,8 +34,7 @@ public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint 
 
     final RestResponse<Void> result = ResponseResultWrapper.fail("身份认证失败");
 
-    //noinspection deprecation
-    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
     response.getWriter().write(objectMapper.writeValueAsString(result));

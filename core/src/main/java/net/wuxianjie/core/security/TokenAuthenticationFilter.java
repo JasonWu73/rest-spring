@@ -116,8 +116,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     final RestResponse<Void> result = ResponseResultWrapper.fail(message);
 
-    //noinspection deprecation
-    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(httpStatus.value());
 
     response.getWriter().write(objectMapper.writeValueAsString(result));
