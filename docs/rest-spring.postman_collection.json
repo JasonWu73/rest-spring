@@ -110,7 +110,7 @@
 						}
 					],
 					"request": {
-						"method": "PUT",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Authorization",
@@ -128,11 +128,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/password",
+							"raw": "{{host}}/user/password",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"user",
 								"password"
 							]
 						},
@@ -178,12 +179,13 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/users?pageNo=0&pageSize=10&username=   ",
+									"raw": "{{host}}/user/list?pageNo=0&pageSize=10&username=   ",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
-										"users"
+										"user",
+										"list"
 									],
 									"query": [
 										{
@@ -239,12 +241,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user",
+									"raw": "{{host}}/user/add",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
-										"user"
+										"user",
+										"add"
 									]
 								},
 								"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"username\": \"\", // 用户名，必填，长度需在2到25个字符之间，且只能包含汉字、字母、数字和下划线\n  \"password\": \"\", // 登录密码，必填，长度需在3到25个字符之间\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含user或admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0代表成功，非0代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 新增用户数\n    \"message\": \"\" // 新增操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0代表成功，非0代表失败\n  \"errMsg\": \"\" // 失败时提示消息，当仅且当返回错误结果时才存在\n}\n```"
@@ -265,7 +268,7 @@
 								}
 							],
 							"request": {
-								"method": "PUT",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Authorization",
@@ -283,12 +286,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user/14",
+									"raw": "{{host}}/user/update/14",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"user",
+										"update",
 										"14"
 									]
 								},
@@ -309,8 +313,11 @@
 									}
 								}
 							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
 							"request": {
-								"method": "DELETE",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Authorization",
@@ -328,12 +335,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user/13",
+									"raw": "{{host}}/user/del/13",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"user",
+										"del",
 										"13"
 									]
 								},
@@ -376,12 +384,13 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/logs?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-02-12",
+									"raw": "{{host}}/operation-log/list?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-02-12",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
-										"logs"
+										"operation-log",
+										"list"
 									],
 									"query": [
 										{

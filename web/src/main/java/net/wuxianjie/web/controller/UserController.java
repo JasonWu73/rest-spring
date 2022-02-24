@@ -16,7 +16,6 @@ import net.wuxianjie.web.model.Wrote2Database;
 import net.wuxianjie.web.service.UserService;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,8 +29,8 @@ import java.util.List;
  *
  * @author 吴仙杰
  */
-@Validated
 @RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
@@ -46,9 +45,9 @@ public class UserController {
    * @return 用户分页数据
    */
   @Admin
-  @GetMapping("/users")
+  @GetMapping("list")
   public PaginationData<List<User>> getUsers(
-      @Valid final PaginationQuery pagination, final String username) {
+    @Valid final PaginationQuery pagination, final String username) {
     // 完善分页条件
     pagination.setOffset();
 
@@ -66,7 +65,7 @@ public class UserController {
    * @return 数据库的写入情况及说明
    */
   @Admin
-  @PostMapping("/user")
+  @PostMapping("add")
   public Wrote2Database saveUser(@RequestBody @Valid final UserToAdd userToAdd) {
     // 处理角色字符串：去重、转小写，再以英文逗号作分隔符拼接为符合要求的角色字符串
     final String roles = toDeduplicateLowerCaseRoles(userToAdd.getRoles());
@@ -89,9 +88,9 @@ public class UserController {
    * @return 数据库的写入情况及说明
    */
   @Admin
-  @PutMapping("/user/{userId:\\d+}")
+  @PostMapping("update/{userId:\\d+}")
   public Wrote2Database updateUser(
-      @PathVariable final int userId, @RequestBody @Valid final UserToUpdate userToUpdate){
+    @PathVariable final int userId, @RequestBody @Valid final UserToUpdate userToUpdate){
     // 完善更新参数
     userToUpdate.setUserId(userId);
 
@@ -112,7 +111,7 @@ public class UserController {
    * @param passwordToUpdate 需要更新的密码，必填
    * @return 数据库的写入情况及说明
    */
-  @PutMapping("/password")
+  @PostMapping("password")
   public Wrote2Database updatePassword(@RequestBody @Valid final PasswordToUpdate passwordToUpdate){
     // 获取当前登录用户
     final CachedToken cacheToken = authentication.getCacheToken();
@@ -136,7 +135,7 @@ public class UserController {
    * @return 删除操作的执行情况
    */
   @Admin
-  @DeleteMapping("/user/{userId:\\d+}")
+  @GetMapping("del/{userId:\\d+}")
   public Wrote2Database removeUser(@PathVariable final int userId) {
     return userService.removeUser(userId);
   }
@@ -151,7 +150,7 @@ public class UserController {
     @NotBlank(message = "用户名不能为空")
     @Length(message = "用户名长度需在2到25个字符之间", min = 2, max = 25)
     @Pattern(message = "用户名只能包含汉字、字母、数字和下划线",
-        regexp = "^[\\u4E00-\\u9FA5A-Za-z0-9_]{2,}$")
+      regexp = "^[\\u4E00-\\u9FA5A-Za-z0-9_]{2,}$")
     private String username;
 
     /** 登录密码，必填，长度需在3到25个字符之间 */
@@ -159,7 +158,7 @@ public class UserController {
     @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String password;
 
-    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin，不传或null则代表不修改用户角色 */
+    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin */
     @Pattern(message = "角色只能包含user或admin，且必须以英文逗号分隔",
       regexp = "^(admin|user)(admin|user|,)*$")
     private String roles;
@@ -178,9 +177,9 @@ public class UserController {
     @Length(message = "密码长度需在3到25个字符之间", min = 3, max = 25)
     private String password;
 
-    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin */
+    /** 用户所拥有的角色，以英文逗号分隔，只能包含user或admin，不传或null则代表不修改用户角色 */
     @Pattern(message = "角色只能包含user或admin，且必须以英文逗号分隔",
-        regexp = "^(admin|user)(admin|user|,)*$")
+      regexp = "^(admin|user)(admin|user|,)*$")
     private String roles;
   }
 
@@ -207,7 +206,7 @@ public class UserController {
     }
 
     final boolean hasInvalidRole = Arrays.stream(roles.split(","))
-        .anyMatch(x -> AuthRole.resolve(x) == null);
+      .anyMatch(x -> AuthRole.resolve(x) == null);
 
     if (hasInvalidRole) {
       throw new BadRequestException("包含未定义角色");
@@ -220,18 +219,18 @@ public class UserController {
     }
 
     return Arrays.stream(roles.split(","))
-        .reduce("", (s, s2) -> {
-          final String appended = s2.trim().toLowerCase();
+      .reduce("", (s, s2) -> {
+        final String appended = s2.trim().toLowerCase();
 
-          if (s.contains(appended)) {
-            return s;
-          }
+        if (s.contains(appended)) {
+          return s;
+        }
 
-          if (StrUtil.isNotEmpty(s)) {
-            return s + "," + appended;
-          }
+        if (StrUtil.isNotEmpty(s)) {
+          return s + "," + appended;
+        }
 
-          return appended;
-        });
+        return appended;
+      });
   }
 }
