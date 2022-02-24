@@ -38,8 +38,7 @@ public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
     final RestResponse<Void> result = ResponseResultWrapper.fail("无访问权限");
 
-    //noinspection deprecation
-    response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
     response.getWriter().write(objectMapper.writeValueAsString(result));
