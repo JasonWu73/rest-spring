@@ -18,7 +18,7 @@
 
   <select id="findByPagination" resultType="User">
     SELECT
-    user_id,
+    user_id AS userId,
     STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
     username,
     IFNULL(roles, '') AS roles
