@@ -34,7 +34,6 @@ public class OperationLogController {
 
   private final OperationLogService logService;
 
-
   /**
    * 根据分页条件及时间段获取操作日志列表数据
    *
