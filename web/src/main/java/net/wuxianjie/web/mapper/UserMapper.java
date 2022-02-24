@@ -60,7 +60,7 @@ public interface UserMapper {
   int update(UserController.UserToUpdate userToUpdate);
 
   /**
-   * 修改密码
+   * 更新密码
    *
    * @param userId 需要修改密码的用户ID，非空
    * @param password 编码后的密码，非空

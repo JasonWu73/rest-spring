@@ -10,6 +10,7 @@ import net.wuxianjie.web.service.OperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -27,6 +28,7 @@ import java.util.List;
  */
 @Validated
 @RestController
+@RequestMapping("/operation-log")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogController {
 
@@ -42,7 +44,7 @@ public class OperationLogController {
    * @return 操作日志列表分页数据
    */
   @Admin
-  @GetMapping("/logs")
+  @GetMapping("list")
   public PaginationData<List<OperationLog>> getOperationLogs(
       @Valid
       final PaginationQuery pagination,
