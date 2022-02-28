@@ -4,16 +4,16 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.core.constant.CommonValues;
 import net.wuxianjie.core.constant.Prefixes;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.model.CachedToken;
+import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.service.TokenAuthenticationService;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -26,7 +26,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 实现Token鉴权认证机制的过滤器
@@ -116,7 +118,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     final RestResponse<Void> result = ResponseResultWrapper.fail(message);
 
-    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
     response.setStatus(httpStatus.value());
 
     response.getWriter().write(objectMapper.writeValueAsString(result));
