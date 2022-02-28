@@ -2,6 +2,7 @@ package net.wuxianjie.core.rest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
@@ -22,19 +23,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  */
 @ControllerAdvice
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-
 public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
   private final ObjectMapper objectMapper;
 
   @Override
-  public boolean supports(final MethodParameter returnType, final Class<? extends HttpMessageConverter<?>> converterType) {
+  public boolean supports(@NonNull final MethodParameter returnType,
+                          @NonNull final Class<? extends HttpMessageConverter<?>> converterType
+  ) {
     return true; // 对所有控制器均有效
   }
 
   @Override
-  public Object beforeBodyWrite(final Object body, final MethodParameter returnType, final MediaType selectedContentType, final Class<? extends HttpMessageConverter<?>> selectedConverterType, final ServerHttpRequest request, final ServerHttpResponse response) {
-
+  public Object beforeBodyWrite(
+    final Object body,
+    @NonNull final MethodParameter returnType,
+    @NonNull final MediaType selectedContentType,
+    @NonNull final Class<? extends HttpMessageConverter<?>> selectedConverterType,
+    @NonNull final ServerHttpRequest request,
+    @NonNull final ServerHttpResponse response
+  ) {
     // 解决控制器方法返回字符串时转换异常的问题
     if (body instanceof String) {
       try {
@@ -46,7 +54,8 @@ public class GlobalResponseHandler implements ResponseBodyAdvice<Object> {
 
     if (body instanceof RestResponse
       || body instanceof ResponseEntity
-      || body instanceof byte[]) {
+      || body instanceof byte[]
+    ) {
       return body;
     }
 

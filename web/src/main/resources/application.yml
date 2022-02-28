@@ -2,12 +2,6 @@
 server:
   # HTTP服务监听端口
   port: 8080
-  servlet:
-    encoding:
-      # 响应编码全局设置为UTF-8
-      charset: UTF-8
-      # 强制响应编码设置生效
-      force-response: true
 spring:
   datasource:
     url: jdbc:sqlite:app.db

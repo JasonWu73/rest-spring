@@ -19,4 +19,7 @@ public final class CommonValues {
 
   /** 同时包含日期和时间的格式化字符串，比如：{@code 2022-01-25 17:43:25} */
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+  /** JSON MIME */
+  public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 }

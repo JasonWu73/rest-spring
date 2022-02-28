@@ -3,11 +3,11 @@ package net.wuxianjie.core.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.core.constant.CommonValues;
 import net.wuxianjie.core.model.RestResponse;
 import net.wuxianjie.core.util.ResponseResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class TokenAuthenticationFailHandler implements AuthenticationEntryPoint 
 
     final RestResponse<Void> result = ResponseResultWrapper.fail("身份认证失败");
 
-    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
     response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
     response.getWriter().write(objectMapper.writeValueAsString(result));
