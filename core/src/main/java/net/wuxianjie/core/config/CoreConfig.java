@@ -4,7 +4,6 @@ import net.wuxianjie.core.constant.BeanQualifiers;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 @PropertySource(value = "classpath:core.yml", factory = YamlPropertySourceFactory.class)
-@EnableAspectJAutoProxy
 public class CoreConfig {
 
   @Value("${core.jwt-signing-key}")
