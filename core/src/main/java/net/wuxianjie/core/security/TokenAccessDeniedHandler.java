@@ -27,6 +27,7 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
+
   private final ObjectMapper objectMapper;
 
   @Override
