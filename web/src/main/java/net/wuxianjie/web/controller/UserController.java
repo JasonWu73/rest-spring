@@ -47,11 +47,13 @@ public class UserController {
   @Admin
   @GetMapping("list")
   public PaginationData<List<User>> getUsers(
-    @Valid final PaginationQuery pagination, final String username) {
+    @Valid final PaginationQuery pagination,
+    final String username
+  ) {
     // 完善分页条件
     pagination.setOffset();
 
-    // 获取支持数字库LIKE的模糊查询值
+    // 获取支持数据库LIKE的模糊查询值
     final String fuzzyUsername = StringUtils.generateDbFuzzyStr(username);
 
     // 根据分页条件及用户名获取操作日志列表数据
@@ -90,7 +92,9 @@ public class UserController {
   @Admin
   @PostMapping("update/{userId:\\d+}")
   public Wrote2Database updateUser(
-    @PathVariable final int userId, @RequestBody @Valid final UserToUpdate userToUpdate){
+    @PathVariable final int userId,
+    @RequestBody @Valid final UserToUpdate userToUpdate
+  ) {
     // 完善更新参数
     userToUpdate.setUserId(userId);
 
@@ -112,7 +116,7 @@ public class UserController {
    * @return 数据库的写入情况及说明
    */
   @PostMapping("password")
-  public Wrote2Database updatePassword(@RequestBody @Valid final PasswordToUpdate passwordToUpdate){
+  public Wrote2Database updatePassword(@RequestBody @Valid final PasswordToUpdate passwordToUpdate) {
     // 获取当前登录用户
     final CachedToken cacheToken = authentication.getCacheToken();
 
