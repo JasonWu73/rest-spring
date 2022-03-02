@@ -4,10 +4,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.constant.CommonValues;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  * @author 吴仙杰
  */
 @Slf4j
+@Disabled
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JwtUtilsTest {
 
