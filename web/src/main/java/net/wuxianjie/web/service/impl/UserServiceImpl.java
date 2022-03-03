@@ -37,13 +37,17 @@ public class UserServiceImpl implements UserService {
   private final PasswordEncoder passwordEncoder;
 
   @Override
-  public PaginationData<List<User>> getUsers(@NonNull final PaginationQuery pagination,
-                                             final String fuzzyUsername) {
+  public PaginationData<List<User>> getUsers(
+    @NonNull final PaginationQuery pagination,
+    final String fuzzyUsername
+  ) {
     // 根据分页条件及用户名从数据库中获取用户列表数据
     final List<User> users = userMapper.findByPagination(pagination, fuzzyUsername);
 
     // 根据用户名从数据库中统计用户总数
     final int total = userMapper.countByUsername(fuzzyUsername);
+
+    // 返回分页数据对象
     return new PaginationData<>(total, pagination.getPageNo(), pagination.getPageSize(), users);
   }
 

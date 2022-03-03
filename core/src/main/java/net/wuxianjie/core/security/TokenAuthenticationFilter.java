@@ -40,8 +40,9 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-  private final TokenAuthenticationService tokenAuthenticationService;
   private final ObjectMapper objectMapper;
+
+  private final TokenAuthenticationService tokenAuthenticationService;
 
   @Override
   protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws IOException, ServletException {
