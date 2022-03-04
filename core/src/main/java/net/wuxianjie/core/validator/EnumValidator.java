@@ -8,6 +8,7 @@ import java.lang.annotation.*;
 
 /**
  * 可用于对枚举值的校验，如：
+ *
  * <pre>{@code
  * @RequiredArgsConstructor
  * @Getter
@@ -15,58 +16,57 @@ import java.lang.annotation.*;
  * @ToString
  * public enum Type {
  *
- *   ME(1);
+ *     ME(1);
  *
- *   @JsonValue
- *   private final int value;
+ *     @JsonValue
+ *     private final int value;
  * }
  *
  * public class Controller {
  *
- *   public test(@RequestBody @Validated final Query query) {
+ *     public test(@RequestBody @Validated final Query query) {
+ *     }
  *
- *   }
+ *     static class Query {
  *
- *   static class Query {
- *
- *    @EnumValidator(message = "类型错误", value = Type.class)
- *    private Integer type;
- *   }
+ *      @EnumValidator(message = "类型错误", value = Type.class)
+ *      private Integer type;
+ *     }
  * }
  * }</pre>
  */
 @Target({
-  ElementType.METHOD,
-  ElementType.FIELD,
-  ElementType.ANNOTATION_TYPE,
-  ElementType.CONSTRUCTOR,
-  ElementType.PARAMETER,
-  ElementType.TYPE_USE
+        ElementType.METHOD,
+        ElementType.FIELD,
+        ElementType.ANNOTATION_TYPE,
+        ElementType.CONSTRUCTOR,
+        ElementType.PARAMETER,
+        ElementType.TYPE_USE
 })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = EnumValidatorImpl.class)
 @Repeatable(EnumValidator.List.class)
+@Constraint(validatedBy = EnumValidatorImpl.class)
 public @interface EnumValidator {
 
-  Class<? extends Enum<?>> value();
+    Class<? extends Enum<?>> value();
 
-  String message() default "{com.qgs.trial.validator.EnumValidator.message}";
+    String message() default "{com.qgs.trial.validator.EnumValidator.message}";
 
-  Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-  Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
-  @Target({
-    ElementType.METHOD,
-    ElementType.FIELD,
-    ElementType.ANNOTATION_TYPE,
-    ElementType.CONSTRUCTOR,
-    ElementType.PARAMETER,
-    ElementType.TYPE_USE
-  })
-  @Retention(RetentionPolicy.RUNTIME)
-  @interface List {
+    @Target({
+            ElementType.METHOD,
+            ElementType.FIELD,
+            ElementType.ANNOTATION_TYPE,
+            ElementType.CONSTRUCTOR,
+            ElementType.PARAMETER,
+            ElementType.TYPE_USE
+    })
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface List {
 
-    EnumValidator[] value();
-  }
+        EnumValidator[] value();
+    }
 }

@@ -1,45 +1,23 @@
-# 部署时，将application.yml放于Jar同级目录的config子目录下
+# 部署时，将 `application.yml` 放于与 Jar 同级目录的 `config` 子目录下
 server:
-  # HTTP服务监听端口
+  # HTTP 服务监听端口
   port: 8080
 spring:
   datasource:
     url: jdbc:sqlite:app.db
-    # Spring Boot 2.0及以上版本，Spring Boot默认会使用`HikariDataSource`
     hikari:
-      # 客户端等待从连接池中获取连接的超时时间（以毫秒为单位）
       connection-timeout: 30000
-      # 连接池中维护的最小空闲连接数
       minimum-idle: 5
-      # 连接池中维护的最大连接数
       maximum-pool-size: 10
-      # 允许连接在连接池中空闲的最长时间（以毫秒为单位）
       idle-timeout: 600000
-      # 池中连接关闭后的最长生命周期（以毫秒为单位）
-      # 使用中的连接永远不会清退，只有当它关闭时才会在最长生命周期后删除
       max-lifetime: 1800000
-      # 从连接池返回的连接的默认自动提交行为
       auto-commit: true
 mybatis:
-  # 配置`xxxMapper.xml`中`resultType`类型别名的包名，即可无需写全限定类名
-  # 在没有注解的情况下，会使用POJO的首字母小写的非限定类名来作为它的别名
-  # 若有POJO类上有`@Alias("xxx")`注解，则别名为该注解值
-  # MyBatis内置类型别名，可查看`TypeAliasRegistry`
-  # 此外，MyBatis内置类型处理器，可查看`TypeHandlerRegistry`
   type-aliases-package: net.wuxianjie.web.model
-  # 类型转换器的包
   type-handlers-package: net.wuxianjie.web.handler
-  # `#{}`：占位符，防止SQL注入风险（会在替换占位符时首尾添加上单引号`'xxx'`）
-  # `${}`：替换符，列名表名灵活替换
   mapper-locations: classpath:mapper/*.xml
   configuration:
-    # 打印 SQL
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
-# Spring Boot默认只加载application.yml（或application.properties）外部配置文件，有两种解决方式：
-# 在命令行中使用`--logging.config=file:./config/logback-spring.xml`
-# 或
-#logging:
-#  config: file:./config/logback-spring.xml
 core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
   allowed-ant-paths: /auth-resource/public

@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.model.CachedToken;
-import net.wuxianjie.core.model.PaginationData;
-import net.wuxianjie.core.model.PaginationQuery;
+import net.wuxianjie.core.dto.PrincipalDto;
+import net.wuxianjie.core.dto.PaginationDto;
+import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.core.service.AuthenticationFacade;
 import net.wuxianjie.web.mapper.OperationLogMapper;
 import net.wuxianjie.web.model.OperationLog;
@@ -32,8 +32,8 @@ public class OperationLogServiceImpl implements OperationLogService {
   private final AuthenticationFacade authentication;
 
   @Override
-  public PaginationData<List<OperationLog>> getOperationLogs(
-      @NonNull final PaginationQuery pagination,
+  public PaginationDto<List<OperationLog>> getOperationLogs(
+      @NonNull final PaginationQueryDto pagination,
       @NonNull final LocalDateTime startTime,
       @NonNull final LocalDateTime endTime) {
     // 根据分页条件、开始时间和结束时间从数据库中查询操作日志列表
@@ -43,7 +43,7 @@ public class OperationLogServiceImpl implements OperationLogService {
     final int total = logMapper.countByTime(startTime, endTime);
 
     // 生成操作日志分页列表结果
-    return new PaginationData<>(total, pagination.getPageNo(), pagination.getPageSize(), logs);
+    return new PaginationDto<>(total, pagination.getPageNo(), pagination.getPageSize(), logs);
   }
 
   @Override
@@ -51,7 +51,7 @@ public class OperationLogServiceImpl implements OperationLogService {
   public Wrote2Database saveOperationLog(
       @NonNull final LocalDateTime operationTime, @NonNull final String message) {
     // 获取当前用户信息
-    final CachedToken cachedToken = authentication.getCacheToken();
+    final PrincipalDto cachedToken = authentication.getCacheToken();
     final Integer userId = cachedToken.getAccountId();
     final String username = cachedToken.getAccountName();
 

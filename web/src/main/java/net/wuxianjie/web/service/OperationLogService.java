@@ -1,7 +1,7 @@
 package net.wuxianjie.web.service;
 
-import net.wuxianjie.core.model.PaginationData;
-import net.wuxianjie.core.model.PaginationQuery;
+import net.wuxianjie.core.dto.PaginationDto;
+import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.web.model.OperationLog;
 import net.wuxianjie.web.model.Wrote2Database;
 
@@ -23,8 +23,8 @@ public interface OperationLogService {
    * @param endTime 结束日期（包含），非空
    * @return 操作日志列表分页数据
    */
-  PaginationData<List<OperationLog>> getOperationLogs(
-      PaginationQuery pagination, LocalDateTime startTime, LocalDateTime endTime);
+  PaginationDto<List<OperationLog>> getOperationLogs(
+          PaginationQueryDto pagination, LocalDateTime startTime, LocalDateTime endTime);
 
   /**
    * 新增操作日志

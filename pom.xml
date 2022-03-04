@@ -1,93 +1,76 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.6.3</version>
-    <relativePath/> <!-- lookup parent from repository -->
-  </parent>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath/>
+    </parent>
 
-  <groupId>net.wuxianjie</groupId>
-  <artifactId>rest-spring</artifactId>
-  <packaging>pom</packaging> <!-- 表示用于定义子模块的父项目 -->
-  <version>0.0.1-SNAPSHOT</version>
+    <groupId>net.wuxianjie</groupId>
+    <artifactId>rest-spring</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
 
-  <!-- 定义子模块 -->
-  <modules>
-    <module>core</module>
-    <module>web</module>
-  </modules>
+    <modules>
+        <module>core</module>
+        <module>web</module>
+    </modules>
 
-  <properties>
-    <!-- 设置Spring Boot Maven插件所使用的JDK版本，默认使用UTF-8编码 -->
-    <java.version>11</java.version>
+    <properties>
+        <java.version>11</java.version>
 
-    <!-- 设置依赖库版本 -->
-    <my.core.version>0.0.1-SNAPSHOT</my.core.version>
-    <my.elasticsearch.version>0.0.1-SNAPSHOT</my.elasticsearch.version>
-    <jjwt.version>0.11.2</jjwt.version>
-    <hutool.version>5.7.20</hutool.version>
-    <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
-  </properties>
+        <my.core.version>0.0.1-SNAPSHOT</my.core.version>
+        <my.elasticsearch.version>0.0.1-SNAPSHOT</my.elasticsearch.version>
+        <jjwt.version>0.11.2</jjwt.version>
+        <hutool.version>5.7.20</hutool.version>
+        <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
+    </properties>
 
-  <dependencyManagement>
-    <dependencies>
-      <!-- Java工具类库Hutool -->
-      <dependency>
-        <groupId>cn.hutool</groupId>
-        <artifactId>hutool-all</artifactId>
-        <version>${hutool.version}</version>
-      </dependency>
+    <dependencyManagement>
+        <dependencies>
+            <!-- Java 工具类库 Hutool -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
 
-      <!-- Spring Boot整合MyBatis -->
-      <dependency>
-        <groupId>org.mybatis.spring.boot</groupId>
-        <artifactId>mybatis-spring-boot-starter</artifactId>
-        <version>${mybatis-spring-boot-starter.version}</version>
-      </dependency>
+            <!-- Spring Boot 整合 MyBatis -->
+            <dependency>
+                <groupId>org.mybatis.spring.boot</groupId>
+                <artifactId>mybatis-spring-boot-starter</artifactId>
+                <version>${mybatis-spring-boot-starter.version}</version>
+            </dependency>
 
-      <!-- JWT -->
-      <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-api</artifactId>
-        <version>${jjwt.version}</version>
-      </dependency>
+            <!-- JWT  -->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
 
-      <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-impl</artifactId>
-        <version>${jjwt.version}</version>
-      </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
 
-      <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-jackson</artifactId>
-        <version>${jjwt.version}</version>
-      </dependency>
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
 
-      <!-- 核心模块 -->
-      <dependency>
-        <groupId>net.wuxianjie</groupId>
-        <artifactId>core</artifactId>
-        <version>${my.core.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <!-- 配置下载及部署时的私有仓库 -->
-  <distributionManagement>
-    <snapshotRepository>
-      <id>maven-snapshots</id>
-      <name>Nexus 快照私有仓库</name>
-      <url>http://192.168.2.41:8081/repository/maven-snapshots/</url>
-    </snapshotRepository>
-    <repository>
-      <id>maven-releases</id>
-      <name>Nexus 正式私有仓库</name>
-      <url>http://192.168.2.41:8081/repository/maven-releases/</url>
-    </repository>
-  </distributionManagement>
+            <!-- 核心模块 -->
+            <dependency>
+                <groupId>net.wuxianjie</groupId>
+                <artifactId>core</artifactId>
+                <version>${my.core.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

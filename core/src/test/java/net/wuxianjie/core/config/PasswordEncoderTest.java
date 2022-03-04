@@ -9,36 +9,34 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * 测试密码编码
- *
- * @author 吴仙杰
- */
 @Slf4j
 @Disabled
 @SpringBootTest(classes = CoreConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PasswordEncoderTest {
 
-  private static final String RAW_PASSWORD = "123";
+    private static final String RAW_PASSWORD = "123";
 
-  private static String encodedPassword = CoreProperties.JWT_SIGNING_KEY;
+    private static String hashedPassword;
 
-  @Autowired
-  private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-  @Test
-  @Order(1)
-  void encodePasswordShouldNotReturnNull() {
-    encodedPassword = passwordEncoder.encode(RAW_PASSWORD);
-    assertNotNull(encodedPassword);
-    log.info("原密码：{}，编码后为：{}", RAW_PASSWORD, encodedPassword);
-  }
+    @Test
+    @Order(1)
+    void encodePasswordShouldNotReturnNull() {
+        hashedPassword = passwordEncoder.encode(RAW_PASSWORD);
 
-  @Test
-  @Order(2)
-  void rawAndEncodedPasswordShouldEqual() {
-    final boolean matched = passwordEncoder.matches(RAW_PASSWORD, encodedPassword);
-    assertTrue(matched);
-  }
+        assertNotNull(hashedPassword);
+
+        log.info("原密码：{}，编码后为：{}", RAW_PASSWORD, hashedPassword);
+    }
+
+    @Test
+    @Order(2)
+    void rawAndEncodedPasswordShouldEqual() {
+        final boolean matched = passwordEncoder.matches(RAW_PASSWORD, hashedPassword);
+
+        assertTrue(matched);
+    }
 }

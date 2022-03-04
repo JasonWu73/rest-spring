@@ -1,6 +1,6 @@
 package net.wuxianjie.web.mapper;
 
-import net.wuxianjie.core.model.PaginationQuery;
+import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.web.model.OperationLog;
 import net.wuxianjie.web.service.impl.OperationLogServiceImpl;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,7 +26,7 @@ public interface OperationLogMapper {
    * @return 操作日志列表分页数据
    */
   List<OperationLog> findByPagination(
-      @Param("page") PaginationQuery pagination,
+      @Param("page") PaginationQueryDto pagination,
       LocalDateTime startTime, LocalDateTime endTime);
 
   /**

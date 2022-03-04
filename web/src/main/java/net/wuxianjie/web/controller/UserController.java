@@ -4,11 +4,11 @@ import cn.hutool.core.util.StrUtil;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.annotation.Admin;
-import net.wuxianjie.core.constant.AuthRole;
+import net.wuxianjie.core.constant.Role;
 import net.wuxianjie.core.exception.BadRequestException;
-import net.wuxianjie.core.model.CachedToken;
-import net.wuxianjie.core.model.PaginationData;
-import net.wuxianjie.core.model.PaginationQuery;
+import net.wuxianjie.core.dto.PrincipalDto;
+import net.wuxianjie.core.dto.PaginationDto;
+import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.core.service.AuthenticationFacade;
 import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.model.User;
@@ -46,8 +46,8 @@ public class UserController {
    */
   @Admin
   @GetMapping("list")
-  public PaginationData<List<User>> getUsers(
-    @Valid final PaginationQuery pagination,
+  public PaginationDto<List<User>> getUsers(
+    @Valid final PaginationQueryDto pagination,
     final String username
   ) {
     // 完善分页条件
@@ -118,7 +118,7 @@ public class UserController {
   @PostMapping("password")
   public Wrote2Database updatePassword(@RequestBody @Valid final PasswordToUpdate passwordToUpdate) {
     // 获取当前登录用户
-    final CachedToken cacheToken = authentication.getCacheToken();
+    final PrincipalDto cacheToken = authentication.getCacheToken();
 
     // 完善修改密码参数
     passwordToUpdate.setUserId(cacheToken.getAccountId());
@@ -210,7 +210,7 @@ public class UserController {
     }
 
     final boolean hasInvalidRole = Arrays.stream(roles.split(","))
-      .anyMatch(x -> AuthRole.resolve(x) == null);
+      .anyMatch(x -> Role.resolve(x) == null);
 
     if (hasInvalidRole) {
       throw new BadRequestException("包含未定义角色");

@@ -4,15 +4,15 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.constant.BeanQualifiers;
+import net.wuxianjie.core.dto.PrincipalDto;
+import net.wuxianjie.core.dto.TokenDto;
 import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.TokenAuthenticationException;
-import net.wuxianjie.core.model.CachedToken;
-import net.wuxianjie.core.model.Token;
 import net.wuxianjie.core.service.TokenService;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.constant.TokenAttributes;
-import net.wuxianjie.web.model.Account;
-import net.wuxianjie.web.mapper.AccountMapper;
+import net.wuxianjie.web.dto.UserDto;
+import net.wuxianjie.web.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,101 +22,103 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 基于本地缓存实现Token生成与刷新
- *
- * @author 吴仙杰
+ * 基于本地缓存实现 Token 管理
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenServiceImpl implements TokenService {
 
-  @Qualifier(BeanQualifiers.JWT_SIGNING_KEY) private final String jwtSigningKey;
-  private final Cache<String, CachedToken> tokenCache;
-  private final PasswordEncoder passwordEncoder;
-  private final AccountMapper accountMapper;
+    @Qualifier(BeanQualifiers.JWT_SIGNING_KEY)
+    private final String jwtSigningKey;
 
-  @Override
-  public Token getToken(@NonNull final String accountName, @NonNull final String accountPassword) {
-    // 根据账号名从数据库查询账号信息
-    final Account account = getAccount(accountName);
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final Cache<String, PrincipalDto> tokenCache;
 
-    if (account == null) {
-      throw new BadRequestException("账号名或密码错误");
+    @Override
+    public TokenDto getToken(@NonNull final String accountName, @NonNull final String rawPassword) {
+        // 获取账号信息
+        final UserDto account = userService.getUser(accountName);
+
+        if (account == null) {
+            throw new BadRequestException("账号不存在");
+        }
+
+        // 判断密码是否正确
+        final String hashedPassword = account.getHashedPassword();
+        final boolean isCorrect = passwordEncoder.matches(rawPassword, hashedPassword);
+
+        if (!isCorrect) {
+            throw new BadRequestException("密码错误");
+        }
+
+        // 构造需要缓存的账号信息
+        final PrincipalDto principal = new PrincipalDto();
+        principal.setAccountId(account.getUserId());
+        principal.setAccountName(account.getUsername());
+        principal.setRoles(account.getRoles());
+
+        // 生成 Token，并写入缓存
+        return generateAndCacheToken(principal);
     }
 
-    // 判断密码是否正确
-    final boolean rightedPassword = isRightPassword(accountPassword, account.getHashedPassword());
+    @Override
+    public TokenDto refreshToken(@NonNull final String refreshToken) {
+        // 解析 Refresh Token
+        final Map<String, Object> payload = JwtUtils.verifyAndParseToken(jwtSigningKey, refreshToken);
+        final String accountName = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+        final String tokenType = (String) payload.get(TokenAttributes.TYPE_KEY);
 
-    if (!rightedPassword) {
-      throw new BadRequestException("账号名或密码错误");
+        if (!tokenType.equals(TokenAttributes.TYPE_REFRESH_VALUE)) {
+            throw new TokenAuthenticationException("Token 类型错误");
+        }
+
+        // 从缓存中查询账号信号
+        final PrincipalDto principal = tokenCache.getIfPresent(accountName);
+
+        // 校验 Refresh Token 是否有效
+        if (principal == null || !principal.getRefreshToken().equals(refreshToken)) {
+            throw new TokenAuthenticationException("Token 已过期");
+        }
+
+        // 获取最新的账号信息
+        final UserDto account = userService.getUser(accountName);
+
+        // 更新缓存的账号信息
+        principal.setRoles(account.getRoles());
+
+        // 生成 Token，并写入缓存
+        return generateAndCacheToken(principal);
     }
 
-    // 构造写入缓存中的Token数据
-    final CachedToken cachedToken = new CachedToken();
-    cachedToken.setAccountId(account.getAccountId());
-    cachedToken.setAccountName(account.getAccountName());
-    cachedToken.setRoles(account.getRoles());
+    private TokenDto generateAndCacheToken(final PrincipalDto principal) {
+        final Map<String, Object> jwtPayload = new HashMap<>();
+        jwtPayload.put(TokenAttributes.ACCOUNT_KEY, principal.getAccountName());
+        jwtPayload.put(TokenAttributes.ROLE_KEY, principal.getRoles());
 
-    // 生成Access Token与Refresh Token
-    return generateToken(cachedToken);
-  }
+        final String accessToken = generateToken(jwtPayload, TokenAttributes.TYPE_ACCESS_VALUE);
+        final String refreshToken = generateToken(jwtPayload, TokenAttributes.TYPE_REFRESH_VALUE);
 
-  @Override
-  public Token updateToken(@NonNull final String refreshToken) {
-    // 解析Token
-    final Map<String, Object> payload = JwtUtils.verifyAndParseToken(jwtSigningKey, refreshToken);
-    final String accountName = (String) payload.get(TokenAttributes.TOKEN_ACCOUNT);
-    final String tokenType = (String) payload.get(TokenAttributes.TOKEN_TYPE);
+        // 完善账号信息
+        principal.setAccessToken(accessToken);
+        principal.setRefreshToken(refreshToken);
 
-    if (!tokenType.equals(TokenAttributes.REFRESH_TOKEN)) {
-      throw new TokenAuthenticationException("Token类型错误");
+        // 写入缓存
+        tokenCache.put(principal.getAccountName(), principal);
+
+        return new TokenDto(TokenAttributes.EXPIRES_IN_SECONDS_VALUE, accessToken, refreshToken);
     }
 
-    // 从缓存中查询Refresh Token
-    final CachedToken cachedToken = tokenCache.getIfPresent(accountName);
+    private String generateToken(
+            final Map<String, Object> jwtPayload,
+            final String tokenType
+    ) {
+        jwtPayload.put(TokenAttributes.TYPE_KEY, tokenType);
 
-    // 核验缓存中的Refresh Token与传入的Refresh Token
-    if (cachedToken == null || !cachedToken.getRefreshToken().equals(refreshToken)) {
-      throw new TokenAuthenticationException("Token已过期");
+        return JwtUtils.generateToken(
+                jwtSigningKey,
+                jwtPayload,
+                TokenAttributes.EXPIRES_IN_SECONDS_VALUE
+        );
     }
-
-    // 查询并更新程序内部的Token数据
-    final Account account = getAccount(accountName);
-    cachedToken.setRoles(account.getRoles());
-
-    // 生成Access Token与Refresh Token
-    return generateToken(cachedToken);
-  }
-
-  private Account getAccount(final String accountName) {
-    return accountMapper.findByAccountName(accountName);
-  }
-
-  private boolean isRightPassword(final String rawPassword, final String encodedPassword) {
-    return passwordEncoder.matches(rawPassword, encodedPassword);
-  }
-
-  private Token generateToken(final CachedToken cachedToken) {
-
-    final Map<String, Object> jwtPayload = new HashMap<>();
-    jwtPayload.put(TokenAttributes.TOKEN_ACCOUNT, cachedToken.getAccountName());
-    jwtPayload.put(TokenAttributes.TOKEN_ROLE, cachedToken.getRoles());
-
-    final String accessToken = generateToken(jwtPayload, TokenAttributes.ACCESS_TOKEN);
-    final String refreshToken = generateToken(jwtPayload, TokenAttributes.REFRESH_TOKEN);
-
-    // 完善Token数据
-    cachedToken.setAccessToken(accessToken);
-    cachedToken.setRefreshToken(refreshToken);
-
-    // 写入缓存
-    tokenCache.put(cachedToken.getAccountName(), cachedToken);
-
-    return new Token(TokenAttributes.TOKEN_EXPIRES_IN_SECONDS, accessToken, refreshToken);
-  }
-
-  private String generateToken(final Map<String, Object> jwtPayload, final String tokenType) {
-    jwtPayload.put(TokenAttributes.TOKEN_TYPE, tokenType);
-    return JwtUtils.generateToken(jwtSigningKey, jwtPayload, TokenAttributes.TOKEN_EXPIRES_IN_SECONDS);
-  }
 }

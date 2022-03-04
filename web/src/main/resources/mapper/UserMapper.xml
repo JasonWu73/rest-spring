@@ -1,82 +1,84 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.mapper.UserMapper">
+    <select id="findById" resultType="User">
+        SELECT user_id         AS userId,
+               username,
+               hashed_password AS hashedPassword,
+               roles
+        FROM user
+        WHERE user_id = #{userId}
+    </select>
 
-  <select id="findById" resultType="Account">
-    SELECT user_id AS accountId,
-           username AS accountName,
-           hashed_password AS hashedPassword,
-           roles
-    FROM
-      user
-    WHERE
-      user_id = #{userId}
-  </select>
+    <select id="findByUsername" resultType="User">
+        SELECT user_id         AS userId,
+               username,
+               hashed_password AS hashedPassword,
+               roles
+        FROM user
+        WHERE username = #{username}
+    </select>
 
-  <select id="findByPagination" resultType="User">
-    SELECT
-    user_id AS userId,
-    STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-    username,
-    IFNULL(roles, '') AS roles
-    FROM
-    user
-    <where>
-      <if test="username != null">
-        username LIKE #{username}
-      </if>
-    </where>
-    ORDER BY modify_time DESC
-    LIMIT #{page.offset}, #{page.pageSize}
-  </select>
+    <select id="findByPagination" resultType="User">
+        SELECT
+        user_id AS userId,
+        STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
+        username,
+        IFNULL(roles, '') AS roles
+        FROM
+        user
+        <where>
+            <if test="username != null">
+                username LIKE #{username}
+            </if>
+        </where>
+        ORDER BY modify_time DESC
+        LIMIT #{page.offset}, #{page.pageSize}
+    </select>
 
-  <select id="countByUsername" resultType="int">
-    SELECT
-    COUNT(1)
-    FROM
-    user
-    <where>
-      <if test="username != null">
-        username LIKE #{username}
-      </if>
-    </where>
-  </select>
+    <select id="countByUsername" resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        user
+        <where>
+            <if test="username != null">
+                username LIKE #{username}
+            </if>
+        </where>
+    </select>
 
-  <insert id="add">
-    INSERT INTO user (
-      create_time,
-      modify_time,
-      username, hashed_password, roles
-    )
-    VALUES (
-      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      #{username}, #{password}, #{roles}
-    )
-  </insert>
+    <insert id="add">
+        INSERT INTO user (create_time,
+                          modify_time,
+                          username, hashed_password, roles)
+        VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+                DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+                #{username}, #{password}, #{roles})
+    </insert>
 
-  <update id="update">
-    UPDATE user
-    <set>
-      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      <if test="password != null">hashed_password = #{password},</if>
-      <if test="roles != null">roles = #{roles}</if>
-    </set>
-    WHERE user_id = #{userId}
-  </update>
+    <update id="update">
+        UPDATE user
+        <set>
+            modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+            <if test="password != null">hashed_password = #{password},</if>
+            <if test="roles != null">roles = #{roles}</if>
+        </set>
+        WHERE user_id = #{userId}
+    </update>
 
-  <update id="updatePasswordById">
-    UPDATE user
-    SET
-      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      hashed_password = #{password}
-    WHERE user_id = #{userId}
-  </update>
+    <update id="updatePasswordById">
+        UPDATE user
+        SET modify_time     = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+            hashed_password = #{password}
+        WHERE user_id = #{userId}
+    </update>
 
-  <delete id="deleteById">
-    DELETE FROM user WHERE user_id = #{userId}
-  </delete>
+    <delete id="deleteById">
+        DELETE
+        FROM user
+        WHERE user_id = #{userId}
+    </delete>
 </mapper>

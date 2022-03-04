@@ -1,5 +1,5 @@
 server:
-  # HTTP服务监听端口
+  # HTTP 服务监听端口
   port: 8080
 spring:
   datasource:

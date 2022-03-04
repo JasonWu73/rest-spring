@@ -3,31 +3,36 @@ package net.wuxianjie.web.constant;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-/**
- * 与Token属性相关的常量类
- *
- * @author 吴仙杰
- */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TokenAttributes {
 
-  /** Access Token的有效期（以秒为单位，有效期30分钟） */
-  public static final int TOKEN_EXPIRES_IN_SECONDS = 1800;
+    /**
+     * Token 有效期，单位秒
+     */
+    public static final int EXPIRES_IN_SECONDS_VALUE = 1800;
 
-  /** JWT中账号名称Key */
-  public static final String TOKEN_ACCOUNT = "account";
+    /**
+     * JWT 中账号名称字段
+     */
+    public static final String ACCOUNT_KEY = "account";
 
-  /**
-   * JWT中角色Key
-   */
-  public static final String TOKEN_ROLE = "roles";
+    /**
+     * JWT 中角色字段
+     */
+    public static final String ROLE_KEY = "roles";
 
-  /** JWT中Token类型Key */
-  public static final String TOKEN_TYPE = "type";
+    /**
+     * JWT 中 Token 类型字段
+     */
+    public static final String TYPE_KEY = "type";
 
-  /** Token类型Value - Access Token */
-  public static final String ACCESS_TOKEN = "access";
+    /**
+     * Access Token 类型值
+     */
+    public static final String TYPE_ACCESS_VALUE = "access";
 
-  /** Token类型Value - Refresh Token */
-  public static final String REFRESH_TOKEN = "refresh";
+    /**
+     * Refresh Token 类型值
+     */
+    public static final String TYPE_REFRESH_VALUE = "refresh";
 }

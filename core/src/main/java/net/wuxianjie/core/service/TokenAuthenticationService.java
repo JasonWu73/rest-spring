@@ -1,19 +1,17 @@
 package net.wuxianjie.core.service;
 
-import net.wuxianjie.core.model.CachedToken;
+import net.wuxianjie.core.dto.PrincipalDto;
 
 /**
- * Token鉴权认证机制业务逻辑接口
- *
- * @author 吴仙杰
+ * Token 认证机制的业务逻辑
  */
 public interface TokenAuthenticationService {
 
-  /**
-   * 执行具体的Token认证业务
-   *
-   * @param accessToken Access Token
-   * @return 认证后的Token数据
-   */
-  CachedToken authenticate(String accessToken);
+    /**
+     * 执行Token 认证
+     *
+     * @param accessToken Access Token
+     * @return PrincipalDto
+     */
+    PrincipalDto authenticate(String accessToken);
 }
