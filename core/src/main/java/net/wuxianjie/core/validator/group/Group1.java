@@ -3,7 +3,7 @@ package net.wuxianjie.core.validator.group;
 import javax.validation.groups.Default;
 
 /**
- * 校验分组 - 修改
+ * 校验分组
  */
-public interface Update extends Default {
+public interface Group1 extends Default {
 }

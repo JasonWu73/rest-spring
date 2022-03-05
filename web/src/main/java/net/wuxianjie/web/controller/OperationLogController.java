@@ -5,7 +5,7 @@ import net.wuxianjie.core.annotation.Admin;
 import net.wuxianjie.core.dto.PaginationDto;
 import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.core.exception.BadRequestException;
-import net.wuxianjie.web.model.OperationLog;
+import net.wuxianjie.web.dto.OperationLogDto;
 import net.wuxianjie.web.service.OperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +41,7 @@ public class OperationLogController {
      */
     @Admin
     @GetMapping("list")
-    public PaginationDto<List<OperationLog>> getOperationLogs(
+    public PaginationDto<List<OperationLogDto>> getOperationLogs(
             @Validated final PaginationQueryDto pagination,
             @NotNull(message = "开始日期不能为空")
             @Pattern(message = "开始日期格式错误", regexp = "^\\d{4}-\\d{2}-\\d{2}$") final String startDate,
@@ -61,6 +61,7 @@ public class OperationLogController {
         final LocalDateTime startTime = startLocalDate.atStartOfDay();
         final LocalDateTime endTime = endLocalDate.atTime(LocalTime.MAX);
 
+        // 获取分页数据
         return logService.getOperationLogs(pagination, startTime, endTime);
     }
 }

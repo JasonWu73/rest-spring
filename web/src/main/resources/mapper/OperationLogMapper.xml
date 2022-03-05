@@ -16,7 +16,7 @@
         LIMIT #{page.offset}, #{page.pageSize}
     </select>
 
-    <select id="countByTime" resultType="int">
+    <select id="countByStartEndTime" resultType="int">
         SELECT COUNT(1)
         FROM operation_log
         WHERE operation_time &gt;= #{startTime}

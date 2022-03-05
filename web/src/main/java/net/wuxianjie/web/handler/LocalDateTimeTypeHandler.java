@@ -3,53 +3,62 @@ package net.wuxianjie.web.handler;
 import net.wuxianjie.core.constant.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
-import org.apache.ibatis.type.MappedJdbcTypes;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * MyBatis LocalDateTime的类型转换器，这是在SQLite JDBC4不支持{@code LocalDateTime}转换的解决方式
- *
- * @author 吴仙杰
- * @see <a href="https://github.com/mybatis/mybatis-3/issues/1644">LocalDateTimeTypeHandler failing with TIMESTAMPTZ · Issue #1644 · mybatis/mybatis-3</a>
- * @see <a href="https://mybatis.org/mybatis-3/configuration.html">mybatis – MyBatis 3 | Configuration</a>
+ * MyBatis {@link LocalDateTime} 的类型转换器，
+ * 以解决某些 JDBC 不支持 {@code LocalDateTime} 转换的问题，
+ * 如 SQLite JDBC4
  */
-@MappedJdbcTypes(value = JdbcType.TIMESTAMP, includeNullJdbcType = true)
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
-  @Override
-  public void setNonNullParameter(PreparedStatement ps, int i, LocalDateTime parameter, JdbcType jdbcType)
-      throws SQLException {
-    // MyBatis默认会将java.time.LocalDateTime映射为数据库Timestamp
-    // 对于SQLite而言，使用Timestamp类型会有问题（导致查询不到结果），故将日期全部转为字符串比较
-    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
-    ps.setString(i, parameter.format(formatter));
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
-    final Timestamp timestamp = rs.getTimestamp(columnName);
-    return getLocalDateTime(timestamp);
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
-    final Timestamp timestamp = rs.getTimestamp(columnIndex);
-    return getLocalDateTime(timestamp);
-  }
-
-  @Override
-  public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
-    final Timestamp timestamp = cs.getTimestamp(columnIndex);
-    return getLocalDateTime(timestamp);
-  }
-
-  private static LocalDateTime getLocalDateTime(Timestamp timestamp) {
-    if (timestamp != null) {
-      return timestamp.toLocalDateTime();
+    @Override
+    public void setNonNullParameter(
+            final PreparedStatement ps,
+            final int i,
+            final LocalDateTime parameter,
+            final JdbcType jdbcType
+    ) throws SQLException {
+        // MyBatis 默认会将 `java.time.LocalDateTime` 映射为数据库 Timestamp
+        // 对于 SQLite 而言，使用 Timestamp 类型会有问题（导致查询不到结果），故将日期全部转为字符串比较
+        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
+        ps.setString(i, parameter.format(formatter));
     }
-    return null;
-  }
+
+    @Override
+    public LocalDateTime getNullableResult(
+            final ResultSet rs,
+            final String columnName
+    ) throws SQLException {
+        final Timestamp timestamp = rs.getTimestamp(columnName);
+        return getLocalDateTime(timestamp);
+    }
+
+    @Override
+    public LocalDateTime getNullableResult(
+            final ResultSet rs,
+            final int columnIndex
+    ) throws SQLException {
+        final Timestamp timestamp = rs.getTimestamp(columnIndex);
+        return getLocalDateTime(timestamp);
+    }
+
+    @Override
+    public LocalDateTime getNullableResult(
+            final CallableStatement cs,
+            final int columnIndex
+    ) throws SQLException {
+        final Timestamp timestamp = cs.getTimestamp(columnIndex);
+        return getLocalDateTime(timestamp);
+    }
+
+    private static LocalDateTime getLocalDateTime(final Timestamp timestamp) {
+        if (timestamp != null) {
+            return timestamp.toLocalDateTime();
+        }
+        return null;
+    }
 }

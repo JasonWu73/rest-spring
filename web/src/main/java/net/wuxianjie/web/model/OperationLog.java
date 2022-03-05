@@ -1,6 +1,8 @@
 package net.wuxianjie.web.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -8,6 +10,8 @@ import java.time.LocalDateTime;
  * 操作日志表
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OperationLog {
 
     /**

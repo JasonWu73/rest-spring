@@ -17,7 +17,7 @@ public class ResponseDto<T> {
     private ErrorCode error;
 
     /**
-     * 失败时提示消息，当仅且当返回错误结果时才存在
+     * 失败时提示消息
      */
     private String errMsg;
 

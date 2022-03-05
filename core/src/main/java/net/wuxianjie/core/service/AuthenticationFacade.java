@@ -12,5 +12,5 @@ public interface AuthenticationFacade {
      *
      * @return PrincipalDto
      */
-    PrincipalDto getCacheToken();
+    PrincipalDto getPrincipal();
 }

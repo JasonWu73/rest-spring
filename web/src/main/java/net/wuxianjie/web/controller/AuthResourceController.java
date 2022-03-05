@@ -31,7 +31,7 @@ public class AuthResourceController {
     public ResultDto testAnonymousResource() {
         return new ResultDto(
                 "无需身份认证即可访问的开放API",
-                authentication.getCacheToken().getAccountName()
+                authentication.getPrincipal().getAccountName()
         );
     }
 
@@ -42,7 +42,7 @@ public class AuthResourceController {
     public ResultDto testGuestResource() {
         return new ResultDto(
                 "只要通过身份认证即可访问的登录后可访问API",
-                authentication.getCacheToken().getAccountName()
+                authentication.getPrincipal().getAccountName()
         );
     }
 
@@ -75,7 +75,7 @@ public class AuthResourceController {
                         Role.USER.value(),
                         Role.ADMIN.value()
                 ),
-                authentication.getCacheToken().getAccountName()
+                authentication.getPrincipal().getAccountName()
         );
     }
 
@@ -90,7 +90,7 @@ public class AuthResourceController {
     private ResultDto getResult(final Role role) {
         return new ResultDto(
                 String.format("通过身份认证且必须拥有【%s】角色才可访问API", role.value()),
-                authentication.getCacheToken().getAccountName()
+                authentication.getPrincipal().getAccountName()
         );
     }
 }
