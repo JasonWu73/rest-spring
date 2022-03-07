@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Spring Boot 默认只加载 application.yml（或 application.properties）外部配置文件，有两种解决方式：
+<!-- Spring Boot 默认只加载 application.yml（
+或 application.properties）外部配置文件，有两种解决方式：
 1、在 application.yml 中指定 `logging.config`
 2、在命令行中使用 `logging.config`
 -->
@@ -8,14 +9,19 @@
 <configuration>
     <!-- 加载 Spring Boot 配置 -->
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+    <include
+            resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
     <!-- 配置属性 -->
-    <!-- 日志文件的存放目录，绝对或相对路径（注意：哪怕在 Windows 中也要使用 `/` 作为目录分隔符）-->
+    <!-- 日志文件的存放目录，绝对或相对路径
+    （注意：哪怕在 Windows 中也要使用 `/` 作为目录分隔符）
+    -->
     <property name="LOG_FILE_DIR" value="logs"/>
     <!-- 日志文件的名称（不包含扩展名 `.log`） -->
     <property name="LOG_FILE_NAME" value="app"/>
-    <!-- 每个文件大小的最大估值（非精确值，可以是以 B、KB、MB 或 GB 为单位，默认以字节为单位） -->
+    <!-- 每个文件大小的最大估值
+    （非精确值，可以是以 B、KB、MB 或 GB 为单位，默认以字节为单位）
+    -->
     <property name="MAX_FILE_SIZE" value="100MB"/>
     <!-- 保留的归档文件的最大天数 -->
     <property name="MAX_HISTORY" value="60"/>
@@ -23,7 +29,8 @@
     <property name="TOTAL_SIZE_CAP" value="20GB"/>
 
     <!-- 记录日志文件 -->
-    <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="LOG_FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE_DIR}/${LOG_FILE_NAME}.log</file>
         <encoder>
             <!-- 使用 Spring Boot 的配置 -->
@@ -32,31 +39,41 @@
         </encoder>
 
         <!-- 滚动日志文件 -->
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <rollingPolicy
+                class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 每日滚存（daily rollover） -->
-            <fileNamePattern>${LOG_FILE_DIR}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>
+                ${LOG_FILE_DIR}/${LOG_FILE_NAME}-%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
             <!-- 设置每个日志文件的最大尺寸应保持在多少大小左右，默认为 10MB。
-            如果设置了该属性，Logback 将在文件大小达到阈值或新的一天开始时生成新的日志文件
+            如果设置了该属性，
+            Logback 将在文件大小达到阈值或新的一天开始时生成新的日志文件
             -->
             <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
-            <!-- 设置 Logback 最大保存的天数，默认为 7 天。如果设置了该属性，Logback 会删除超过指定天数的归档日志文件 -->
+            <!-- 设置 Logback 最大保存的天数，默认为 7 天。
+            如果设置了该属性，Logback 会删除超过指定天数的归档日志文件
+            -->
             <maxHistory>${MAX_HISTORY}</maxHistory>
-            <!-- 设置所有日志文件的总大小（MB, GB）。如果设置了该属性，Logback 将删除最旧的日志文件，以保持总大小不超过指定值 -->
+            <!-- 设置所有日志文件的总大小（MB, GB）。
+            如果设置了该属性，Logback 将删除最旧的日志文件，
+            以保持总大小不超过指定值
+            -->
             <totalSizeCap>${TOTAL_SIZE_CAP}</totalSizeCap>
             <!-- 设置 Logback 是否在启动时清理存档的日志文件，默认为 false。
-            设置为 true：Logback 将在程序启动时，根据 `totalSizeCap` 和 `maxHistory` 的值来清理旧的日志文件
+            设置为 true：Logback 将在程序启动时，
+            根据 `totalSizeCap` 和 `maxHistory` 的值来清理旧的日志文件
             -->
             <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
 
     <!-- `additivity="false"`：不要追加日志输出至 `<root>` -->
-<!--
-    <logger name="org.springframework.transaction" level="TRACE" additivity="false">
-      &lt;!&ndash; 查看 Spring 事务管理是否开启 &ndash;&gt;
-      <appender-ref ref="CONSOLE"/>
-    </logger>
--->
+    <!--
+        <logger name="org.springframework.transaction" level="TRACE" additivity="false">
+          &lt;!&ndash; 查看 Spring 事务管理是否开启 &ndash;&gt;
+          <appender-ref ref="CONSOLE"/>
+        </logger>
+    -->
 
     <!-- 生产环境下，推荐使用 WARN 级别日志 -->
     <root level="INFO">

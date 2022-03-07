@@ -13,11 +13,11 @@ spring:
       max-lifetime: 1800000
       auto-commit: true
 mybatis:
-  type-aliases-package: net.wuxianjie.web.model
   type-handlers-package: net.wuxianjie.web.handler
   mapper-locations: classpath:mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 core:
-  jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /api/v1/auth-resource/public
+  auth:
+    jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
+    allowed-ant-paths: /api/v1/auth-resource/public

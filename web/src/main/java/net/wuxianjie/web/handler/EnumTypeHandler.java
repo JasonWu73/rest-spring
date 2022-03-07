@@ -1,7 +1,5 @@
 package net.wuxianjie.web.handler;
 
-import net.wuxianjie.core.constant.ValueEnum;
-import net.wuxianjie.core.util.EnumUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -13,7 +11,8 @@ import java.sql.SQLException;
 /**
  * 处理枚举类的映射规则
  */
-public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHandler<ValueEnum> {
+public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends
+        BaseTypeHandler<ValueEnum> {
 
     private Class<E> enumType;
 
