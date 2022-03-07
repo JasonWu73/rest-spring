@@ -2,8 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.wuxianjie.web.mapper.OperationLogMapper">
-    <select id="findByPagination" resultType="OperationLog">
+<mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
+    <select id="findByPagination"
+            resultType="net.wuxianjie.web.operationlog.OperationLog"
+    >
         SELECT operation_log_id AS operationLogId,
                operation_time   AS operationTime,
                user_id             userId,

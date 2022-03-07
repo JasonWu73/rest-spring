@@ -1,6 +1,6 @@
 package net.wuxianjie.web.handler;
 
-import net.wuxianjie.core.constant.CommonValues;
+import net.wuxianjie.core.shared.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -23,8 +23,10 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
             final JdbcType jdbcType
     ) throws SQLException {
         // MyBatis 默认会将 `java.time.LocalDateTime` 映射为数据库 Timestamp
-        // 对于 SQLite 而言，使用 Timestamp 类型会有问题（导致查询不到结果），故将日期全部转为字符串比较
-        final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
+        // 对于 SQLite 而言，使用 Timestamp 类型会有问题（导致查询不到结果），
+        // 故将日期全部转为字符串比较
+        final DateTimeFormatter formatter =
+                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
         ps.setString(i, parameter.format(formatter));
     }
 

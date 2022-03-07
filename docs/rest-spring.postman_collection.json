@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"accountName\": \"  管理员   \",\n  \"accountPassword\": \" 123  \"\n}",
+							"raw": "{\n    \"accountName\": \"  管理员   \",\n    \"accountPassword\": \" 123  \"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -48,7 +48,7 @@
 								"access_token"
 							]
 						},
-						"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"accountName\": \"user\", // 账号名称，必填\n  \"accountPassword\": \"passw0rd\" // 账号密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"\", // 用于访问 API 的 Token，即用于请求头 `Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+						"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"accountName\": \"user\", // 账号名称，必填\n  \"accountPassword\": \"passw0rd\" // 账号密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"\", // 用于 API 鉴权的 Token，即用于请求头 `Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
 					},
 					"response": []
 				},
@@ -124,7 +124,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"oldPassword\": \" 1231 \",\n  \"newPassword\": \" 123 \"\n}",
+							"raw": "{\n    \"oldPassword\": \" 1231 \",\n    \"newPassword\": \" 123 \"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -143,7 +143,7 @@
 								"password"
 							]
 						},
-						"description": "# 请求参数\n\n需要修改密码的用户ID已在URL路径中指明。\n\nJSON请求体：\n\n```json\n{\n  \"oldPassword\": \"\", // 旧密码，必填\n  \"newPassword\": \"\", // 新密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 修改密码操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+						"description": "# 请求参数\n\n需要修改密码的用户 ID 已在 URL 路径中指明。\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"\", // 旧密码，必填\n  \"newPassword\": \"\", // 新密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 修改密码操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
 					},
 					"response": []
 				}
@@ -241,7 +241,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"enabled\": 1,\n  \"username\": \" test \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,,,user  \"\n}",
+									"raw": "{\n    \"enabled\": 1,\n    \"username\": \" test \",\n    \"password\": \"123\",\n    \"roles\": \"  admin,,,user  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -260,7 +260,7 @@
 										"add"
 									]
 								},
-								"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"username\": \"\", // 用户名，必填\n  \"password\": \"\", // 登录密码，必填\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 新增用户数\n    \"message\": \"\" // 新增操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"username\": \"\", // 用户名，必填\n  \"password\": \"\", // 登录密码，必填\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 新增用户数\n    \"message\": \"\" // 新增操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
 							},
 							"response": []
 						},
@@ -288,7 +288,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"password\": \"123\",\n  \"roles\": \"  admin,,user  \"\n}",
+									"raw": "{\n    \"password\": \"123\",\n    \"roles\": \"  admin,,user  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -308,7 +308,7 @@
 										"15"
 									]
 								},
-								"description": "# 请求参数\n\n在 URL 路径中指明需要更新的用户 ID。\n\nJSON请求体：\n\n```json\n{\n  \"password\": \"\", // 重置后的新密码\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 更新操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\n在 URL 路径中指明需要更新的用户 ID。\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"\", // 重置后的新密码\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 更新操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
 							},
 							"response": []
 						},

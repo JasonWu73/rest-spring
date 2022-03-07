@@ -2,8 +2,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.wuxianjie.web.mapper.UserMapper">
-    <select id="findById" resultType="User">
+<mapper namespace="net.wuxianjie.web.user.UserMapper">
+    <select id="findById" resultType="net.wuxianjie.web.user.User">
         SELECT user_id         AS userId,
                is_enabled      AS enabled,
                username,
@@ -13,7 +13,7 @@
         WHERE user_id = #{userId}
     </select>
 
-    <select id="findByUsername" resultType="User">
+    <select id="findByUsername" resultType="net.wuxianjie.web.user.User">
         SELECT user_id         AS userId,
                is_enabled      AS enabled,
                username,
@@ -23,15 +23,14 @@
         WHERE username = #{username}
     </select>
 
-    <select id="findByPagination" resultType="User">
+    <select id="findByPagination" resultType="net.wuxianjie.web.user.User">
         SELECT
         user_id AS userId,
         STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-        is_enabled      AS enabled,
+        is_enabled AS enabled,
         username,
         IFNULL(roles, '') AS roles
-        FROM
-        user
+        FROM user
         <where>
             <if test="username != null">
                 username LIKE #{username}
@@ -44,8 +43,7 @@
     <select id="countByUsername" resultType="int">
         SELECT
         COUNT(1)
-        FROM
-        user
+        FROM user
         <where>
             <if test="username != null">
                 username LIKE #{username}
@@ -68,7 +66,9 @@
         UPDATE user
         <set>
             modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            <if test="password != null">hashed_password = #{hashedPassword},</if>
+            <if test="password != null">
+                hashed_password = #{hashedPassword},
+            </if>
             <if test="roles != null">roles = #{roles}</if>
         </set>
         WHERE user_id = #{userId}

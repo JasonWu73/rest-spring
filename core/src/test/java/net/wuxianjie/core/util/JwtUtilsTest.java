@@ -3,6 +3,7 @@ package net.wuxianjie.core.util;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.core.shared.util.JwtUtils;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
@@ -50,7 +51,8 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        final Map<String, Object> payload = JwtUtils.verifyAndParseToken(secretKey, token);
+        final Map<String, Object> payload =
+                JwtUtils.verifyAndParseToken(secretKey, token);
 
         final String username = (String) payload.get(USERNAME_KEY);
 
