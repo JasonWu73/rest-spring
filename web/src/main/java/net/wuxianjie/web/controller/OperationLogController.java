@@ -35,8 +35,8 @@ public class OperationLogController {
      * 获取操作日志分页数据
      *
      * @param pagination 分页条件
-     * @param startDate  开始日期（包含），必填，格式为 yyyy-MM-dd，例如：2022-02-10
-     * @param endDate    结束日期（包含），必填，格式为 yyyy-MM-dd，例如：2022-02-12
+     * @param startDate  开始日期（包含），格式为 yyyy-MM-dd，例如：2022-02-10
+     * @param endDate    结束日期（包含），格式为 yyyy-MM-dd，例如：2022-02-12
      * @return 操作日志分页数据
      */
     @Admin
