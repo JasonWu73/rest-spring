@@ -4,8 +4,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.core.constant.YesOrNo;
 import net.wuxianjie.core.validator.EnumValidator;
-import net.wuxianjie.core.validator.group.Group1;
-import net.wuxianjie.core.validator.group.Group2;
+import net.wuxianjie.core.validator.group.Save;
+import net.wuxianjie.core.validator.group.Update;
 import net.wuxianjie.web.model.User;
 import org.hibernate.validator.constraints.Length;
 
@@ -27,14 +27,14 @@ public class UserDto {
      *
      * <p>详见：{@link net.wuxianjie.core.constant.YesOrNo}</p>
      */
-    @NotNull(message = "启用状态不能为空", groups = Group1.class)
+    @NotNull(message = "启用状态不能为空", groups = Save.class)
     @EnumValidator(message = "启用状态错误", value = YesOrNo.class)
     private Integer enabled;
 
     /**
      * 用户名
      */
-    @NotBlank(message = "用户名不能为空", groups = Group1.class)
+    @NotBlank(message = "用户名不能为空", groups = Save.class)
     @Length(message = "用户名长度需在 2 到 25 个字符之间", min = 2, max = 25)
     @Pattern(message = "用户名只能包含汉字、字母、数字和下划线",
             regexp = "^[\\u4E00-\\u9FA5A-Za-z0-9_]{2,}$")
@@ -43,7 +43,7 @@ public class UserDto {
     /**
      * 登录密码
      */
-    @NotBlank(message = "密码不能为空", groups = Group1.class)
+    @NotBlank(message = "密码不能为空", groups = Save.class)
     @Length(message = "密码长度需在 3 到 25 个字符之间", min = 3, max = 25)
     private String password;
 
@@ -52,14 +52,14 @@ public class UserDto {
     /**
      * 旧密码
      */
-    @NotBlank(message = "旧密码不能为空", groups = Group2.class)
+    @NotBlank(message = "旧密码不能为空", groups = Update.class)
     @Length(message = "密码长度需在 3 到 25 个字符之间", min = 3, max = 25)
     private String oldPassword;
 
     /**
      * 新密码
      */
-    @NotBlank(message = "新密码不能为空", groups = Group2.class)
+    @NotBlank(message = "新密码不能为空", groups = Update.class)
     @Length(message = "密码长度需在 3 到 25 个字符之间", min = 3, max = 25)
     private String newPassword;
 

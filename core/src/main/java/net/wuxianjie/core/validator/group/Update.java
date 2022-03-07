@@ -5,5 +5,5 @@ import javax.validation.groups.Default;
 /**
  * 校验分组
  */
-public interface Group1 extends Default {
+public interface Update extends Default {
 }

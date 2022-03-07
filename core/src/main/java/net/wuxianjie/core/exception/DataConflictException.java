@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
  * 表示因数据已存在而导致操作失败，对应 409 HTTP 状态。
  * 常用于因唯一值约束条件而重复创建数据时抛出
  */
-public class DataConflictException extends RuntimeException {
+public class DataConflictException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.CONFLICT;

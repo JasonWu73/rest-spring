@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 表示 Token 身份认证失败的异常，对应 401 HTTP 状态码
  */
-public class TokenAuthenticationException extends RuntimeException {
+public class TokenAuthenticationException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.UNAUTHORIZED;

@@ -2,10 +2,8 @@ package net.wuxianjie.core.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.core.dto.ResponseDto;
-import net.wuxianjie.core.exception.BadRequestException;
-import net.wuxianjie.core.exception.DataConflictException;
+import net.wuxianjie.core.exception.AbstractBaseException;
 import net.wuxianjie.core.exception.InternalServerException;
-import net.wuxianjie.core.exception.TokenAuthenticationException;
 import net.wuxianjie.core.util.ResponseDtoWrapper;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -208,9 +206,9 @@ public class ControllerExceptionHandler {
         );
     }
 
-    @ExceptionHandler(TokenAuthenticationException.class)
-    public ResponseEntity<ResponseDto<Void>> handleTokenAuthenticationException(
-            final TokenAuthenticationException e,
+    @ExceptionHandler(AbstractBaseException.class)
+    public ResponseEntity<ResponseDto<Void>> handleAbstractBaseException(
+            final AbstractBaseException e,
             final WebRequest request
     ) {
         final Throwable cause = e.getCause();
@@ -220,40 +218,6 @@ public class ControllerExceptionHandler {
         } else {
             log.warn("HTTP 请求【{}】-> {}：{}", request, e.getMessage(), cause.getMessage());
         }
-
-        if (isNotJsonResponse(request)) {
-            return new ResponseEntity<>(null, e.getHttpStatus());
-        }
-
-        return new ResponseEntity<>(
-                ResponseDtoWrapper.fail(e.getMessage()),
-                e.getHttpStatus()
-        );
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ResponseDto<Void>> handleBadRequestException(
-            final BadRequestException e,
-            final WebRequest request
-    ) {
-        log.warn("HTTP 请求【{}】-> {}", request, e.getMessage());
-
-        if (isNotJsonResponse(request)) {
-            return new ResponseEntity<>(null, e.getHttpStatus());
-        }
-
-        return new ResponseEntity<>(
-                ResponseDtoWrapper.fail(e.getMessage()),
-                e.getHttpStatus()
-        );
-    }
-
-    @ExceptionHandler(DataConflictException.class)
-    public ResponseEntity<ResponseDto<Void>> handleDataConflictException(
-            final DataConflictException e,
-            final WebRequest request
-    ) {
-        log.warn("HTTP 请求【{}】-> {}", request, e.getMessage());
 
         if (isNotJsonResponse(request)) {
             return new ResponseEntity<>(null, e.getHttpStatus());

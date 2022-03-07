@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 表示因程序内部问题才导致服务不可用的异常，对应 500 HTTP 状态码
  */
-public class InternalServerException extends RuntimeException {
+public class InternalServerException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;

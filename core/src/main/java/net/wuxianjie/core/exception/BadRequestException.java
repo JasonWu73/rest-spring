@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
  * 表示因客户端请求有误才导致服务不可用，对应 400 HTTP 状态码。
  * 常用于参数校验失败时抛出异常
  */
-public class BadRequestException extends RuntimeException {
+public class BadRequestException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

@@ -6,6 +6,7 @@ import net.wuxianjie.core.dto.PaginationDto;
 import net.wuxianjie.core.dto.PaginationQueryDto;
 import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.exception.DataConflictException;
+import net.wuxianjie.core.exception.NotFoundException;
 import net.wuxianjie.core.util.StringUtils;
 import net.wuxianjie.web.dto.UserDto;
 import net.wuxianjie.web.dto.Wrote2DbDto;
@@ -87,7 +88,7 @@ public class UserServiceImpl implements UserService {
         final User user = userMapper.findById(userToUpdate.getUserId());
 
         if (user == null) {
-            throw new BadRequestException("用户 ID 不存在");
+            throw new NotFoundException("用户 ID 不存在");
         }
 
         // 判断用户数据是否需要更新，记录更新日志，并将不需要更新的数据设置为 null
@@ -147,7 +148,7 @@ public class UserServiceImpl implements UserService {
         final User user = userMapper.findById(userId);
 
         if (user == null) {
-            throw new BadRequestException("用户 ID 不存在");
+            throw new NotFoundException("用户 ID 不存在");
         }
 
         // 删除数据库中的指定用户

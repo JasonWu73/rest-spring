@@ -10,8 +10,8 @@ import net.wuxianjie.core.dto.PrincipalDto;
 import net.wuxianjie.core.exception.BadRequestException;
 import net.wuxianjie.core.service.AuthenticationFacade;
 import net.wuxianjie.core.util.StringUtils;
-import net.wuxianjie.core.validator.group.Group1;
-import net.wuxianjie.core.validator.group.Group2;
+import net.wuxianjie.core.validator.group.Save;
+import net.wuxianjie.core.validator.group.Update;
 import net.wuxianjie.web.dto.UserDto;
 import net.wuxianjie.web.dto.Wrote2DbDto;
 import net.wuxianjie.web.service.UserService;
@@ -62,7 +62,7 @@ public class UserController {
      */
     @Admin
     @PostMapping("add")
-    public Wrote2DbDto saveUser(@RequestBody @Validated(Group1.class) final UserDto userToAdd) {
+    public Wrote2DbDto saveUser(@RequestBody @Validated(Save.class) final UserDto userToAdd) {
         // 处理角色字符串：去重、转小写，再以英文逗号作分隔符拼接为符合要求的角色字符串
         final String roles = toDeduplicateLowerCaseCommaSeparatedRoles(userToAdd.getRoles());
         userToAdd.setRoles(roles);
@@ -111,7 +111,7 @@ public class UserController {
      */
     @PostMapping("password")
     public Wrote2DbDto updatePassword(
-            @RequestBody @Validated(Group2.class) final UserDto passwordToUpdate
+            @RequestBody @Validated(Update.class) final UserDto passwordToUpdate
     ) {
         // 获取当前登录用户
         final PrincipalDto principal = authentication.getPrincipal();
