@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 // 按顺序比较
-                .antMatchers("/access_token", "/refresh_token/{\\.+}")
+                .antMatchers("/api/v1/access_token", "/api/v1/refresh_token/{\\.+}")
                 .permitAll() // principal 为 "anonymous"
                 .antMatchers(paths)
                 .permitAll()

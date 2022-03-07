@@ -20,4 +20,4 @@ mybatis:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 core:
   jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-  allowed-ant-paths: /auth-resource/public
+  allowed-ant-paths: /api/v1/auth-resource/public

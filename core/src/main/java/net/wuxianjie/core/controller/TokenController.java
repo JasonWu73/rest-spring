@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.NotBlank;
 
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenController {
 
@@ -22,7 +23,7 @@ public class TokenController {
      * @param query 请求参数
      * @return Token
      */
-    @PostMapping("/access_token")
+    @PostMapping("access_token")
     public TokenDto getToken(@RequestBody @Validated final Query query) {
         return tokenService.getToken(query.getAccountName(), query.getAccountPassword());
     }
@@ -33,7 +34,7 @@ public class TokenController {
      * @param refreshToken 用于刷新的 Refresh Token，必填
      * @return Token
      */
-    @GetMapping("/refresh_token/{refreshToken}")
+    @GetMapping("refresh_token/{refreshToken}")
     public TokenDto updateToken(@PathVariable final String refreshToken) {
         return tokenService.refreshToken(refreshToken);
     }

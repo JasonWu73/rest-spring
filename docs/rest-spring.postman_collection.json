@@ -38,11 +38,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/access_token",
+							"raw": "{{host}}/api/v1/access_token",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"access_token"
 							]
 						},
@@ -78,11 +80,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/refresh_token/{{refreshToken}}",
+							"raw": "{{host}}/api/v1/refresh_token/{{refreshToken}}",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"refresh_token",
 								"{{refreshToken}}"
 							]
@@ -128,11 +132,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/user/password",
+							"raw": "{{host}}/api/v1/user/password",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"user",
 								"password"
 							]
@@ -179,11 +185,13 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/user/list?pageNo=0&pageSize=10&username=   ",
+									"raw": "{{host}}/api/v1/user/list?pageNo=0&pageSize=10&username=   ",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
+										"api",
+										"v1",
 										"user",
 										"list"
 									],
@@ -233,7 +241,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"username\": \" test \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,,,user  \"\n}",
+									"raw": "{\n  \"enabled\": 1,\n  \"username\": \" test \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,,,user  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -241,11 +249,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user/add",
+									"raw": "{{host}}/api/v1/user/add",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
+										"api",
+										"v1",
 										"user",
 										"add"
 									]
@@ -286,11 +296,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user/update/15",
+									"raw": "{{host}}/api/v1/user/update/15",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
+										"api",
+										"v1",
 										"user",
 										"update",
 										"15"
@@ -335,11 +347,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/user/del/15",
+									"raw": "{{host}}/api/v1/user/del/15",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
+										"api",
+										"v1",
 										"user",
 										"del",
 										"15"
@@ -384,11 +398,13 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/operation-log/list?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-03-07",
+									"raw": "{{host}}/api/v1/operation-log/list?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-03-07",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
+										"api",
+										"v1",
 										"operation-log",
 										"list"
 									],
@@ -450,11 +466,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/auth-resource/public",
+							"raw": "{{host}}/api/v1/auth-resource/public",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"auth-resource",
 								"public"
 							]
@@ -492,11 +510,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/auth-resource/guest",
+							"raw": "{{host}}/api/v1/auth-resource/guest",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"auth-resource",
 								"guest"
 							]
@@ -534,11 +554,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/auth-resource/user",
+							"raw": "{{host}}/api/v1/auth-resource/user",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"auth-resource",
 								"user"
 							]
@@ -576,11 +598,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/auth-resource/admin",
+							"raw": "{{host}}/api/v1/auth-resource/admin",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"auth-resource",
 								"admin"
 							]
@@ -618,11 +642,13 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/auth-resource/user-or-admin",
+							"raw": "{{host}}/api/v1/auth-resource/user-or-admin",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
+								"api",
+								"v1",
 								"auth-resource",
 								"user-or-admin"
 							]

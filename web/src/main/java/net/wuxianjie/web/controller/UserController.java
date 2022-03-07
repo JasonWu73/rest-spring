@@ -27,7 +27,7 @@ import java.util.List;
  * 用户管理
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 

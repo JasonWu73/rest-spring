@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Validated
 @RestController
-@RequestMapping("/operation-log")
+@RequestMapping("/api/v1/operation-log")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogController {
 

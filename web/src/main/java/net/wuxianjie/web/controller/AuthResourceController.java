@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 测试 Token 认证是否有效
  */
 @RestController
-@RequestMapping("/auth-resource")
+@RequestMapping("/api/v1/auth-resource")
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthResourceController {
 
