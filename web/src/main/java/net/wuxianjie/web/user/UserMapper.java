@@ -1,6 +1,6 @@
 package net.wuxianjie.web.user;
 
-import net.wuxianjie.core.shared.pagination.PaginationQueryDto;
+import net.wuxianjie.core.paging.PagingQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -9,22 +9,24 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    User findById(int userId);
+    User findById(@Param("id") int userId);
 
-    User findByUsername(String username);
+    User findUserByUsername(String username);
 
-    List<User> findByPagination(
-            @Param("page") PaginationQueryDto pagination,
+    List<User> findByUsernameLimitModifyTimeDesc(
+            @Param("p") PagingQuery paging,
             @Param("username") String fuzzyUsername
     );
 
-    int countByUsername(String fuzzyUsername);
+    int countByUsername(@Param("username") String fuzzyUsername);
 
-    int add(UserDto userToAdd);
+    boolean existsUsername(String username);
 
-    int update(UserDto userToUpdate);
+    int add(User userToAdd);
 
-    int updatePasswordById(int userId, String hashedPassword);
+    int update(User userToUpdate);
 
-    int deleteById(int userId);
+    int updatePasswordById(@Param("id") int userId, String hashedPassword);
+
+    int deleteById(@Param("id") int userId);
 }

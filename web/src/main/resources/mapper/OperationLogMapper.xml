@@ -3,32 +3,34 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
-    <select id="findByPagination"
-            resultType="net.wuxianjie.web.operationlog.OperationLog"
-    >
+    <select id="findByStartEndTimeLimitTimeDesc" resultType="net.wuxianjie.web.operationlog.OperationLog">
         SELECT operation_log_id AS operationLogId,
                operation_time   AS operationTime,
                user_id             userId,
                username,
                message
         FROM operation_log
-        WHERE operation_time &gt;= #{startTime}
-          AND operation_time &lt;= #{endTime}
+        WHERE operation_time &gt;= #{start}
+          AND operation_time &lt;= #{end}
         ORDER BY operation_time DESC
-        LIMIT #{page.offset}, #{page.pageSize}
+        LIMIT #{p.offset}, #{p.pageSize}
     </select>
 
     <select id="countByStartEndTime" resultType="int">
         SELECT COUNT(1)
         FROM operation_log
-        WHERE operation_time &gt;= #{startTime}
-          AND operation_time &lt;= #{endTime}
+        WHERE operation_time &gt;= #{start}
+          AND operation_time &lt;= #{end}
     </select>
 
     <insert id="add">
         INSERT INTO operation_log (operation_time,
-                                   user_id, username, message)
+                                   user_id,
+                                   username,
+                                   message)
         VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
-                #{userId}, #{username}, #{message})
+                #{userId},
+                #{username},
+                #{message})
     </insert>
 </mapper>

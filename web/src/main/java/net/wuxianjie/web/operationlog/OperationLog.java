@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class OperationLog {
 
     /**
-     * 操作日志 ID
+     * 操作日志表 ID
      */
     private Integer operationLogId;
 
@@ -35,7 +35,13 @@ public class OperationLog {
     private String username;
 
     /**
-     * 操作的详细内容
+     * 具体的操作消息。例如：
+     *
+     * <ul>
+     *     <li>新增 xxx 数据【ID：xxx，标识名：xxx】</li>
+     *     <li>删除 xxx 数据【ID：xxx，标识名：xxx】</li>
+     *     <li>修改 xxx 数据【ID：xxx，标识名：xxx】，将【xxx】修改为【xxx】</li>
+     * </ul>
      */
     private String message;
 }

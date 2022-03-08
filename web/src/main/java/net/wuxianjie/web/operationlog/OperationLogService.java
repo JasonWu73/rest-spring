@@ -1,11 +1,10 @@
 package net.wuxianjie.web.operationlog;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.rest.auth.AuthenticationFacade;
-import net.wuxianjie.core.rest.auth.dto.PrincipalDto;
-import net.wuxianjie.core.shared.pagination.PaginationDto;
-import net.wuxianjie.core.shared.pagination.PaginationQueryDto;
+import net.wuxianjie.core.paging.PagingData;
+import net.wuxianjie.core.paging.PagingQuery;
+import net.wuxianjie.core.security.AuthenticationFacade;
+import net.wuxianjie.core.security.TokenUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,63 +13,48 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * 操作日志
+ */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogService {
 
     private final OperationLogMapper logMapper;
-    private final AuthenticationFacade authentication;
+    private final AuthenticationFacade authenticationFacade;
 
-    public PaginationDto<List<OperationLogDto>> getOperationLogs(
-            @NonNull final PaginationQueryDto pagination,
-            @NonNull final LocalDateTime startTime,
-            @NonNull final LocalDateTime endTime
+    public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
+            PagingQuery paging,
+            LocalDateTime startTimeInclusive,
+            LocalDateTime endTimeInclusive
     ) {
-        // 获取分页数据
-        final List<OperationLog> logs = logMapper
-                .findByPagination(pagination, startTime, endTime);
-        final int total = logMapper.countByStartEndTime(startTime, endTime);
+        List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
+                paging,
+                startTimeInclusive,
+                endTimeInclusive
+        );
 
-        // 构造 DTO
-        final List<OperationLogDto> logList = logs.stream()
-                .map(OperationLogDto::new)
+        int total = logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
+
+        List<ListItemOfOperationLog> logList = logs.stream()
+                .map(ListItemOfOperationLog::new)
                 .collect(Collectors.toList());
 
-        // 返回分页结果
-        return new PaginationDto<>(
-                total,
-                pagination.getPageNo(),
-                pagination.getPageSize(),
-                logList
-        );
+        return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(), logList);
     }
 
-    /**
-     * 新增操作日志
-     *
-     * @param operationTime 操作的时间
-     * @param message       需指明具体操作内容，如新增或删除了什么、将什么修改为什么
-     */
     @Transactional(rollbackFor = Exception.class)
-    public void saveOperationLog(
-            @NonNull final LocalDateTime operationTime,
-            @NonNull final String message
-    ) {
-        // 获取当前用户信息
-        final PrincipalDto principal = authentication.getPrincipal();
-        final Integer userId = principal.getAccountId();
-        final String username = principal.getAccountName();
+    public void addNewOperationLog(LocalDateTime operationTime, String message) {
+        TokenUserDetails userDetails = authenticationFacade.getCurrentLoggedInUserDetails();
 
-        // 生成日志数据
-        final OperationLog logToAdd = new OperationLog(
+        OperationLog logToAdd = new OperationLog(
                 null,
                 operationTime,
-                userId,
-                username,
+                userDetails.getAccountId(),
+                userDetails.getAccountName(),
                 message
         );
 
-        // 入库
         logMapper.add(logToAdd);
     }
 }

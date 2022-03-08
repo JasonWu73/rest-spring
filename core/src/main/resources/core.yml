@@ -1,4 +1,4 @@
 core:
-  auth:
+  security:
     jwt-signing-key:
-    allowed-ant-paths:
+    permit-all-ant-patterns:

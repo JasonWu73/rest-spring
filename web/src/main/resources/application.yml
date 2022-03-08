@@ -1,4 +1,4 @@
-# 部署时，将 `application.yml` 放于与 Jar 同级目录的 `config` 子目录下
+# 部署时，将 application.yml 放于与 Jar 同级目录的 config 子目录下
 server:
   # HTTP 服务监听端口
   port: 8080
@@ -18,6 +18,6 @@ mybatis:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 core:
-  auth:
+  security:
     jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-    allowed-ant-paths: /api/v1/auth-resource/public
+    permit-all-ant-patterns: /api/v1/auth-test/public

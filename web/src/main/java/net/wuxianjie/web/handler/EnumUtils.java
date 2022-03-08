@@ -2,28 +2,24 @@ package net.wuxianjie.web.handler;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EnumUtils {
 
     /**
-     * 从指定值解析为枚举值
+     * 将 Integer 值解析为枚举值
      *
-     * @param val 值
-     * @return 若没有找到则为 {@code null}
+     * @param val Integer 值
+     * @return 枚举值，若无法解析则返回 null
      */
-    public static <E extends Enum<?> & ValueEnum> E resolve(
-            @NonNull final Class<E> enumClass,
-            final Integer val
-    ) {
-        if (val == null) {
+    public static <E extends Enum<?> & ValueEnum> E resolve(Class<E> enumClass, Integer val) {
+        if (enumClass == null || val == null) {
             return null;
         }
 
-        final E[] enumConstants = enumClass.getEnumConstants();
+        E[] enumConstants = enumClass.getEnumConstants();
 
-        for (final E e : enumConstants) {
+        for (E e : enumConstants) {
             if (e.value() == val) {
                 return e;
             }

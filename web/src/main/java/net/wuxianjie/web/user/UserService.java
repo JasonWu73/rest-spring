@@ -1,15 +1,17 @@
 package net.wuxianjie.web.user;
 
-import lombok.NonNull;
+import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.shared.Wrote2DbDto;
-import net.wuxianjie.core.shared.exception.BadRequestException;
-import net.wuxianjie.core.shared.exception.DataConflictException;
-import net.wuxianjie.core.shared.exception.NotFoundException;
-import net.wuxianjie.core.shared.pagination.PaginationDto;
-import net.wuxianjie.core.shared.pagination.PaginationQueryDto;
-import net.wuxianjie.core.shared.util.StringUtils;
+import net.wuxianjie.core.exception.BadRequestException;
+import net.wuxianjie.core.exception.DataConflictException;
+import net.wuxianjie.core.exception.NotFoundException;
+import net.wuxianjie.core.paging.PagingData;
+import net.wuxianjie.core.paging.PagingQuery;
+import net.wuxianjie.core.shared.Written2Db;
+import net.wuxianjie.core.util.StringUtils;
+import net.wuxianjie.web.handler.EnumUtils;
 import net.wuxianjie.web.operationlog.OperationLogService;
+import net.wuxianjie.web.shared.YesOrNo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,190 +30,194 @@ public class UserService {
     private final OperationLogService logService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto getUser(@NonNull final String username) {
-        final User user = userMapper.findByUsername(username);
-        return new UserDto(user);
+    public ManagementOfUser getUser(String username) {
+        User user = userMapper.findUserByUsername(username);
+        return new ManagementOfUser(user);
     }
 
-    public PaginationDto<List<UserDto>> getUsers(
-            @NonNull final PaginationQueryDto pagination,
-            final String fuzzyUsername
-    ) {
-        // 获取分页数据
-        final List<User> users = userMapper
-                .findByPagination(pagination, fuzzyUsername);
-        final int total = userMapper.countByUsername(fuzzyUsername);
+    public PagingData<List<ManagementOfUser>> getUsers(PagingQuery paging, String fuzzyUsername) {
+        List<User> users = userMapper.findByUsernameLimitModifyTimeDesc(paging, fuzzyUsername);
 
-        // 构造 DTO
-        final List<UserDto> userList = users.stream()
-                .map(UserDto::new)
+        int total = userMapper.countByUsername(fuzzyUsername);
+
+        List<ManagementOfUser> userList = users.stream()
+                .map(ManagementOfUser::new)
                 .collect(Collectors.toList());
 
-        // 返回分页数据对象
-        return new PaginationDto<>(
-                total,
-                pagination.getPageNo(),
-                pagination.getPageSize(),
-                userList
-        );
+        return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(), userList);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2DbDto saveUser(@NonNull final UserDto userToAdd) {
-        // 校验是否已存在同名用户
-        final int count = userMapper.countByUsername(userToAdd.getUsername());
+    public Written2Db addNewUser(ManagementOfUser userToAdd) {
+        validateUsernameUniqueness(userToAdd.getUsername());
 
-        if (count > 0) {
-            throw new DataConflictException("已存在相同用户名");
-        }
+        String hashedPassword = passwordEncoder.encode(userToAdd.getPassword());
 
-        // 将明文密码编码为哈希值
-        final String hashedPassword =
-                passwordEncoder.encode(userToAdd.getPassword());
         userToAdd.setPassword(hashedPassword);
 
-        // 在数据库中添加用户数据
-        final int addedNum = userMapper.add(userToAdd);
+        User userToAddDb = createUserToAddDb(userToAdd);
 
-        // 记录操作日志
-        final String logMessage =
-                String.format("新增用户【%s】", userToAdd.getUsername());
-        logService.saveOperationLog(LocalDateTime.now(), logMessage);
+        int addedNum = userMapper.add(userToAddDb);
 
-        // 返回入库结果
-        return new Wrote2DbDto(addedNum, "新增用户成功");
+        String logMessage = String.format("新增用户数据【ID：%s, 用户名：%s】",
+                userToAddDb.getUserId(),
+                userToAddDb.getUsername()
+        );
+
+        logService.addNewOperationLog(LocalDateTime.now(), logMessage);
+
+        return new Written2Db(addedNum, "新增用户成功");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2DbDto updateUser(@NonNull final UserDto userToUpdate) {
-        // 检查用户是否存在
-        final User user = userMapper.findById(userToUpdate.getUserId());
+    public Written2Db updateUser(ManagementOfUser userToUpdate) {
+        User userToUpdateDb = getUserFromDbMustBeExists(userToUpdate.getUserId());
 
-        if (user == null) {
-            throw new NotFoundException("用户 ID 不存在");
-        }
-
-        // 判断用户数据是否需要更新，记录更新日志，并将不需要更新的数据设置为 null
-        final List<String> logs = new ArrayList<>();
-        final boolean needsUpdate =
-                needsUpdateUserInfo(user, userToUpdate, logs);
+        List<String> logs = new ArrayList<>();
+        boolean needsUpdate = needsUpdateLogsSetNull2Fields(userToUpdateDb, userToUpdate, logs);
 
         if (needsUpdate) {
-            // 更新数据库中的用户数据
-            final int updatedNum = userMapper.update(userToUpdate);
+            int updatedNum = userMapper.update(userToUpdateDb);
 
-            // 记录操作日志
-            final String logMessage = String.format("更新用户信息【%s】",
-                    String.join("；", logs)
-            );
-            logService.saveOperationLog(LocalDateTime.now(), logMessage);
+            String logMessage = String.format("修改用户数据【%s】", String.join("；", logs));
 
-            return new Wrote2DbDto(updatedNum, "更新用户成功");
+            logService.addNewOperationLog(LocalDateTime.now(), logMessage);
+
+            return new Written2Db(updatedNum, "更新用户成功");
         }
 
-        return new Wrote2DbDto(0, "无需更新用户");
+        return new Written2Db(0, "无需更新用户");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2DbDto updatePassword(@NonNull final UserDto passwordToUpdate) {
-        // 检查用户是否存在
-        final User user = userMapper.findById(passwordToUpdate.getUserId());
+    public Written2Db updateUserPassword(ManagementOfUser passwordToUpdate) {
+        Integer userId = passwordToUpdate.getUserId();
+        User userToUpdateDb = getUserFromDbMustBeExists(userId);
+
+        checkOldPassword(passwordToUpdate.getOldPassword(), userToUpdateDb.getHashedPassword());
+
+        String newPassword = passwordToUpdate.getNewPassword();
+        String newHashedPassword = passwordEncoder.encode(newPassword);
+
+        int updatedNum = userMapper.updatePasswordById(userId, newHashedPassword);
+
+        String logMessage = String.format("修改用户【%s】密码", userToUpdateDb.getUsername());
+
+        logService.addNewOperationLog(LocalDateTime.now(), logMessage);
+
+        return new Written2Db(updatedNum, "修改密码成功");
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Written2Db removeUser(int userId) {
+        User userToUpdateDb = getUserFromDbMustBeExists(userId);
+
+        int deletedNum = userMapper.deleteById(userId);
+
+        String logMessage = String.format("删除用户数据【%s】", userToUpdateDb.getUsername());
+
+        logService.addNewOperationLog(LocalDateTime.now(), logMessage);
+
+        return new Written2Db(deletedNum, "删除用户成功");
+    }
+
+    private void validateUsernameUniqueness(String username) {
+        boolean existsUsername = userMapper.existsUsername(username);
+
+        if (existsUsername) {
+            throw new DataConflictException("已存在相同用户名");
+        }
+    }
+
+    private User createUserToAddDb(ManagementOfUser user) {
+        User userToAdd = new User();
+
+        BeanUtil.copyProperties(user, userToAdd, "enabled");
+
+        userToAdd.setEnabled(EnumUtils.resolve(YesOrNo.class, user.getEnabled()));
+
+        return userToAdd;
+    }
+
+    private User getUserFromDbMustBeExists(Integer userId) {
+        User user = userMapper.findById(userId);
 
         if (user == null) {
-            throw new BadRequestException("用户ID不存在");
+            throw new NotFoundException(String.format("用户 ID【%s】不存在", userId));
         }
 
-        // 检查旧密码与库中的密码是否一致
-        final boolean isCorrect = passwordEncoder.matches(
-                passwordToUpdate.getOldPassword(),
-                user.getHashedPassword()
-        );
+        return user;
+    }
 
-        if (!isCorrect) {
+    private boolean needsUpdateLogsSetNull2Fields(
+            User userToUpdateDb,
+            ManagementOfUser userToUpdate,
+            List<String> logs
+    ) {
+        boolean isPasswordChanged = isPasswordChangedLogSetNull(userToUpdateDb, userToUpdate, logs);
+
+        boolean isRolesChanged = isRolesChangedLogSetNull(userToUpdateDb, userToUpdate, logs);
+
+        return isPasswordChanged || isRolesChanged;
+    }
+
+    private void checkOldPassword(String rawPassword, String hashedPassword) {
+        boolean isPasswordCorrect = passwordEncoder.matches(rawPassword, hashedPassword);
+
+        if (!isPasswordCorrect) {
             throw new BadRequestException("旧密码错误");
         }
+    }
 
-        // 将明文新密码编码为哈希值
-        final String hashedNewPassword =
-                passwordEncoder.encode(passwordToUpdate.getNewPassword());
+    private boolean isPasswordChangedLogSetNull(
+            User userToUpdateDb,
+            ManagementOfUser userToUpdate,
+            List<String> logs
+    ) {
+        boolean isChanged = false;
+        String rawPassword = userToUpdate.getPassword();
 
-        // 更新数据库中的用户密码
-        final int updatedNum = userMapper.updatePasswordById(
-                passwordToUpdate.getUserId(),
-                hashedNewPassword
+        boolean isSamePassword = rawPassword != null &&
+                passwordEncoder.matches(rawPassword, userToUpdateDb.getHashedPassword());
+
+        if (rawPassword != null && !isSamePassword) {
+            isChanged = true;
+
+            String hashedPassword = passwordEncoder.encode(rawPassword);
+
+            userToUpdateDb.setHashedPassword(hashedPassword);
+
+            logs.add(String.format("重置用户【%s】密码", userToUpdateDb.getUsername()));
+        } else if (rawPassword != null) {
+            userToUpdateDb.setHashedPassword(null);
+        }
+
+        return isChanged;
+    }
+
+    private boolean isRolesChangedLogSetNull(
+            User userToUpdateDb,
+            ManagementOfUser userToUpdate,
+            List<String> logs
+    ) {
+        boolean isChanged = false;
+        String roles = userToUpdate.getRoles();
+
+        boolean isSameRoles = StringUtils.isEqualsIgnoreNull(
+                roles,
+                userToUpdateDb.getRoles()
         );
 
-        // 记录操作日志
-        final String logMessage =
-                String.format("修改用户【%s】的密码", user.getUsername());
-        logService.saveOperationLog(LocalDateTime.now(), logMessage);
+        if (roles != null && !isSameRoles) {
+            isChanged = true;
 
-        return new Wrote2DbDto(updatedNum, "修改密码成功");
-    }
+            userToUpdateDb.setRoles(roles);
 
-    @Transactional(rollbackFor = Exception.class)
-    public Wrote2DbDto removeUser(final int userId) {
-        // 检查用户是否存在
-        final User user = userMapper.findById(userId);
-
-        if (user == null) {
-            throw new NotFoundException("用户 ID 不存在");
+            logs.add(String.format("将角色【%s】修改为【%s】", userToUpdateDb.getRoles(), roles));
+        } else if (roles != null) {
+            userToUpdateDb.setRoles(null);
         }
 
-        // 删除数据库中的指定用户
-        final int deletedNum = userMapper.deleteById(userId);
-
-        // 记录操作日志
-        final String logMessage =
-                String.format("删除用户【%s】", user.getUsername());
-        logService.saveOperationLog(LocalDateTime.now(), logMessage);
-
-        return new Wrote2DbDto(deletedNum, "删除用户成功");
-    }
-
-    private boolean needsUpdateUserInfo(
-            final User user,
-            final UserDto userToUpdate,
-            final List<String> logs
-    ) {
-        boolean isChange = false;
-        // 判断密码是否需要更改
-        final boolean isSamePassword = userToUpdate.getPassword() != null &&
-                passwordEncoder.matches(
-                        userToUpdate.getPassword(),
-                        user.getHashedPassword()
-                );
-
-        if (userToUpdate.getPassword() != null && !isSamePassword) {
-            isChange = true;
-
-            // 将明文密码编码为哈希值
-            final String hashedPassword =
-                    passwordEncoder.encode(userToUpdate.getPassword());
-            userToUpdate.setHashedPassword(hashedPassword);
-
-            logs.add(String.format("重置用户【%s】的密码", user.getUsername()));
-        } else if (userToUpdate.getPassword() != null) {
-            userToUpdate.setPassword(null);
-        }
-
-        // 判断角色是否需要更改
-        final boolean isSameRoles = StringUtils
-                .isNullEquals(user.getRoles(), userToUpdate.getRoles());
-
-        if (userToUpdate.getRoles() != null && !isSameRoles) {
-            isChange = true;
-
-            logs.add(
-                    String.format("将角色从【%s】修改为【%s】",
-                            user.getRoles(),
-                            userToUpdate.getRoles()
-                    )
-            );
-        } else if (userToUpdate.getRoles() != null) {
-            userToUpdate.setRoles(null);
-        }
-
-        return isChange;
+        return isChanged;
     }
 }

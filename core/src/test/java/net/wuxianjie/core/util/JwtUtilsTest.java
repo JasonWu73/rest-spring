@@ -3,7 +3,6 @@ package net.wuxianjie.core.util;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.core.shared.util.JwtUtils;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
@@ -19,7 +18,7 @@ class JwtUtilsTest {
 
     private static final String USERNAME_KEY = "user";
     private static final String USERNAME_VALUE = "吴仙杰";
-    private static final int EXPIRE_IN_SECONDS = 60;
+    private static final int EXPIRE_IN_SECONDS_VALUE = 60;
 
     private static String secretKey = "";
     private static String token = "";
@@ -27,7 +26,7 @@ class JwtUtilsTest {
     @Test
     @Order(1)
     void generateSecretKeyShouldNotReturnNull() {
-        secretKey = JwtUtils.generateSingingKey();
+        secretKey = JwtUtils.createNewBase64SigningKey();
 
         assertNotNull(secretKey);
 
@@ -37,11 +36,11 @@ class JwtUtilsTest {
     @Test
     @Order(2)
     void generateTokenShouldNotReturnNull() {
-        final Map<String, Object> claims = new HashMap<>() {{
+        Map<String, Object> payload = new HashMap<>() {{
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
-        token = JwtUtils.generateToken(secretKey, claims, EXPIRE_IN_SECONDS);
+        token = JwtUtils.createNewJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
         assertNotNull(token);
 
@@ -51,15 +50,13 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        final Map<String, Object> payload =
-                JwtUtils.verifyAndParseToken(secretKey, token);
-
-        final String username = (String) payload.get(USERNAME_KEY);
+        Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(secretKey, token);
+        String username = (String) payload.get(USERNAME_KEY);
 
         assertEquals(USERNAME_VALUE, username);
 
-        final JSONObject jsonObject = JSONUtil.parseObj(payload);
-        final String json = JSONUtil.toJsonStr(jsonObject, 2);
+        JSONObject jsonObject = JSONUtil.parseObj(payload);
+        String json = JSONUtil.toJsonStr(jsonObject, 4);
 
         log.info("解析 JWT：\n{}", json);
     }
