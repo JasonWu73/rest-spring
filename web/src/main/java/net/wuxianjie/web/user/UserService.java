@@ -90,10 +90,10 @@ public class UserService {
 
             logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
-            return new Wrote2Db(updatedNum, "更新用户成功");
+            return new Wrote2Db(updatedNum, "修改用户成功");
         }
 
-        return new Wrote2Db(0, "无需更新用户");
+        return new Wrote2Db(0, "无需修改用户");
     }
 
     @NonNull
