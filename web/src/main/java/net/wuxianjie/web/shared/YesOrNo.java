@@ -3,7 +3,6 @@ package net.wuxianjie.web.shared;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import net.wuxianjie.web.handler.ValueEnum;
 
 @ToString
 @RequiredArgsConstructor
