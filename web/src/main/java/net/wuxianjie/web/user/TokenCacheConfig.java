@@ -1,4 +1,4 @@
-package net.wuxianjie.web.login;
+package net.wuxianjie.web.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;

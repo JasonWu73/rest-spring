@@ -1,4 +1,4 @@
-package net.wuxianjie.web.login;
+package net.wuxianjie.web.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
@@ -12,8 +12,6 @@ import net.wuxianjie.core.shared.TokenAuthenticationException;
 import net.wuxianjie.core.util.JwtUtils;
 import net.wuxianjie.web.shared.BeanQualifiers;
 import net.wuxianjie.web.shared.YesOrNo;
-import net.wuxianjie.web.user.ManagementOfUser;
-import net.wuxianjie.web.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.lang.NonNull;

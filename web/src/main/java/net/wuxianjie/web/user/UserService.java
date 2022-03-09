@@ -90,10 +90,10 @@ public class UserService {
 
             logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
-            return new Wrote2Db(updatedNum, "更新用户成功");
+            return new Wrote2Db(updatedNum, "修改用户成功");
         }
 
-        return new Wrote2Db(0, "无需更新用户");
+        return new Wrote2Db(0, "无需修改用户");
     }
 
     @NonNull
@@ -125,7 +125,7 @@ public class UserService {
         final int deletedNum = userMapper.deleteById(userId);
 
         final String logMessage = String.format("删除用户数据【ID：%s，用户名：%s】",
-                userToDelete.getUsername(), userToDelete.getUsername());
+                userToDelete.getUserId(), userToDelete.getUsername());
 
         logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
