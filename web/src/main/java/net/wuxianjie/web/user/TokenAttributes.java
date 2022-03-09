@@ -1,4 +1,4 @@
-package net.wuxianjie.web.login;
+package net.wuxianjie.web.user;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

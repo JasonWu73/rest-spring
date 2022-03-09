@@ -1,9 +1,10 @@
-package net.wuxianjie.web.login;
+package net.wuxianjie.web.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.core.security.User;
 import net.wuxianjie.core.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
