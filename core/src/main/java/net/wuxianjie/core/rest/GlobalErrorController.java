@@ -16,6 +16,9 @@ import org.springframework.web.context.request.WebRequest;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * 全局处理未经过 Controller 层的异常。
+ */
 @Slf4j
 @Controller
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,12 +29,9 @@ public class GlobalErrorController implements ErrorController {
     @ResponseBody
     @RequestMapping("/error")
     public ResponseEntity<RestData<Void>> handleError(WebRequest request) {
-        Map<String, Object> errorMap = attributes.getErrorAttributes(
-                request,
-                ErrorAttributeOptions.defaults()
-        );
-        Integer status = (Integer) errorMap.get("status");
-        String error = (String) errorMap.get("error");
+        final Map<String, Object> errorMap = attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        final Integer status = (Integer) errorMap.get("status");
+        final String error = (String) errorMap.get("error");
 
         if (HttpStatus.NOT_FOUND.value() == status) {
             log.warn("全局 404 处理：{}", errorMap);
@@ -44,7 +44,7 @@ public class GlobalErrorController implements ErrorController {
         try {
             httpStatus = Objects.requireNonNull(HttpStatus.resolve(status));
         } catch (NullPointerException e) {
-            log.warn("全局异常处理，无法解析 HTTP 状态码【{}】", status);
+            log.warn("全局异常处理发生异常：无法解析 HTTP 状态码【{}】", status);
 
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }

@@ -5,7 +5,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.springframework.lang.Nullable;
 
+/**
+ * 内置可用的 Spring Security 角色。
+ */
 @Getter
 @ToString
 @RequiredArgsConstructor
@@ -25,13 +29,11 @@ public enum Role {
     @JsonValue
     private final String value;
 
-    /**
-     * 将常量值解析为枚举值，无法解析则返回 null
-     */
+    @Nullable
     public static Role resolve(String value) {
-        for (Role roleEnum : VALUES) {
-            if (roleEnum.value.equals(value)) {
-                return roleEnum;
+        for (Role role : VALUES) {
+            if (role.value.equals(value)) {
+                return role;
             }
         }
 

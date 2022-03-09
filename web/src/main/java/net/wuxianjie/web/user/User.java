@@ -9,7 +9,7 @@ import net.wuxianjie.web.shared.YesOrNo;
 import java.time.LocalDateTime;
 
 /**
- * 用户表
+ * 用户表。
  */
 @Data
 @NoArgsConstructor
@@ -17,39 +17,39 @@ import java.time.LocalDateTime;
 public class User {
 
     /**
-     * 用户表 ID
+     * 用户表 ID。
      */
     private Integer userId;
 
     /**
-     * 记录创建时间
+     * 记录创建时间。
      */
     private LocalDateTime createTime;
 
     /**
-     * 记录修改时间
+     * 记录修改时间。
      */
     private LocalDateTime modifyTime;
 
     /**
-     * 是否已启用：1=启用，0=禁用
+     * 启用状态：1：启用，0：禁用。
      */
     private YesOrNo enabled;
 
     /**
-     * 用户名
+     * 用户名。
      */
     private String username;
 
     /**
-     * 哈希密码
+     * 哈希密码。
      */
     private String hashedPassword;
 
     /**
      * 用户绑定的角色，多个角色以英文逗号分隔。
      *
-     * <p>值为：{@link Role#value()}</p>
+     * @see Role#value()
      */
     private String roles;
 }

@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 分页数据结果。
+ *
+ * @param <T> 数据列表泛型
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

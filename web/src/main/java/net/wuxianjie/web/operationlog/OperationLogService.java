@@ -6,6 +6,7 @@ import net.wuxianjie.core.paging.PagingQuery;
 import net.wuxianjie.core.security.AuthenticationFacade;
 import net.wuxianjie.core.security.TokenUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,20 +24,16 @@ public class OperationLogService {
     private final OperationLogMapper logMapper;
     private final AuthenticationFacade authenticationFacade;
 
-    public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
-            PagingQuery paging,
-            LocalDateTime startTimeInclusive,
-            LocalDateTime endTimeInclusive
-    ) {
-        List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
-                paging,
-                startTimeInclusive,
-                endTimeInclusive
-        );
+    @NonNull
+    public PagingData<List<ListItemOfOperationLog>> getOperationLogs(PagingQuery paging,
+                                                                     LocalDateTime startTimeInclusive,
+                                                                     LocalDateTime endTimeInclusive) {
+        final List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
+                paging, startTimeInclusive, endTimeInclusive);
 
-        int total = logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
+        final int total = logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
 
-        List<ListItemOfOperationLog> logList = logs.stream()
+        final List<ListItemOfOperationLog> logList = logs.stream()
                 .map(ListItemOfOperationLog::new)
                 .collect(Collectors.toList());
 
@@ -45,15 +42,10 @@ public class OperationLogService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addNewOperationLog(LocalDateTime operationTime, String message) {
-        TokenUserDetails userDetails = authenticationFacade.getCurrentLoggedInUserDetails();
+        final TokenUserDetails userDetails = authenticationFacade.getCurrentLoggedInUserDetails();
 
-        OperationLog logToAdd = new OperationLog(
-                null,
-                operationTime,
-                userDetails.getAccountId(),
-                userDetails.getAccountName(),
-                message
-        );
+        final OperationLog logToAdd = new OperationLog(null,
+                operationTime, userDetails.getAccountId(), userDetails.getAccountName(), message);
 
         logMapper.add(logToAdd);
     }

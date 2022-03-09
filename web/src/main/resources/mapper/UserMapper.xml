@@ -23,7 +23,7 @@
         WHERE username = #{username}
     </select>
 
-    <select id="findByUsernameLimitModifyTimeDesc" resultType="net.wuxianjie.web.user.User">
+    <select id="findByUsernameEnabledLimitModifyTimeDesc" resultType="net.wuxianjie.web.user.User">
         SELECT
         user_id AS userId,
         STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
@@ -35,18 +35,24 @@
             <if test="username != null">
                 username LIKE #{username}
             </if>
+            <if test="enabled != null">
+                AND is_enabled = #{enabled}
+            </if>
         </where>
         ORDER BY modify_time DESC
         LIMIT #{p.offset}, #{p.pageSize}
     </select>
 
-    <select id="countByUsername" resultType="int">
+    <select id="countByUsernameEnabled" resultType="int">
         SELECT
         COUNT(1)
         FROM user
         <where>
             <if test="username != null">
                 username LIKE #{username}
+            </if>
+            <if test="enabled != null">
+                AND is_enabled = #{enabled}
             </if>
         </where>
     </select>
@@ -77,7 +83,8 @@
             <if test="hashedPassword != null">
                 hashed_password = #{hashedPassword},
             </if>
-            <if test="roles != null">roles = #{roles}</if>
+            <if test="roles != null">roles = #{roles},</if>
+            <if test="enabled != null">is_enabled = #{enabled}</if>
         </set>
         WHERE user_id = #{userId}
     </update>

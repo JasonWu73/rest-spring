@@ -19,12 +19,10 @@ import java.lang.annotation.Target;
  *         public void test() {
  *     }
  * }
- * } </pre>
+ * }</pre>
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole(" +
-        "T(net.wuxianjie.core.security.Role).ADMIN.value().toUpperCase())"
-)
+@PreAuthorize("hasRole(T(net.wuxianjie.core.security.Role).ADMIN.value().toUpperCase())")
 public @interface Admin {
 }

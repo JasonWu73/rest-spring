@@ -35,7 +35,7 @@ class PasswordEncoderTest {
     @Test
     @Order(2)
     void rawAndEncodedPasswordShouldEqual() {
-        boolean isMatched = passwordEncoder.matches(RAW_PASSWORD, hashedPassword);
+        final boolean isMatched = passwordEncoder.matches(RAW_PASSWORD, hashedPassword);
 
         assertTrue(isMatched);
     }

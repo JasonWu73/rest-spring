@@ -8,29 +8,29 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 /**
- * 用于分页查询的参数
+ * 分页查询参数。
  */
 @Data
 public class PagingQuery {
 
     /**
-     * 页码，从 0 开始
+     * 页码，从 0 开始。
      */
     @NotNull(message = "页码不能为空")
     @Min(message = "页码不能小于 0", value = 0)
     private Integer pageNo;
 
     /**
-     * 每页条数
+     * 每页条数。
      */
     @NotNull(message = "每页条数不能为空")
     @Min(message = "每页条数不能小于 1", value = 1)
     private Integer pageSize;
 
     /**
-     * MySQL、SQLite 等数据库的偏移量 OFFSET
+     * MySQL、SQLite 等数据库的偏移量 OFFSET。
      *
-     * <p>由 {@link PagingParamPaddingAspect} 自动识别方法并调用 {@link #setOffset()} 设置</p>
+     * @see PagingParamPaddingAspect
      */
     @Setter(AccessLevel.NONE)
     private Integer offset;

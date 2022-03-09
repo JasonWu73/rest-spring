@@ -12,31 +12,31 @@ import java.time.LocalDateTime;
 public class ListItemOfOperationLog {
 
     /**
-     * 操作日志 ID
+     * 操作日志 ID。
      */
     private Integer operationLogId;
 
     /**
-     * 操作时间
+     * 操作时间。
      */
     private LocalDateTime operationTime;
 
     /**
-     * 用户 ID，即操作人 ID
+     * 用户 ID，即操作人 ID。
      */
     private Integer userId;
 
     /**
-     * 用户名，即操作人名称
+     * 用户名，即操作人名称。
      */
     private String username;
 
     /**
-     * 具体的操作消息
+     * 具体的操作消息。
      */
     private String message;
 
-    public ListItemOfOperationLog(final OperationLog operationLog) {
+    public ListItemOfOperationLog(OperationLog operationLog) {
         this.operationLogId = operationLog.getOperationLogId();
         this.operationTime = operationLog.getOperationTime();
         this.userId = operationLog.getUserId();

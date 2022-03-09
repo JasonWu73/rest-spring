@@ -3,20 +3,22 @@ package net.wuxianjie.core.util;
 import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.util.Objects;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class StringUtils {
+public class StrUtils {
 
     /**
-     * 去除字符串的首尾空白字符，并转换为支持数据库 LIKE 模糊搜索的字符串 "%str%"
+     * 去除字符串的首尾空白字符，并转换为支持数据库 LIKE 模糊搜索的字符串 {@code %str%}
      *
      * @param str 需要转换的字符串
-     * @return 去除字符串首尾空白字符后形式为 "%str%" 的字符串，当 str 为 null 时则返回 null
+     * @return 去除字符串首尾空白字符后形式为 {@code %str%} 的字符串，当 str 为 null 时则返回 null
      */
+    @Nullable
     public static String generateDbFuzzyStr(String str) {
-        String trimmedStr = StrUtil.trimToNull(str);
+        final String trimmedStr = StrUtil.trimToNull(str);
 
         if (trimmedStr == null) {
             return null;

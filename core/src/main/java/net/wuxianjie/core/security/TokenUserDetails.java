@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 public class TokenUserDetails {
 
     private Integer accountId;
+
     private String accountName;
+
     private String accountRoles;
+
     private String accessToken;
+
     private String refreshToken;
 }

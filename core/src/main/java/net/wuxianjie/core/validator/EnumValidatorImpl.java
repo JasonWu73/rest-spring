@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 实现 {@link EnumValidator} 枚举值校验注解的业务逻辑
+ * 实现 {@link EnumValidator} 枚举值校验注解的业务逻辑。
  */
 @Slf4j
 public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Object> {
@@ -21,11 +21,11 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
     @Override
     public void initialize(EnumValidator constraintAnnotation) {
         values = new ArrayList<>();
-        Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
-        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        final Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
+        final Enum<?>[] enumConstants = enumClass.getEnumConstants();
 
         for (Enum<?> enumValue : enumConstants) {
-            Method valueMethod;
+            final Method valueMethod;
 
             try {
                 valueMethod = enumValue.getClass().getDeclaredMethod("value");
@@ -37,7 +37,7 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
                 break;
             }
 
-            Object value;
+            final Object value;
 
             try {
                 valueMethod.setAccessible(true);

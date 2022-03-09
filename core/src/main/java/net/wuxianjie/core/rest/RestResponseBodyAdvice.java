@@ -13,6 +13,9 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+/**
+ * REST API 响应结果全局处理。
+ */
 @ControllerAdvice
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
@@ -25,28 +28,23 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     }
 
     @Override
-    public Object beforeBodyWrite(
-            Object body,
-            MethodParameter returnType,
-            MediaType selectedContentType,
-            Class<? extends HttpMessageConverter<?>> selectedConverterType,
-            ServerHttpRequest request,
-            ServerHttpResponse response
-    ) {
+    public Object beforeBodyWrite(Object body,
+                                  MethodParameter returnType,
+                                  MediaType selectedContentType,
+                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  ServerHttpRequest request,
+                                  ServerHttpResponse response) {
         if (body instanceof String) {
             try {
-                return objectMapper.writeValueAsString(
-                        RestDataWrapper.success(body)
-                );
+                return objectMapper.writeValueAsString(RestDataWrapper.success(body));
             } catch (JsonProcessingException e) {
-                throw new RuntimeException("统一响应结果处理，JSON 序列化失败", e);
+                throw new RuntimeException("统一响应结果处理时 JSON 序列化失败", e);
             }
         }
 
         if (body instanceof RestData ||
                 body instanceof ResponseEntity ||
-                body instanceof byte[]
-        ) {
+                body instanceof byte[]) {
             return body;
         }
 

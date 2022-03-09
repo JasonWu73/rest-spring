@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 测试 Token 认证是否有效
+ * 测试 Token 认证是否有效。
  */
 @RestController
 @RequestMapping("/api/v1/auth-test")
@@ -25,10 +26,7 @@ public class AuthTestController {
      */
     @GetMapping("public")
     public Result testPublic() {
-        return new Result(
-                "无需 Token 认证即可访问的开放 API",
-                authenticationFacade.getCurrentLoggedInUserDetails().getAccountName()
-        );
+        return new Result("无需 Token 认证即可访问的开放 API", getUsername());
     }
 
     /**
@@ -36,10 +34,7 @@ public class AuthTestController {
      */
     @GetMapping("authenticated")
     public Result testAuthenticated() {
-        return new Result(
-                "只要通过 Token 认证（登录后）即可访问的 API",
-                authenticationFacade.getCurrentLoggedInUserDetails().getAccountName()
-        );
+        return new Result("只要通过 Token 认证（登录后）即可访问的 API", getUsername());
     }
 
     /**
@@ -66,20 +61,19 @@ public class AuthTestController {
     @UserOrAdmin
     @GetMapping("user-or-admin")
     public Result testUserOrAdmin() {
-        return new Result(
-                String.format("通过 Token 认证且必须拥有【%s】或【%s】角色才可访问的 API",
-                        Role.USER.value(),
-                        Role.ADMIN.value()
-                ),
-                authenticationFacade.getCurrentLoggedInUserDetails().getAccountName()
-        );
+        return new Result(String.format("通过 Token 认证且必须拥有【%s】或【%s】角色才可访问的 API",
+                Role.USER.value(), Role.ADMIN.value()), getUsername());
     }
 
     private Result getResult(Role role) {
-        return new Result(
-                String.format("通过 Token 认证且必须拥有【%s】角色才可访问的 API", role.value()),
-                authenticationFacade.getCurrentLoggedInUserDetails().getAccountName()
-        );
+        return new Result(String.format("通过 Token 认证且必须拥有【%s】角色才可访问的 API", role.value()), getUsername());
+    }
+
+    @NonNull
+    private String getUsername() {
+        final String username = authenticationFacade.getCurrentLoggedInUserDetails().getAccountName();
+
+        return username == null ? "未知用户" : username;
     }
 
     @Data

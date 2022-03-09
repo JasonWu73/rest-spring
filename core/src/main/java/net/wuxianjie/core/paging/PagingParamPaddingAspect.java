@@ -6,6 +6,11 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+/**
+ * 自动识别拥有分页查询参数的 Controller 方法，并自动调用填充 OFFSET 参数。
+ *
+ * @see PagingQuery
+ */
 @Aspect
 @Component
 public class PagingParamPaddingAspect {
@@ -20,12 +25,12 @@ public class PagingParamPaddingAspect {
 
     @Before("getByPaging()")
     public void beforeCallGetByPagingMethod(JoinPoint joinpoint) {
-        Object[] args = joinpoint.getArgs();
+        final Object[] args = joinpoint.getArgs();
 
         if (args != null) {
             for (Object arg : args) {
                 if (arg instanceof PagingQuery) {
-                    PagingQuery paging = (PagingQuery) arg;
+                    final PagingQuery paging = (PagingQuery) arg;
 
                     paging.setOffset();
                 }

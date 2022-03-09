@@ -25,16 +25,19 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * 请求与响应数据处理配置。
+ *
  * <ul>
+ *     <li>配置自动去除 URL 及 Form 表单字符串参数的首尾空格</li>
+ *     <li>配置自动去除 JSON 字符串参数的首尾空格</li>
  *     <li>配置 JSON 响应结果的序列化规则</li>
- *     <li>配置自动去除 URL 及 Form 表单参数的首尾空白字符</li>
  * </ul>
  */
 @Configuration
 public class RequestResponseDataConfig {
 
     /**
-     * 定制 JSON 序列化/反序列化行为
+     * 定制 JSON 序列化与反序列化行为。
      */
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
@@ -46,24 +49,18 @@ public class RequestResponseDataConfig {
             builder.timeZone(CommonValues.CHINA_TIME_ZONE);
 
             // 设置 Date 序列化后的日期字符串格式
-            builder.serializers(
-                    new DateSerializer(
-                            false,
-                            new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)
-                    )
-            );
+            builder.serializers(new DateSerializer(false,
+                    new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
 
             // 设置 Java 8 LocalDate 序列化后的日期字符串格式
             builder.serializers(
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT))
-            );
+                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
 
             // 设置 Java 8 LocalDateTime 序列化后的日期时间字符串格式
             builder.serializers(
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT))
-            );
+                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
 
-            // 在序列化时去除字符串首尾空白字符，用于 HTTP Response Content Bean
+            // 在序列化时去除字符串首尾空格
             builder.serializerByType(String.class, new JsonSerializer<String>() {
 
                 @Override
@@ -73,12 +70,11 @@ public class RequestResponseDataConfig {
                 }
             });
 
-            // 在反序列化时去除字符串首尾空格，用于 HTTP Request JSON Data
+            // 在反序列化时去除字符串首尾空格
             builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
 
                 @Override
                 public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    // 去除前后空白字符
                     return StrUtil.trim(p.getValueAsString());
                 }
             });
@@ -86,14 +82,15 @@ public class RequestResponseDataConfig {
     }
 
     /**
-     * 去除通过 URL 或 Form 表单提交的参数的首尾空格
+     * 去除通过 URL 和 Form 表单提交的字符串参数的首尾空格。
      */
     @ControllerAdvice
-    public static class ControllerStringParamTrimConfig {
+    public static class ControllerStrParamTrimConfig {
 
         @InitBinder
         public void initBinder(WebDataBinder binder) {
-            StringTrimmerEditor propertyEditor = new StringTrimmerEditor(false);
+            final StringTrimmerEditor propertyEditor = new StringTrimmerEditor(false);
+
             binder.registerCustomEditor(String.class, propertyEditor);
         }
     }

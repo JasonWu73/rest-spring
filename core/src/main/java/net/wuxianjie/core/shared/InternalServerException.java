@@ -1,8 +1,11 @@
-package net.wuxianjie.core.exception;
+package net.wuxianjie.core.shared;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * 表示因服务器本身原因而引起的操作失败，使用 409 HTTP 状态码。
+ */
 public class InternalServerException extends AbstractBaseException {
 
     @Getter

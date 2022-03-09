@@ -36,7 +36,7 @@ class JwtUtilsTest {
     @Test
     @Order(2)
     void generateTokenShouldNotReturnNull() {
-        Map<String, Object> payload = new HashMap<>() {{
+        final Map<String, Object> payload = new HashMap<>() {{
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
@@ -50,13 +50,13 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(secretKey, token);
-        String username = (String) payload.get(USERNAME_KEY);
+        final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(secretKey, token);
+        final String username = (String) payload.get(USERNAME_KEY);
 
         assertEquals(USERNAME_VALUE, username);
 
-        JSONObject jsonObject = JSONUtil.parseObj(payload);
-        String json = JSONUtil.toJsonStr(jsonObject, 4);
+        final JSONObject jsonObject = JSONUtil.parseObj(payload);
+        final String json = JSONUtil.toJsonStr(jsonObject, 4);
 
         log.info("解析 JWT：\n{}", json);
     }

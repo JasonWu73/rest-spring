@@ -9,7 +9,8 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.core.exception.TokenAuthenticationException;
+import net.wuxianjie.core.shared.TokenAuthenticationException;
+import org.springframework.lang.NonNull;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -19,15 +20,17 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtUtils {
 
+    @NonNull
     public static String createNewBase64SigningKey() {
-        SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+        final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+
         return Encoders.BASE64.encode(secretKey.getEncoded());
     }
 
+    @NonNull
     public static String createNewJwt(String signingKey, Map<String, Object> payload, int expiresInSeconds) {
-        SecretKey secretKey = createNewSecretKey(signingKey);
-
-        DateTime expirationDateTime = DateUtil.offsetSecond(new Date(), expiresInSeconds);
+        final SecretKey secretKey = createNewSecretKey(signingKey);
+        final DateTime expirationDateTime = DateUtil.offsetSecond(new Date(), expiresInSeconds);
 
         return Jwts.builder()
                 .setClaims(payload)
@@ -37,16 +40,17 @@ public class JwtUtils {
                 .compact();
     }
 
+    @NonNull
     public static Map<String, Object> verifyTwtReturnPayload(String signingKey, String jwt) {
         try {
-            SecretKey secretKey = createNewSecretKey(signingKey);
+            final SecretKey secretKey = createNewSecretKey(signingKey);
 
-            Jws<Claims> jws = Jwts.parserBuilder()
+            final Jws<Claims> jws = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
                     .parseClaimsJws(jwt);
 
-            Claims claims = jws.getBody();
+            final Claims claims = jws.getBody();
 
             return toMap(claims);
         } catch (MalformedJwtException e) {
@@ -58,11 +62,14 @@ public class JwtUtils {
         }
     }
 
+    @NonNull
     private static SecretKey createNewSecretKey(String signingKey) {
-        byte[] decodedSigningKey = Decoders.BASE64.decode(signingKey);
+        final byte[] decodedSigningKey = Decoders.BASE64.decode(signingKey);
+
         return Keys.hmacShaKeyFor(decodedSigningKey);
     }
 
+    @NonNull
     private static Map<String, Object> toMap(Claims claims) {
         return new HashMap<>(claims);
     }

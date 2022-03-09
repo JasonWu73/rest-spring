@@ -15,7 +15,7 @@ public class TokenData {
     private Integer expiresIn;
 
     /**
-     * 用于 API 鉴权的 Token，请求头中携带："Authorization: Bearer accessToken"
+     * 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`
      */
     private String accessToken;
 

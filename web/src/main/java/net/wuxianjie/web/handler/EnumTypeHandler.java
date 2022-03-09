@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * MyBatis 处理数据库 int 类型与枚举类的映射规则
+ * MyBatis 处理数据库 int 类型与枚举值的映射规则。
  */
 @NoArgsConstructor
 public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHandler<ValueEnum> {

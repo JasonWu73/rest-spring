@@ -32,9 +32,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String antPatterns = securityConfig.getPermitAllAntPatterns();
-        // 参数：被切分字符串，分隔符逗号，0 表示无限制分片数，去除两边空格，忽略空白项
-        String[] permitAllAntPatterns = StrSplitter.splitToArray(antPatterns, ',', 0, true, true);
+        final String antPatterns = securityConfig.getPermitAllAntPatterns();
+        final String[] permitAllAntPatterns;
+
+        if (antPatterns == null) {
+            permitAllAntPatterns = new String[]{};
+        } else {
+            // 参数：被切分字符串，分隔符逗号，0 表示无限制分片数，去除两边空格，忽略空白项
+            permitAllAntPatterns = StrSplitter.splitToArray(antPatterns, ',', 0, true, true);
+        }
+
 
         http
                 .authorizeRequests()
@@ -42,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/api/v1/access_token",
                         "/api/v1/refresh_token/{\\.+}"
-                ).permitAll() // principal 为 "anonymous"
+                ).permitAll() // principal 为 anonymous
                 .antMatchers(permitAllAntPatterns).permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -52,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     log.warn("Token 认证失败：{}", authException.getMessage());
 
-                    RestData<Void> result = RestDataWrapper.fail("Token 认证失败");
+                    final RestData<Void> result = RestDataWrapper.fail("Token 认证失败");
 
                     response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -64,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler(((request, response, deniedException) -> {
                     log.warn("Token 未授权：{}", deniedException.getMessage());
 
-                    RestData<Void> result = RestDataWrapper.fail("Token 未授权");
+                    final RestData<Void> result = RestDataWrapper.fail("Token 未授权");
 
                     response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
