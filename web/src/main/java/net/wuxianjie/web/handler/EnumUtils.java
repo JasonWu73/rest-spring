@@ -2,6 +2,7 @@ package net.wuxianjie.web.handler;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.web.shared.ValueEnum;
 import org.springframework.lang.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
