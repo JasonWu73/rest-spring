@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * 操作日志表
+ * 操作日志表。
  */
 @Data
 @NoArgsConstructor
@@ -15,27 +15,33 @@ import java.time.LocalDateTime;
 public class OperationLog {
 
     /**
-     * 操作日志 ID
+     * 操作日志表 ID。
      */
     private Integer operationLogId;
 
     /**
-     * 操作时间
+     * 操作时间。
      */
     private LocalDateTime operationTime;
 
     /**
-     * 用户 ID，即操作人 ID
+     * 用户 ID，即操作人 ID。
      */
     private Integer userId;
 
     /**
-     * 用户名，即操作人名称
+     * 用户名，即操作人名称。
      */
     private String username;
 
     /**
-     * 操作的详细内容
+     * 具体的操作消息。例如：
+     *
+     * <ul>
+     *     <li>新增 xxx 数据【ID：xxx，标识名：xxx】</li>
+     *     <li>删除 xxx 数据【ID：xxx，标识名：xxx】</li>
+     *     <li>修改 xxx 数据【ID：xxx，标识名：xxx】：将【xxx】修改为【xxx】</li>
+     * </ul>
      */
     private String message;
 }

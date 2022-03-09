@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * REST API 响应结果的错误码
+ * REST API 服务响应结果的错误码。
  */
 @Getter
 @ToString
@@ -16,12 +16,12 @@ import lombok.experimental.Accessors;
 public enum ErrorCode {
 
     /**
-     * 成功
+     * 请求成功。
      */
     SUCCESS(0),
 
     /**
-     * 失败
+     * 请求失败。
      */
     FAIL(1);
 

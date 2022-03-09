@@ -1,4 +1,4 @@
 core:
-  auth:
-    jwt-signing-key:
-    allowed-ant-paths:
+  security:
+    jwt-signing-key: Qrjfl4tcKH9Yx5KROHQ8jQdRmJgbZWvy3v4hEoxzFq0=
+    permit-all-ant-patterns: /test/**, /public/**

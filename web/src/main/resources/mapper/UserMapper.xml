@@ -10,10 +10,10 @@
                hashed_password AS hashedPassword,
                roles
         FROM user
-        WHERE user_id = #{userId}
+        WHERE user_id = #{id}
     </select>
 
-    <select id="findByUsername" resultType="net.wuxianjie.web.user.User">
+    <select id="findUserByUsername" resultType="net.wuxianjie.web.user.User">
         SELECT user_id         AS userId,
                is_enabled      AS enabled,
                username,
@@ -23,7 +23,7 @@
         WHERE username = #{username}
     </select>
 
-    <select id="findByPagination" resultType="net.wuxianjie.web.user.User">
+    <select id="findByUsernameEnabledLimitModifyTimeDesc" resultType="net.wuxianjie.web.user.User">
         SELECT
         user_id AS userId,
         STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
@@ -35,12 +35,15 @@
             <if test="username != null">
                 username LIKE #{username}
             </if>
+            <if test="enabled != null">
+                AND is_enabled = #{enabled}
+            </if>
         </where>
         ORDER BY modify_time DESC
-        LIMIT #{page.offset}, #{page.pageSize}
+        LIMIT #{p.offset}, #{p.pageSize}
     </select>
 
-    <select id="countByUsername" resultType="int">
+    <select id="countByUsernameEnabled" resultType="int">
         SELECT
         COUNT(1)
         FROM user
@@ -48,28 +51,40 @@
             <if test="username != null">
                 username LIKE #{username}
             </if>
+            <if test="enabled != null">
+                AND is_enabled = #{enabled}
+            </if>
         </where>
     </select>
 
-    <insert id="add">
+    <select id="existsUsername" resultType="boolean">
+        SELECT EXISTS(SELECT 1 FROM user WHERE username = #{username})
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="userId" parameterType="net.wuxianjie.web.user.User">
         INSERT INTO user (create_time,
                           modify_time,
                           is_enabled,
-                          username, hashed_password, roles)
+                          username,
+                          hashed_password,
+                          roles)
         VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
                 DATETIME(CURRENT_TIMESTAMP, 'localtime'),
                 #{enabled},
-                #{username}, #{password}, #{roles})
+                #{username},
+                #{hashedPassword},
+                #{roles})
     </insert>
 
     <update id="update">
         UPDATE user
         <set>
             modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            <if test="password != null">
+            <if test="hashedPassword != null">
                 hashed_password = #{hashedPassword},
             </if>
-            <if test="roles != null">roles = #{roles}</if>
+            <if test="roles != null">roles = #{roles},</if>
+            <if test="enabled != null">is_enabled = #{enabled}</if>
         </set>
         WHERE user_id = #{userId}
     </update>
@@ -78,12 +93,12 @@
         UPDATE user
         SET modify_time     = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
             hashed_password = #{hashedPassword}
-        WHERE user_id = #{userId}
+        WHERE user_id = #{id}
     </update>
 
     <delete id="deleteById">
         DELETE
         FROM user
-        WHERE user_id = #{userId}
+        WHERE user_id = #{id}
     </delete>
 </mapper>
