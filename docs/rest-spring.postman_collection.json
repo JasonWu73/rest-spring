@@ -48,7 +48,7 @@
 								"access_token"
 							]
 						},
-						"description": "# 请求参数\n\nJSON请求体：\n\n```json\n{\n  \"accountName\": \"user\", // 账号名称，必填\n  \"accountPassword\": \"passw0rd\" // 账号密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"\", // 用于 API 鉴权的 Token，即用于请求头 `Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+						"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n    \"accountName\": \"user\", // 账号名称，必填\n    \"accountPassword\": \"passw0rd\" // 账号密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"expiresIn\": 1800, // Token 的有效期，单位秒\n        \"accessToken\": \"xxx\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n        \"refreshToken\": \"xxx\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"密码错误\" // 错误信息\n}\n```"
 					},
 					"response": []
 				},
@@ -91,7 +91,7 @@
 								"{{refreshToken}}"
 							]
 						},
-						"description": "# 请求参数\n\n在 URL 路径中指定 Refresh Token。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"\", // 用于访问 API 的 Token，即用于请求头 `Authorization: Bearer accessToken`\n    \"refreshToken\": \"\" // 用于刷新的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+						"description": "# 请求参数\n\n在 URL 路径中指定 Refresh Token。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"expiresIn\": 1800, // Token 的有效期，单位秒\n        \"accessToken\": \"xxx\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n        \"refreshToken\": \"xxx\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"Token 签名错误\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
@@ -143,7 +143,7 @@
 								"password"
 							]
 						},
-						"description": "# 请求参数\n\n需要修改密码的用户 ID 已在 URL 路径中指明。\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"\", // 旧密码，必填\n  \"newPassword\": \"\", // 新密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 修改密码操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+						"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n    \"oldPassword\": \"passw0rd\", // 旧密码，必填\n    \"newPassword\": \"password\", // 新密码，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"affectedNum\": 1, // 数据库中受影响的行数\n        \"message\": \"修改密码成功\" // 针对本次操作的结果说明\n  }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, //错误码：0：成功，1：失败\n    \"errMsg\": \"新旧密码不能相同\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
@@ -185,7 +185,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/list?pageNo=0&pageSize=10&username=   ",
+									"raw": "{{host}}/api/v1/user/list?pageNo=0&pageSize=10&username=  &enabled= ",
 									"host": [
 										"{{host}}"
 									],
@@ -208,12 +208,17 @@
 										},
 										{
 											"key": "username",
-											"value": "   ",
-											"description": "用户名，空或不传都代表不使用该查询条件"
+											"value": "  ",
+											"description": "用户名"
+										},
+										{
+											"key": "enabled",
+											"value": " ",
+											"description": "启用状态：1：启用，0：禁用"
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"total\": 100, // 总数\n    \"pageNo\": 0, // 当前页码\n    \"pageSize\": 10, // 每页条数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 5, // 用户 ID\n        \"modifyTime\": \"2022-03-06 01:10:53\", // 修改时间\n        \"username\": \"user\", // 用户名\n        \"roles\": \"user\" // 分配的角色\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"total\": 11, // 总数\n        \"pageNo\": 0, // 当前页码\n        \"pageSize\": 1, // 每页条数\n        \"list\": [ // 数据列表\n            {\n                \"userId\": 1, // 用户 ID\n                \"modifyTime\": \"2022-03-08 21:03:24\", // 记录创建时间\n                \"enabled\": 1, // 启用状态：1：启用，0：禁用\n                \"username\": \"管理员\", // 用户名\n                \"roles\": \"admin\" // 用户绑定的角色，多个角色以英文逗号分隔\n            }\n        ]\n    }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"每页条数不能小于 1\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -260,12 +265,12 @@
 										"add"
 									]
 								},
-								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"username\": \"\", // 用户名，必填\n  \"password\": \"\", // 登录密码，必填\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 新增用户数\n    \"message\": \"\" // 新增操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n    \"enabled\": 1, // 是否已启用：1=启用，0=禁用，必填\n    \"username\": \" test \", // 用户名，必填\n    \"password\": \"123\", // 密码，必填\n    \"roles\": \"  admin,,,user  \" // 用户绑定的角色，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"affectedNum\": 1, // 数据库中受影响的行数\n        \"message\": \"新增用户成功\" // 针对本次操作的结果说明\n    }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"已存在相同用户名\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
 						{
-							"name": "更新用户",
+							"name": "修改用户",
 							"event": [
 								{
 									"listen": "test",
@@ -288,7 +293,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"password\": \"123\",\n    \"roles\": \"  admin,,user  \"\n}",
+									"raw": "{\n    \"password\": \"123\",\n    \"roles\": \"  admin,,,user,admin,user  \",\n    \"enabled\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -296,7 +301,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/update/15",
+									"raw": "{{host}}/api/v1/user/update/14",
 									"host": [
 										"{{host}}"
 									],
@@ -305,10 +310,10 @@
 										"v1",
 										"user",
 										"update",
-										"15"
+										"14"
 									]
 								},
-								"description": "# 请求参数\n\n在 URL 路径中指明需要更新的用户 ID。\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"\", // 重置后的新密码\n  \"roles\": \"\" // 用户所拥有的角色，以英文逗号分隔，只能包含 user 或 admin\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 更新用户数\n    \"message\": \"\" // 更新操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\n在 URL 路径中指定要修改用户的 ID。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 数据结果\n        \"expiresIn\": 1800, // Token 的有效期，单位秒\n        \"accessToken\": \"xxx\", // 用于 API 鉴权的 Token，请求头中携带：\"Authorization: Bearer accessToken\"\n        \"refreshToken\": \"xxx\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"用户 ID【15】不存在\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -347,7 +352,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/del/15",
+									"raw": "{{host}}/api/v1/user/del/17",
 									"host": [
 										"{{host}}"
 									],
@@ -356,10 +361,10 @@
 										"v1",
 										"user",
 										"del",
-										"15"
+										"17"
 									]
 								},
-								"description": "# 请求参数\n\n在 URL 路径中指明需要删除的用户 ID。\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 删除用户数\n    \"message\": \"\" // 删除操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\n在 URL 路径中指明需要删除的用户 ID。\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体结果\n    \"affectedNum\": 1, // 删除用户数\n    \"message\": \"\" // 删除操作的描述消息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
 							},
 							"response": []
 						}
@@ -398,7 +403,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/operation-log/list?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2022-03-07",
+									"raw": "{{host}}/api/v1/operation-log/list?pageNo=0&pageSize=10&startDate=2022-02-10&endDate=2023-02-12",
 									"host": [
 										"{{host}}"
 									],
@@ -426,12 +431,12 @@
 										},
 										{
 											"key": "endDate",
-											"value": "2022-03-07",
-											"description": "结束日期（包含），必填，格式为 yyyy-MM-dd，例如：2022-02-12"
+											"value": "2023-02-12",
+											"description": "结束日期（包含），必填，格式为 yyyy-MM-dd，例如：2023-02-12"
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码，0 代表成功，非 0 代表失败\n  \"data\": { // 具体结果\n    \"total\": 100, // 总数\n    \"pageNo\": 0, // 当前页码\n    \"pageSize\": 10, // 每页条数\n    \"list\": [ // 具体数据列表\n      {\n        \"operationLogId\": 1, // 操作日志 ID\n        \"operationTime\": \"\", // 操作时间\n        \"userId\": 1, // 用户 ID，即操作人 ID\n        \"username\": \"\", // 用户名，即操作人名称\n        \"message\": \"\" // 操作的详细内容\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码，0 代表成功，非 0 代表失败\n  \"errMsg\": \"\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 具体结果\n        \"total\": 41, // 总数\n        \"pageNo\": 0, // 当前页码\n        \"pageSize\": 10, // 每页条数\n        \"list\": [ // 具体数据列表\n            {\n                \"operationLogId\": 42, // 操作日志 ID\n                \"operationTime\": \"2022-03-09 16:43:12\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n                \"userId\": 1, // 用户 ID，即操作人 ID\n                \"username\": \"管理员\", // 用户名，即操作人名称\n                \"message\": \"修改用户【ID：14，用户名：kitty_s】数据：重置密码\" // 操作的详细内容\n            }\n        ]\n    }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"每页条数不能小于 1\" // 错误信息\n}\n```"
 							},
 							"response": []
 						}
@@ -443,7 +448,7 @@
 			"name": "权限测试接口",
 			"item": [
 				{
-					"name": "测试无认证权限",
+					"name": "测试不登录",
 					"event": [
 						{
 							"listen": "test",
@@ -466,14 +471,14 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/auth-resource/public",
+							"raw": "{{host}}/api/v1/auth-test/public",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"auth-resource",
+								"auth-test",
 								"public"
 							]
 						}
@@ -481,7 +486,7 @@
 					"response": []
 				},
 				{
-					"name": "测试仅认证空权限",
+					"name": "测试仅登录空权限",
 					"event": [
 						{
 							"listen": "test",
@@ -510,22 +515,22 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/auth-resource/guest",
+							"raw": "{{host}}/api/v1/auth-test/authenticated",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"auth-resource",
-								"guest"
+								"auth-test",
+								"authenticated"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "测试普通用户权限",
+					"name": "测试 USER 权限",
 					"event": [
 						{
 							"listen": "test",
@@ -554,14 +559,14 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/auth-resource/user",
+							"raw": "{{host}}/api/v1/auth-test/user",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"auth-resource",
+								"auth-test",
 								"user"
 							]
 						}
@@ -569,7 +574,7 @@
 					"response": []
 				},
 				{
-					"name": "测试管理员权限",
+					"name": "测试 ADMIN 权限",
 					"event": [
 						{
 							"listen": "test",
@@ -598,14 +603,14 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/auth-resource/admin",
+							"raw": "{{host}}/api/v1/auth-test/admin",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"auth-resource",
+								"auth-test",
 								"admin"
 							]
 						}
@@ -613,7 +618,7 @@
 					"response": []
 				},
 				{
-					"name": "测试普通用户或管理员权限",
+					"name": "测试 USER 或 ADMIN 权限",
 					"event": [
 						{
 							"listen": "test",
@@ -642,14 +647,14 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/auth-resource/user-or-admin",
+							"raw": "{{host}}/api/v1/auth-test/user-or-admin",
 							"host": [
 								"{{host}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"auth-resource",
+								"auth-test",
 								"user-or-admin"
 							]
 						}
