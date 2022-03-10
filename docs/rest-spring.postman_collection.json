@@ -209,16 +209,16 @@
 										{
 											"key": "startDate",
 											"value": "2022-02-10",
-											"description": "开始日期（包含），必填，格式为 yyyy-MM-dd，例如：2022-02-10"
+											"description": "开始日期（包含），格式为 yyyy-MM-dd，例如：2022-02-10"
 										},
 										{
 											"key": "endDate",
 											"value": "2023-02-12",
-											"description": "结束日期（包含），必填，格式为 yyyy-MM-dd，例如：2023-02-12"
+											"description": "结束日期（包含），格式为 yyyy-MM-dd，例如：2023-02-12"
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 具体结果\n        \"total\": 100, // 总数\n        \"pageNo\": 0, // 当前页码\n        \"pageSize\": 10, // 每页条数\n        \"list\": [ // 具体数据列表\n            {\n                \"operationLogId\": 99, // 操作日志 ID\n                \"operationTime\": \"...\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n                \"userId\": 1, // 用户 ID，即操作人 ID\n                \"username\": \"...\", // 用户名，即操作人名称\n                \"message\": \"...\" // 操作的详细内容\n            }\n        ]\n    }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"每页条数不能小于 1\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n    \"error\": 0, // 错误码：0：成功，1：失败\n    \"data\": { // 具体结果\n        \"total\": 100, // 总数\n        \"pageNo\": 0, // 当前页码\n        \"pageSize\": 10, // 每页条数\n        \"list\": [ // 具体数据列表\n            {\n                \"operationLogId\": 99, // 操作日志 ID\n                \"operationTime\": \"...\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n                \"userId\": 1, // 用户 ID，即操作人 ID\n                \"username\": \"...\", // 用户名，即操作人名称\n                \"message\": \"...\" // 操作的详细内容\n            }\n        ]\n    }\n}\n```\n\n失败时：\n\n```json\n{\n    \"error\": 1, // 错误码：0：成功，1：失败\n    \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						}

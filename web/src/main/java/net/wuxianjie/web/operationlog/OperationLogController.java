@@ -1,22 +1,23 @@
 package net.wuxianjie.web.operationlog;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.paging.PagingData;
 import net.wuxianjie.core.paging.PagingQuery;
 import net.wuxianjie.core.security.Admin;
 import net.wuxianjie.core.shared.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 /**
@@ -37,27 +38,52 @@ public class OperationLogController {
     @GetMapping("list")
     public PagingData<List<ListItemOfOperationLog>> getOperationLogs(@Validated PagingQuery paging,
 
-                                                                     @RequestParam("startDate")
-                                                                     @NotNull(message = "开始日期不能为空")
                                                                      @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
                                                                              regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                     ) String startDateStrInclusive,
+                                                                     ) String startDate,
 
-                                                                     @RequestParam("endDate")
-                                                                     @NotNull(message = "结束日期不能为空")
                                                                      @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
                                                                              regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                     ) String endDateStrInclusive) {
-        final LocalDate startDateInclusive = LocalDate.parse(startDateStrInclusive);
-        final LocalDate endDateInclusive = LocalDate.parse(endDateStrInclusive);
+                                                                     ) String endDate) {
 
-        if (startDateInclusive.isAfter(endDateInclusive)) {
-            throw new BadRequestException("开始日期不能晚于结束日期");
-        }
+        final LocalDateTime startTimeInclusive = getStartTime(startDate);
 
-        final LocalDateTime startTimeInclusive = startDateInclusive.atStartOfDay();
-        final LocalDateTime endTimeInclusive = endDateInclusive.atTime(LocalTime.MAX);
+        final LocalDateTime endTimeInclusive = getEndTime(endDate);
 
         return logService.getOperationLogs(paging, startTimeInclusive, endTimeInclusive);
+    }
+
+    @Nullable
+    private LocalDateTime getStartTime(String startDateStr) {
+        if (StrUtil.isEmpty(startDateStr)) {
+            return null;
+        }
+
+        final LocalDate startDate;
+
+        try {
+            startDate = LocalDate.parse(startDateStr);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("开始日期错误", e);
+        }
+
+        return startDate.atStartOfDay();
+    }
+
+    @Nullable
+    private LocalDateTime getEndTime(String endDateStr) {
+        if (StrUtil.isEmpty(endDateStr)) {
+            return null;
+        }
+
+        final LocalDate endDate;
+
+        try {
+            endDate = LocalDate.parse(endDateStr);
+        } catch (DateTimeParseException e) {
+            throw new BadRequestException("结束日期错误", e);
+        }
+
+        return endDate.atTime(LocalTime.MAX);
     }
 }

@@ -41,7 +41,7 @@ public class ManagementOfUser {
      */
     @NotBlank(message = "用户名不能为空", groups = Add.class)
     @Pattern(message = "用户名只能包含汉字、字母、数字和下划线，且最多包含 64 个字符",
-            regexp = "(^$|^[\\u4E00-\\u9FA5A-Za-z0-9_]{0,64}$)", groups = {Add.class, Update.class})
+            regexp = "(^$|^[\\u4E00-\\u9FA5A-Za-z0-9_]{0,64}$)")
     private String username;
 
     /**

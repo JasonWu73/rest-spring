@@ -12,7 +12,7 @@ spring:
       max-lifetime: 1800000
       auto-commit: true
 mybatis:
-  type-handlers-package: net.wuxianjie.web.handler
+  type-handlers-package: net.wuxianjie.web.shared
   mapper-locations: classpath:mapper/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
