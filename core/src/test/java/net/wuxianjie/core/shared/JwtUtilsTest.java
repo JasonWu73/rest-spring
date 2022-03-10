@@ -1,4 +1,4 @@
-package net.wuxianjie.core.util;
+package net.wuxianjie.core.shared;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
