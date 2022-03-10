@@ -114,17 +114,6 @@ public class UserService {
         return new Wrote2Db(updatedNum, "修改密码成功");
     }
 
-    private int updateUserPasswordInDatabase(ManagementOfUser query) {
-        final String rawPassword = query.getNewPassword();
-        final String hashedPassword = passwordEncoder.encode(rawPassword);
-
-        final User user = new User();
-        user.setUserId(query.getUserId());
-        user.setHashedPassword(hashedPassword);
-
-        return userMapper.update(user);
-    }
-
     @NonNull
     @Transactional(rollbackFor = Exception.class)
     public Wrote2Db deleteUser(int userId) {
@@ -188,6 +177,17 @@ public class UserService {
         if (!isPasswordCorrect) {
             throw new BadRequestException("旧密码错误");
         }
+    }
+
+    private int updateUserPasswordInDatabase(ManagementOfUser query) {
+        final String rawPassword = query.getNewPassword();
+        final String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        final User user = new User();
+        user.setUserId(query.getUserId());
+        user.setHashedPassword(hashedPassword);
+
+        return userMapper.update(user);
     }
 
     private boolean isPasswordChangedLogSetNull(User userToUpdate,
