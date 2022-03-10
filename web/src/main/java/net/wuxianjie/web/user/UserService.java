@@ -85,7 +85,7 @@ public class UserService {
         if (needsUpdate) {
             final int updatedNum = userMapper.update(userToUpdate);
 
-            final String logMessage = String.format("修改用户【ID：%s，用户名：%s】数据：%s",
+            final String logMessage = String.format("修改用户数据【ID：%s，用户名：%s】：%s",
                     userToUpdate.getUserId(), userToUpdate.getUsername(), String.join("；", logs));
 
             logService.addNewOperationLog(LocalDateTime.now(), logMessage);
@@ -106,23 +106,12 @@ public class UserService {
 
         final int updatedNum = updateUserPasswordInDatabase(query);
 
-        final String logMessage = String.format("修改用户【ID：%s，用户名：%s】密码",
+        final String logMessage = String.format("修改用户密码【ID：%s，用户名：%s】",
                 passwordToUpdate.getUserId(), passwordToUpdate.getUsername());
 
         logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
         return new Wrote2Db(updatedNum, "修改密码成功");
-    }
-
-    private int updateUserPasswordInDatabase(ManagementOfUser query) {
-        final String rawPassword = query.getNewPassword();
-        final String hashedPassword = passwordEncoder.encode(rawPassword);
-
-        final User user = new User();
-        user.setUserId(query.getUserId());
-        user.setHashedPassword(hashedPassword);
-
-        return userMapper.update(user);
     }
 
     @NonNull
@@ -188,6 +177,17 @@ public class UserService {
         if (!isPasswordCorrect) {
             throw new BadRequestException("旧密码错误");
         }
+    }
+
+    private int updateUserPasswordInDatabase(ManagementOfUser query) {
+        final String rawPassword = query.getNewPassword();
+        final String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        final User user = new User();
+        user.setUserId(query.getUserId());
+        user.setHashedPassword(hashedPassword);
+
+        return userMapper.update(user);
     }
 
     private boolean isPasswordChangedLogSetNull(User userToUpdate,
