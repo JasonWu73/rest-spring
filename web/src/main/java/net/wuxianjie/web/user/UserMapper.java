@@ -31,7 +31,5 @@ public interface UserMapper {
 
     int update(User user);
 
-    int updatePasswordById(@Param("id") int userId, String hashedPassword);
-
     int deleteById(@Param("id") int userId);
 }

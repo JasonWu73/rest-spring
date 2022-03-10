@@ -104,10 +104,7 @@ public class UserService {
 
         checkOldPassword(query.getOldPassword(), passwordToUpdate.getHashedPassword());
 
-        final String newPassword = query.getNewPassword();
-        final String newHashedPassword = passwordEncoder.encode(newPassword);
-
-        final int updatedNum = userMapper.updatePasswordById(userId, newHashedPassword);
+        final int updatedNum = updateUserPasswordInDatabase(query);
 
         final String logMessage = String.format("修改用户【ID：%s，用户名：%s】密码",
                 passwordToUpdate.getUserId(), passwordToUpdate.getUsername());
@@ -115,6 +112,17 @@ public class UserService {
         logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
         return new Wrote2Db(updatedNum, "修改密码成功");
+    }
+
+    private int updateUserPasswordInDatabase(ManagementOfUser query) {
+        final String rawPassword = query.getNewPassword();
+        final String hashedPassword = passwordEncoder.encode(rawPassword);
+
+        final User user = new User();
+        user.setUserId(query.getUserId());
+        user.setHashedPassword(hashedPassword);
+
+        return userMapper.update(user);
     }
 
     @NonNull
