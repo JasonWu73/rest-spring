@@ -1,7 +1,6 @@
-package net.wuxianjie.web.handler;
+package net.wuxianjie.web.shared;
 
 import lombok.NoArgsConstructor;
-import net.wuxianjie.web.shared.ValueEnum;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
