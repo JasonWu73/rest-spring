@@ -85,7 +85,7 @@ public class UserService {
         if (needsUpdate) {
             final int updatedNum = userMapper.update(userToUpdate);
 
-            final String logMessage = String.format("修改用户【ID：%s，用户名：%s】数据：%s",
+            final String logMessage = String.format("修改用户数据【ID：%s，用户名：%s】：%s",
                     userToUpdate.getUserId(), userToUpdate.getUsername(), String.join("；", logs));
 
             logService.addNewOperationLog(LocalDateTime.now(), logMessage);
@@ -106,7 +106,7 @@ public class UserService {
 
         final int updatedNum = updateUserPasswordInDatabase(query);
 
-        final String logMessage = String.format("修改用户【ID：%s，用户名：%s】密码",
+        final String logMessage = String.format("修改用户密码【ID：%s，用户名：%s】",
                 passwordToUpdate.getUserId(), passwordToUpdate.getUsername());
 
         logService.addNewOperationLog(LocalDateTime.now(), logMessage);
