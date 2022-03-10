@@ -1,4 +1,4 @@
-package net.wuxianjie.web.handler;
+package net.wuxianjie.web.shared;
 
 import net.wuxianjie.core.shared.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
