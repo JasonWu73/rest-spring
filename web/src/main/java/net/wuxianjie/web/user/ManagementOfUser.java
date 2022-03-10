@@ -25,7 +25,7 @@ public class ManagementOfUser {
     private Integer userId;
 
     /**
-     * 记录创建时间。
+     * 修改时间。
      */
     private LocalDateTime modifyTime;
 
