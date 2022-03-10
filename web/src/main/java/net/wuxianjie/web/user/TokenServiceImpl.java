@@ -32,6 +32,7 @@ public class TokenServiceImpl implements TokenService {
     private final PasswordEncoder passwordEncoder;
     private final SecurityConfigData securityConfig;
 
+    @NonNull
     @Override
     public TokenData getToken(String accountName, String accountRawPassword) {
         final ManagementOfUser user = getUserFromDbMustBeExists(accountName);
@@ -47,6 +48,7 @@ public class TokenServiceImpl implements TokenService {
         return token;
     }
 
+    @NonNull
     @Override
     public TokenData refreshToken(String refreshToken) {
         final String signingKey = securityConfig.getJwtSigningKey();

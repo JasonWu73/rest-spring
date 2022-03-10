@@ -24,8 +24,9 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
     private final SecurityConfigData securityConfig;
 
+    @NonNull
     @Override
-    public TokenUserDetails authenticate(String accessToken) {
+    public TokenUserDetails authenticate(@NonNull String accessToken) {
         final String username = getUsernameFromAccessToken(accessToken);
 
         return getUserDetailsFromCache(username, accessToken);

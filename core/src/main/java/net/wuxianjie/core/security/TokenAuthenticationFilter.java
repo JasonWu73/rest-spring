@@ -48,7 +48,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenAuthenticationService authenticationService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain)
             throws IOException, ServletException {
         final String accessToken = getAccessTokenFromHttpRequest(request);
 
