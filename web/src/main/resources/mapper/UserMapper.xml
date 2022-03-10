@@ -89,13 +89,6 @@
         WHERE user_id = #{userId}
     </update>
 
-    <update id="updatePasswordById">
-        UPDATE user
-        SET modify_time     = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            hashed_password = #{hashedPassword}
-        WHERE user_id = #{id}
-    </update>
-
     <delete id="deleteById">
         DELETE
         FROM user
