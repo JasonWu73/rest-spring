@@ -1,4 +1,4 @@
-package net.wuxianjie.core.util;
+package net.wuxianjie.core.shared;
 
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.core.shared.TokenAuthenticationException;
 import org.springframework.lang.NonNull;
 
 import javax.crypto.SecretKey;
