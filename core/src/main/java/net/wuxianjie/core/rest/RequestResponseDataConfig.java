@@ -49,8 +49,12 @@ public class RequestResponseDataConfig {
       builder.timeZone(CommonValues.CHINA_TIME_ZONE);
 
       // 设置 Date 序列化后的日期字符串格式
-      builder.serializers(new DateSerializer(false,
-        new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
+      builder.serializers(
+        new DateSerializer(
+          false,
+          new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)
+        )
+      );
 
       // 设置 Java 8 LocalDate 序列化后的日期字符串格式
       builder.serializers(
@@ -70,9 +74,10 @@ public class RequestResponseDataConfig {
 
         @Override
         public void serialize(
-          String value, JsonGenerator gen, SerializerProvider serializers
-        )
-          throws IOException {
+          String value,
+          JsonGenerator gen,
+          SerializerProvider serializers
+        ) throws IOException {
           gen.writeString(StrUtil.trim(value));
         }
       });

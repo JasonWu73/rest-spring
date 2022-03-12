@@ -184,11 +184,14 @@ public class UserService {
     ManagementOfUser query,
     List<String> logs
   ) {
-    boolean isPasswordChanged = isPasswordChangedLogSetNull(userToUpdate, query, logs);
+    boolean isPasswordChanged =
+      isPasswordChangedLogSetNull(userToUpdate, query, logs);
 
-    boolean isRolesChanged = isRolesChangedLogSetNull(userToUpdate, query, logs);
+    boolean isRolesChanged =
+      isRolesChangedLogSetNull(userToUpdate, query, logs);
 
-    boolean isEnabledChanged = isEnabledChangedLogSetNull(userToUpdate, query, logs);
+    boolean isEnabledChanged =
+      isEnabledChangedLogSetNull(userToUpdate, query, logs);
 
     return isPasswordChanged || isRolesChanged || isEnabledChanged;
   }
