@@ -16,40 +16,40 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class User {
 
-    /**
-     * 用户表 ID。
-     */
-    private Integer userId;
+  /**
+   * 用户表 ID。
+   */
+  private Integer userId;
 
-    /**
-     * 记录创建时间。
-     */
-    private LocalDateTime createTime;
+  /**
+   * 记录创建时间。
+   */
+  private LocalDateTime createTime;
 
-    /**
-     * 记录修改时间。
-     */
-    private LocalDateTime modifyTime;
+  /**
+   * 记录修改时间。
+   */
+  private LocalDateTime modifyTime;
 
-    /**
-     * 启用状态：1：启用，0：禁用。
-     */
-    private YesOrNo enabled;
+  /**
+   * 启用状态：1：启用，0：禁用。
+   */
+  private YesOrNo enabled;
 
-    /**
-     * 用户名。
-     */
-    private String username;
+  /**
+   * 用户名。
+   */
+  private String username;
 
-    /**
-     * 哈希密码。
-     */
-    private String hashedPassword;
+  /**
+   * 哈希密码。
+   */
+  private String hashedPassword;
 
-    /**
-     * 用户绑定的角色，多个角色以英文逗号分隔。
-     *
-     * @see Role#value()
-     */
-    private String roles;
+  /**
+   * 用户绑定的角色，多个角色以英文逗号分隔。
+   *
+   * @see Role#value()
+   */
+  private String roles;
 }

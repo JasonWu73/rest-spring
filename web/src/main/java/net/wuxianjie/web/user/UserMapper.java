@@ -11,25 +11,29 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    @Nullable
-    User findById(@Param("id") int userId);
+  @Nullable
+  User findById(@Param("id") int userId);
 
-    @Nullable
-    User findUserByUsername(String username);
+  @Nullable
+  User findUserByUsername(String username);
 
-    @NonNull
-    List<User> findByUsernameEnabledLimitModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                        @Param("username") String fuzzyUsername,
-                                                        Integer enabled);
+  @NonNull
+  List<User> findByUsernameEnabledLimitModifyTimeDesc(
+    @Param("p") PagingQuery paging,
+    @Param("username") String fuzzyUsername,
+    Integer enabled
+  );
 
-    int countByUsernameEnabled(@Param("username") String fuzzyUsername,
-                               Integer enabled);
+  int countByUsernameEnabled(
+    @Param("username") String fuzzyUsername,
+    Integer enabled
+  );
 
-    boolean existsUsername(String username);
+  boolean existsUsername(String username);
 
-    int add(User user);
+  int add(User user);
 
-    int update(User user);
+  int update(User user);
 
-    int deleteById(@Param("id") int userId);
+  int deleteById(@Param("id") int userId);
 }

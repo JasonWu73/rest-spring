@@ -12,13 +12,16 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class TokenCacheConfig {
 
-    /**
-     * Key: {@code username}
-     */
-    @Bean(BeanQualifiers.TOKEN_CACHE)
-    public Cache<String, TokenUserDetails> tokenCache() {
-        return Caffeine.newBuilder()
-                .expireAfterWrite(TokenAttributes.EXPIRES_IN_SECONDS_VALUE, TimeUnit.SECONDS)
-                .build();
-    }
+  /**
+   * Key: {@code username}
+   */
+  @Bean(BeanQualifiers.TOKEN_CACHE)
+  public Cache<String, TokenUserDetails> tokenCache() {
+    return Caffeine.newBuilder()
+      .expireAfterWrite(
+        TokenAttributes.EXPIRES_IN_SECONDS_VALUE,
+        TimeUnit.SECONDS
+      )
+      .build();
+  }
 }

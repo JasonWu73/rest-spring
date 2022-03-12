@@ -21,35 +21,39 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    private final ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-    @Override
-    public boolean supports(@NonNull MethodParameter returnType,
-                            @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
-        return true;
+  @Override
+  public boolean supports(
+    @NonNull MethodParameter returnType,
+    @NonNull Class<? extends HttpMessageConverter<?>> converterType
+  ) {
+    return true;
+  }
+
+  @Override
+  public Object beforeBodyWrite(
+    Object body,
+    @NonNull MethodParameter returnType,
+    @NonNull MediaType selectedContentType,
+    @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+    @NonNull ServerHttpRequest request,
+    @NonNull ServerHttpResponse response
+  ) {
+    if (body instanceof String) {
+      try {
+        return objectMapper.writeValueAsString(RestDataWrapper.success(body));
+      } catch (JsonProcessingException e) {
+        throw new RuntimeException("统一响应结果处理时 JSON 序列化失败", e);
+      }
     }
 
-    @Override
-    public Object beforeBodyWrite(Object body,
-                                  @NonNull MethodParameter returnType,
-                                  @NonNull MediaType selectedContentType,
-                                  @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  @NonNull ServerHttpRequest request,
-                                  @NonNull ServerHttpResponse response) {
-        if (body instanceof String) {
-            try {
-                return objectMapper.writeValueAsString(RestDataWrapper.success(body));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("统一响应结果处理时 JSON 序列化失败", e);
-            }
-        }
-
-        if (body instanceof RestData ||
-                body instanceof ResponseEntity ||
-                body instanceof byte[]) {
-            return body;
-        }
-
-        return RestDataWrapper.success(body);
+    if (body instanceof RestData ||
+      body instanceof ResponseEntity ||
+      body instanceof byte[]) {
+      return body;
     }
+
+    return RestDataWrapper.success(body);
+  }
 }

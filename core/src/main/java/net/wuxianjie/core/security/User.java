@@ -23,6 +23,10 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole(T(net.wuxianjie.core.security.Role).USER.value().toUpperCase())")
+@PreAuthorize(
+  "hasRole(" +
+    "T(net.wuxianjie.core.security.Role).USER.value().toUpperCase()" +
+  ")"
+)
 public @interface User {
 }

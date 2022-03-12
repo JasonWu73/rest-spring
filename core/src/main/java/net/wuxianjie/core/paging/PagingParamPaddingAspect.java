@@ -15,27 +15,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class PagingParamPaddingAspect {
 
-    // execution([方法的可见性] 返回类型 [方法所在类的全路径名] 方法名(参数类型列表) [方法抛出的异常类型])
-    @Pointcut("execution(" +
-            "public net.wuxianjie.core.paging.PagingData " +
-            "*..*.*" +
-            "(net.wuxianjie.core.paging.PagingQuery, ..))"
-    )
-    public void getByPaging() {
-    }
+  @Pointcut(
+    // execution([方法的可见性] 返回类型
+    // [方法所在类的全路径名] 方法名(参数类型列表) [方法抛出的异常类型]
+    // )
+    "execution(public net.wuxianjie.core.paging.PagingData " +
+      "*..*.*(net.wuxianjie.core.paging.PagingQuery, ..)" +
+    ")"
+  )
+  public void getByPaging() {
+  }
 
-    @Before("getByPaging()")
-    public void beforeCallGetByPagingMethod(JoinPoint joinpoint) {
-        final Object[] args = joinpoint.getArgs();
+  @Before("getByPaging()")
+  public void beforeCallGetByPagingMethod(JoinPoint joinpoint) {
+    final Object[] args = joinpoint.getArgs();
 
-        if (args != null) {
-            for (Object arg : args) {
-                if (arg instanceof PagingQuery) {
-                    final PagingQuery paging = (PagingQuery) arg;
+    if (args != null) {
+      for (Object arg : args) {
+        if (arg instanceof PagingQuery) {
+          final PagingQuery paging = (PagingQuery) arg;
 
-                    paging.setOffset();
-                }
-            }
+          paging.setOffset();
         }
+      }
     }
+  }
 }

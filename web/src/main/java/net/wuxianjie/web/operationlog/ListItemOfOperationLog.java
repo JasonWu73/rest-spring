@@ -11,36 +11,36 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ListItemOfOperationLog {
 
-    /**
-     * 操作日志 ID。
-     */
-    private Integer operationLogId;
+  /**
+   * 操作日志 ID。
+   */
+  private Integer operationLogId;
 
-    /**
-     * 操作时间。
-     */
-    private LocalDateTime operationTime;
+  /**
+   * 操作时间。
+   */
+  private LocalDateTime operationTime;
 
-    /**
-     * 用户 ID，即操作人 ID。
-     */
-    private Integer userId;
+  /**
+   * 用户 ID，即操作人 ID。
+   */
+  private Integer userId;
 
-    /**
-     * 用户名，即操作人名称。
-     */
-    private String username;
+  /**
+   * 用户名，即操作人名称。
+   */
+  private String username;
 
-    /**
-     * 具体的操作消息。
-     */
-    private String message;
+  /**
+   * 具体的操作消息。
+   */
+  private String message;
 
-    public ListItemOfOperationLog(OperationLog operationLog) {
-        this.operationLogId = operationLog.getOperationLogId();
-        this.operationTime = operationLog.getOperationTime();
-        this.userId = operationLog.getUserId();
-        this.username = operationLog.getUsername();
-        this.message = operationLog.getMessage();
-    }
+  public ListItemOfOperationLog(OperationLog operationLog) {
+    this.operationLogId = operationLog.getOperationLogId();
+    this.operationTime = operationLog.getOperationTime();
+    this.userId = operationLog.getUserId();
+    this.username = operationLog.getUsername();
+    this.message = operationLog.getMessage();
+  }
 }

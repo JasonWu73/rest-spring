@@ -7,9 +7,9 @@ import org.springframework.lang.NonNull;
  */
 public interface TokenAuthenticationService {
 
-    /**
-     * 执行 Token 认证。
-     */
-    @NonNull
-    TokenUserDetails authenticate(@NonNull String accessToken);
+  /**
+   * 执行 Token 认证。
+   */
+  @NonNull
+  TokenUserDetails authenticate(@NonNull String accessToken);
 }

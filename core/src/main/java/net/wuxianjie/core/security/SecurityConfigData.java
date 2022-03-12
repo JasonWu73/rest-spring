@@ -14,15 +14,16 @@ import org.springframework.lang.Nullable;
 @AllArgsConstructor
 public class SecurityConfigData {
 
-    /**
-     * JWT 签名密钥。
-     */
-    @NonNull
-    private String jwtSigningKey;
+  /**
+   * JWT 签名密钥。
+   */
+  @NonNull
+  private String jwtSigningKey;
 
-    /**
-     * 无需鉴权即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
-     */
-    @Nullable
-    private String permitAllAntPatterns;
+  /**
+   * 无需鉴权即可访问的请求路径，
+   * 多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
+   */
+  @Nullable
+  private String permitAllAntPatterns;
 }

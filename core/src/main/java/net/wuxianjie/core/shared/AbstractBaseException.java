@@ -10,13 +10,13 @@ import org.springframework.http.HttpStatus;
  */
 public abstract class AbstractBaseException extends RuntimeException {
 
-    public AbstractBaseException(String message) {
-        super(message);
-    }
+  public AbstractBaseException(String message) {
+    super(message);
+  }
 
-    public AbstractBaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  public AbstractBaseException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    public abstract HttpStatus getHttpStatus();
+  public abstract HttpStatus getHttpStatus();
 }

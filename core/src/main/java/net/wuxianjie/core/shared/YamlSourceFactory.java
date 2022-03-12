@@ -15,26 +15,29 @@ import java.util.Properties;
  */
 public class YamlSourceFactory implements PropertySourceFactory {
 
-    @NonNull
-    @Override
-    public PropertySource<?> createPropertySource(String name, EncodedResource encodedResource) {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-        final Resource resource = encodedResource.getResource();
+  @NonNull
+  @Override
+  public PropertySource<?> createPropertySource(
+    String name,
+    EncodedResource encodedResource
+  ) {
+    final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+    final Resource resource = encodedResource.getResource();
 
-        factory.setResources(resource);
+    factory.setResources(resource);
 
-        final String filename = resource.getFilename();
+    final String filename = resource.getFilename();
 
-        if (filename == null) {
-            throw new InternalServerException("无法识别 YAML 配置文件的文件名");
-        }
-
-        final Properties properties = factory.getObject();
-
-        if (properties == null) {
-            throw new InternalServerException("YAML 配置初始化失败");
-        }
-
-        return new PropertiesPropertySource(filename, properties);
+    if (filename == null) {
+      throw new InternalServerException("无法识别 YAML 配置文件的文件名");
     }
+
+    final Properties properties = factory.getObject();
+
+    if (properties == null) {
+      throw new InternalServerException("YAML 配置初始化失败");
+    }
+
+    return new PropertiesPropertySource(filename, properties);
+  }
 }

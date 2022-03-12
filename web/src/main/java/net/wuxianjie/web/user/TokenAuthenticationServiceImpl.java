@@ -17,37 +17,45 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
+public class TokenAuthenticationServiceImpl
+  implements TokenAuthenticationService {
 
-    @Qualifier(BeanQualifiers.TOKEN_CACHE)
-    private final Cache<String, TokenUserDetails> tokenCache;
+  @Qualifier(BeanQualifiers.TOKEN_CACHE)
+  private final Cache<String, TokenUserDetails> tokenCache;
 
-    private final SecurityConfigData securityConfig;
+  private final SecurityConfigData securityConfig;
 
-    @NonNull
-    @Override
-    public TokenUserDetails authenticate(@NonNull String accessToken) {
-        final String username = getUsernameFromAccessToken(accessToken);
+  @NonNull
+  @Override
+  public TokenUserDetails authenticate(@NonNull String accessToken) {
+    final String username = getUsernameFromAccessToken(accessToken);
 
-        return getUserDetailsFromCache(username, accessToken);
+    return getUserDetailsFromCache(username, accessToken);
+  }
+
+  @NonNull
+  private String getUsernameFromAccessToken(String accessToken) {
+    final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(
+      securityConfig.getJwtSigningKey(),
+      accessToken
+    );
+
+    return (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+  }
+
+  @NonNull
+  private TokenUserDetails getUserDetailsFromCache(
+    String username,
+    String accessToken
+  ) {
+    final TokenUserDetails userDetails = tokenCache.getIfPresent(username);
+
+    if (userDetails == null ||
+      !accessToken.equals(userDetails.getAccessToken())
+    ) {
+      throw new TokenAuthenticationException("Token 已过期");
     }
 
-    @NonNull
-    private String getUsernameFromAccessToken(String accessToken) {
-        final String signingKey = securityConfig.getJwtSigningKey();
-        final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(signingKey, accessToken);
-
-        return (String) payload.get(TokenAttributes.ACCOUNT_KEY);
-    }
-
-    @NonNull
-    private TokenUserDetails getUserDetailsFromCache(String username, String accessToken) {
-        final TokenUserDetails userDetails = tokenCache.getIfPresent(username);
-
-        if (userDetails == null || !accessToken.equals(userDetails.getAccessToken())) {
-            throw new TokenAuthenticationException("Token 已过期");
-        }
-
-        return userDetails;
-    }
+    return userDetails;
+  }
 }

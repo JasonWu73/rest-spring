@@ -15,16 +15,16 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 public enum ErrorCode {
 
-    /**
-     * 请求成功。
-     */
-    SUCCESS(0),
+  /**
+   * 请求成功。
+   */
+  SUCCESS(0),
 
-    /**
-     * 请求失败。
-     */
-    FAIL(1);
+  /**
+   * 请求失败。
+   */
+  FAIL(1);
 
-    @JsonValue
-    private final int value;
+  @JsonValue
+  private final int value;
 }

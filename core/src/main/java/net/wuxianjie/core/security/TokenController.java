@@ -13,31 +13,34 @@ import javax.validation.constraints.NotBlank;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenController {
 
-    private final TokenService tokenService;
+  private final TokenService tokenService;
 
-    /**
-     * 获取 Access Token
-     */
-    @PostMapping("access_token")
-    public TokenData getToken(@RequestBody @Validated GetTokenQuery param) {
-        return tokenService.getToken(param.getAccountName(), param.getAccountPassword());
-    }
+  /**
+   * 获取 Access Token。
+   */
+  @PostMapping("access_token")
+  public TokenData getToken(@RequestBody @Validated GetTokenQuery param) {
+    return tokenService.getToken(
+      param.getAccountName(),
+      param.getAccountPassword()
+    );
+  }
 
-    /**
-     * 刷新 Access Token
-     */
-    @GetMapping("refresh_token/{refreshToken}")
-    public TokenData refreshToken(@PathVariable String refreshToken) {
-        return tokenService.refreshToken(refreshToken);
-    }
+  /**
+   * 刷新 Access Token。
+   */
+  @GetMapping("refresh_token/{refreshToken}")
+  public TokenData refreshToken(@PathVariable String refreshToken) {
+    return tokenService.refreshToken(refreshToken);
+  }
 
-    @Data
-    private static class GetTokenQuery {
+  @Data
+  private static class GetTokenQuery {
 
-        @NotBlank(message = "账号名称不能为空")
-        private String accountName;
+    @NotBlank(message = "账号名称不能为空")
+    private String accountName;
 
-        @NotBlank(message = "账号密码不能为空")
-        private String accountPassword;
-    }
+    @NotBlank(message = "账号密码不能为空")
+    private String accountPassword;
+  }
 }

@@ -4,9 +4,9 @@ import org.springframework.lang.NonNull;
 
 public interface TokenService {
 
-    @NonNull
-    TokenData getToken(String accountName, String accountRawPassword);
+  @NonNull
+  TokenData getToken(String accountName, String accountRawPassword);
 
-    @NonNull
-    TokenData refreshToken(String refreshToken);
+  @NonNull
+  TokenData refreshToken(String refreshToken);
 }

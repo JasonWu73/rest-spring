@@ -2,74 +2,75 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.3</version>
-        <relativePath/>
-    </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.6.3</version>
+    <relativePath/>
+  </parent>
 
-    <groupId>net.wuxianjie</groupId>
-    <artifactId>rest-spring</artifactId>
-    <packaging>pom</packaging>
-    <version>0.0.1-SNAPSHOT</version>
+  <groupId>net.wuxianjie</groupId>
+  <artifactId>rest-spring</artifactId>
+  <packaging>pom</packaging>
+  <version>0.0.1-SNAPSHOT</version>
 
-    <modules>
-        <module>web</module>
-    </modules>
+  <modules>
+    <module>web</module>
+  </modules>
 
-    <properties>
-        <java.version>11</java.version>
+  <properties>
+    <java.version>11</java.version>
 
-        <my.core.version>0.0.1-SNAPSHOT</my.core.version>
+    <my.core.version>0.0.1-SNAPSHOT</my.core.version>
 
-        <jjwt.version>0.11.2</jjwt.version>
-        <hutool.version>5.7.21</hutool.version>
-        <mybatis-spring-boot-starter.version>2.2.2</mybatis-spring-boot-starter.version>
-    </properties>
+    <jjwt.version>0.11.2</jjwt.version>
+    <hutool.version>5.7.21</hutool.version>
+    <mybatis-spring-boot-starter.version>2.2.2
+    </mybatis-spring-boot-starter.version>
+  </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- 核心模块 -->
-            <dependency>
-                <groupId>net.wuxianjie</groupId>
-                <artifactId>core</artifactId>
-                <version>${my.core.version}</version>
-            </dependency>
+  <dependencyManagement>
+    <dependencies>
+      <!-- 核心模块 -->
+      <dependency>
+        <groupId>net.wuxianjie</groupId>
+        <artifactId>core</artifactId>
+        <version>${my.core.version}</version>
+      </dependency>
 
-            <!-- Java 工具类库 Hutool -->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
+      <!-- Java 工具类库 Hutool -->
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool.version}</version>
+      </dependency>
 
-            <!-- Spring Boot 整合 MyBatis -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring-boot-starter.version}</version>
-            </dependency>
+      <!-- Spring Boot 整合 MyBatis -->
+      <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>${mybatis-spring-boot-starter.version}</version>
+      </dependency>
 
-            <!-- JWT  -->
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt-api</artifactId>
-                <version>${jjwt.version}</version>
-            </dependency>
+      <!-- JWT  -->
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-api</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
 
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt-impl</artifactId>
-                <version>${jjwt.version}</version>
-            </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-impl</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
 
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt-jackson</artifactId>
-                <version>${jjwt.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>

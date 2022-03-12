@@ -30,119 +30,129 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserController {
 
-    private final UserService userService;
-    private final AuthenticationFacade authenticationFacade;
+  private final UserService userService;
+  private final AuthenticationFacade authenticationFacade;
 
-    /**
-     * 获取用户列表。
-     */
-    @Admin
-    @GetMapping("list")
-    public PagingData<List<ManagementOfUser>> getUsers(@Validated PagingQuery paging,
-                                                       @Validated ManagementOfUser query) {
-        final String fuzzyUsername = StrUtils.generateDbFuzzyStr(query.getUsername());
+  /**
+   * 获取用户列表。
+   */
+  @Admin
+  @GetMapping("list")
+  public PagingData<List<ManagementOfUser>> getUsers(
+    @Validated PagingQuery paging,
+    @Validated ManagementOfUser query
+  ) {
+    final String fuzzyUsername =
+      StrUtils.generateDbFuzzyStr(query.getUsername());
 
-        query.setUsername(fuzzyUsername);
+    query.setUsername(fuzzyUsername);
 
-        return userService.getUsers(paging, query);
+    return userService.getUsers(paging, query);
+  }
+
+  /**
+   * 新增用户。
+   */
+  @Admin
+  @PostMapping("add")
+  public Wrote2Db addNewUser(
+    @RequestBody @Validated(Add.class) ManagementOfUser query
+  ) {
+    final String commaSeparatedLowerCaseRoleStr =
+      toDeduplicateCommaSeparatedLowerCaseStr(query.getRoles());
+
+    validateRoleStr(commaSeparatedLowerCaseRoleStr);
+
+    query.setRoles(commaSeparatedLowerCaseRoleStr);
+
+    return userService.addNewUser(query);
+  }
+
+  /**
+   * 修改用户。
+   *
+   * <p>注意：此处重置密码无需校验旧密码。</p>
+   */
+  @Admin
+  @PostMapping("update/{userId:\\d+}")
+  public Wrote2Db updateUser(
+    @PathVariable("userId") int id,
+    @RequestBody @Validated ManagementOfUser query
+  ) {
+    query.setUserId(id);
+
+    final String commaSeparatedLowerCaseRoleStr =
+      toDeduplicateCommaSeparatedLowerCaseStr(query.getRoles());
+
+    validateRoleStr(commaSeparatedLowerCaseRoleStr);
+
+    query.setRoles(commaSeparatedLowerCaseRoleStr);
+
+    return userService.updateUser(query);
+  }
+
+  /**
+   * 修改当前用户密码。
+   */
+  @PostMapping("password")
+  public Wrote2Db updateCurrentUserPassword(
+    @RequestBody @Validated(Update.class) ManagementOfUser query
+  ) {
+    final TokenUserDetails userDetails =
+      authenticationFacade.getCurrentLoggedInUserDetails();
+
+    query.setUserId(userDetails.getAccountId());
+
+    if (Objects.equals(query.getOldPassword(), query.getNewPassword())) {
+      throw new BadRequestException("新旧密码不能相同");
     }
 
-    /**
-     * 新增用户。
-     */
-    @Admin
-    @PostMapping("add")
-    public Wrote2Db addNewUser(@RequestBody @Validated(Add.class) ManagementOfUser query) {
-        final String originalRoleStr = query.getRoles();
-        final String commaSeparatedLowerCaseRoleStr = toDeduplicateCommaSeparatedLowerCaseStr(originalRoleStr);
+    return userService.updateUserPassword(query);
+  }
 
-        validateRoleStr(commaSeparatedLowerCaseRoleStr);
+  /**
+   * 删除用户。
+   */
+  @Admin
+  @GetMapping("del/{userId:\\d+}")
+  public Wrote2Db deleteUser(@PathVariable("userId") int id) {
+    return userService.deleteUser(id);
+  }
 
-        query.setRoles(commaSeparatedLowerCaseRoleStr);
-
-        return userService.addNewUser(query);
+  @Nullable
+  private String toDeduplicateCommaSeparatedLowerCaseStr(String roles) {
+    if (StrUtil.isEmpty(roles)) {
+      return roles;
     }
 
-    /**
-     * 修改用户。
-     *
-     * <p>注意：此处重置密码无需校验旧密码。</p>
-     */
-    @Admin
-    @PostMapping("update/{userId:\\d+}")
-    public Wrote2Db updateUser(@PathVariable("userId") int id,
-                               @RequestBody @Validated ManagementOfUser query) {
-        query.setUserId(id);
+    return Arrays.stream(roles.split(","))
+      .reduce("", (s1, s2) -> {
+        final String trimmedLowerCaseStr = s2.trim().toLowerCase();
 
-        final String originalRoleStr = query.getRoles();
-        final String commaSeparatedLowerCaseRoleStr = toDeduplicateCommaSeparatedLowerCaseStr(originalRoleStr);
-
-        validateRoleStr(commaSeparatedLowerCaseRoleStr);
-
-        query.setRoles(commaSeparatedLowerCaseRoleStr);
-
-        return userService.updateUser(query);
-    }
-
-    /**
-     * 修改当前用户密码。
-     */
-    @PostMapping("password")
-    public Wrote2Db updateCurrentUserPassword(
-            @RequestBody @Validated(Update.class) ManagementOfUser query
-    ) {
-        final TokenUserDetails userDetails = authenticationFacade.getCurrentLoggedInUserDetails();
-
-        query.setUserId(userDetails.getAccountId());
-
-        if (Objects.equals(query.getOldPassword(), query.getNewPassword())) {
-            throw new BadRequestException("新旧密码不能相同");
+        if (s1.contains(trimmedLowerCaseStr)) {
+          return s1;
         }
 
-        return userService.updateUserPassword(query);
-    }
-
-    /**
-     * 删除用户。
-     */
-    @Admin
-    @GetMapping("del/{userId:\\d+}")
-    public Wrote2Db deleteUser(@PathVariable("userId") int id) {
-        return userService.deleteUser(id);
-    }
-
-    @Nullable
-    private String toDeduplicateCommaSeparatedLowerCaseStr(String roles) {
-        if (StrUtil.isEmpty(roles)) {
-            return roles;
+        if (StrUtil.isNotEmpty(s1)) {
+          return s1 + "," + trimmedLowerCaseStr;
         }
 
-        return Arrays.stream(roles.split(","))
-                .reduce("", (s1, s2) -> {
-                    final String trimmedLowerCaseStr = s2.trim().toLowerCase();
+        return trimmedLowerCaseStr;
+      });
+  }
 
-                    if (s1.contains(trimmedLowerCaseStr)) {
-                        return s1;
-                    }
-
-                    if (StrUtil.isNotEmpty(s1)) {
-                        return s1 + "," + trimmedLowerCaseStr;
-                    }
-
-                    return trimmedLowerCaseStr;
-                });
+  private void validateRoleStr(String commaSeparatedLowerCaseRoleStr) {
+    if (StrUtil.isEmpty(commaSeparatedLowerCaseRoleStr)) {
+      return;
     }
 
-    private void validateRoleStr(String commaSeparatedLowerCaseRoleStr) {
-        if (StrUtil.isEmpty(commaSeparatedLowerCaseRoleStr)) {
-            return;
-        }
+    final String[] roleArray = commaSeparatedLowerCaseRoleStr.split(",");
 
-        final boolean hasInvalidRole = Arrays.stream(commaSeparatedLowerCaseRoleStr.split(","))
-                .anyMatch(x -> Role.resolve(x) == null);
+    final boolean hasInvalidRole = Arrays.stream(roleArray)
+      .anyMatch(x -> Role.resolve(x) == null);
 
-        if (hasInvalidRole) {
-            throw new BadRequestException("包含未定义角色");
-        }
+    if (hasInvalidRole) {
+      throw new BadRequestException("包含未定义角色");
     }
+  }
 }
