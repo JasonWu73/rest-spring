@@ -135,7 +135,7 @@ public class ControllerErrorAdvice {
     final Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
 
     for (ConstraintViolation<?> violation : violations) {
-      String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
         violation.getRootBeanClass().getName(),
         violation.getPropertyPath(),
         violation.getInvalidValue(),
@@ -173,7 +173,7 @@ public class ControllerErrorAdvice {
     final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 
     for (FieldError err : fieldErrors) {
-      String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
         err.getObjectName(),
         err.getField(),
         err.getRejectedValue(),

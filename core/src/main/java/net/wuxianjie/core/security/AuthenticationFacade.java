@@ -8,7 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 /**
- * 封装获取 Spring Security 认证过后的用户详细数据的方法，使其可通过依赖注入方便地使用。
+ * 封装获取 Spring Security 认证过后的用户详细数据的方法，
+ * 使其可通过依赖注入方便地使用。
  */
 @Service
 public class AuthenticationFacade {

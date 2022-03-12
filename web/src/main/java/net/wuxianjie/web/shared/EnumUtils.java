@@ -9,14 +9,14 @@ public class EnumUtils {
 
   @Nullable
   public static <E extends Enum<?> & ValueEnum> E resolve(
-    @Nullable Class<E> enumClass,
-    @Nullable Integer val
+    Class<E> enumClass,
+    Integer val
   ) {
     if (enumClass == null || val == null) {
       return null;
     }
 
-    E[] enumConstants = enumClass.getEnumConstants();
+    final E[] enumConstants = enumClass.getEnumConstants();
 
     for (E e : enumConstants) {
       if (e.value() == val) {

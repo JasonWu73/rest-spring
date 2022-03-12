@@ -27,7 +27,7 @@
   </select>
 
   <select id="findByUsernameEnabledLimitModifyTimeDesc"
-          resultType="net.wuxianjie.web.user.User"
+    resultType="net.wuxianjie.web.user.User"
   >
     SELECT
       user_id AS userId,
