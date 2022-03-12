@@ -70,20 +70,24 @@ public class RequestResponseDataConfig {
       );
 
       // 在序列化时去除字符串首尾空格
-      builder.serializerByType(String.class, new JsonSerializer<String>() {
+      builder.serializerByType(
+        String.class,
+        new JsonSerializer<String>() {
 
-        @Override
-        public void serialize(
-          String value,
-          JsonGenerator gen,
-          SerializerProvider serializers
-        ) throws IOException {
-          gen.writeString(StrUtil.trim(value));
+          @Override
+          public void serialize(
+            String value,
+            JsonGenerator gen,
+            SerializerProvider serializers
+          ) throws IOException {
+            gen.writeString(StrUtil.trim(value));
+          }
         }
-      });
+      );
 
       // 在反序列化时去除字符串首尾空格
-      builder.deserializerByType(String.class,
+      builder.deserializerByType(
+        String.class,
         new StdScalarDeserializer<String>(String.class) {
 
           @Override
@@ -91,7 +95,8 @@ public class RequestResponseDataConfig {
             throws IOException {
             return StrUtil.trim(p.getValueAsString());
           }
-        });
+        }
+      );
     };
   }
 

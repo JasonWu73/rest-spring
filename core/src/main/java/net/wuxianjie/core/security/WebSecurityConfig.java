@@ -39,7 +39,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       permitAllAntPatterns = new String[]{};
     } else {
       // 参数：被切分字符串，分隔符逗号，0 表示无限制分片数，去除两边空格，忽略空白项
-      permitAllAntPatterns = StrSplitter.splitToArray(antPatterns, ',', 0, true, true);
+      permitAllAntPatterns = StrSplitter.splitToArray(
+        antPatterns,
+        ',',
+        0,
+        true,
+        true
+      );
     }
 
 
@@ -62,26 +68,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
           .authenticationEntryPoint((request, response, authException) -> {
             log.warn("Token 认证失败：{}", authException.getMessage());
 
-            final RestData<Void> result =
+            final RestData<Void> data =
               RestDataWrapper.fail("Token 认证失败");
 
             response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-            response.getWriter().write(objectMapper.writeValueAsString(result));
+            response.getWriter().write(objectMapper.writeValueAsString(data));
           })
           // 403
           // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则不生效
           .accessDeniedHandler(((request, response, deniedException) -> {
             log.warn("Token 未授权：{}", deniedException.getMessage());
 
-            final RestData<Void> result =
+            final RestData<Void> data =
               RestDataWrapper.fail("Token 未授权");
 
             response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
             response.setStatus(HttpStatus.FORBIDDEN.value());
 
-            response.getWriter().write(objectMapper.writeValueAsString(result));
+            response.getWriter().write(objectMapper.writeValueAsString(data));
           }))
       .and()
         // 禁用 CSRF 措施
@@ -95,8 +101,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
         // 解决浏览器发送 OPTIONS 跨域检查请求时返回 401 的问题
         .cors()
-        .configurationSource(request ->
-          new CorsConfiguration().applyPermitDefaultValues())
+          .configurationSource(request ->
+            new CorsConfiguration().applyPermitDefaultValues()
+          )
       .and()
         // 添加 Token 认证过滤器
         .addFilterBefore(

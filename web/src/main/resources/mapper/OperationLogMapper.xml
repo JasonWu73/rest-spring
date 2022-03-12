@@ -15,7 +15,7 @@
     </where>
   </sql>
 
-  <select id="findByStartEndTimeLimitTimeDesc"
+  <select id="findByStartEndTimePagingOperationTimeDesc"
     resultType="net.wuxianjie.web.operationlog.OperationLog"
   >
     SELECT

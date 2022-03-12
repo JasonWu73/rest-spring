@@ -18,16 +18,12 @@ public interface UserMapper {
   User findUserByUsername(String username);
 
   @NonNull
-  List<User> findByUsernameEnabledLimitModifyTimeDesc(
+  List<User> findByQueryPagingModifyTimeDesc(
     @Param("p") PagingQuery paging,
-    @Param("username") String fuzzyUsername,
-    Integer enabled
+    @Param("q") ManagementOfUser query
   );
 
-  int countByUsernameEnabled(
-    @Param("username") String fuzzyUsername,
-    Integer enabled
-  );
+  int countByQuery(ManagementOfUser query);
 
   boolean existsUsername(String username);
 

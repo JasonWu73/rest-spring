@@ -41,38 +41,37 @@ public class UserService {
     ManagementOfUser query
   ) {
     final List<User> users =
-      userMapper.findByUsernameEnabledLimitModifyTimeDesc(
-        paging, query.getUsername(), query.getEnabled()
-      );
+      userMapper.findByQueryPagingModifyTimeDesc(paging, query);
 
-    final int total = userMapper.countByUsernameEnabled(
-      query.getUsername(), query.getEnabled()
-    );
+    final int total = userMapper.countByQuery(query);
 
     final List<ManagementOfUser> userList = users.stream()
       .map(ManagementOfUser::new)
       .collect(Collectors.toList());
 
     return new PagingData<>(
-      total, paging.getPageNo(), paging.getPageSize(), userList
+      total,
+      paging.getPageNo(),
+      paging.getPageSize(),
+      userList
     );
   }
 
   @NonNull
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Db addNewUser(ManagementOfUser query) {
-    checkUsernameExists(query.getUsername());
+    validateUsernameUniqueness(query.getUsername());
 
     final String hashedPassword = passwordEncoder.encode(query.getPassword());
-
     query.setPassword(hashedPassword);
 
     final User userToAdd = createUserToAdd(query);
-
     final int addedNum = userMapper.add(userToAdd);
 
-    final String logMessage = String.format("新增用户数据【ID：%s, 用户名：%s】",
-      userToAdd.getUserId(), userToAdd.getUsername()
+    final String logMessage = String.format(
+      "新增用户数据【ID：%s, 用户名：%s】",
+      userToAdd.getUserId(),
+      userToAdd.getUsername()
     );
 
     logService.addNewOperationLog(LocalDateTime.now(), logMessage);
@@ -86,15 +85,14 @@ public class UserService {
     final User userToUpdate = getUserFromDbMustBeExists(query.getUserId());
 
     final List<String> logs = new ArrayList<>();
-
-    final boolean needsUpdate =
-      needsUpdateLogsSetNull2Fields(userToUpdate, query, logs);
+    final boolean needsUpdate = needsUpdateUser(userToUpdate, query, logs);
 
     if (needsUpdate) {
       final int updatedNum = userMapper.update(userToUpdate);
 
       final String logMessage =
-        String.format("修改用户数据【ID：%s，用户名：%s】：%s",
+        String.format(
+          "修改用户数据【ID：%s，用户名：%s】：%s",
           userToUpdate.getUserId(),
           userToUpdate.getUsername(),
           String.join("；", logs)
@@ -113,14 +111,15 @@ public class UserService {
   public Wrote2Db updateUserPassword(ManagementOfUser query) {
     final User passwordToUpdate = getUserFromDbMustBeExists(query.getUserId());
 
-    checkOldPassword(
+    validatePassword(
       query.getOldPassword(),
       passwordToUpdate.getHashedPassword()
     );
 
     final int updatedNum = updateUserPasswordInDatabase(query);
 
-    final String logMessage = String.format("修改用户密码【ID：%s，用户名：%s】",
+    final String logMessage = String.format(
+      "修改用户密码【ID：%s，用户名：%s】",
       passwordToUpdate.getUserId(),
       passwordToUpdate.getUsername()
     );
@@ -137,7 +136,8 @@ public class UserService {
 
     final int deletedNum = userMapper.deleteById(userId);
 
-    final String logMessage = String.format("删除用户数据【ID：%s，用户名：%s】",
+    final String logMessage = String.format(
+      "删除用户数据【ID：%s，用户名：%s】",
       userToDelete.getUserId(),
       userToDelete.getUsername()
     );
@@ -147,7 +147,7 @@ public class UserService {
     return new Wrote2Db(deletedNum, "删除用户成功");
   }
 
-  private void checkUsernameExists(String username) {
+  private void validateUsernameUniqueness(String username) {
     final boolean existsUsername = userMapper.existsUsername(username);
 
     if (existsUsername) {
@@ -179,24 +179,21 @@ public class UserService {
     return user;
   }
 
-  private boolean needsUpdateLogsSetNull2Fields(
+  private boolean needsUpdateUser(
     User userToUpdate,
     ManagementOfUser query,
     List<String> logs
   ) {
-    boolean isPasswordChanged =
-      isPasswordChangedLogSetNull(userToUpdate, query, logs);
+    boolean needsUpdatePassword = needsUpdatePassword(userToUpdate, query, logs);
 
-    boolean isRolesChanged =
-      isRolesChangedLogSetNull(userToUpdate, query, logs);
+    boolean needsUpdateRoles = needsUpdateRoles(userToUpdate, query, logs);
 
-    boolean isEnabledChanged =
-      isEnabledChangedLogSetNull(userToUpdate, query, logs);
+    boolean needsUpdateEnabled = needsUpdateEnabled(userToUpdate, query, logs);
 
-    return isPasswordChanged || isRolesChanged || isEnabledChanged;
+    return needsUpdatePassword || needsUpdateRoles || needsUpdateEnabled;
   }
 
-  private void checkOldPassword(String rawPassword, String hashedPassword) {
+  private void validatePassword(String rawPassword, String hashedPassword) {
     final boolean isPasswordCorrect =
       passwordEncoder.matches(rawPassword, hashedPassword);
 
@@ -217,15 +214,15 @@ public class UserService {
     return userMapper.update(user);
   }
 
-  private boolean isPasswordChangedLogSetNull(
+  private boolean needsUpdatePassword(
     User userToUpdate,
     ManagementOfUser query,
     List<String> logs
   ) {
     boolean isChanged = false;
-    final String rawPassword = query.getPassword();
 
-    boolean isSamePassword = rawPassword != null &&
+    final String rawPassword = query.getPassword();
+    final boolean isSamePassword = rawPassword != null &&
       passwordEncoder.matches(rawPassword, userToUpdate.getHashedPassword());
 
     if (rawPassword != null && !isSamePassword) {
@@ -234,7 +231,6 @@ public class UserService {
       logs.add("重置密码");
 
       final String hashedPassword = passwordEncoder.encode(rawPassword);
-
       userToUpdate.setHashedPassword(hashedPassword);
     } else if (rawPassword != null) {
       userToUpdate.setHashedPassword(null);
@@ -243,15 +239,15 @@ public class UserService {
     return isChanged;
   }
 
-  private boolean isRolesChangedLogSetNull(
+  private boolean needsUpdateRoles(
     User userToUpdate,
     ManagementOfUser query,
     List<String> logs
   ) {
     boolean isChanged = false;
+
     final String roles = query.getRoles();
     final String oldRoles = userToUpdate.getRoles();
-
     final boolean isSameRoles = StrUtils.isEqualsIgnoreNull(roles, oldRoles);
 
     if (roles != null && !isSameRoles) {
@@ -267,27 +263,23 @@ public class UserService {
     return isChanged;
   }
 
-  private boolean isEnabledChangedLogSetNull(
+  private boolean needsUpdateEnabled(
     User userToUpdate,
     ManagementOfUser query,
     List<String> logs
   ) {
     boolean isChanged = false;
-    final YesOrNo enabled = EnumUtils.resolve(
-      YesOrNo.class,
-      query.getEnabled()
-    );
-    final YesOrNo oldEnabled = userToUpdate.getEnabled();
 
+    final YesOrNo enabled = EnumUtils.resolve(YesOrNo.class, query.getEnabled());
+    final YesOrNo oldEnabled = userToUpdate.getEnabled();
     final boolean isSameEnabled = enabled != null && enabled == oldEnabled;
 
     if (enabled != null && !isSameEnabled) {
       isChanged = true;
 
       logs.add(
-        String.format("将启用状态【%s】修改为【%s】",
-          oldEnabled.name(),
-          enabled.name()
+        String.format(
+          "将启用状态【%s】修改为【%s】", oldEnabled.name(), enabled.name()
         )
       );
 

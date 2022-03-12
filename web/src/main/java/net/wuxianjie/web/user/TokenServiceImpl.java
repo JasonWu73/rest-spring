@@ -37,9 +37,9 @@ public class TokenServiceImpl implements TokenService {
   public TokenData getToken(String accountName, String accountRawPassword) {
     final ManagementOfUser user = getUserFromDbMustBeExists(accountName);
 
-    checkAccountIsDisabled(user.getEnabled(), user.getUsername());
+    validateAccountAvaliable(user.getEnabled(), user.getUsername());
 
-    checkPassword(accountRawPassword, user.getHashedPassword());
+    validatePassword(accountRawPassword, user.getHashedPassword());
 
     final TokenData token = createNewToken(user);
 
@@ -67,7 +67,7 @@ public class TokenServiceImpl implements TokenService {
 
     final ManagementOfUser user = getUserFromDbMustBeExists(username);
 
-    checkAccountIsDisabled(user.getEnabled(), username);
+    validateAccountAvaliable(user.getEnabled(), username);
 
     final TokenData token = createNewToken(user);
 
@@ -87,7 +87,7 @@ public class TokenServiceImpl implements TokenService {
     return user;
   }
 
-  private void checkAccountIsDisabled(Integer enabled, String username) {
+  private void validateAccountAvaliable(Integer enabled, String username) {
     if (enabled == null || enabled != YesOrNo.YES.value()) {
       throw new TokenAuthenticationException(
         String.format("账号【%s】已被禁用", username)
@@ -95,7 +95,7 @@ public class TokenServiceImpl implements TokenService {
     }
   }
 
-  private void checkPassword(String rawPassword, String hashedPassword) {
+  private void validatePassword(String rawPassword, String hashedPassword) {
     final boolean isPasswordCorrect =
       passwordEncoder.matches(rawPassword, hashedPassword);
 

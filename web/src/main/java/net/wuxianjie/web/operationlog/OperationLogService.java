@@ -30,9 +30,12 @@ public class OperationLogService {
     LocalDateTime startTimeInclusive,
     LocalDateTime endTimeInclusive
   ) {
-    final List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
-      paging, startTimeInclusive, endTimeInclusive
-    );
+    final List<OperationLog> logs =
+      logMapper.findByStartEndTimePagingOperationTimeDesc(
+        paging,
+        startTimeInclusive,
+        endTimeInclusive
+      );
 
     final int total =
       logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);

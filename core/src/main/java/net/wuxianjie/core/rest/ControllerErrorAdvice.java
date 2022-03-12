@@ -41,7 +41,8 @@ public class ControllerErrorAdvice {
   ) {
     final String[] accepts = request.getHeaderValues(HttpHeaders.ACCEPT);
 
-    log.warn("HTTP 请求【{}】->\n不支持请求头 {} 中指定的资源类型【{}】：{}",
+    log.warn(
+      "HTTP 请求【{}】->\n不支持请求头 {} 中指定的资源类型【{}】：{}",
       request,
       HttpHeaders.ACCEPT,
       Arrays.toString(accepts),
@@ -56,7 +57,8 @@ public class ControllerErrorAdvice {
     HttpRequestMethodNotSupportedException e,
     WebRequest request
   ) {
-    log.warn("HTTP 请求【{}】->\nAPI 不支持当前 HTTP 请求方法：{}",
+    log.warn(
+      "HTTP 请求【{}】->\nAPI 不支持当前 HTTP 请求方法：{}",
       request,
       e.getMessage()
     );
@@ -135,7 +137,8 @@ public class ControllerErrorAdvice {
     final Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
 
     for (ConstraintViolation<?> violation : violations) {
-      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format(
+        "%s.%s【拒绝值【%s】：%s】",
         violation.getRootBeanClass().getName(),
         violation.getPropertyPath(),
         violation.getInvalidValue(),
@@ -147,7 +150,8 @@ public class ControllerErrorAdvice {
       errorsToResponse.add(violation.getMessage());
     }
 
-    log.warn("HTTP 请求【{}】->\n参数错误：{}",
+    log.warn(
+      "HTTP 请求【{}】->\n参数错误：{}",
       request,
       String.join("；", errorsToLog)
     );
@@ -173,7 +177,8 @@ public class ControllerErrorAdvice {
     final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 
     for (FieldError err : fieldErrors) {
-      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format(
+        "%s.%s【拒绝值【%s】：%s】",
         err.getObjectName(),
         err.getField(),
         err.getRejectedValue(),
@@ -185,7 +190,8 @@ public class ControllerErrorAdvice {
       errorsToResponse.add(err.getDefaultMessage());
     }
 
-    log.warn("HTTP 请求【{}】->\n参数错误：{}",
+    log.warn(
+      "HTTP 请求【{}】->\n参数错误：{}",
       request,
       String.join("；", errorsToLog)
     );
@@ -227,7 +233,8 @@ public class ControllerErrorAdvice {
     if (cause == null) {
       log.warn("HTTP 请求【{}】->\n{}", request, e.getMessage());
     } else {
-      log.warn("HTTP 请求【{}】->\n{}：{}",
+      log.warn(
+        "HTTP 请求【{}】->\n{}：{}",
         request,
         e.getMessage(),
         cause.getMessage()
@@ -292,8 +299,9 @@ public class ControllerErrorAdvice {
     }
 
     return Arrays.stream(accepts)
-      .noneMatch(x -> x.contains(MediaType.ALL_VALUE) ||
-        x.toLowerCase().contains(MediaType.APPLICATION_JSON_VALUE)
+      .noneMatch(
+        x -> x.contains(MediaType.ALL_VALUE) ||
+          x.toLowerCase().contains(MediaType.APPLICATION_JSON_VALUE)
       );
   }
 }

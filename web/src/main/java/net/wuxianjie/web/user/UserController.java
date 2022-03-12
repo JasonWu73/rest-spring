@@ -42,10 +42,7 @@ public class UserController {
     @Validated PagingQuery paging,
     @Validated ManagementOfUser query
   ) {
-    final String fuzzyUsername =
-      StrUtils.generateDbFuzzyStr(query.getUsername());
-
-    query.setUsername(fuzzyUsername);
+    setFuzzySearchValue(query);
 
     return userService.getUsers(paging, query);
   }
@@ -58,12 +55,7 @@ public class UserController {
   public Wrote2Db addNewUser(
     @RequestBody @Validated(Add.class) ManagementOfUser query
   ) {
-    final String commaSeparatedLowerCaseRoleStr =
-      toDeduplicateCommaSeparatedLowerCaseStr(query.getRoles());
-
-    validateRoleStr(commaSeparatedLowerCaseRoleStr);
-
-    query.setRoles(commaSeparatedLowerCaseRoleStr);
+    setRoleStrAfterDeduplication(query);
 
     return userService.addNewUser(query);
   }
@@ -81,12 +73,7 @@ public class UserController {
   ) {
     query.setUserId(id);
 
-    final String commaSeparatedLowerCaseRoleStr =
-      toDeduplicateCommaSeparatedLowerCaseStr(query.getRoles());
-
-    validateRoleStr(commaSeparatedLowerCaseRoleStr);
-
-    query.setRoles(commaSeparatedLowerCaseRoleStr);
+    setRoleStrAfterDeduplication(query);
 
     return userService.updateUser(query);
   }
@@ -98,14 +85,9 @@ public class UserController {
   public Wrote2Db updateCurrentUserPassword(
     @RequestBody @Validated(Update.class) ManagementOfUser query
   ) {
-    final TokenUserDetails userDetails =
-      authenticationFacade.getCurrentLoggedInUserDetails();
+    validateDifferentPassword(query.getOldPassword(), query.getNewPassword());
 
-    query.setUserId(userDetails.getAccountId());
-
-    if (Objects.equals(query.getOldPassword(), query.getNewPassword())) {
-      throw new BadRequestException("新旧密码不能相同");
-    }
+    setCurrentUserId(query);
 
     return userService.updateUserPassword(query);
   }
@@ -119,40 +101,69 @@ public class UserController {
     return userService.deleteUser(id);
   }
 
+  private void setFuzzySearchValue(ManagementOfUser query) {
+    final String fuzzyUsername =
+      StrUtils.generateDbFuzzyStr(query.getUsername());
+
+    query.setUsername(fuzzyUsername);
+  }
+
+  private void setRoleStrAfterDeduplication(ManagementOfUser query) {
+    final String roles = toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
+
+    validateRole(roles);
+
+    query.setRoles(roles);
+  }
+
   @Nullable
-  private String toDeduplicateCommaSeparatedLowerCaseStr(String roles) {
+  private String toDeduplicatedCommaSeparatedLowerCase(String roles) {
     if (StrUtil.isEmpty(roles)) {
       return roles;
     }
 
     return Arrays.stream(roles.split(","))
       .reduce("", (s1, s2) -> {
-        final String trimmedLowerCaseStr = s2.trim().toLowerCase();
+        final String trimmedLowerCase = s2.trim().toLowerCase();
 
-        if (s1.contains(trimmedLowerCaseStr)) {
+        if (s1.contains(trimmedLowerCase)) {
           return s1;
         }
 
         if (StrUtil.isNotEmpty(s1)) {
-          return s1 + "," + trimmedLowerCaseStr;
+          return s1 + "," + trimmedLowerCase;
         }
 
-        return trimmedLowerCaseStr;
+        return trimmedLowerCase;
       });
   }
 
-  private void validateRoleStr(String commaSeparatedLowerCaseRoleStr) {
-    if (StrUtil.isEmpty(commaSeparatedLowerCaseRoleStr)) {
+  private void validateRole(String commaSeparatedLowerCase) {
+    if (StrUtil.isEmpty(commaSeparatedLowerCase)) {
       return;
     }
 
-    final String[] roleArray = commaSeparatedLowerCaseRoleStr.split(",");
+    final String[] roles = commaSeparatedLowerCase.split(",");
 
-    final boolean hasInvalidRole = Arrays.stream(roleArray)
+    final boolean hasInvalidRole = Arrays.stream(roles)
       .anyMatch(x -> Role.resolve(x) == null);
 
     if (hasInvalidRole) {
       throw new BadRequestException("包含未定义角色");
     }
+  }
+
+  private void validateDifferentPassword(String oldPassword, String newPassword) {
+    if (Objects.equals(oldPassword, newPassword)) {
+      throw new BadRequestException("新旧密码不能相同");
+    }
+  }
+
+  private void setCurrentUserId(ManagementOfUser query) {
+    final TokenUserDetails userDetails =
+      authenticationFacade.getCurrentLoggedInUserDetails();
+
+    query.setUserId(userDetails.getAccountId());
+
   }
 }

@@ -12,7 +12,7 @@ import java.util.List;
 public interface OperationLogMapper {
 
   @NonNull
-  List<OperationLog> findByStartEndTimeLimitTimeDesc(
+  List<OperationLog> findByStartEndTimePagingOperationTimeDesc(
     @Param("p") PagingQuery paging,
     @Param("start") LocalDateTime startTimeInclusive,
     @Param("end") LocalDateTime endTimeInclusive

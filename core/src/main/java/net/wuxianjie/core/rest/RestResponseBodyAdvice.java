@@ -48,9 +48,11 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
       }
     }
 
-    if (body instanceof RestData ||
-      body instanceof ResponseEntity ||
-      body instanceof byte[]) {
+    if (
+      body instanceof RestData ||
+        body instanceof ResponseEntity ||
+        body instanceof byte[]
+    ) {
       return body;
     }
 

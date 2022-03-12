@@ -16,10 +16,12 @@ import org.springframework.stereotype.Component;
 public class PagingParamPaddingAspect {
 
   @Pointcut(
-    // execution([方法的可见性] 返回类型
-    // [方法所在类的全路径名] 方法名(参数类型列表) [方法抛出的异常类型]
+    // execution(
+    //   [方法的可见性] 返回类型
+    //   [方法所在类的全路径名] 方法名(参数类型列表) [方法抛出的异常类型]
     // )
-    "execution(public net.wuxianjie.core.paging.PagingData " +
+    "execution(" +
+      "public net.wuxianjie.core.paging.PagingData " +
       "*..*.*(net.wuxianjie.core.paging.PagingQuery, ..)" +
     ")"
   )
