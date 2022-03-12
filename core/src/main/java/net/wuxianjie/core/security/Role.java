@@ -16,27 +16,27 @@ import org.springframework.lang.Nullable;
 @Accessors(fluent = true)
 public enum Role {
 
-    USER("user"),
+  USER("user"),
 
-    ADMIN("admin");
+  ADMIN("admin");
 
-    private static final Role[] VALUES;
+  private static final Role[] VALUES;
 
-    static {
-        VALUES = values();
+  static {
+    VALUES = values();
+  }
+
+  @JsonValue
+  private final String value;
+
+  @Nullable
+  public static Role resolve(String value) {
+    for (Role role : VALUES) {
+      if (role.value.equals(value)) {
+        return role;
+      }
     }
 
-    @JsonValue
-    private final String value;
-
-    @Nullable
-    public static Role resolve(String value) {
-        for (Role role : VALUES) {
-            if (role.value.equals(value)) {
-                return role;
-            }
-        }
-
-        return null;
-    }
+    return null;
+  }
 }

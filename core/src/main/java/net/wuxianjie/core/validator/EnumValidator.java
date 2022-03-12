@@ -44,18 +44,18 @@ import static java.lang.annotation.ElementType.*;
 @Constraint(validatedBy = EnumValidatorImpl.class)
 public @interface EnumValidator {
 
-    Class<? extends Enum<?>> value();
+  Class<? extends Enum<?>> value();
 
-    String message() default "{com.qgs.trial.validator.EnumValidator.message}";
+  String message() default "{com.qgs.trial.validator.EnumValidator.message}";
 
-    Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface List {
+  @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface List {
 
-        EnumValidator[] value();
-    }
+    EnumValidator[] value();
+  }
 }

@@ -16,26 +16,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @PropertySource(value = "classpath:core.yml", factory = YamlSourceFactory.class)
 public class SecurityConfig {
 
-    @Value("${core.security.jwt-signing-key}")
-    private String jwtSigningKey;
+  @Value("${core.security.jwt-signing-key}")
+  private String jwtSigningKey;
 
-    @Value("${core.security.permit-all-ant-patterns}")
-    private String permitAllAntPatterns;
+  @Value("${core.security.permit-all-ant-patterns}")
+  private String permitAllAntPatterns;
 
-    @Bean
-    public SecurityConfigData securityConfigData() {
-        jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
-        permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
+  @Bean
+  public SecurityConfigData securityConfigData() {
+    jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
+    permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
 
-        if (jwtSigningKey == null) {
-            throw new IllegalArgumentException("jwtSigningKey 不能为空");
-        }
-
-        return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
+    if (jwtSigningKey == null) {
+      throw new IllegalArgumentException("jwtSigningKey 不能为空");
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

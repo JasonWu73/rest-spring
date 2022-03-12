@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TokenUserDetails {
 
-    private Integer accountId;
+  private Integer accountId;
 
-    private String accountName;
+  private String accountName;
 
-    private String accountRoles;
+  private String accountRoles;
 
-    private String accessToken;
+  private String accessToken;
 
-    private String refreshToken;
+  private String refreshToken;
 }

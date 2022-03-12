@@ -21,32 +21,47 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogService {
 
-    private final OperationLogMapper logMapper;
-    private final AuthenticationFacade authenticationFacade;
+  private final OperationLogMapper logMapper;
+  private final AuthenticationFacade authenticationFacade;
 
-    @NonNull
-    public PagingData<List<ListItemOfOperationLog>> getOperationLogs(PagingQuery paging,
-                                                                     LocalDateTime startTimeInclusive,
-                                                                     LocalDateTime endTimeInclusive) {
-        final List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
-                paging, startTimeInclusive, endTimeInclusive);
+  @NonNull
+  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
+    PagingQuery paging,
+    LocalDateTime startTimeInclusive,
+    LocalDateTime endTimeInclusive
+  ) {
+    final List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
+      paging, startTimeInclusive, endTimeInclusive
+    );
 
-        final int total = logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
+    final int total =
+      logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
 
-        final List<ListItemOfOperationLog> logList = logs.stream()
-                .map(ListItemOfOperationLog::new)
-                .collect(Collectors.toList());
+    final List<ListItemOfOperationLog> logList = logs.stream()
+      .map(ListItemOfOperationLog::new)
+      .collect(Collectors.toList());
 
-        return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(), logList);
-    }
+    return new PagingData<>(
+      total,
+      paging.getPageNo(),
+      paging.getPageSize(),
+      logList
+    );
+  }
 
-    @Transactional(rollbackFor = Exception.class)
-    public void addNewOperationLog(LocalDateTime operationTime, String message) {
-        final TokenUserDetails userDetails = authenticationFacade.getCurrentLoggedInUserDetails();
+  @Transactional(rollbackFor = Exception.class)
+  public void addNewOperationLog(LocalDateTime operationTime, String message) {
+    final TokenUserDetails userDetails =
+      authenticationFacade.getCurrentLoggedInUserDetails();
 
-        final OperationLog logToAdd = new OperationLog(null,
-                operationTime, userDetails.getAccountId(), userDetails.getAccountName(), message);
+    final OperationLog logToAdd = new OperationLog(
+      null,
+      operationTime,
+      userDetails.getAccountId(),
+      userDetails.getAccountName(),
+      message
+    );
 
-        logMapper.add(logToAdd);
-    }
+    logMapper.add(logToAdd);
+  }
 }

@@ -16,48 +16,50 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class JwtUtilsTest {
 
-    private static final String USERNAME_KEY = "user";
-    private static final String USERNAME_VALUE = "吴仙杰";
-    private static final int EXPIRE_IN_SECONDS_VALUE = 60;
+  private static final String USERNAME_KEY = "user";
+  private static final String USERNAME_VALUE = "吴仙杰";
+  private static final int EXPIRE_IN_SECONDS_VALUE = 60;
 
-    private static String secretKey = "";
-    private static String token = "";
+  private static String secretKey = "";
+  private static String token = "";
 
-    @Test
-    @Order(1)
-    void generateSecretKeyShouldNotReturnNull() {
-        secretKey = JwtUtils.createNewBase64SigningKey();
+  @Test
+  @Order(1)
+  void generateSecretKeyShouldNotReturnNull() {
+    secretKey = JwtUtils.createNewBase64SigningKey();
 
-        assertNotNull(secretKey);
+    assertNotNull(secretKey);
 
-        log.info("JWT 签名密钥：{}", secretKey);
-    }
+    log.info("JWT 签名密钥：{}", secretKey);
+  }
 
-    @Test
-    @Order(2)
-    void generateTokenShouldNotReturnNull() {
-        final Map<String, Object> payload = new HashMap<>() {{
-            put(USERNAME_KEY, USERNAME_VALUE);
-        }};
+  @Test
+  @Order(2)
+  void generateTokenShouldNotReturnNull() {
+    final Map<String, Object> payload = new HashMap<>() {{
+      put(USERNAME_KEY, USERNAME_VALUE);
+    }};
 
-        token = JwtUtils.createNewJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
+    token = JwtUtils.createNewJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
-        assertNotNull(token);
+    assertNotNull(token);
 
-        log.info("生成 JWT：{}", token);
-    }
+    log.info("生成 JWT：{}", token);
+  }
 
-    @Test
-    @Order(3)
-    void parseTokenShouldEqualsOriginalData() {
-        final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(secretKey, token);
-        final String username = (String) payload.get(USERNAME_KEY);
+  @Test
+  @Order(3)
+  void parseTokenShouldEqualsOriginalData() {
+    final Map<String, Object> payload =
+      JwtUtils.verifyTwtReturnPayload(secretKey, token);
 
-        assertEquals(USERNAME_VALUE, username);
+    final String username = (String) payload.get(USERNAME_KEY);
 
-        final JSONObject jsonObject = JSONUtil.parseObj(payload);
-        final String json = JSONUtil.toJsonStr(jsonObject, 4);
+    assertEquals(USERNAME_VALUE, username);
 
-        log.info("解析 JWT：\n{}", json);
-    }
+    final JSONObject jsonObject = JSONUtil.parseObj(payload);
+    final String json = JSONUtil.toJsonStr(jsonObject, 4);
+
+    log.info("解析 JWT：\n{}", json);
+  }
 }

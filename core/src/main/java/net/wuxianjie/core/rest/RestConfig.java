@@ -14,16 +14,17 @@ import java.util.List;
 @Configuration
 public class RestConfig implements WebMvcConfigurer {
 
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // 当涉及 JSON 序列化时，设置默认编码为 UTF-8
-        converters.stream()
-                .filter(MappingJackson2HttpMessageConverter.class::isInstance)
-                .findFirst()
-                .ifPresent(converter -> {
-                    MappingJackson2HttpMessageConverter jsonConverter = (MappingJackson2HttpMessageConverter) converter;
+  @Override
+  public void configureMessageConverters(List<HttpMessageConverter<?>> con) {
+    // 当涉及 JSON 序列化时，设置默认编码为 UTF-8
+    con.stream()
+      .filter(MappingJackson2HttpMessageConverter.class::isInstance)
+      .findFirst()
+      .ifPresent(c -> {
+        final MappingJackson2HttpMessageConverter converter =
+          (MappingJackson2HttpMessageConverter) c;
 
-                    jsonConverter.setDefaultCharset(StandardCharsets.UTF_8);
-                });
-    }
+        converter.setDefaultCharset(StandardCharsets.UTF_8);
+      });
+  }
 }

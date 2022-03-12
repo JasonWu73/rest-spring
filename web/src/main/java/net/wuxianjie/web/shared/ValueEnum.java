@@ -5,5 +5,5 @@ package net.wuxianjie.web.shared;
  */
 public interface ValueEnum {
 
-    int value();
+  int value();
 }

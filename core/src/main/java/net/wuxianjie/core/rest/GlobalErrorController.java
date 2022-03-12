@@ -24,31 +24,33 @@ import java.util.Objects;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GlobalErrorController implements ErrorController {
 
-    private final ErrorAttributes attributes;
+  private final ErrorAttributes attributes;
 
-    @ResponseBody
-    @RequestMapping("/error")
-    public ResponseEntity<RestData<Void>> handleError(WebRequest request) {
-        final Map<String, Object> errorMap = attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
-        final Integer status = (Integer) errorMap.get("status");
-        final String error = (String) errorMap.get("error");
+  @ResponseBody
+  @RequestMapping("/error")
+  public ResponseEntity<RestData<Void>> handleError(WebRequest request) {
+    final Map<String, Object> errorMap =
+      attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
-        if (HttpStatus.NOT_FOUND.value() == status) {
-            log.warn("全局 404 处理：{}", errorMap);
-        } else {
-            log.error("全局异常处理（未知）：{}", errorMap);
-        }
+    final Integer status = (Integer) errorMap.get("status");
+    final String error = (String) errorMap.get("error");
 
-        HttpStatus httpStatus;
-
-        try {
-            httpStatus = Objects.requireNonNull(HttpStatus.resolve(status));
-        } catch (NullPointerException e) {
-            log.warn("全局异常处理发生异常：无法解析 HTTP 状态码【{}】", status);
-
-            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
-
-        return new ResponseEntity<>(RestDataWrapper.fail(error), httpStatus);
+    if (HttpStatus.NOT_FOUND.value() == status) {
+      log.warn("全局 404 处理：{}", errorMap);
+    } else {
+      log.error("全局异常处理（未知）：{}", errorMap);
     }
+
+    HttpStatus httpStatus;
+
+    try {
+      httpStatus = Objects.requireNonNull(HttpStatus.resolve(status));
+    } catch (NullPointerException e) {
+      log.warn("全局异常处理发生异常：无法解析 HTTP 状态码【{}】", status);
+
+      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    return new ResponseEntity<>(RestDataWrapper.fail(error), httpStatus);
+  }
 }

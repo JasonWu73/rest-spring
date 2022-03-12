@@ -8,15 +8,15 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public enum YesOrNo implements ValueEnum {
 
-    NO(0),
+  NO(0),
 
-    YES(1);
+  YES(1);
 
-    @JsonValue
-    private final int value;
+  @JsonValue
+  private final int value;
 
-    @Override
-    public int value() {
-        return value;
-    }
+  @Override
+  public int value() {
+    return value;
+  }
 }

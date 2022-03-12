@@ -13,27 +13,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationFacade {
 
-    /**
-     * 获取当前已登录的用户详细数据。
-     */
-    @NonNull
-    public TokenUserDetails getCurrentLoggedInUserDetails() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+  /**
+   * 获取当前已登录的用户详细数据。
+   */
+  @NonNull
+  public TokenUserDetails getCurrentLoggedInUserDetails() {
+    final Authentication authentication =
+      SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication instanceof AnonymousAuthenticationToken) {
-            final TokenUserDetails anonymous = new TokenUserDetails();
+    if (authentication instanceof AnonymousAuthenticationToken) {
+      final TokenUserDetails anonymous = new TokenUserDetails();
 
-            anonymous.setAccountName(authentication.getName());
+      anonymous.setAccountName(authentication.getName());
 
-            return anonymous;
-        }
-
-        final TokenUserDetails userDetails = (TokenUserDetails) authentication.getPrincipal();
-
-        if (userDetails == null) {
-            throw new InternalServerException("无法获取已登录用户的详细数据");
-        }
-
-        return userDetails;
+      return anonymous;
     }
+
+    final TokenUserDetails userDetails =
+      (TokenUserDetails) authentication.getPrincipal();
+
+    if (userDetails == null) {
+      throw new InternalServerException("无法获取已登录用户的详细数据");
+    }
+
+    return userDetails;
+  }
 }

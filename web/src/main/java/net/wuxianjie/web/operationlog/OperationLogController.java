@@ -29,61 +29,66 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogController {
 
-    private final OperationLogService logService;
+  private final OperationLogService logService;
 
-    /**
-     * 获取操作日志列表。
-     */
-    @Admin
-    @GetMapping("list")
-    public PagingData<List<ListItemOfOperationLog>> getOperationLogs(@Validated PagingQuery paging,
+  /**
+   * 获取操作日志列表。
+   */
+  @Admin
+  @GetMapping("list")
+  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
+    @Validated PagingQuery paging,
 
-                                                                     @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
-                                                                             regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                     ) String startDate,
+    @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
+      regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
+    ) String startDate,
 
-                                                                     @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
-                                                                             regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                     ) String endDate) {
+    @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
+      regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
+    ) String endDate
+  ) {
+    final LocalDateTime startTimeInclusive = getStartTime(startDate);
 
-        final LocalDateTime startTimeInclusive = getStartTime(startDate);
+    final LocalDateTime endTimeInclusive = getEndTime(endDate);
 
-        final LocalDateTime endTimeInclusive = getEndTime(endDate);
+    return logService.getOperationLogs(
+      paging,
+      startTimeInclusive,
+      endTimeInclusive
+    );
+  }
 
-        return logService.getOperationLogs(paging, startTimeInclusive, endTimeInclusive);
+  @Nullable
+  private LocalDateTime getStartTime(String startDateStr) {
+    if (StrUtil.isEmpty(startDateStr)) {
+      return null;
     }
 
-    @Nullable
-    private LocalDateTime getStartTime(String startDateStr) {
-        if (StrUtil.isEmpty(startDateStr)) {
-            return null;
-        }
+    final LocalDate startDate;
 
-        final LocalDate startDate;
-
-        try {
-            startDate = LocalDate.parse(startDateStr);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("开始日期错误", e);
-        }
-
-        return startDate.atStartOfDay();
+    try {
+      startDate = LocalDate.parse(startDateStr);
+    } catch (DateTimeParseException e) {
+      throw new BadRequestException("开始日期错误", e);
     }
 
-    @Nullable
-    private LocalDateTime getEndTime(String endDateStr) {
-        if (StrUtil.isEmpty(endDateStr)) {
-            return null;
-        }
+    return startDate.atStartOfDay();
+  }
 
-        final LocalDate endDate;
-
-        try {
-            endDate = LocalDate.parse(endDateStr);
-        } catch (DateTimeParseException e) {
-            throw new BadRequestException("结束日期错误", e);
-        }
-
-        return endDate.atTime(LocalTime.MAX);
+  @Nullable
+  private LocalDateTime getEndTime(String endDateStr) {
+    if (StrUtil.isEmpty(endDateStr)) {
+      return null;
     }
+
+    final LocalDate endDate;
+
+    try {
+      endDate = LocalDate.parse(endDateStr);
+    } catch (DateTimeParseException e) {
+      throw new BadRequestException("结束日期错误", e);
+    }
+
+    return endDate.atTime(LocalTime.MAX);
+  }
 }

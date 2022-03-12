@@ -14,13 +14,14 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "core.security")
 public class SecurityConfigProperties {
 
-    /**
-     * JWT 签名密钥。
-     */
-    private String jwtSigningKey;
+  /**
+   * JWT 签名密钥。
+   */
+  private String jwtSigningKey;
 
-    /**
-     * 无需鉴权即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
-     */
-    private String permitAllAntPatterns;
+  /**
+   * 无需鉴权即可访问的请求路径，
+   * 多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
+   */
+  private String permitAllAntPatterns;
 }

@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RestData<T> {
 
-    /**
-     * 错误码：0：成功，1：失败
-     */
-    private ErrorCode error;
+  /**
+   * 错误码：0：成功，1：失败
+   */
+  private ErrorCode error;
 
-    /**
-     * 错误信息
-     */
-    private String errMsg;
+  /**
+   * 错误信息
+   */
+  private String errMsg;
 
-    /**
-     * 数据结果
-     */
-    private T data;
+  /**
+   * 数据结果
+   */
+  private T data;
 }

@@ -36,62 +36,71 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class RequestResponseDataConfig {
 
-    /**
-     * 定制 JSON 序列化与反序列化行为。
-     */
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-        return builder -> {
-            // 序列化后的字符串排除值为 null 的属性
-            builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+  /**
+   * 定制 JSON 序列化与反序列化行为。
+   */
+  @Bean
+  public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+    return builder -> {
+      // 序列化后的字符串排除值为 null 的属性
+      builder.serializationInclusion(JsonInclude.Include.NON_NULL);
 
-            // 设置中国时区，默认使用 UTC 时间
-            builder.timeZone(CommonValues.CHINA_TIME_ZONE);
+      // 设置中国时区，默认使用 UTC 时间
+      builder.timeZone(CommonValues.CHINA_TIME_ZONE);
 
-            // 设置 Date 序列化后的日期字符串格式
-            builder.serializers(new DateSerializer(false,
-                    new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
+      // 设置 Date 序列化后的日期字符串格式
+      builder.serializers(new DateSerializer(false,
+        new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
 
-            // 设置 Java 8 LocalDate 序列化后的日期字符串格式
-            builder.serializers(
-                    new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
+      // 设置 Java 8 LocalDate 序列化后的日期字符串格式
+      builder.serializers(
+        new LocalDateSerializer(
+          DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)
+        )
+      );
 
-            // 设置 Java 8 LocalDateTime 序列化后的日期时间字符串格式
-            builder.serializers(
-                    new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
+      // 设置 Java 8 LocalDateTime 序列化后的日期时间字符串格式
+      builder.serializers(
+        new LocalDateTimeSerializer(
+          DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT))
+      );
 
-            // 在序列化时去除字符串首尾空格
-            builder.serializerByType(String.class, new JsonSerializer<String>() {
+      // 在序列化时去除字符串首尾空格
+      builder.serializerByType(String.class, new JsonSerializer<String>() {
 
-                @Override
-                public void serialize(String value, JsonGenerator gen, SerializerProvider serializers)
-                        throws IOException {
-                    gen.writeString(StrUtil.trim(value));
-                }
-            });
-
-            // 在反序列化时去除字符串首尾空格
-            builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
-
-                @Override
-                public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    return StrUtil.trim(p.getValueAsString());
-                }
-            });
-        };
-    }
-
-    /**
-     * 去除通过 URL 和 Form 表单提交的字符串参数的首尾空格。
-     */
-    @ControllerAdvice
-    public static class ControllerStrParamTrimConfig {
-
-        @InitBinder
-        public void initBinder(WebDataBinder binder) {
-            final StringTrimmerEditor propertyEditor = new StringTrimmerEditor(false);
-
-            binder.registerCustomEditor(String.class, propertyEditor);
+        @Override
+        public void serialize(
+          String value, JsonGenerator gen, SerializerProvider serializers
+        )
+          throws IOException {
+          gen.writeString(StrUtil.trim(value));
         }
+      });
+
+      // 在反序列化时去除字符串首尾空格
+      builder.deserializerByType(String.class,
+        new StdScalarDeserializer<String>(String.class) {
+
+          @Override
+          public String deserialize(JsonParser p, DeserializationContext ctxt)
+            throws IOException {
+            return StrUtil.trim(p.getValueAsString());
+          }
+        });
+    };
+  }
+
+  /**
+   * 去除通过 URL 和 Form 表单提交的字符串参数的首尾空格。
+   */
+  @ControllerAdvice
+  public static class ControllerStrParamTrimConfig {
+
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+      final StringTrimmerEditor propertyEditor = new StringTrimmerEditor(false);
+
+      binder.registerCustomEditor(String.class, propertyEditor);
     }
+  }
 }
