@@ -26,23 +26,22 @@ public class OperationLogService {
 
   @NonNull
   public PagingData<List<ListItemOfOperationLog>> getOperationLogs(PagingQuery paging,
-                                                                   LocalDateTime startInclusive,
-                                                                   LocalDateTime endInclusive
+                                                                   LocalDateTime startTimeInclusive,
+                                                                   LocalDateTime endTimeInclusive
   ) {
-    final List<OperationLog> logs =
-      logMapper.findByStartEndTimePagingOperationTimeDesc(
-        paging, startInclusive, endInclusive
+    final List<OperationLog> logs = logMapper.findByStartEndTimePagingOperationTimeDesc(
+        paging, startTimeInclusive, endTimeInclusive
       );
 
     final int total =
-      logMapper.countByStartEndTime(startInclusive, endInclusive);
+      logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
 
     final List<ListItemOfOperationLog> logList = logs.stream()
       .map(ListItemOfOperationLog::new)
       .collect(Collectors.toList());
 
-    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
-      logList
+    return new PagingData<>(
+      total, paging.getPageNo(), paging.getPageSize(), logList
     );
   }
 

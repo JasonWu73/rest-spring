@@ -103,20 +103,21 @@ public class UserController {
   }
 
   private void setRoleStrAfterDeduplication(ManagementOfUser query) {
-    final String roles = toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
+    final String commaSeparatedStr =
+      toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
 
-    validateRole(roles);
+    validateRole(commaSeparatedStr);
 
-    query.setRoles(roles);
+    query.setRoles(commaSeparatedStr);
   }
 
   @Nullable
-  private String toDeduplicatedCommaSeparatedLowerCase(String roles) {
-    if (StrUtil.isEmpty(roles)) {
-      return roles;
+  private String toDeduplicatedCommaSeparatedLowerCase(String commaSeparatedStr) {
+    if (StrUtil.isEmpty(commaSeparatedStr)) {
+      return commaSeparatedStr;
     }
 
-    return Arrays.stream(roles.split(","))
+    return Arrays.stream(commaSeparatedStr.split(","))
       .reduce("", (s1, s2) -> {
         final String trimmedLowerCase = s2.trim().toLowerCase();
 
@@ -132,12 +133,12 @@ public class UserController {
       });
   }
 
-  private void validateRole(String commaSeparatedLowerCase) {
-    if (StrUtil.isEmpty(commaSeparatedLowerCase)) {
+  private void validateRole(String comaSeparatedStr) {
+    if (StrUtil.isEmpty(comaSeparatedStr)) {
       return;
     }
 
-    final String[] roles = commaSeparatedLowerCase.split(",");
+    final String[] roles = comaSeparatedStr.split(",");
 
     final boolean hasInvalidRole = Arrays.stream(roles)
       .anyMatch(x -> Role.resolve(x) == null);
