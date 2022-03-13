@@ -161,7 +161,7 @@ public class UserController {
 
   private void setCurrentUserId(ManagementOfUser query) {
     final TokenUserDetails userDetails =
-      authenticationFacade.getCurrentLoggedInUserDetails();
+      authenticationFacade.getCurrentUser();
 
     query.setUserId(userDetails.getAccountId());
 

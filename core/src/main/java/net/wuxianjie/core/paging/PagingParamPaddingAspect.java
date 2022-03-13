@@ -29,7 +29,7 @@ public class PagingParamPaddingAspect {
   }
 
   @Before("getByPaging()")
-  public void beforeCallGetByPagingMethod(JoinPoint joinpoint) {
+  public void before(JoinPoint joinpoint) {
     final Object[] args = joinpoint.getArgs();
 
     if (args != null) {

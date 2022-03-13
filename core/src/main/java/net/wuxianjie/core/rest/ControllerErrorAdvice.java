@@ -35,32 +35,24 @@ import java.util.Set;
 public class ControllerErrorAdvice {
 
   @ExceptionHandler(HttpMediaTypeException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    HttpMediaTypeException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(HttpMediaTypeException e,
+                                                        WebRequest request
   ) {
     final String[] accepts = request.getHeaderValues(HttpHeaders.ACCEPT);
 
-    log.warn(
-      "HTTP 请求【{}】->\n不支持请求头 {} 中指定的资源类型【{}】：{}",
-      request,
-      HttpHeaders.ACCEPT,
-      Arrays.toString(accepts),
-      e.getMessage()
+    log.warn("HTTP 请求【{}】->\n不支持请求头 {} 中指定的资源类型【{}】：{}",
+      request, HttpHeaders.ACCEPT, Arrays.toString(accepts), e.getMessage()
     );
 
     return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    HttpRequestMethodNotSupportedException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(HttpRequestMethodNotSupportedException e,
+                                                        WebRequest request
   ) {
-    log.warn(
-      "HTTP 请求【{}】->\nAPI 不支持当前 HTTP 请求方法：{}",
-      request,
-      e.getMessage()
+    log.warn("HTTP 请求【{}】->\nAPI 不支持当前 HTTP 请求方法：{}",
+      request, e.getMessage()
     );
 
     if (isNotJsonResponse(request)) {
@@ -74,9 +66,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(MissingRequestHeaderException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    MissingRequestHeaderException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(MissingRequestHeaderException e,
+                                                        WebRequest request
   ) {
     log.warn("HTTP 请求【{}】->\n缺少必要请求头：{}", request, e.getMessage());
 
@@ -91,9 +82,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    HttpMessageNotReadableException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(HttpMessageNotReadableException e,
+                                                        WebRequest request
   ) {
     log.warn("HTTP 请求【{}】->\n请求体内容有误：{}", request, e.getMessage());
 
@@ -108,9 +98,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    MissingServletRequestParameterException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(MissingServletRequestParameterException e,
+                                                        WebRequest request
   ) {
     final String paramName = e.getParameterName();
 
@@ -127,9 +116,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    ConstraintViolationException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(ConstraintViolationException e,
+                                                        WebRequest request
   ) {
     final List<String> errorsToLog = new ArrayList<>();
     final List<String> errorsToResponse = new ArrayList<>();
@@ -137,8 +125,7 @@ public class ControllerErrorAdvice {
     final Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
 
     for (ConstraintViolation<?> violation : violations) {
-      final String errMsg = String.format(
-        "%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
         violation.getRootBeanClass().getName(),
         violation.getPropertyPath(),
         violation.getInvalidValue(),
@@ -150,10 +137,8 @@ public class ControllerErrorAdvice {
       errorsToResponse.add(violation.getMessage());
     }
 
-    log.warn(
-      "HTTP 请求【{}】->\n参数错误：{}",
-      request,
-      String.join("；", errorsToLog)
+    log.warn("HTTP 请求【{}】->\n参数错误：{}",
+      request, String.join("；", errorsToLog)
     );
 
     if (isNotJsonResponse(request)) {
@@ -167,9 +152,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(BindException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    BindException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(BindException e,
+                                                        WebRequest request
   ) {
     final List<String> errorsToLog = new ArrayList<>();
     final List<String> errorsToResponse = new ArrayList<>();
@@ -177,8 +161,7 @@ public class ControllerErrorAdvice {
     final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 
     for (FieldError err : fieldErrors) {
-      final String errMsg = String.format(
-        "%s.%s【拒绝值【%s】：%s】",
+      final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
         err.getObjectName(),
         err.getField(),
         err.getRejectedValue(),
@@ -190,10 +173,8 @@ public class ControllerErrorAdvice {
       errorsToResponse.add(err.getDefaultMessage());
     }
 
-    log.warn(
-      "HTTP 请求【{}】->\n参数错误：{}",
-      request,
-      String.join("；", errorsToLog)
+    log.warn("HTTP 请求【{}】->\n参数错误：{}",
+      request, String.join("；", errorsToLog)
     );
 
     if (isNotJsonResponse(request)) {
@@ -207,9 +188,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(UncategorizedDataAccessException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    UncategorizedDataAccessException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(UncategorizedDataAccessException e,
+                                                        WebRequest request
   ) {
     log.error("HTTP 请求【{}】-> 数据库操作异常", request, e);
 
@@ -224,20 +204,16 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(AbstractBaseException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    AbstractBaseException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(AbstractBaseException e,
+                                                        WebRequest request
   ) {
     final Throwable cause = e.getCause();
 
     if (cause == null) {
       log.warn("HTTP 请求【{}】->\n{}", request, e.getMessage());
     } else {
-      log.warn(
-        "HTTP 请求【{}】->\n{}：{}",
-        request,
-        e.getMessage(),
-        cause.getMessage()
+      log.warn("HTTP 请求【{}】->\n{}：{}",
+        request, e.getMessage(), cause.getMessage()
       );
     }
 
@@ -252,9 +228,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(InternalServerException.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    InternalServerException e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(InternalServerException e,
+                                                        WebRequest request
   ) {
     log.warn("HTTP 请求【{}】->\n服务异常（已知）：{}", request, e.getMessage());
 
@@ -269,9 +244,8 @@ public class ControllerErrorAdvice {
   }
 
   @ExceptionHandler(Throwable.class)
-  public ResponseEntity<RestData<Void>> handleException(
-    Throwable e,
-    WebRequest request
+  public ResponseEntity<RestData<Void>> handleException(Throwable e,
+                                                        WebRequest request
   ) {
     if (e instanceof AccessDeniedException) {
       // 不要让全局异常处理 AccessDeniedException，

@@ -48,10 +48,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   private final TokenAuthenticationService authenticationService;
 
   @Override
-  protected void doFilterInternal(
-    @NonNull HttpServletRequest request,
-    @NonNull HttpServletResponse response,
-    @NonNull FilterChain filterChain
+  protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                  @NonNull HttpServletResponse response,
+                                  @NonNull FilterChain filterChain
   ) throws IOException, ServletException {
     final String accessToken = getAccessTokenFromRequest(request);
 
@@ -102,22 +101,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   private void login(TokenUserDetails userDetails) {
     final List<GrantedAuthority> authorities =
-      getGrantedAuthorities(userDetails.getAccountRoles());
+      getAuthorities(userDetails.getAccountRoles());
 
     final UsernamePasswordAuthenticationToken token =
       new UsernamePasswordAuthenticationToken(
-        userDetails,
-        null,
-        authorities
+        userDetails, null, authorities
       );
 
     SecurityContextHolder.getContext().setAuthentication(token);
   }
 
-  private void send2Response(
-    HttpServletResponse response,
-    String message,
-    HttpStatus httpStatus
+  private void send2Response(HttpServletResponse response,
+                             String message,
+                             HttpStatus httpStatus
   ) throws IOException {
     final RestData<Void> data = RestDataWrapper.fail(message);
 
@@ -128,7 +124,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   }
 
   @NonNull
-  private List<GrantedAuthority> getGrantedAuthorities(String commaSeparated) {
+  private List<GrantedAuthority> getAuthorities(String commaSeparated) {
     final List<GrantedAuthority> authorities;
 
     if (StrUtil.isNotEmpty(commaSeparated)) {

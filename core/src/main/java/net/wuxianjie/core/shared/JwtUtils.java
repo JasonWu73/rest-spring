@@ -27,10 +27,9 @@ public class JwtUtils {
   }
 
   @NonNull
-  public static String createNewJwt(
-    String signingKey,
-    Map<String, Object> payload,
-    int expiresInSeconds
+  public static String createNewJwt(String signingKey,
+                                    Map<String, Object> payload,
+                                    int expiresInSeconds
   ) {
     final SecretKey secretKey = createNewSecretKey(signingKey);
     final DateTime expirationDateTime =
@@ -45,9 +44,8 @@ public class JwtUtils {
   }
 
   @NonNull
-  public static Map<String, Object> verifyTwtReturnPayload(
-    String signingKey,
-    String jwt
+  public static Map<String, Object> verifyTwtReturnPayload(String signingKey,
+                                                           String jwt
   ) {
     try {
       final SecretKey secretKey = createNewSecretKey(signingKey);

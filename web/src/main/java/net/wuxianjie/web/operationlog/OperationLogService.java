@@ -55,7 +55,7 @@ public class OperationLogService {
   @Transactional(rollbackFor = Exception.class)
   public void addNewOperationLog(LocalDateTime operationTime, String message) {
     final TokenUserDetails userDetails =
-      authenticationFacade.getCurrentLoggedInUserDetails();
+      authenticationFacade.getCurrentUser();
 
     final OperationLog logToAdd = new OperationLog(
       null,

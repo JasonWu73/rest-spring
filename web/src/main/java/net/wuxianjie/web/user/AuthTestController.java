@@ -91,7 +91,7 @@ public class AuthTestController {
   @NonNull
   private String getUsername() {
     final String username =
-      authenticationFacade.getCurrentLoggedInUserDetails().getAccountName();
+      authenticationFacade.getCurrentUser().getAccountName();
 
     return username == null ? "未知用户" : username;
   }
