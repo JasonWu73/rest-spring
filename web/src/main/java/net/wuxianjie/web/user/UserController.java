@@ -38,8 +38,10 @@ public class UserController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<ManagementOfUser>> getUsers(@Validated PagingQuery paging,
-                                                     @Validated ManagementOfUser query
+  public PagingData<List<ManagementOfUser>> getUsers(@Validated
+                                                     PagingQuery paging,
+                                                     @Validated
+                                                     ManagementOfUser query
   ) {
     setFuzzySearchValue(query);
 
@@ -51,7 +53,10 @@ public class UserController {
    */
   @Admin
   @PostMapping("add")
-  public Wrote2Db addNewUser(@RequestBody @Validated(Add.class) ManagementOfUser query) {
+  public Wrote2Db addNewUser(@RequestBody
+                             @Validated(Add.class)
+                             ManagementOfUser query
+  ) {
     setRoleStrAfterDeduplication(query);
 
     return userService.addNewUser(query);
@@ -78,7 +83,10 @@ public class UserController {
    * 修改当前用户密码。
    */
   @PostMapping("password")
-  public Wrote2Db updateCurrentUserPassword(@RequestBody @Validated(Update.class) ManagementOfUser query) {
+  public Wrote2Db updateCurrentUserPassword(@RequestBody
+                                            @Validated(Update.class)
+                                            ManagementOfUser query
+  ) {
     validateDifferentPassword(query.getOldPassword(), query.getNewPassword());
 
     setCurrentUserId(query);
@@ -112,7 +120,8 @@ public class UserController {
   }
 
   @Nullable
-  private String toDeduplicatedCommaSeparatedLowerCase(String commaSeparatedStr) {
+  private String toDeduplicatedCommaSeparatedLowerCase(String commaSeparatedStr
+  ) {
     if (StrUtil.isEmpty(commaSeparatedStr)) {
       return commaSeparatedStr;
     }
@@ -148,7 +157,9 @@ public class UserController {
     }
   }
 
-  private void validateDifferentPassword(String oldPassword, String newPassword) {
+  private void validateDifferentPassword(String oldPassword,
+                                         String newPassword
+  ) {
     if (Objects.equals(oldPassword, newPassword)) {
       throw new BadRequestException("新旧密码不能相同");
     }

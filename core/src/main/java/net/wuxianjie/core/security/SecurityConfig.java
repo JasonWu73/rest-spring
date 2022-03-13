@@ -24,12 +24,7 @@ public class SecurityConfig {
 
   @Bean
   public SecurityConfigData securityConfigData() {
-    jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
-    permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
-
-    if (jwtSigningKey == null) {
-      throw new IllegalArgumentException("jwtSigningKey 不能为空");
-    }
+    validateFields();
 
     return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
   }
@@ -37,5 +32,16 @@ public class SecurityConfig {
   @Bean
   public PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
+  }
+
+  private void validateFields() {
+    jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
+    permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
+
+    if (jwtSigningKey == null) {
+      throw new IllegalStateException(
+        "application.yml 中必须配置 core.security.jwt-signing-key"
+      );
+    }
   }
 }
