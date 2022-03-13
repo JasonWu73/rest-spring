@@ -24,21 +24,19 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
   private final ObjectMapper objectMapper;
 
   @Override
-  public boolean supports(
-    @NonNull MethodParameter returnType,
-    @NonNull Class<? extends HttpMessageConverter<?>> converterType
+  public boolean supports(@NonNull MethodParameter returnType,
+                          @NonNull Class<? extends HttpMessageConverter<?>> converterType
   ) {
     return true;
   }
 
   @Override
-  public Object beforeBodyWrite(
-    Object body,
-    @NonNull MethodParameter returnType,
-    @NonNull MediaType selectedContentType,
-    @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-    @NonNull ServerHttpRequest request,
-    @NonNull ServerHttpResponse response
+  public Object beforeBodyWrite(Object body,
+                                @NonNull MethodParameter returnType,
+                                @NonNull MediaType selectedContentType,
+                                @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                @NonNull ServerHttpRequest request,
+                                @NonNull ServerHttpResponse response
   ) {
     if (body instanceof String) {
       try {
@@ -48,9 +46,11 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
       }
     }
 
-    if (body instanceof RestData ||
-      body instanceof ResponseEntity ||
-      body instanceof byte[]) {
+    if (
+      body instanceof RestData ||
+        body instanceof ResponseEntity ||
+        body instanceof byte[]
+    ) {
       return body;
     }
 

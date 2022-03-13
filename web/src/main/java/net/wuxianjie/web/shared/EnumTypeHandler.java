@@ -27,11 +27,10 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
   }
 
   @Override
-  public void setNonNullParameter(
-    PreparedStatement ps,
-    int i,
-    ValueEnum parameter,
-    JdbcType jdbcType
+  public void setNonNullParameter(PreparedStatement ps,
+                                  int i,
+                                  ValueEnum parameter,
+                                  JdbcType jdbcType
   ) throws SQLException {
     ps.setInt(i, parameter.value());
   }

@@ -5,50 +5,47 @@
 >
 <mapper namespace="net.wuxianjie.web.user.UserMapper">
   <select id="findById" resultType="net.wuxianjie.web.user.User">
-    SELECT
-      user_id AS userId,
-      is_enabled AS enabled,
-      username,
-      hashed_password AS hashedPassword,
-      roles
+    SELECT user_id         AS userId,
+           is_enabled      AS enabled,
+           username,
+           hashed_password AS hashedPassword,
+           roles
     FROM user
     WHERE user_id = #{id}
   </select>
 
   <select id="findUserByUsername" resultType="net.wuxianjie.web.user.User">
-    SELECT
-      user_id  AS userId,
-      is_enabled AS enabled,
-      username,
-      hashed_password AS hashedPassword,
-      roles
+    SELECT user_id         AS userId,
+           is_enabled      AS enabled,
+           username,
+           hashed_password AS hashedPassword,
+           roles
     FROM user
     WHERE username = #{username}
   </select>
 
-  <select id="findByUsernameEnabledLimitModifyTimeDesc"
+  <select id="findByQueryPagingModifyTimeDesc"
     resultType="net.wuxianjie.web.user.User"
   >
-    SELECT
-      user_id AS userId,
-      STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-      is_enabled AS enabled,
-      username,
-      IFNULL(roles, '') AS roles
+    SELECT user_id                                    AS userId,
+           STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
+           is_enabled                                 AS enabled,
+           username,
+           IFNULL(roles, '')                          AS roles
     FROM user
     <where>
-      <if test="username != null">
-        username LIKE #{username}
+      <if test="q.username != null">
+        username LIKE #{q.username}
       </if>
-      <if test="enabled != null">
-        AND is_enabled = #{enabled}
+      <if test="q.enabled != null">
+        AND is_enabled = #{q.enabled}
       </if>
     </where>
     ORDER BY modify_time DESC
     LIMIT #{p.offset}, #{p.pageSize}
   </select>
 
-  <select id="countByUsernameEnabled" resultType="int">
+  <select id="countByQuery" resultType="int">
     SELECT COUNT(1)
     FROM user
     <where>

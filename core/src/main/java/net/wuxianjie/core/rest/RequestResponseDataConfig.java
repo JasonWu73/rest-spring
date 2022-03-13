@@ -50,8 +50,7 @@ public class RequestResponseDataConfig {
 
       // 设置 Date 序列化后的日期字符串格式
       builder.serializers(
-        new DateSerializer(
-          false,
+        new DateSerializer(false,
           new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)
         )
       );
@@ -70,17 +69,18 @@ public class RequestResponseDataConfig {
       );
 
       // 在序列化时去除字符串首尾空格
-      builder.serializerByType(String.class, new JsonSerializer<String>() {
+      builder.serializerByType(String.class,
+        new JsonSerializer<String>() {
 
-        @Override
-        public void serialize(
-          String value,
-          JsonGenerator gen,
-          SerializerProvider serializers
-        ) throws IOException {
-          gen.writeString(StrUtil.trim(value));
+          @Override
+          public void serialize(String value,
+                                JsonGenerator gen,
+                                SerializerProvider serializers
+          ) throws IOException {
+            gen.writeString(StrUtil.trim(value));
+          }
         }
-      });
+      );
 
       // 在反序列化时去除字符串首尾空格
       builder.deserializerByType(String.class,
@@ -91,7 +91,8 @@ public class RequestResponseDataConfig {
             throws IOException {
             return StrUtil.trim(p.getValueAsString());
           }
-        });
+        }
+      );
     };
   }
 
@@ -103,7 +104,8 @@ public class RequestResponseDataConfig {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-      final StringTrimmerEditor propertyEditor = new StringTrimmerEditor(false);
+      final StringTrimmerEditor propertyEditor =
+        new StringTrimmerEditor(false);
 
       binder.registerCustomEditor(String.class, propertyEditor);
     }

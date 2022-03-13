@@ -17,9 +17,8 @@ public class YamlSourceFactory implements PropertySourceFactory {
 
   @NonNull
   @Override
-  public PropertySource<?> createPropertySource(
-    String name,
-    EncodedResource encodedResource
+  public PropertySource<?> createPropertySource(String name,
+                                                EncodedResource encodedResource
   ) {
     final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
     final Resource resource = encodedResource.getResource();

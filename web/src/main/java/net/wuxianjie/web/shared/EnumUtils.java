@@ -8,9 +8,8 @@ import org.springframework.lang.Nullable;
 public class EnumUtils {
 
   @Nullable
-  public static <E extends Enum<?> & ValueEnum> E resolve(
-    Class<E> enumClass,
-    Integer val
+  public static <E extends Enum<?> & ValueEnum> E resolve(Class<E> enumClass,
+                                                          Integer val
   ) {
     if (enumClass == null || val == null) {
       return null;

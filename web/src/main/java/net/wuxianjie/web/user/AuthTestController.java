@@ -27,8 +27,7 @@ public class AuthTestController {
    */
   @GetMapping("public")
   public Result testPublic() {
-    return new Result(
-      "无需 Token 认证即可访问的开放 API",
+    return new Result("无需 Token 认证即可访问的开放 API",
       getUsername()
     );
   }
@@ -38,8 +37,7 @@ public class AuthTestController {
    */
   @GetMapping("authenticated")
   public Result testAuthenticated() {
-    return new Result(
-      "只要通过 Token 认证（登录后）即可访问的 API",
+    return new Result("只要通过 Token 认证（登录后）即可访问的 API",
       getUsername()
     );
   }
@@ -89,7 +87,7 @@ public class AuthTestController {
   @NonNull
   private String getUsername() {
     final String username =
-      authenticationFacade.getCurrentLoggedInUserDetails().getAccountName();
+      authenticationFacade.getCurrentUser().getAccountName();
 
     return username == null ? "未知用户" : username;
   }

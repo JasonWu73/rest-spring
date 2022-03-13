@@ -114,31 +114,18 @@
 
   <build>
     <plugins>
-      <!-- 部署时提交源码：`mvn clean deploy` -->
+      <!-- 在打包时一并生成 JAR 源码文件 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
         <executions>
           <execution>
             <id>attach-sources</id>
-            <phase>deploy</phase>
+            <!-- 绑定到 package 生命周期 -->
+            <phase>package</phase>
             <goals>
+              <!-- 执行 jar-no-fork 目标 -->
               <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <!-- 强制 deploy 插件的执行顺序 -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-deploy-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>deploy</id>
-            <phase>deploy</phase>
-            <goals>
-              <goal>deploy</goal>
             </goals>
           </execution>
         </executions>
@@ -147,7 +134,9 @@
   </build>
 
   <distributionManagement>
+    <!-- 用于上传的仓库 -->
     <snapshotRepository>
+      <!-- 这里的 id 需要和 settings.xml 中的 server 的 id 一致 -->
       <id>maven-snapshots</id>
       <name>Nexus 快照私有仓库</name>
       <url>http://192.168.2.41:8081/repository/maven-snapshots/</url>

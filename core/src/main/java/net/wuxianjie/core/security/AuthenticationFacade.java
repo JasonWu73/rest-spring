@@ -18,7 +18,7 @@ public class AuthenticationFacade {
    * 获取当前已登录的用户详细数据。
    */
   @NonNull
-  public TokenUserDetails getCurrentLoggedInUserDetails() {
+  public TokenUserDetails getCurrentUser() {
     final Authentication authentication =
       SecurityContextHolder.getContext().getAuthentication();
 

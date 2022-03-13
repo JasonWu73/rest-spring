@@ -12,15 +12,13 @@ import java.util.List;
 public interface OperationLogMapper {
 
   @NonNull
-  List<OperationLog> findByStartEndTimeLimitTimeDesc(
-    @Param("p") PagingQuery paging,
-    @Param("start") LocalDateTime startTimeInclusive,
-    @Param("end") LocalDateTime endTimeInclusive
+  List<OperationLog> findByStartEndTimePagingOperationTimeDesc(@Param("p") PagingQuery paging,
+                                                               @Param("start") LocalDateTime startInclusive,
+                                                               @Param("end") LocalDateTime endInclusive
   );
 
-  int countByStartEndTime(
-    @Param("start") LocalDateTime startTimeInclusive,
-    @Param("end") LocalDateTime endTimeInclusive
+  int countByStartEndTime(@Param("start") LocalDateTime startInclusive,
+                          @Param("end") LocalDateTime endInclusive
   );
 
   int add(OperationLog log);

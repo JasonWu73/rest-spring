@@ -16,8 +16,8 @@ import java.util.List;
 public class EnumValidatorImpl
   implements ConstraintValidator<EnumValidator, Object> {
 
-  private List<Object> values;
   private boolean isPassed = false;
+  private List<Object> values;
 
   @Override
   public void initialize(EnumValidator constraintAnnotation) {

@@ -25,41 +25,34 @@ public class OperationLogService {
   private final AuthenticationFacade authenticationFacade;
 
   @NonNull
-  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
-    PagingQuery paging,
-    LocalDateTime startTimeInclusive,
-    LocalDateTime endTimeInclusive
+  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(PagingQuery paging,
+                                                                   LocalDateTime startInclusive,
+                                                                   LocalDateTime endInclusive
   ) {
-    final List<OperationLog> logs = logMapper.findByStartEndTimeLimitTimeDesc(
-      paging, startTimeInclusive, endTimeInclusive
-    );
+    final List<OperationLog> logs =
+      logMapper.findByStartEndTimePagingOperationTimeDesc(
+        paging, startInclusive, endInclusive
+      );
 
     final int total =
-      logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
+      logMapper.countByStartEndTime(startInclusive, endInclusive);
 
     final List<ListItemOfOperationLog> logList = logs.stream()
       .map(ListItemOfOperationLog::new)
       .collect(Collectors.toList());
 
-    return new PagingData<>(
-      total,
-      paging.getPageNo(),
-      paging.getPageSize(),
+    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
       logList
     );
   }
 
   @Transactional(rollbackFor = Exception.class)
   public void addNewOperationLog(LocalDateTime operationTime, String message) {
-    final TokenUserDetails userDetails =
-      authenticationFacade.getCurrentLoggedInUserDetails();
+    final TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
 
     final OperationLog logToAdd = new OperationLog(
-      null,
-      operationTime,
-      userDetails.getAccountId(),
-      userDetails.getAccountName(),
-      message
+      null, operationTime,
+      userDetails.getAccountId(), userDetails.getAccountName(), message
     );
 
     logMapper.add(logToAdd);
