@@ -18,12 +18,11 @@
   <select id="findByStartEndTimePagingOperationTimeDesc"
     resultType="net.wuxianjie.web.operationlog.OperationLog"
   >
-    SELECT
-      operation_log_id AS operationLogId,
-      operation_time AS operationTime,
-      user_id AS userId,
-      username,
-      message
+    SELECT operation_log_id AS operationLogId,
+           operation_time   AS operationTime,
+           user_id          AS userId,
+           username,
+           message
     FROM operation_log
     <include refid="startEndTimeWhereClause"/>
     ORDER BY operation_time DESC

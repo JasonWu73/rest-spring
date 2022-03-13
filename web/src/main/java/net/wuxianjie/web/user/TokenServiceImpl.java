@@ -52,8 +52,7 @@ public class TokenServiceImpl implements TokenService {
   @Override
   public TokenData refreshToken(String refreshToken) {
     final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(
-      securityConfig.getJwtSigningKey(),
-      refreshToken
+      securityConfig.getJwtSigningKey(), refreshToken
     );
 
     final String username =
@@ -137,9 +136,8 @@ public class TokenServiceImpl implements TokenService {
   }
 
   @NonNull
-  private String createNewToken(
-    Map<String, Object> jwtPayload,
-    String tokenType
+  private String createNewToken(Map<String, Object> jwtPayload,
+                                String tokenType
   ) {
     jwtPayload.put(TokenAttributes.TOKEN_TYPE_KEY, tokenType);
 

@@ -36,9 +36,8 @@ public class UserService {
   }
 
   @NonNull
-  public PagingData<List<ManagementOfUser>> getUsers(
-    PagingQuery paging,
-    ManagementOfUser query
+  public PagingData<List<ManagementOfUser>> getUsers(PagingQuery paging,
+                                                     ManagementOfUser query
   ) {
     final List<User> users =
       userMapper.findByQueryPagingModifyTimeDesc(paging, query);
@@ -49,10 +48,7 @@ public class UserService {
       .map(ManagementOfUser::new)
       .collect(Collectors.toList());
 
-    return new PagingData<>(
-      total,
-      paging.getPageNo(),
-      paging.getPageSize(),
+    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
       userList
     );
   }

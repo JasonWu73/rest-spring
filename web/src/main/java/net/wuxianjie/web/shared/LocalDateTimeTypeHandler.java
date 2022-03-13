@@ -16,11 +16,10 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
   @Override
-  public void setNonNullParameter(
-    PreparedStatement ps,
-    int i,
-    LocalDateTime parameter,
-    JdbcType jdbcType
+  public void setNonNullParameter(PreparedStatement ps,
+                                  int i,
+                                  LocalDateTime parameter,
+                                  JdbcType jdbcType
   ) throws SQLException {
     // MyBatis 默认会将 java.time.LocalDateTime 映射为数据库 Timestamp，
     // 但对于 SQLite 而言，使用 Timestamp 类型会有问题（导致查询不到结果），

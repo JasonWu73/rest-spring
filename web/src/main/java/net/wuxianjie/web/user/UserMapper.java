@@ -18,9 +18,8 @@ public interface UserMapper {
   User findUserByUsername(String username);
 
   @NonNull
-  List<User> findByQueryPagingModifyTimeDesc(
-    @Param("p") PagingQuery paging,
-    @Param("q") ManagementOfUser query
+  List<User> findByQueryPagingModifyTimeDesc(@Param("p") PagingQuery paging,
+                                             @Param("q") ManagementOfUser query
   );
 
   int countByQuery(ManagementOfUser query);
