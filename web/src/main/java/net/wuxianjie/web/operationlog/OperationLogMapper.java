@@ -13,12 +13,12 @@ public interface OperationLogMapper {
 
   @NonNull
   List<OperationLog> findByStartEndTimePagingOperationTimeDesc(@Param("p") PagingQuery paging,
-                                                               @Param("start") LocalDateTime startInclusive,
-                                                               @Param("end") LocalDateTime endInclusive
+                                                               @Param("start") LocalDateTime startTimeInclusive,
+                                                               @Param("end") LocalDateTime endTimeInclusive
   );
 
-  int countByStartEndTime(@Param("start") LocalDateTime startInclusive,
-                          @Param("end") LocalDateTime endInclusive
+  int countByStartEndTime(@Param("start") LocalDateTime startTimeInclusive,
+                          @Param("end") LocalDateTime endTimeInclusive
   );
 
   int add(OperationLog log);

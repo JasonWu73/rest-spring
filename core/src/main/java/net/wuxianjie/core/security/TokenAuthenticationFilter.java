@@ -124,11 +124,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   }
 
   @NonNull
-  private List<GrantedAuthority> getAuthorities(String commaSeparated) {
+  private List<GrantedAuthority> getAuthorities(String commaSeparatedStr) {
     final List<GrantedAuthority> authorities;
 
-    if (StrUtil.isNotEmpty(commaSeparated)) {
-      final String[] roles = commaSeparated.split(",");
+    if (StrUtil.isNotEmpty(commaSeparatedStr)) {
+      final String[] roles = commaSeparatedStr.split(",");
 
       // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
       final String commaSeparatedSpringSecurityRole = Arrays.stream(roles)

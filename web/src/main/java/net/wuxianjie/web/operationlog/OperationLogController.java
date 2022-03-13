@@ -42,12 +42,12 @@ public class OperationLogController {
                                                                    @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
                                                                      regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
                                                                    )
-                                                                     String startDate,
+                                                                   String startDate,
 
                                                                    @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
                                                                      regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
                                                                    )
-                                                                     String endDate
+                                                                   String endDate
   ) {
     final LocalDateTime startTime = getStartTime(startDate);
 

@@ -64,8 +64,7 @@ public class UserService {
     final User userToAdd = createUserToAdd(query);
     final int addedNum = userMapper.add(userToAdd);
 
-    final String logMessage = String.format(
-      "新增用户数据【ID：%s, 用户名：%s】",
+    final String logMessage = String.format("新增用户数据【ID：%s, 用户名：%s】",
       userToAdd.getUserId(),
       userToAdd.getUsername()
     );
@@ -87,8 +86,7 @@ public class UserService {
       final int updatedNum = userMapper.update(userToUpdate);
 
       final String logMessage =
-        String.format(
-          "修改用户数据【ID：%s，用户名：%s】：%s",
+        String.format("修改用户数据【ID：%s，用户名：%s】：%s",
           userToUpdate.getUserId(),
           userToUpdate.getUsername(),
           String.join("；", logs)
@@ -114,8 +112,7 @@ public class UserService {
 
     final int updatedNum = updateUserPasswordInDatabase(query);
 
-    final String logMessage = String.format(
-      "修改用户密码【ID：%s，用户名：%s】",
+    final String logMessage = String.format("修改用户密码【ID：%s，用户名：%s】",
       passwordToUpdate.getUserId(),
       passwordToUpdate.getUsername()
     );
@@ -132,8 +129,7 @@ public class UserService {
 
     final int deletedNum = userMapper.deleteById(userId);
 
-    final String logMessage = String.format(
-      "删除用户数据【ID：%s，用户名：%s】",
+    final String logMessage = String.format("删除用户数据【ID：%s，用户名：%s】",
       userToDelete.getUserId(),
       userToDelete.getUsername()
     );
@@ -175,12 +171,12 @@ public class UserService {
     return user;
   }
 
-  private boolean needsUpdateUser(
-    User userToUpdate,
-    ManagementOfUser query,
-    List<String> logs
+  private boolean needsUpdateUser(User userToUpdate,
+                                  ManagementOfUser query,
+                                  List<String> logs
   ) {
-    boolean needsUpdatePassword = needsUpdatePassword(userToUpdate, query, logs);
+    boolean needsUpdatePassword =
+      needsUpdatePassword(userToUpdate, query, logs);
 
     boolean needsUpdateRoles = needsUpdateRoles(userToUpdate, query, logs);
 
@@ -266,7 +262,8 @@ public class UserService {
   ) {
     boolean isChanged = false;
 
-    final YesOrNo enabled = EnumUtils.resolve(YesOrNo.class, query.getEnabled());
+    final YesOrNo enabled =
+      EnumUtils.resolve(YesOrNo.class, query.getEnabled());
     final YesOrNo oldEnabled = userToUpdate.getEnabled();
     final boolean isSameEnabled = enabled != null && enabled == oldEnabled;
 
