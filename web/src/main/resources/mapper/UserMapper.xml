@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.user.UserMapper">
   <select id="findById" resultType="net.wuxianjie.web.user.User">
     SELECT user_id         AS userId,
@@ -25,13 +23,12 @@
   </select>
 
   <select id="findByQueryPagingModifyTimeDesc"
-    resultType="net.wuxianjie.web.user.User"
-  >
-    SELECT user_id                                    AS userId,
-           STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
-           is_enabled                                 AS enabled,
-           username,
-           IFNULL(roles, '')                          AS roles
+          resultType="net.wuxianjie.web.user.User">
+    SELECT user_id                             AS userId,
+    STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
+    is_enabled                                 AS enabled,
+    username,
+    IFNULL(roles, '')                          AS roles
     FROM user
     <where>
       <if test="q.username != null">
@@ -63,24 +60,13 @@
   </select>
 
   <insert id="add" useGeneratedKeys="true" keyProperty="userId"
-    parameterType="net.wuxianjie.web.user.User"
-  >
-    INSERT INTO user (
-      create_time,
-      modify_time,
-      is_enabled,
-      username,
-      hashed_password,
-      roles
-    )
-    VALUES (
-      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      #{enabled},
-      #{username},
-      #{hashedPassword},
-      #{roles}
-   )
+          parameterType="net.wuxianjie.web.user.User">
+    INSERT INTO user (create_time,
+                      modify_time,
+                      is_enabled, username, hashed_password, roles)
+    VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+            DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+            #{enabled}, #{username}, #{hashedPassword}, #{roles})
   </insert>
 
   <update id="update">

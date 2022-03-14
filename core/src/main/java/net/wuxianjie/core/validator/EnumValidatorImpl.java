@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Slf4j
 public class EnumValidatorImpl
-  implements ConstraintValidator<EnumValidator, Object> {
+    implements ConstraintValidator<EnumValidator, Object> {
 
   private boolean isPassed = false;
   private List<Object> values;
@@ -22,6 +22,7 @@ public class EnumValidatorImpl
   @Override
   public void initialize(EnumValidator constraintAnnotation) {
     values = new ArrayList<>();
+
     final Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
     final Enum<?>[] enumConstants = enumClass.getEnumConstants();
 

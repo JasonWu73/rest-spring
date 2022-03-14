@@ -35,72 +35,65 @@ import java.util.Set;
 public class ControllerErrorAdvice {
 
   @ExceptionHandler(HttpMediaTypeException.class)
-  public ResponseEntity<RestData<Void>> handleException(HttpMediaTypeException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      HttpMediaTypeException e,
+      WebRequest request) {
     final String[] accepts = request.getHeaderValues(HttpHeaders.ACCEPT);
 
     log.warn("HTTP 请求【{}】->\n不支持请求头 {} 中指定的资源类型【{}】：{}",
-      request, HttpHeaders.ACCEPT, Arrays.toString(accepts), e.getMessage()
-    );
+        request, HttpHeaders.ACCEPT, Arrays.toString(accepts), e.getMessage());
 
     return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
   }
 
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-  public ResponseEntity<RestData<Void>> handleException(HttpRequestMethodNotSupportedException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      HttpRequestMethodNotSupportedException e,
+      WebRequest request) {
     log.warn("HTTP 请求【{}】->\nAPI 不支持当前 HTTP 请求方法：{}",
-      request, e.getMessage()
-    );
+        request, e.getMessage());
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     return new ResponseEntity<>(
-      RestDataWrapper.fail("API 不支持当前 HTTP 请求方法"),
-      HttpStatus.METHOD_NOT_ALLOWED
-    );
+        RestDataWrapper.fail("API 不支持当前 HTTP 请求方法"),
+        HttpStatus.METHOD_NOT_ALLOWED);
   }
 
   @ExceptionHandler(MissingRequestHeaderException.class)
-  public ResponseEntity<RestData<Void>> handleException(MissingRequestHeaderException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      MissingRequestHeaderException e,
+      WebRequest request) {
     log.warn("HTTP 请求【{}】->\n缺少必要请求头：{}", request, e.getMessage());
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    return new ResponseEntity<>(
-      RestDataWrapper.fail("缺少必要请求头"),
-      HttpStatus.BAD_REQUEST
-    );
+    return new ResponseEntity<>(RestDataWrapper.fail("缺少必要请求头"),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<RestData<Void>> handleException(HttpMessageNotReadableException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      HttpMessageNotReadableException e,
+      WebRequest request) {
     log.warn("HTTP 请求【{}】->\n请求体内容有误：{}", request, e.getMessage());
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    return new ResponseEntity<>(
-      RestDataWrapper.fail("请求体内容有误"),
-      HttpStatus.BAD_REQUEST
-    );
+    return new ResponseEntity<>(RestDataWrapper.fail("请求体内容有误"),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(MissingServletRequestParameterException.class)
-  public ResponseEntity<RestData<Void>> handleException(MissingServletRequestParameterException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      MissingServletRequestParameterException e,
+      WebRequest request) {
     final String paramName = e.getParameterName();
 
     log.warn("HTTP 请求【{}】->\n缺少必填参数【{}】", request, paramName);
@@ -110,15 +103,14 @@ public class ControllerErrorAdvice {
     }
 
     return new ResponseEntity<>(
-      RestDataWrapper.fail(String.format("缺少必填参数【%s】", paramName)),
-      HttpStatus.BAD_REQUEST
-    );
+        RestDataWrapper.fail(String.format("缺少必填参数【%s】", paramName)),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<RestData<Void>> handleException(ConstraintViolationException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      ConstraintViolationException e,
+      WebRequest request) {
     final List<String> errorsToLog = new ArrayList<>();
     final List<String> errorsToResponse = new ArrayList<>();
 
@@ -126,11 +118,10 @@ public class ControllerErrorAdvice {
 
     for (ConstraintViolation<?> violation : violations) {
       final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
-        violation.getRootBeanClass().getName(),
-        violation.getPropertyPath(),
-        violation.getInvalidValue(),
-        violation.getMessage()
-      );
+          violation.getRootBeanClass().getName(),
+          violation.getPropertyPath(),
+          violation.getInvalidValue(),
+          violation.getMessage());
 
       errorsToLog.add(errMsg);
 
@@ -138,23 +129,21 @@ public class ControllerErrorAdvice {
     }
 
     log.warn("HTTP 请求【{}】->\n参数错误：{}",
-      request, String.join("；", errorsToLog)
-    );
+        request, String.join("；", errorsToLog));
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     return new ResponseEntity<>(
-      RestDataWrapper.fail(String.join("；", errorsToResponse)),
-      HttpStatus.BAD_REQUEST
-    );
+        RestDataWrapper.fail(String.join("；", errorsToResponse)),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(BindException.class)
-  public ResponseEntity<RestData<Void>> handleException(BindException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      BindException e,
+      WebRequest request) {
     final List<String> errorsToLog = new ArrayList<>();
     final List<String> errorsToResponse = new ArrayList<>();
 
@@ -162,10 +151,10 @@ public class ControllerErrorAdvice {
 
     for (FieldError err : fieldErrors) {
       final String errMsg = String.format("%s.%s【拒绝值【%s】：%s】",
-        err.getObjectName(),
-        err.getField(),
-        err.getRejectedValue(),
-        err.getDefaultMessage()
+          err.getObjectName(),
+          err.getField(),
+          err.getRejectedValue(),
+          err.getDefaultMessage()
       );
 
       errorsToLog.add(errMsg);
@@ -174,23 +163,21 @@ public class ControllerErrorAdvice {
     }
 
     log.warn("HTTP 请求【{}】->\n参数错误：{}",
-      request, String.join("；", errorsToLog)
-    );
+        request, String.join("；", errorsToLog));
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     return new ResponseEntity<>(
-      RestDataWrapper.fail(String.join("；", errorsToResponse)),
-      HttpStatus.BAD_REQUEST
-    );
+        RestDataWrapper.fail(String.join("；", errorsToResponse)),
+        HttpStatus.BAD_REQUEST);
   }
 
   @ExceptionHandler(UncategorizedDataAccessException.class)
-  public ResponseEntity<RestData<Void>> handleException(UncategorizedDataAccessException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      UncategorizedDataAccessException e,
+      WebRequest request) {
     log.error("HTTP 请求【{}】-> 数据库操作异常", request, e);
 
     if (isNotJsonResponse(request)) {
@@ -198,55 +185,49 @@ public class ControllerErrorAdvice {
     }
 
     return new ResponseEntity<>(
-      RestDataWrapper.fail("数据库操作异常"),
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
+        RestDataWrapper.fail("数据库操作异常"),
+        HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   @ExceptionHandler(AbstractBaseException.class)
-  public ResponseEntity<RestData<Void>> handleException(AbstractBaseException e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      AbstractBaseException e,
+      WebRequest request) {
     final Throwable cause = e.getCause();
 
     if (cause == null) {
       log.warn("HTTP 请求【{}】->\n{}", request, e.getMessage());
     } else {
       log.warn("HTTP 请求【{}】->\n{}：{}",
-        request, e.getMessage(), cause.getMessage()
-      );
+          request, e.getMessage(), cause.getMessage());
     }
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, e.getHttpStatus());
     }
 
-    return new ResponseEntity<>(
-      RestDataWrapper.fail(e.getMessage()),
-      e.getHttpStatus()
-    );
+    return new ResponseEntity<>(RestDataWrapper.fail(e.getMessage()),
+        e.getHttpStatus());
   }
 
   @ExceptionHandler(InternalServerException.class)
-  public ResponseEntity<RestData<Void>> handleException(InternalServerException e,
-                                                        WebRequest request
-  ) {
-    log.warn("HTTP 请求【{}】->\n服务异常（已知）：{}", request, e.getMessage());
+  public ResponseEntity<RestData<Void>> handleException(
+      InternalServerException e,
+      WebRequest request) {
+    log.error("HTTP 请求【{}】->\n服务异常（已知）：{}", request, e.getMessage());
 
     if (isNotJsonResponse(request)) {
       return new ResponseEntity<>(null, e.getHttpStatus());
     }
 
-    return new ResponseEntity<>(
-      RestDataWrapper.fail("服务异常（已知）"),
-      e.getHttpStatus()
-    );
+    return new ResponseEntity<>(RestDataWrapper.fail("服务异常（已知）"),
+        e.getHttpStatus());
   }
 
   @ExceptionHandler(Throwable.class)
-  public ResponseEntity<RestData<Void>> handleException(Throwable e,
-                                                        WebRequest request
-  ) {
+  public ResponseEntity<RestData<Void>> handleException(
+      Throwable e,
+      WebRequest request) {
     if (e instanceof AccessDeniedException) {
       // 不要让全局异常处理 AccessDeniedException，
       // 否则将导致 Spring Security 无法正常处理 403
@@ -259,10 +240,8 @@ public class ControllerErrorAdvice {
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    return new ResponseEntity<>(
-      RestDataWrapper.fail("服务异常（未知）"),
-      HttpStatus.INTERNAL_SERVER_ERROR
-    );
+    return new ResponseEntity<>(RestDataWrapper.fail("服务异常（未知）"),
+        HttpStatus.INTERNAL_SERVER_ERROR);
   }
 
   private boolean isNotJsonResponse(WebRequest request) {
@@ -273,9 +252,7 @@ public class ControllerErrorAdvice {
     }
 
     return Arrays.stream(accepts)
-      .noneMatch(
-        x -> x.contains(MediaType.ALL_VALUE) ||
-          x.toLowerCase().contains(MediaType.APPLICATION_JSON_VALUE)
-      );
+        .noneMatch(x -> x.contains(MediaType.ALL_VALUE)
+            || x.toLowerCase().contains(MediaType.APPLICATION_JSON_VALUE));
   }
 }

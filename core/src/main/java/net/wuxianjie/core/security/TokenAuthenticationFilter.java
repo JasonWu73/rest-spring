@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Token 认证实现机制的过滤器。
@@ -50,11 +50,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
                                   @NonNull HttpServletResponse response,
-                                  @NonNull FilterChain filterChain
-  ) throws IOException, ServletException {
-    final String accessToken = getAccessTokenFromRequest(request);
+                                  @NonNull FilterChain filterChain)
+      throws IOException, ServletException {
+    final Optional<String> tokenOptional = getTokenFromRequest(request);
 
-    if (accessToken == null) {
+    if (tokenOptional.isEmpty()) {
       filterChain.doFilter(request, response);
 
       return;
@@ -62,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     try {
       final TokenUserDetails userDetails =
-        authenticationService.authenticate(accessToken);
+          authenticationService.authenticate(tokenOptional.get());
 
       login(userDetails);
     } catch (TokenAuthenticationException e) {
@@ -84,37 +84,34 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  @Nullable
-  private String getAccessTokenFromRequest(HttpServletRequest request) {
+  private Optional<String> getTokenFromRequest(HttpServletRequest request) {
     final String bearer = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-    if (
-      bearer == null || !bearer.startsWith(AUTHORIZATION_BEARER_PREFIX)
-    ) {
-      return null;
+    if (bearer == null || !bearer.startsWith(AUTHORIZATION_BEARER_PREFIX)) {
+      return Optional.empty();
     }
 
     final int tokenBeginIndexInclusive = AUTHORIZATION_BEARER_PREFIX.length();
+    final String token = bearer.substring(tokenBeginIndexInclusive);
 
-    return bearer.substring(tokenBeginIndexInclusive);
+    return Optional.of(token);
   }
 
   private void login(TokenUserDetails userDetails) {
     final List<GrantedAuthority> authorities =
-      getAuthorities(userDetails.getAccountRoles());
+        getAuthorities(userDetails.getAccountRoles());
 
     final UsernamePasswordAuthenticationToken token =
-      new UsernamePasswordAuthenticationToken(
-        userDetails, null, authorities
-      );
+        new UsernamePasswordAuthenticationToken(
+            userDetails, null, authorities
+        );
 
     SecurityContextHolder.getContext().setAuthentication(token);
   }
 
   private void send2Response(HttpServletResponse response,
                              String message,
-                             HttpStatus httpStatus
-  ) throws IOException {
+                             HttpStatus httpStatus) throws IOException {
     final RestData<Void> data = RestDataWrapper.fail(message);
 
     response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
@@ -123,28 +120,27 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     response.getWriter().write(objectMapper.writeValueAsString(data));
   }
 
-  @NonNull
   private List<GrantedAuthority> getAuthorities(String commaSeparatedStr) {
     final List<GrantedAuthority> authorities;
 
     if (StrUtil.isNotEmpty(commaSeparatedStr)) {
       final String[] roles = commaSeparatedStr.split(",");
 
-      // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
       final String commaSeparatedSpringSecurityRole = Arrays.stream(roles)
-        .reduce("", (s1, s2) -> {
-          final String role =
-            SPRING_SECURITY_ROLE_PREFIX + s2.trim().toUpperCase();
+          .reduce("", (s1, s2) -> {
+            // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
+            final String role =
+                SPRING_SECURITY_ROLE_PREFIX + s2.trim().toUpperCase();
 
-          if (StrUtil.isNotEmpty(s1)) {
-            return s1 + "," + role;
-          }
+            if (StrUtil.isNotEmpty(s1)) {
+              return s1 + "," + role;
+            }
 
-          return role;
-        });
+            return role;
+          });
 
       authorities = AuthorityUtils.commaSeparatedStringToAuthorityList(
-        commaSeparatedSpringSecurityRole
+          commaSeparatedSpringSecurityRole
       );
     } else {
       authorities = Collections.emptyList();

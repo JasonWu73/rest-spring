@@ -1,6 +1,7 @@
-package net.wuxianjie.web.shared;
+package net.wuxianjie.core.handler;
 
 import lombok.NoArgsConstructor;
+import net.wuxianjie.core.shared.EnumUtils;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
@@ -11,10 +12,12 @@ import java.sql.SQLException;
 
 /**
  * MyBatis 处理数据库 int 类型与枚举值的映射规则。
+ *
+ * @see ValueEnum
  */
 @NoArgsConstructor
 public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
-  extends BaseTypeHandler<ValueEnum> {
+    extends BaseTypeHandler<ValueEnum> {
 
   private Class<E> enumType;
 
@@ -30,26 +33,25 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
   public void setNonNullParameter(PreparedStatement ps,
                                   int i,
                                   ValueEnum parameter,
-                                  JdbcType jdbcType
-  ) throws SQLException {
+                                  JdbcType jdbcType) throws SQLException {
     ps.setInt(i, parameter.value());
   }
 
   @Override
   public ValueEnum getNullableResult(ResultSet rs, String columnName)
-    throws SQLException {
-    return EnumUtils.resolve(enumType, rs.getInt(columnName));
+      throws SQLException {
+    return EnumUtils.resolve(enumType, rs.getInt(columnName)).orElseThrow();
   }
 
   @Override
   public ValueEnum getNullableResult(ResultSet rs, int columnIndex)
-    throws SQLException {
-    return EnumUtils.resolve(enumType, rs.getInt(columnIndex));
+      throws SQLException {
+    return EnumUtils.resolve(enumType, rs.getInt(columnIndex)).orElseThrow();
   }
 
   @Override
   public ValueEnum getNullableResult(CallableStatement cs, int columnIndex)
-    throws SQLException {
-    return EnumUtils.resolve(enumType, cs.getInt(columnIndex));
+      throws SQLException {
+    return EnumUtils.resolve(enumType, cs.getInt(columnIndex)).orElseThrow();
   }
 }

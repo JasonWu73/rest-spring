@@ -10,49 +10,43 @@ import net.wuxianjie.core.shared.TokenAuthenticationException;
 import net.wuxianjie.web.shared.BeanQualifiers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TokenAuthenticationServiceImpl
-  implements TokenAuthenticationService {
+    implements TokenAuthenticationService {
 
   @Qualifier(BeanQualifiers.TOKEN_CACHE)
   private final Cache<String, TokenUserDetails> tokenCache;
 
   private final SecurityConfigData securityConfig;
 
-  @NonNull
   @Override
-  public TokenUserDetails authenticate(@NonNull String accessToken) {
-    final String username = getUsernameFromAccessToken(accessToken);
-
-    return getUserDetailsFromCache(username, accessToken);
-  }
-
-  @NonNull
-  private String getUsernameFromAccessToken(String accessToken) {
+  public TokenUserDetails authenticate(String token) {
     final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(
-      securityConfig.getJwtSigningKey(),
-      accessToken
-    );
+        securityConfig.getJwtSigningKey(), token);
 
-    return (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+    final String username = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+    final String tokenType =
+        (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY);
+
+    if (!Objects.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
+      throw new TokenAuthenticationException("Token 类型错误");
+    }
+
+    return getUserDetailsFromCache(username, token);
   }
 
-  @NonNull
-  private TokenUserDetails getUserDetailsFromCache(
-    String username,
-    String accessToken
-  ) {
+  private TokenUserDetails getUserDetailsFromCache(String username,
+                                                   String accessToken) {
     final TokenUserDetails userDetails = tokenCache.getIfPresent(username);
 
-    if (userDetails == null ||
-      !accessToken.equals(userDetails.getAccessToken())
-    ) {
+    if (userDetails == null
+        || !Objects.equals(accessToken, userDetails.getAccessToken())) {
       throw new TokenAuthenticationException("Token 已过期");
     }
 

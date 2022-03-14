@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-    "http://mybatis.org/dtd/mybatis-3-mapper.dtd"
->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
   <sql id="startEndTimeWhereClause">
     <where>
@@ -16,13 +14,12 @@
   </sql>
 
   <select id="findByStartEndTimePagingOperationTimeDesc"
-    resultType="net.wuxianjie.web.operationlog.OperationLog"
-  >
+          resultType="net.wuxianjie.web.operationlog.OperationLog">
     SELECT operation_log_id AS operationLogId,
-           operation_time   AS operationTime,
-           user_id          AS userId,
-           username,
-           message
+    operation_time          AS operationTime,
+    user_id                 AS userId,
+    username,
+    message
     FROM operation_log
     <include refid="startEndTimeWhereClause"/>
     ORDER BY operation_time DESC
@@ -36,17 +33,9 @@
   </select>
 
   <insert id="add">
-    INSERT INTO operation_log (
-      operation_time,
-      user_id,
-      username,
-      message
-    )
-    VALUES (
-      STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
-      #{userId},
-      #{username},
-      #{message}
-    )
+    INSERT INTO operation_log (operation_time, user_id,
+                               username, message)
+    VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}), #{userId},
+            #{username}, #{message})
   </insert>
 </mapper>

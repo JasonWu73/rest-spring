@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.core.security.Role;
-import net.wuxianjie.web.shared.YesOrNo;
+import net.wuxianjie.core.handler.YesOrNo;
 
 import java.time.LocalDateTime;
 

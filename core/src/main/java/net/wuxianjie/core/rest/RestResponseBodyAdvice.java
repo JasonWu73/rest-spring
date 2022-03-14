@@ -25,19 +25,17 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
   @Override
   public boolean supports(@NonNull MethodParameter returnType,
-                          @NonNull Class<? extends HttpMessageConverter<?>> converterType
-  ) {
+      @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
     return true;
   }
 
   @Override
   public Object beforeBodyWrite(Object body,
-                                @NonNull MethodParameter returnType,
-                                @NonNull MediaType selectedContentType,
-                                @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                @NonNull ServerHttpRequest request,
-                                @NonNull ServerHttpResponse response
-  ) {
+      @NonNull MethodParameter returnType,
+      @NonNull MediaType selectedContentType,
+      @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+      @NonNull ServerHttpRequest request,
+      @NonNull ServerHttpResponse response) {
     if (body instanceof String) {
       try {
         return objectMapper.writeValueAsString(RestDataWrapper.success(body));
@@ -46,11 +44,8 @@ public class RestResponseBodyAdvice implements ResponseBodyAdvice<Object> {
       }
     }
 
-    if (
-      body instanceof RestData ||
-        body instanceof ResponseEntity ||
-        body instanceof byte[]
-    ) {
+    if (body instanceof RestData || body instanceof ResponseEntity
+        || body instanceof byte[]) {
       return body;
     }
 

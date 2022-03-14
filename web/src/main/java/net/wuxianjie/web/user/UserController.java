@@ -14,7 +14,6 @@ import net.wuxianjie.core.shared.Wrote2Db;
 import net.wuxianjie.core.validator.group.Add;
 import net.wuxianjie.core.validator.group.Update;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,11 +37,9 @@ public class UserController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<ManagementOfUser>> getUsers(@Validated
-                                                     PagingQuery paging,
-                                                     @Validated
-                                                     ManagementOfUser query
-  ) {
+  public PagingData<List<ManagementOfUser>> getUsers(
+      @Validated PagingQuery paging,
+      @Validated ManagementOfUser query) {
     setFuzzySearchValue(query);
 
     return userService.getUsers(paging, query);
@@ -53,11 +50,9 @@ public class UserController {
    */
   @Admin
   @PostMapping("add")
-  public Wrote2Db addNewUser(@RequestBody
-                             @Validated(Add.class)
-                             ManagementOfUser query
-  ) {
-    setRoleStrAfterDeduplication(query);
+  public Wrote2Db addNewUser(@RequestBody @Validated(Add.class)
+                                 ManagementOfUser query) {
+    setRoleAfterDeduplication(query);
 
     return userService.addNewUser(query);
   }
@@ -70,11 +65,10 @@ public class UserController {
   @Admin
   @PostMapping("update/{userId:\\d+}")
   public Wrote2Db updateUser(@PathVariable("userId") int id,
-                             @RequestBody @Validated ManagementOfUser query
-  ) {
+                             @RequestBody @Validated ManagementOfUser query) {
     query.setUserId(id);
 
-    setRoleStrAfterDeduplication(query);
+    setRoleAfterDeduplication(query);
 
     return userService.updateUser(query);
   }
@@ -85,9 +79,8 @@ public class UserController {
   @PostMapping("password")
   public Wrote2Db updateCurrentUserPassword(@RequestBody
                                             @Validated(Update.class)
-                                            ManagementOfUser query
-  ) {
-    validateDifferentPassword(query.getOldPassword(), query.getNewPassword());
+                                                ManagementOfUser query) {
+    validatePasswordDifference(query.getOldPassword(), query.getNewPassword());
 
     setCurrentUserId(query);
 
@@ -104,42 +97,37 @@ public class UserController {
   }
 
   private void setFuzzySearchValue(ManagementOfUser query) {
-    final String fuzzyUsername =
-      StrUtils.generateDbFuzzyStr(query.getUsername());
-
-    query.setUsername(fuzzyUsername);
+    query.setUsername(StrUtils.generateDbFuzzyStr(query.getUsername()));
   }
 
-  private void setRoleStrAfterDeduplication(ManagementOfUser query) {
+  private void setRoleAfterDeduplication(ManagementOfUser query) {
     final String commaSeparatedStr =
-      toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
+        toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
 
     validateRole(commaSeparatedStr);
 
     query.setRoles(commaSeparatedStr);
   }
 
-  @Nullable
-  private String toDeduplicatedCommaSeparatedLowerCase(String commaSeparatedStr
-  ) {
-    if (StrUtil.isEmpty(commaSeparatedStr)) {
-      return commaSeparatedStr;
+  private String toDeduplicatedCommaSeparatedLowerCase(String commaSepStr) {
+    if (StrUtil.isEmpty(commaSepStr)) {
+      return commaSepStr;
     }
 
-    return Arrays.stream(commaSeparatedStr.split(","))
-      .reduce("", (s1, s2) -> {
-        final String trimmedLowerCase = s2.trim().toLowerCase();
+    return Arrays.stream(commaSepStr.split(","))
+        .reduce("", (s1, s2) -> {
+          final String trimmedLowerCase = s2.trim().toLowerCase();
 
-        if (s1.contains(trimmedLowerCase)) {
-          return s1;
-        }
+          if (s1.contains(trimmedLowerCase)) {
+            return s1;
+          }
 
-        if (StrUtil.isNotEmpty(s1)) {
-          return s1 + "," + trimmedLowerCase;
-        }
+          if (StrUtil.isNotEmpty(s1)) {
+            return s1 + "," + trimmedLowerCase;
+          }
 
-        return trimmedLowerCase;
-      });
+          return trimmedLowerCase;
+        });
   }
 
   private void validateRole(String comaSeparatedStr) {
@@ -150,26 +138,23 @@ public class UserController {
     final String[] roles = comaSeparatedStr.split(",");
 
     final boolean hasInvalidRole = Arrays.stream(roles)
-      .anyMatch(x -> Role.resolve(x) == null);
+        .anyMatch(x -> Role.resolve(x).isEmpty());
 
     if (hasInvalidRole) {
       throw new BadRequestException("包含未定义角色");
     }
   }
 
-  private void validateDifferentPassword(String oldPassword,
-                                         String newPassword
-  ) {
+  private void validatePasswordDifference(String oldPassword,
+                                          String newPassword) {
     if (Objects.equals(oldPassword, newPassword)) {
       throw new BadRequestException("新旧密码不能相同");
     }
   }
 
   private void setCurrentUserId(ManagementOfUser query) {
-    final TokenUserDetails userDetails =
-      authenticationFacade.getCurrentUser();
+    final TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
 
     query.setUserId(userDetails.getAccountId());
-
   }
 }

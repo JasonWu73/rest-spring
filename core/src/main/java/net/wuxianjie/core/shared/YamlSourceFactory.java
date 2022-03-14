@@ -11,21 +11,23 @@ import org.springframework.lang.NonNull;
 import java.util.Properties;
 
 /**
- * 支持对 YAML 自定义配置文件（非 application.properties 和 application.yml）的读取。
+ * 支持对 YAML 自定义配置文件的读取。
+ *
+ * <p>默认 Spring 仅支持读取 application.yml 的 YAML 内置配置文件。</p>
  */
 public class YamlSourceFactory implements PropertySourceFactory {
 
   @NonNull
   @Override
   public PropertySource<?> createPropertySource(String name,
-                                                EncodedResource encodedResource
-  ) {
+                                                EncodedResource resource)
+      throws InternalServerException {
     final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-    final Resource resource = encodedResource.getResource();
+    final Resource heldResource = resource.getResource();
 
-    factory.setResources(resource);
+    factory.setResources(heldResource);
 
-    final String filename = resource.getFilename();
+    final String filename = heldResource.getFilename();
 
     if (filename == null) {
       throw new InternalServerException("无法识别 YAML 配置文件的文件名");

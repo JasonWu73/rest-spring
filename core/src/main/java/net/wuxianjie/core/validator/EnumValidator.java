@@ -19,24 +19,23 @@ import static java.lang.annotation.ElementType.*;
  * @Accessors(fluent = true)
  * public enum Type {
  *
- *     ME(1);
+ *   ME(1);
  *
- *     @JsonValue
- *     private final int value;
+ *   @JsonValue
+ *   private final int value;
  * }
  *
  * public class Controller {
  *
- *     public test(@RequestBody @Validated Query query) {
- *     }
+ *   public test(@RequestBody @Validated Query query) {
+ *   }
  *
- *     private static class Query {
+ *   private static class Query {
  *
- *      @EnumValidator(message = "类型错误", value = Type.class)
- *      private Integer type;
- *     }
- * }
- * }</pre>
+ *     @EnumValidator(message = "类型错误", value = Type.class)
+ *     private Integer type;
+ *   }
+ * }}</pre>
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
