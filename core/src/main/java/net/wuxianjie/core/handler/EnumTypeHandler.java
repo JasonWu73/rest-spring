@@ -13,6 +13,10 @@ import java.sql.SQLException;
 /**
  * MyBatis 处理数据库 int 类型与枚举值的映射规则。
  *
+ * <p>全局配置（application.yml）：</p>
+ *
+ * <p>{@code mybatis.type-handlers-package: net.wuxianjie.core.handler}</p>
+ *
  * @see ValueEnum
  */
 @NoArgsConstructor
