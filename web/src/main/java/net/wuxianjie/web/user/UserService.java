@@ -42,8 +42,7 @@ public class UserService {
         .map(ManagementOfUser::new)
         .collect(Collectors.toList());
 
-    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
-        userList);
+    return new PagingData<>(paging, total, userList);
   }
 
   @Transactional(rollbackFor = Exception.class)

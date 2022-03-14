@@ -33,4 +33,11 @@ public class PagingData<T> {
    * 数据列表。
    */
   private T list;
+
+  public PagingData(PagingQuery paging, long total, T list) {
+    this.pageNo = paging.getPageNo();
+    this.pageSize = paging.getPageSize();
+    this.total = total;
+    this.list = list;
+  }
 }

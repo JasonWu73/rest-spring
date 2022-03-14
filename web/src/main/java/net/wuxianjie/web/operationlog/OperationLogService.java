@@ -38,8 +38,7 @@ public class OperationLogService {
         .map(ListItemOfOperationLog::new)
         .collect(Collectors.toList());
 
-    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
-        logList);
+    return new PagingData<>(paging, total, logList);
   }
 
   @Transactional(rollbackFor = Exception.class)
