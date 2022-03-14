@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.core.security.User;
 import net.wuxianjie.core.security.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -77,7 +76,6 @@ public class AuthTestController {
         getUsername());
   }
 
-  @NonNull
   private String getUsername() {
     final String username =
         authenticationFacade.getCurrentUser().getAccountName();

@@ -2,7 +2,6 @@ package net.wuxianjie.core.rest;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 
 /**
  * REST API 服务响应结果封装器。
@@ -10,7 +9,6 @@ import org.springframework.lang.NonNull;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RestDataWrapper {
 
-  @NonNull
   public static <T> RestData<T> success(T data) {
     final RestData<T> result = new RestData<>();
 
@@ -20,7 +18,6 @@ public class RestDataWrapper {
     return result;
   }
 
-  @NonNull
   public static RestData<Void> fail(String failMsg) {
     final RestData<Void> result = new RestData<>();
 
