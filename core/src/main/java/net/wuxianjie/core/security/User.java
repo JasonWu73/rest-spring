@@ -18,15 +18,10 @@ import java.lang.annotation.Target;
  *     @RequestMapping("/test")
  *         public void test() {
  *     }
- * }
- * }</pre>
+ * }}</pre>
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize(
-  "hasRole(" +
-    "T(net.wuxianjie.core.security.Role).USER.value().toUpperCase()" +
-  ")"
-)
-public @interface User {
-}
+@PreAuthorize("hasRole("
+    + "T(net.wuxianjie.core.security.Role).USER.value().toUpperCase())")
+public @interface User {}

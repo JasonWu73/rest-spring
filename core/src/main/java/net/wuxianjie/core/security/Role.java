@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-import org.springframework.lang.Nullable;
+
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 内置可用的 Spring Security 角色。
@@ -29,14 +31,13 @@ public enum Role {
   @JsonValue
   private final String value;
 
-  @Nullable
-  public static Role resolve(String value) {
+  public static Optional<Role> resolve(String value) {
     for (Role role : VALUES) {
-      if (role.value.equals(value)) {
-        return role;
+      if (Objects.equals(value, role.value)) {
+        return Optional.of(role);
       }
     }
 
-    return null;
+    return Optional.empty();
   }
 }

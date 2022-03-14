@@ -1,7 +1,6 @@
 package net.wuxianjie.core.security;
 
 import net.wuxianjie.core.shared.InternalServerException;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,10 +16,9 @@ public class AuthenticationFacade {
   /**
    * 获取当前已登录的用户详细数据。
    */
-  @NonNull
   public TokenUserDetails getCurrentUser() {
     final Authentication authentication =
-      SecurityContextHolder.getContext().getAuthentication();
+        SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication instanceof AnonymousAuthenticationToken) {
       final TokenUserDetails anonymous = new TokenUserDetails();
@@ -31,7 +29,7 @@ public class AuthenticationFacade {
     }
 
     final TokenUserDetails userDetails =
-      (TokenUserDetails) authentication.getPrincipal();
+        (TokenUserDetails) authentication.getPrincipal();
 
     if (userDetails == null) {
       throw new InternalServerException("无法获取已登录用户的详细数据");

@@ -18,10 +18,8 @@ public class TokenCacheConfig {
   @Bean(BeanQualifiers.TOKEN_CACHE)
   public Cache<String, TokenUserDetails> tokenCache() {
     return Caffeine.newBuilder()
-      .expireAfterWrite(
-        TokenAttributes.EXPIRES_IN_SECONDS_VALUE,
-        TimeUnit.SECONDS
-      )
-      .build();
+        .expireAfterWrite(TokenAttributes.EXPIRES_IN_SECONDS_VALUE,
+            TimeUnit.SECONDS)
+        .build();
   }
 }

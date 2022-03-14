@@ -1,4 +1,4 @@
-package net.wuxianjie.web.shared;
+package net.wuxianjie.core.handler;
 
 import net.wuxianjie.core.shared.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -19,20 +19,19 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
   public void setNonNullParameter(PreparedStatement ps,
                                   int i,
                                   LocalDateTime parameter,
-                                  JdbcType jdbcType
-  ) throws SQLException {
+                                  JdbcType jdbcType) throws SQLException {
     // MyBatis 默认会将 java.time.LocalDateTime 映射为数据库 Timestamp，
     // 但对于 SQLite 而言，使用 Timestamp 类型会有问题（导致查询不到结果），
     // 故将日期全部转为字符串比较
     final DateTimeFormatter formatter =
-      DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
+        DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT);
 
     ps.setString(i, parameter.format(formatter));
   }
 
   @Override
   public LocalDateTime getNullableResult(ResultSet rs, String columnName)
-    throws SQLException {
+      throws SQLException {
     final Timestamp timestamp = rs.getTimestamp(columnName);
 
     return toLocalDateTime(timestamp);
@@ -40,7 +39,7 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
   @Override
   public LocalDateTime getNullableResult(ResultSet rs, int columnIndex)
-    throws SQLException {
+      throws SQLException {
     final Timestamp timestamp = rs.getTimestamp(columnIndex);
 
     return toLocalDateTime(timestamp);
@@ -48,7 +47,7 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
   @Override
   public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex)
-    throws SQLException {
+      throws SQLException {
     final Timestamp timestamp = cs.getTimestamp(columnIndex);
 
     return toLocalDateTime(timestamp);

@@ -37,7 +37,7 @@ import java.time.format.DateTimeFormatter;
 public class RequestResponseDataConfig {
 
   /**
-   * 定制 JSON 序列化与反序列化行为。
+   * 配置 JSON 序列化与反序列化行为。
    */
   @Bean
   public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
@@ -49,50 +49,39 @@ public class RequestResponseDataConfig {
       builder.timeZone(CommonValues.CHINA_TIME_ZONE);
 
       // 设置 Date 序列化后的日期字符串格式
-      builder.serializers(
-        new DateSerializer(false,
-          new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)
-        )
-      );
+      builder.serializers(new DateSerializer(false,
+          new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
 
       // 设置 Java 8 LocalDate 序列化后的日期字符串格式
-      builder.serializers(
-        new LocalDateSerializer(
-          DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)
-        )
-      );
+      builder.serializers(new LocalDateSerializer(
+          DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
 
       // 设置 Java 8 LocalDateTime 序列化后的日期时间字符串格式
-      builder.serializers(
-        new LocalDateTimeSerializer(
-          DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT))
-      );
+      builder.serializers(new LocalDateTimeSerializer(
+          DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
 
       // 在序列化时去除字符串首尾空格
-      builder.serializerByType(String.class,
-        new JsonSerializer<String>() {
+      builder.serializerByType(String.class, new JsonSerializer<String>() {
 
-          @Override
-          public void serialize(String value,
-                                JsonGenerator gen,
-                                SerializerProvider serializers
-          ) throws IOException {
-            gen.writeString(StrUtil.trim(value));
-          }
+        @Override
+        public void serialize(String value,
+                              JsonGenerator gen,
+                              SerializerProvider serializers)
+            throws IOException {
+          gen.writeString(StrUtil.trim(value));
         }
-      );
+      });
 
       // 在反序列化时去除字符串首尾空格
       builder.deserializerByType(String.class,
-        new StdScalarDeserializer<String>(String.class) {
+          new StdScalarDeserializer<String>(String.class) {
 
-          @Override
-          public String deserialize(JsonParser p, DeserializationContext ctxt)
-            throws IOException {
-            return StrUtil.trim(p.getValueAsString());
-          }
-        }
-      );
+            @Override
+            public String deserialize(JsonParser p, DeserializationContext ctxt)
+                throws IOException {
+              return StrUtil.trim(p.getValueAsString());
+            }
+          });
     };
   }
 
@@ -105,7 +94,7 @@ public class RequestResponseDataConfig {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
       final StringTrimmerEditor propertyEditor =
-        new StringTrimmerEditor(false);
+          new StringTrimmerEditor(false);
 
       binder.registerCustomEditor(String.class, propertyEditor);
     }

@@ -1,4 +1,4 @@
-package net.wuxianjie.web.shared;
+package net.wuxianjie.core.handler;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,12 @@ public enum YesOrNo implements ValueEnum {
   NO(0),
 
   YES(1);
+
+  private static final YesOrNo[] VALUES;
+
+  static {
+    VALUES = values();
+  }
 
   @JsonValue
   private final int value;

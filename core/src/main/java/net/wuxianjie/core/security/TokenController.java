@@ -19,11 +19,9 @@ public class TokenController {
    * 获取 Access Token。
    */
   @PostMapping("access_token")
-  public TokenData getToken(@RequestBody @Validated GetTokenQuery param) {
-    return tokenService.getToken(
-      param.getAccountName(),
-      param.getAccountPassword()
-    );
+  public TokenData getToken(@RequestBody @Validated GetTokenQuery query) {
+    return tokenService.getToken(query.getAccountName(),
+        query.getAccountPassword());
   }
 
   /**

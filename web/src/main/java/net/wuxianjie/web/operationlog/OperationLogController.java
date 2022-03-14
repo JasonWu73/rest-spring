@@ -7,7 +7,6 @@ import net.wuxianjie.core.paging.PagingQuery;
 import net.wuxianjie.core.security.Admin;
 import net.wuxianjie.core.shared.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,19 +35,15 @@ public class OperationLogController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(@Validated
-                                                                   PagingQuery paging,
-
-                                                                   @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
-                                                                     regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                   )
-                                                                   String startDate,
-
-                                                                   @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
-                                                                     regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)"
-                                                                   )
-                                                                   String endDate
-  ) {
+  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
+      @Validated
+          PagingQuery paging,
+      @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",
+          regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)")
+          String startDate,
+      @Pattern(message = "结束日期不符合 yyyy-MM-dd 格式",
+          regexp = "(^$|^\\d{4}-\\d{2}-\\d{2}$)")
+          String endDate) {
     final LocalDateTime startTime = getStartTime(startDate);
 
     final LocalDateTime endTime = getEndTime(endDate);
@@ -56,7 +51,6 @@ public class OperationLogController {
     return logService.getOperationLogs(paging, startTime, endTime);
   }
 
-  @Nullable
   private LocalDateTime getStartTime(String startDateStr) {
     if (StrUtil.isEmpty(startDateStr)) {
       return null;
@@ -73,7 +67,6 @@ public class OperationLogController {
     return startDate.atStartOfDay();
   }
 
-  @Nullable
   private LocalDateTime getEndTime(String endDateStr) {
     if (StrUtil.isEmpty(endDateStr)) {
       return null;

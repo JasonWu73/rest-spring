@@ -39,9 +39,8 @@ public class SecurityConfig {
     permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
 
     if (jwtSigningKey == null) {
-      throw new IllegalStateException(
-        "application.yml 中必须配置 core.security.jwt-signing-key"
-      );
+      throw new IllegalArgumentException(
+          "core.security.jwt-signing-key 不能为空");
     }
   }
 }

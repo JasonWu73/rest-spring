@@ -1,5 +1,6 @@
 package net.wuxianjie.web.operationlog;
 
+import cn.hutool.core.bean.BeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -37,10 +38,6 @@ public class ListItemOfOperationLog {
   private String message;
 
   public ListItemOfOperationLog(OperationLog operationLog) {
-    this.operationLogId = operationLog.getOperationLogId();
-    this.operationTime = operationLog.getOperationTime();
-    this.userId = operationLog.getUserId();
-    this.username = operationLog.getUsername();
-    this.message = operationLog.getMessage();
+    BeanUtil.copyProperties(operationLog, this);
   }
 }
