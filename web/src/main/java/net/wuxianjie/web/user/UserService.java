@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -25,24 +25,20 @@ public class UserService {
   private final OperationLogService logService;
   private final PasswordEncoder passwordEncoder;
 
-  public ManagementOfUser getUser(String username) {
+  public Optional<User> getUser(String username) {
     final User user = userMapper.findUserByUsername(username);
 
-    return user == null ? null : new ManagementOfUser(user);
+    return Optional.ofNullable(user);
   }
 
-  public PagingData<List<ManagementOfUser>> getUsers(PagingQuery paging,
-                                                     ManagementOfUser query) {
+  public PagingData<List<User>> getUsers(PagingQuery paging,
+                                         ManagementOfUser query) {
     final List<User> users =
         userMapper.findByQueryPagingModifyTimeDesc(paging, query);
 
     final int total = userMapper.countByQuery(query);
 
-    final List<ManagementOfUser> userList = users.stream()
-        .map(ManagementOfUser::new)
-        .collect(Collectors.toList());
-
-    return new PagingData<>(paging, total, userList);
+    return new PagingData<>(paging, total, users);
   }
 
   @Transactional(rollbackFor = Exception.class)

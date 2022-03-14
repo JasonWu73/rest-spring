@@ -1,6 +1,5 @@
 package net.wuxianjie.web.user;
 
-import cn.hutool.core.bean.BeanUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -77,10 +76,4 @@ public class ManagementOfUser {
   @NotBlank(message = "新密码不能为空", groups = Update.class)
   @Length(message = "新密码长度需在 3 到 25 个字符之间", min = 3, max = 25)
   private String newPassword;
-
-  public ManagementOfUser(User user) {
-    BeanUtil.copyProperties(user, this, "enabled");
-
-    this.enabled = user.getEnabled() == null ? null : user.getEnabled().value();
-  }
 }
