@@ -12,6 +12,10 @@ import java.time.format.DateTimeFormatter;
 /**
  * MyBatis {@link LocalDateTime} 的类型转换器，
  * 以解决某些 JDBC 不支持 {@link LocalDateTime} 转换的问题，如 SQLite JDBC4。
+ *
+ * <p>全局配置（application.yml）：</p>
+ *
+ * <p>{@code mybatis.type-handlers-package: net.wuxianjie.core.handler}</p>
  */
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
