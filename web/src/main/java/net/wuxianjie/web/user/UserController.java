@@ -37,7 +37,7 @@ public class UserController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<ManagementOfUser>> getUsers(
+  public PagingData<List<User>> getUsers(
       @Validated PagingQuery paging,
       @Validated ManagementOfUser query) {
     setFuzzySearchValue(query);

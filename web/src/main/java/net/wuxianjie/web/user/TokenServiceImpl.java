@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -33,7 +34,7 @@ public class TokenServiceImpl implements TokenService {
 
   @Override
   public TokenData getToken(String accountName, String accountRawPassword) {
-    final ManagementOfUser user = getUserFromDbMustBeExists(accountName);
+    final User user = getUserFromDbMustBeExists(accountName);
 
     validateAccountAvailable(user.getEnabled(), user.getUsername());
 
@@ -59,7 +60,7 @@ public class TokenServiceImpl implements TokenService {
       throw new TokenAuthenticationException("Token 类型错误");
     }
 
-    final ManagementOfUser user = getUserFromDbMustBeExists(username);
+    final User user = getUserFromDbMustBeExists(username);
 
     validateAccountAvailable(user.getEnabled(), username);
 
@@ -70,18 +71,18 @@ public class TokenServiceImpl implements TokenService {
     return token;
   }
 
-  private ManagementOfUser getUserFromDbMustBeExists(String username) {
-    final ManagementOfUser user = userService.getUser(username);
+  private User getUserFromDbMustBeExists(String username) {
+    final Optional<User> userOptional = userService.getUser(username);
 
-    if (user == null) {
+    if (userOptional.isEmpty()) {
       throw new NotFoundException(String.format("账号【%s】不存在", username));
     }
 
-    return user;
+    return userOptional.get();
   }
 
-  private void validateAccountAvailable(Integer enabled, String username) {
-    if (enabled == null || enabled != YesOrNo.YES.value()) {
+  private void validateAccountAvailable(YesOrNo enabled, String username) {
+    if (enabled != YesOrNo.YES) {
       throw new TokenAuthenticationException(String.format("账号【%s】已被禁用",
           username));
     }
@@ -96,7 +97,7 @@ public class TokenServiceImpl implements TokenService {
     }
   }
 
-  private TokenData createNewToken(ManagementOfUser user) {
+  private TokenData createNewToken(User user) {
     final Map<String, Object> jwtPayload = new HashMap<>();
 
     jwtPayload.put(TokenAttributes.ACCOUNT_KEY, user.getUsername());
@@ -112,7 +113,7 @@ public class TokenServiceImpl implements TokenService {
         accessToken, refreshToken);
   }
 
-  private void addToCache(ManagementOfUser user, TokenData token) {
+  private void addToCache(User user, TokenData token) {
     final TokenUserDetails userDetails = new TokenUserDetails(
         user.getUserId(), user.getUsername(), user.getRoles(),
         token.getAccessToken(), token.getRefreshToken());

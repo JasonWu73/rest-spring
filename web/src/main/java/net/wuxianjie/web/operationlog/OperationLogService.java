@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 操作日志。
@@ -23,7 +22,7 @@ public class OperationLogService {
   private final OperationLogMapper logMapper;
   private final AuthenticationFacade authenticationFacade;
 
-  public PagingData<List<ListItemOfOperationLog>> getOperationLogs(
+  public PagingData<List<OperationLog>> getOperationLogs(
       PagingQuery paging,
       LocalDateTime startTimeInclusive,
       LocalDateTime endTimeInclusive) {
@@ -34,12 +33,7 @@ public class OperationLogService {
     final int total =
         logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
 
-    final List<ListItemOfOperationLog> logList = logs.stream()
-        .map(ListItemOfOperationLog::new)
-        .collect(Collectors.toList());
-
-    return new PagingData<>(total, paging.getPageNo(), paging.getPageSize(),
-        logList);
+    return new PagingData<>(paging, total, logs);
   }
 
   @Transactional(rollbackFor = Exception.class)
