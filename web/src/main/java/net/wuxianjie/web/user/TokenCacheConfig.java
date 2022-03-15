@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import net.wuxianjie.core.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.web.shared.BeanQualifiers;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

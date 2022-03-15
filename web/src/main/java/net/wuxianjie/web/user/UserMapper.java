@@ -1,6 +1,6 @@
 package net.wuxianjie.web.user;
 
-import net.wuxianjie.core.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.PagingQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

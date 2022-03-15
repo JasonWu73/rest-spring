@@ -3,10 +3,10 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.core.handler.YesOrNo;
-import net.wuxianjie.core.validator.EnumValidator;
-import net.wuxianjie.core.validator.group.Add;
-import net.wuxianjie.core.validator.group.Update;
+import net.wuxianjie.springbootcore.handler.YesOrNo;
+import net.wuxianjie.springbootcore.validator.EnumValidator;
+import net.wuxianjie.springbootcore.validator.group.Add;
+import net.wuxianjie.springbootcore.validator.group.Update;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;

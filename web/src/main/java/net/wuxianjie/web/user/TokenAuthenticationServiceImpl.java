@@ -2,11 +2,11 @@ package net.wuxianjie.web.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.security.SecurityConfigData;
-import net.wuxianjie.core.security.TokenAuthenticationService;
-import net.wuxianjie.core.security.TokenUserDetails;
-import net.wuxianjie.core.shared.JwtUtils;
-import net.wuxianjie.core.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.shared.JwtUtils;
+import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
 import net.wuxianjie.web.shared.BeanQualifiers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

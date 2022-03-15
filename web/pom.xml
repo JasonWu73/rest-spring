@@ -19,7 +19,7 @@
     <!-- 核心模块 -->
     <dependency>
       <groupId>net.wuxianjie</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>spring-boot-core</artifactId>
     </dependency>
 
     <!-- Caffeine Cache -->

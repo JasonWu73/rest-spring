@@ -1,10 +1,10 @@
 package net.wuxianjie.web.operationlog;
 
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.paging.PagingData;
-import net.wuxianjie.core.paging.PagingQuery;
-import net.wuxianjie.core.security.AuthenticationFacade;
-import net.wuxianjie.core.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.security.AuthenticationFacade;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

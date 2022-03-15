@@ -2,10 +2,10 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.handler.YesOrNo;
-import net.wuxianjie.core.paging.PagingData;
-import net.wuxianjie.core.paging.PagingQuery;
-import net.wuxianjie.core.shared.*;
+import net.wuxianjie.springbootcore.handler.YesOrNo;
+import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.shared.*;
 import net.wuxianjie.web.operationlog.OperationLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

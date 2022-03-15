@@ -3,8 +3,8 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.core.security.Role;
-import net.wuxianjie.core.handler.YesOrNo;
+import net.wuxianjie.springbootcore.security.Role;
+import net.wuxianjie.springbootcore.handler.YesOrNo;
 
 import java.time.LocalDateTime;
 

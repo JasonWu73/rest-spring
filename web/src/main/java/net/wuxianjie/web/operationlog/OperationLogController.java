@@ -2,10 +2,10 @@ package net.wuxianjie.web.operationlog;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.core.paging.PagingData;
-import net.wuxianjie.core.paging.PagingQuery;
-import net.wuxianjie.core.security.Admin;
-import net.wuxianjie.core.shared.BadRequestException;
+import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.security.Admin;
+import net.wuxianjie.springbootcore.shared.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;

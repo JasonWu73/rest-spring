@@ -23,7 +23,7 @@
   <properties>
     <java.version>11</java.version>
 
-    <my.core.version>1.0.0</my.core.version>
+    <spring-boot-core.version>1.0.0</spring-boot-core.version>
   </properties>
 
   <dependencyManagement>
@@ -31,8 +31,8 @@
       <!-- 核心模块 -->
       <dependency>
         <groupId>net.wuxianjie</groupId>
-        <artifactId>core</artifactId>
-        <version>${my.core.version}</version>
+        <artifactId>spring-boot-core</artifactId>
+        <version>${spring-boot-core.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
