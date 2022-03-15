@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface OperationLogMapper {
 
-  List<OperationLog> findByStartEndTimePagingOperationTimeDesc(
+  List<ListOfOperationLogItem> findByStartEndTimePagingOperationTimeDesc(
       @Param("p") PagingQuery paging,
       @Param("start") LocalDateTime startTimeInclusive,
       @Param("end") LocalDateTime endTimeInclusive);

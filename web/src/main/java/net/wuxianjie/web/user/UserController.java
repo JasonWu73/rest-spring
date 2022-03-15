@@ -12,7 +12,6 @@ import net.wuxianjie.springbootcore.shared.BadRequestException;
 import net.wuxianjie.springbootcore.shared.StrUtils;
 import net.wuxianjie.springbootcore.shared.Wrote2Db;
 import net.wuxianjie.springbootcore.validator.group.Add;
-import net.wuxianjie.springbootcore.validator.group.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +36,9 @@ public class UserController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<User>> getUsers(
+  public PagingData<List<ListOfUserItem>> getUsers(
       @Validated PagingQuery paging,
-      @Validated ManagementOfUser query) {
+      @Validated GetUserQuery query) {
     setFuzzySearchValue(query);
 
     return userService.getUsers(paging, query);
@@ -51,7 +50,7 @@ public class UserController {
   @Admin
   @PostMapping("add")
   public Wrote2Db addNewUser(@RequestBody @Validated(Add.class)
-                                 ManagementOfUser query) {
+                                 AddOrUpdateUserQuery query) {
     setRoleAfterDeduplication(query);
 
     return userService.addNewUser(query);
@@ -65,7 +64,8 @@ public class UserController {
   @Admin
   @PostMapping("update/{userId:\\d+}")
   public Wrote2Db updateUser(@PathVariable("userId") int id,
-                             @RequestBody @Validated ManagementOfUser query) {
+                             @RequestBody @Validated
+                                 AddOrUpdateUserQuery query) {
     query.setUserId(id);
 
     setRoleAfterDeduplication(query);
@@ -78,8 +78,8 @@ public class UserController {
    */
   @PostMapping("password")
   public Wrote2Db updateCurrentUserPassword(@RequestBody
-                                            @Validated(Update.class)
-                                                ManagementOfUser query) {
+                                            @Validated
+                                                UpdatePasswordQuery query) {
     validatePasswordDifference(query.getOldPassword(), query.getNewPassword());
 
     setCurrentUserId(query);
@@ -96,11 +96,11 @@ public class UserController {
     return userService.deleteUser(id);
   }
 
-  private void setFuzzySearchValue(ManagementOfUser query) {
+  private void setFuzzySearchValue(GetUserQuery query) {
     query.setUsername(StrUtils.generateDbFuzzyStr(query.getUsername()));
   }
 
-  private void setRoleAfterDeduplication(ManagementOfUser query) {
+  private void setRoleAfterDeduplication(AddOrUpdateUserQuery query) {
     final String commaSeparatedStr =
         toDeduplicatedCommaSeparatedLowerCase(query.getRoles());
 
@@ -152,7 +152,7 @@ public class UserController {
     }
   }
 
-  private void setCurrentUserId(ManagementOfUser query) {
+  private void setCurrentUserId(UpdatePasswordQuery query) {
     final TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
 
     query.setUserId(userDetails.getAccountId());

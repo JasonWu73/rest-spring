@@ -23,7 +23,7 @@
   </select>
 
   <select id="findByQueryPagingModifyTimeDesc"
-          resultType="net.wuxianjie.web.user.User">
+          resultType="net.wuxianjie.web.user.ListOfUserItem">
     SELECT user_id                             AS userId,
     STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
     is_enabled                                 AS enabled,

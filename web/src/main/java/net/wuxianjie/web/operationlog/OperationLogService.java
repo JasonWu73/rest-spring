@@ -22,11 +22,11 @@ public class OperationLogService {
   private final OperationLogMapper logMapper;
   private final AuthenticationFacade authenticationFacade;
 
-  public PagingData<List<OperationLog>> getOperationLogs(
+  public PagingData<List<ListOfOperationLogItem>> getOperationLogs(
       PagingQuery paging,
       LocalDateTime startTimeInclusive,
       LocalDateTime endTimeInclusive) {
-    final List<OperationLog> logs =
+    final List<ListOfOperationLogItem> logs =
         logMapper.findByStartEndTimePagingOperationTimeDesc(paging,
             startTimeInclusive, endTimeInclusive);
 

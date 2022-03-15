@@ -14,7 +14,7 @@
   </sql>
 
   <select id="findByStartEndTimePagingOperationTimeDesc"
-          resultType="net.wuxianjie.web.operationlog.OperationLog">
+          resultType="net.wuxianjie.web.operationlog.ListOfOperationLogItem">
     SELECT operation_log_id AS operationLogId,
     operation_time          AS operationTime,
     user_id                 AS userId,

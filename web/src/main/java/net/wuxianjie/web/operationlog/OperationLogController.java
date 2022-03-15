@@ -35,7 +35,7 @@ public class OperationLogController {
    */
   @Admin
   @GetMapping("list")
-  public PagingData<List<OperationLog>> getOperationLogs(
+  public PagingData<List<ListOfOperationLogItem>> getOperationLogs(
       @Validated
           PagingQuery paging,
       @Pattern(message = "开始日期不符合 yyyy-MM-dd 格式",

@@ -31,9 +31,9 @@ public class UserService {
     return Optional.ofNullable(user);
   }
 
-  public PagingData<List<User>> getUsers(PagingQuery paging,
-                                         ManagementOfUser query) {
-    final List<User> users =
+  public PagingData<List<ListOfUserItem>> getUsers(PagingQuery paging,
+                                                   GetUserQuery query) {
+    final List<ListOfUserItem> users =
         userMapper.findByQueryPagingModifyTimeDesc(paging, query);
 
     final int total = userMapper.countByQuery(query);
@@ -42,12 +42,8 @@ public class UserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public Wrote2Db addNewUser(ManagementOfUser query) {
+  public Wrote2Db addNewUser(AddOrUpdateUserQuery query) {
     validateUsernameUniqueness(query.getUsername());
-
-    final String hashedPassword = passwordEncoder.encode(query.getPassword());
-
-    query.setHashedPassword(hashedPassword);
 
     final User userToAdd = createUserToAdd(query);
     final int addedNum = userMapper.add(userToAdd);
@@ -61,7 +57,7 @@ public class UserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public Wrote2Db updateUser(ManagementOfUser query) {
+  public Wrote2Db updateUser(AddOrUpdateUserQuery query) {
     final User userToUpdate = getUserFromDbMustBeExists(query.getUserId());
 
     final List<String> logs = new ArrayList<>();
@@ -84,7 +80,7 @@ public class UserService {
   }
 
   @Transactional(rollbackFor = Exception.class)
-  public Wrote2Db updateUserPassword(ManagementOfUser query) {
+  public Wrote2Db updateUserPassword(UpdatePasswordQuery query) {
     final User passwordToUpdate = getUserFromDbMustBeExists(query.getUserId());
 
     validatePassword(query.getOldPassword(),
@@ -123,11 +119,12 @@ public class UserService {
     }
   }
 
-  private User createUserToAdd(ManagementOfUser query) {
+  private User createUserToAdd(AddOrUpdateUserQuery query) {
     final User userToAdd = new User();
 
     BeanUtil.copyProperties(query, userToAdd, "enabled");
 
+    userToAdd.setHashedPassword(passwordEncoder.encode(query.getPassword()));
     userToAdd.setEnabled(EnumUtils.resolve(YesOrNo.class, query.getEnabled())
         .orElseThrow());
 
@@ -145,7 +142,7 @@ public class UserService {
   }
 
   private boolean needsUpdateUser(User userToUpdate,
-                                  ManagementOfUser query,
+                                  AddOrUpdateUserQuery query,
                                   List<String> logs) {
     boolean needsUpdatePassword =
         needsUpdatePassword(userToUpdate, query, logs);
@@ -166,7 +163,7 @@ public class UserService {
     }
   }
 
-  private int updateUserPasswordInDatabase(ManagementOfUser query) {
+  private int updateUserPasswordInDatabase(UpdatePasswordQuery query) {
     final String rawPassword = query.getNewPassword();
     final String hashedPassword = passwordEncoder.encode(rawPassword);
 
@@ -179,7 +176,7 @@ public class UserService {
   }
 
   private boolean needsUpdatePassword(User userToUpdate,
-                                      ManagementOfUser query,
+                                      AddOrUpdateUserQuery query,
                                       List<String> logs) {
     boolean isChanged = false;
 
@@ -205,7 +202,7 @@ public class UserService {
   }
 
   private boolean needsUpdateRoles(User userToUpdate,
-                                   ManagementOfUser query,
+                                   AddOrUpdateUserQuery query,
                                    List<String> logs) {
     boolean isChanged = false;
 
@@ -228,7 +225,7 @@ public class UserService {
   }
 
   private boolean needsUpdateEnabled(User userToUpdate,
-                                     ManagementOfUser query,
+                                     AddOrUpdateUserQuery query,
                                      List<String> logs) {
     boolean isChanged = false;
 
