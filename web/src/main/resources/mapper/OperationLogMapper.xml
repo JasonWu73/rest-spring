@@ -20,7 +20,7 @@
     user_id                 AS userId,
     username,
     message
-    FROM operation_log
+    FROM operation_logs
     <include refid="startEndTimeWhereClause"/>
     ORDER BY operation_time DESC
     LIMIT #{p.offset}, #{p.pageSize}
@@ -28,12 +28,12 @@
 
   <select id="countByStartEndTime" resultType="int">
     SELECT COUNT(1)
-    FROM operation_log
+    FROM operation_logs
     <include refid="startEndTimeWhereClause"/>
   </select>
 
   <insert id="add">
-    INSERT INTO operation_log (operation_time, user_id,
+    INSERT INTO operation_logs (operation_time, user_id,
                                username, message)
     VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}), #{userId},
             #{username}, #{message})

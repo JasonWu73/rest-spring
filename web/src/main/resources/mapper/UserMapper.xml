@@ -8,7 +8,7 @@
            username,
            hashed_password AS hashedPassword,
            roles
-    FROM user
+    FROM users
     WHERE user_id = #{id}
   </select>
 
@@ -18,7 +18,7 @@
            username,
            hashed_password AS hashedPassword,
            roles
-    FROM user
+    FROM users
     WHERE username = #{username}
   </select>
 
@@ -29,7 +29,7 @@
     is_enabled                                 AS enabled,
     username,
     IFNULL(roles, '')                          AS roles
-    FROM user
+    FROM users
     <where>
       <if test="q.username != null">
         username LIKE #{q.username}
@@ -44,7 +44,7 @@
 
   <select id="countByQuery" resultType="int">
     SELECT COUNT(1)
-    FROM user
+    FROM users
     <where>
       <if test="username != null">
         username LIKE #{username}
@@ -56,12 +56,12 @@
   </select>
 
   <select id="existsUsername" resultType="boolean">
-    SELECT EXISTS(SELECT 1 FROM user WHERE username = #{username})
+    SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})
   </select>
 
   <insert id="add" useGeneratedKeys="true" keyProperty="userId"
           parameterType="net.wuxianjie.web.user.User">
-    INSERT INTO user (create_time,
+    INSERT INTO users (create_time,
                       modify_time,
                       is_enabled, username, hashed_password, roles)
     VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
@@ -70,7 +70,7 @@
   </insert>
 
   <update id="update">
-    UPDATE user
+    UPDATE users
     <set>
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
       <if test="hashedPassword != null">
@@ -83,6 +83,6 @@
   </update>
 
   <delete id="deleteById">
-    DELETE FROM user WHERE user_id = #{id}
+    DELETE FROM users WHERE user_id = #{id}
   </delete>
 </mapper>
