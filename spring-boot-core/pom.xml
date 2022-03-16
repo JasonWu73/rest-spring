@@ -20,11 +20,14 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+    <spring.boot.dependencies.version>2.6.3</spring.boot.dependencies.version>
+    <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+    <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
     <jjwt.version>0.11.2</jjwt.version>
     <hutool.version>5.7.22</hutool.version>
-    <mybatis-spring-boot-starter.version>
+    <mybatis.spring.boot.starter.version>
       2.2.2
-    </mybatis-spring-boot-starter.version>
+    </mybatis.spring.boot.starter.version>
   </properties>
 
   <!-- 仅定义依赖版本，并不真正意义上下载依赖 -->
@@ -35,7 +38,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <type>pom</type>
-        <version>2.6.3</version>
+        <version>${spring.boot.dependencies.version}</version>
         <scope>import</scope>
       </dependency>
 
@@ -69,7 +72,7 @@
       <dependency>
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
-        <version>${mybatis-spring-boot-starter.version}</version>
+        <version>${mybatis.spring.boot.starter.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -164,12 +167,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>${maven.source.plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>${maven.jar.plugin.version}</version>
         </plugin>
       </plugins>
     </pluginManagement>
