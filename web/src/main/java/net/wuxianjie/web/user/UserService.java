@@ -144,12 +144,12 @@ public class UserService {
   private boolean needsUpdateUser(User userToUpdate,
                                   AddOrUpdateUserQuery query,
                                   List<String> logs) {
-    boolean needsUpdatePassword =
+    final boolean needsUpdatePassword =
         needsUpdatePassword(userToUpdate, query, logs);
 
-    boolean needsUpdateRoles = needsUpdateRoles(userToUpdate, query, logs);
+    final boolean needsUpdateRoles = needsUpdateRoles(userToUpdate, query, logs);
 
-    boolean needsUpdateEnabled = needsUpdateEnabled(userToUpdate, query, logs);
+    final boolean needsUpdateEnabled = needsUpdateEnabled(userToUpdate, query, logs);
 
     return needsUpdatePassword || needsUpdateRoles || needsUpdateEnabled;
   }
