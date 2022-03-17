@@ -58,7 +58,9 @@ public class UserService {
 
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Db updateUser(AddOrUpdateUserQuery query) {
-    final User userToUpdate = getUserFromDbMustBeExists(query.getUserId());
+    final Integer userId = query.getUserId();
+    final User userToUpdate = getUserFromDbMustBeExists(userId);
+    final String username = userToUpdate.getUsername();
 
     final List<String> logs = new ArrayList<>();
     final boolean needsUpdate = needsUpdateUser(userToUpdate, query, logs);
@@ -68,8 +70,7 @@ public class UserService {
 
       final String logMessage = String.format(
           "修改用户数据【ID：%s，用户名：%s】：%s",
-          userToUpdate.getUserId(), userToUpdate.getUsername(),
-          String.join("；", logs));
+          userId, username, String.join("；", logs));
 
       logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
@@ -81,7 +82,9 @@ public class UserService {
 
   @Transactional(rollbackFor = Exception.class)
   public Wrote2Db updateUserPassword(UpdatePasswordQuery query) {
-    final User passwordToUpdate = getUserFromDbMustBeExists(query.getUserId());
+    final Integer userId = query.getUserId();
+    final User passwordToUpdate = getUserFromDbMustBeExists(userId);
+    final String username = passwordToUpdate.getUsername();
 
     validatePassword(query.getOldPassword(),
         passwordToUpdate.getHashedPassword());
@@ -89,7 +92,7 @@ public class UserService {
     final int updatedNum = updateUserPasswordInDatabase(query);
 
     final String logMessage = String.format("修改用户密码【ID：%s，用户名：%s】",
-        passwordToUpdate.getUserId(), passwordToUpdate.getUsername());
+        userId, username);
 
     logService.addNewOperationLog(LocalDateTime.now(), logMessage);
 
