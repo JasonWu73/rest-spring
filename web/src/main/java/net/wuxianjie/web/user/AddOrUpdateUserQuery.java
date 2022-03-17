@@ -47,6 +47,7 @@ public class AddOrUpdateUserQuery {
   /**
    * 用户绑定的角色，多个角色以英文逗号分隔。
    */
+  @Length(message = "角色长度不能超过 100 个字符", max = 100)
   @Pattern(message = "角色只能包含 user 或 admin，且多个角色需以英文逗号分隔",
       regexp = "(^$|^(admin|user|,)*$)")
   private String roles;
