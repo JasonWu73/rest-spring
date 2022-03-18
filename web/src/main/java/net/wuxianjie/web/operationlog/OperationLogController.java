@@ -54,7 +54,7 @@ public class OperationLogController {
         try {
             endDate = LocalDate.parse(dateStr);
         } catch (DateTimeParseException e) {
-            throw new BadRequestException("结束日期错误", e);
+            throw new BadRequestException("结束日期不合法", e);
         }
         return endDate.atTime(LocalTime.MAX);
     }
