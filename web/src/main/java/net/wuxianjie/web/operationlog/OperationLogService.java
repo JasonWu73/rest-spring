@@ -5,7 +5,6 @@ import net.wuxianjie.springbootcore.paging.PagingData;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.AuthenticationFacade;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @author 吴仙杰
  */
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class OperationLogService {
 
     private final OperationLogMapper logMapper;
