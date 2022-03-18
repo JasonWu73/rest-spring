@@ -2,7 +2,6 @@ package net.wuxianjie.springbootcore.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -17,40 +16,39 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 全局处理未经过 Controller 层的异常。
+ * 全局异常处理。
+ *
+ * @author 吴仙杰
+ * @see ExceptionControllerAdvice
  */
 @Slf4j
 @Controller
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class GlobalErrorController implements ErrorController {
 
-  private final ErrorAttributes attributes;
+    private final ErrorAttributes errorAttributes;
 
-  @ResponseBody
-  @RequestMapping("/error")
-  public ResponseEntity<RestData<Void>> handleError(WebRequest request) {
-    final Map<String, Object> errorMap =
-      attributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+    @ResponseBody
+    @RequestMapping("/error")
+    public ResponseEntity<RestData<Void>> handleError(WebRequest request) {
+        Map<String, Object> errorMap = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        Integer httpStatusCode = (Integer) errorMap.get("status");
+        if (httpStatusCode == HttpStatus.NOT_FOUND.value()) {
+            log.warn("全局 404 处理：{}", errorMap);
+        } else {
+            log.error("全局异常处理（未知）：{}", errorMap);
+        }
 
-    final Integer status = (Integer) errorMap.get("status");
-    final String error = (String) errorMap.get("error");
+        HttpStatus httpStatus;
+        try {
+            httpStatus = Objects.requireNonNull(HttpStatus.resolve(httpStatusCode));
+        } catch (NullPointerException e) {
+            log.warn("全局异常处理 -> 无法解析 HTTP 状态码【{}】", httpStatusCode);
 
-    if (HttpStatus.NOT_FOUND.value() == status) {
-      log.warn("全局 404 处理：{}", errorMap);
-    } else {
-      log.error("全局异常处理（未知）：{}", errorMap);
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        String errorMessage = (String) errorMap.get("error");
+        return new ResponseEntity<>(RestDataWrapper.fail(errorMessage), httpStatus);
     }
-
-    HttpStatus httpStatus;
-
-    try {
-      httpStatus = Objects.requireNonNull(HttpStatus.resolve(status));
-    } catch (NullPointerException e) {
-      log.warn("全局异常处理发生异常：无法解析 HTTP 状态码【{}】", status);
-
-      httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-    }
-
-    return new ResponseEntity<>(RestDataWrapper.fail(error), httpStatus);
-  }
 }

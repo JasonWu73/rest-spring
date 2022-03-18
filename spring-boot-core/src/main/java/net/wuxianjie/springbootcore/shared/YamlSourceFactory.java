@@ -13,32 +13,28 @@ import java.util.Properties;
 /**
  * 支持对 YAML 自定义配置文件的读取。
  *
- * <p>默认 Spring 仅支持读取 application.yml 的 YAML 内置配置文件。</p>
+ * <p>默认 Spring 仅支持读取 application.yml 配置文件。</p>
+ *
+ * @author 吴仙杰
  */
 public class YamlSourceFactory implements PropertySourceFactory {
 
-  @NonNull
-  @Override
-  public PropertySource<?> createPropertySource(String name,
-                                                EncodedResource resource)
-      throws InternalServerException {
-    final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-    final Resource heldResource = resource.getResource();
+    @NonNull
+    @Override
+    public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws InternalServerException {
+        YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+        Resource heldResource = resource.getResource();
+        factory.setResources(heldResource);
+        String filename = heldResource.getFilename();
+        if (filename == null) {
+            throw new InternalServerException("无法识别 YAML 配置文件的文件名");
+        }
 
-    factory.setResources(heldResource);
+        Properties properties = factory.getObject();
+        if (properties == null) {
+            throw new InternalServerException("初始化读取 YAML 配置文件失败");
+        }
 
-    final String filename = heldResource.getFilename();
-
-    if (filename == null) {
-      throw new InternalServerException("无法识别 YAML 配置文件的文件名");
+        return new PropertiesPropertySource(filename, properties);
     }
-
-    final Properties properties = factory.getObject();
-
-    if (properties == null) {
-      throw new InternalServerException("YAML 配置初始化失败");
-    }
-
-    return new PropertiesPropertySource(filename, properties);
-  }
 }

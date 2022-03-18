@@ -14,36 +14,27 @@ import java.util.List;
 
 /**
  * 操作日志。
+ *
+ * @author 吴仙杰
  */
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class OperationLogService {
 
-  private final OperationLogMapper logMapper;
-  private final AuthenticationFacade authenticationFacade;
+    private final OperationLogMapper logMapper;
+    private final AuthenticationFacade authenticationFacade;
 
-  public PagingData<List<ListOfOperationLogItem>> getOperationLogs(
-      PagingQuery paging,
-      LocalDateTime startTimeInclusive,
-      LocalDateTime endTimeInclusive) {
-    final List<ListOfOperationLogItem> logs =
-        logMapper.findByStartEndTimePagingOperationTimeDesc(paging,
-            startTimeInclusive, endTimeInclusive);
+    public PagingData<List<ListOfOperationLogItem>> getOperationLogs(PagingQuery paging, GetOperationLogQuery query) {
+        List<ListOfOperationLogItem> logs = logMapper.findByQueryPagingOrderByOperationTimeDesc(paging, query);
+        int total = logMapper.countByQuery(query);
+        return new PagingData<>(paging, total, logs);
+    }
 
-    final int total =
-        logMapper.countByStartEndTime(startTimeInclusive, endTimeInclusive);
-
-    return new PagingData<>(paging, total, logs);
-  }
-
-  @Transactional(rollbackFor = Exception.class)
-  public void addNewOperationLog(LocalDateTime operationTime, String message) {
-    final TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
-
-    final OperationLog logToAdd = new OperationLog(null,
-        operationTime, userDetails.getAccountId(), userDetails.getAccountName(),
-        message);
-
-    logMapper.add(logToAdd);
-  }
+    @Transactional(rollbackFor = Exception.class)
+    public void addNewOperationLog(LocalDateTime operationTime, String message) {
+        TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
+        OperationLog logToAdd = new OperationLog(null, operationTime,
+                userDetails.getAccountId(), userDetails.getAccountName(), message);
+        logMapper.add(logToAdd);
+    }
 }

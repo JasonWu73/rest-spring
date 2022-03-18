@@ -17,39 +17,38 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TokenAuthenticationServiceImpl
-    implements TokenAuthenticationService {
+public class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
-  @Qualifier(BeanQualifiers.TOKEN_CACHE)
-  private final Cache<String, TokenUserDetails> tokenCache;
+    @Qualifier(BeanQualifiers.TOKEN_CACHE)
+    private final Cache<String, TokenUserDetails> tokenCache;
 
-  private final SecurityConfigData securityConfig;
+    private final SecurityConfigData securityConfig;
 
-  @Override
-  public TokenUserDetails authenticate(String token) {
-    final Map<String, Object> payload = JwtUtils.verifyTwtReturnPayload(
-        securityConfig.getJwtSigningKey(), token);
+    @Override
+    public TokenUserDetails authenticate(String token) {
+        final Map<String, Object> payload = JwtUtils.validateJwtReturnPayload(
+                securityConfig.getJwtSigningKey(), token);
 
-    final String username = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
-    final String tokenType =
-        (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY);
+        final String username = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+        final String tokenType =
+                (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY);
 
-    if (!Objects.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
-      throw new TokenAuthenticationException("Token 类型错误");
+        if (!Objects.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
+            throw new TokenAuthenticationException("Token 类型错误");
+        }
+
+        return getUserDetailsFromCache(username, token);
     }
 
-    return getUserDetailsFromCache(username, token);
-  }
+    private TokenUserDetails getUserDetailsFromCache(String username,
+                                                     String accessToken) {
+        final TokenUserDetails userDetails = tokenCache.getIfPresent(username);
 
-  private TokenUserDetails getUserDetailsFromCache(String username,
-                                                   String accessToken) {
-    final TokenUserDetails userDetails = tokenCache.getIfPresent(username);
+        if (userDetails == null
+                || !Objects.equals(accessToken, userDetails.getAccessToken())) {
+            throw new TokenAuthenticationException("Token 已过期");
+        }
 
-    if (userDetails == null
-        || !Objects.equals(accessToken, userDetails.getAccessToken())) {
-      throw new TokenAuthenticationException("Token 已过期");
+        return userDetails;
     }
-
-    return userDetails;
-  }
 }

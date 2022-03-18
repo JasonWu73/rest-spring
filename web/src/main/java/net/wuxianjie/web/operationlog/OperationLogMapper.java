@@ -4,19 +4,20 @@ import net.wuxianjie.springbootcore.paging.PagingQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * 操作日志表相关。
+ *
+ * @author 吴仙杰
+ */
 @Mapper
 public interface OperationLogMapper {
 
-  List<ListOfOperationLogItem> findByStartEndTimePagingOperationTimeDesc(
-      @Param("p") PagingQuery paging,
-      @Param("start") LocalDateTime startTimeInclusive,
-      @Param("end") LocalDateTime endTimeInclusive);
+    List<ListOfOperationLogItem> findByQueryPagingOrderByOperationTimeDesc(@Param("p") PagingQuery paging,
+                                                                           @Param("q") GetOperationLogQuery query);
 
-  int countByStartEndTime(@Param("start") LocalDateTime startTimeInclusive,
-                          @Param("end") LocalDateTime endTimeInclusive);
+    int countByQuery(@Param("q") GetOperationLogQuery query);
 
-  int add(OperationLog log);
+    int add(OperationLog log);
 }

@@ -1,41 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
-  <sql id="startEndTimeWhereClause">
-    <where>
-      <if test="start != null">
-        AND operation_time &gt;= #{start}
-      </if>
-      <if test="end != null">
-        AND operation_time &lt;= #{end}
-      </if>
-    </where>
-  </sql>
+    <sql id="queryWhereClause">
+        <where>
+            <if test="q.startTimeInclusive != null">
+                AND operation_time &gt;= #{q.startTimeInclusive}
+            </if>
+            <if test="q.endTimeInclusive != null">
+                AND operation_time &lt;= #{q.endTimeInclusive}
+            </if>
+        </where>
+    </sql>
 
-  <select id="findByStartEndTimePagingOperationTimeDesc"
-          resultType="net.wuxianjie.web.operationlog.ListOfOperationLogItem">
-    SELECT operation_log_id AS operationLogId,
-    operation_time          AS operationTime,
-    user_id                 AS userId,
-    username,
-    message
-    FROM operation_logs
-    <include refid="startEndTimeWhereClause"/>
-    ORDER BY operation_time DESC
-    LIMIT #{p.offset}, #{p.pageSize}
-  </select>
+    <select id="findByQueryPagingOrderByOperationTimeDesc"
+            resultType="net.wuxianjie.web.operationlog.ListOfOperationLogItem">
+        SELECT operation_log_id AS operationLogId,
+        operation_time AS operationTime,
+        user_id AS userId,
+        username,
+        message
+        FROM operation_logs
+        <include refid="queryWhereClause"/>
+        ORDER BY operation_time DESC
+        LIMIT #{p.offset}, #{p.pageSize}
+    </select>
 
-  <select id="countByStartEndTime" resultType="int">
-    SELECT COUNT(1)
-    FROM operation_logs
-    <include refid="startEndTimeWhereClause"/>
-  </select>
+    <select id="countByQuery" resultType="int">
+        SELECT COUNT(1)
+        FROM operation_logs
+        <include refid="queryWhereClause"/>
+    </select>
 
-  <insert id="add">
-    INSERT INTO operation_logs (operation_time, user_id,
-                               username, message)
-    VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}), #{userId},
-            #{username}, #{message})
-  </insert>
+    <insert id="add">
+        INSERT INTO operation_logs (operation_time,
+                                    user_id, username, message)
+        VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
+                #{userId}, #{username}, #{message})
+    </insert>
 </mapper>

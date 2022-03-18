@@ -19,10 +19,13 @@ import java.lang.annotation.Target;
  *         public void test() {
  *     }
  * }}</pre>
+ *
+ * @author 吴仙杰
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasAnyRole("
-    + "T(net.wuxianjie.springbootcore.security.Role).USER.value().toUpperCase(), "
-    + "T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
-public @interface UserOrAdmin {}
+@PreAuthorize("hasAnyRole(" +
+        "T(net.wuxianjie.springbootcore.security.Role).USER.value().toUpperCase(), " +
+        "T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
+public @interface UserOrAdmin {
+}

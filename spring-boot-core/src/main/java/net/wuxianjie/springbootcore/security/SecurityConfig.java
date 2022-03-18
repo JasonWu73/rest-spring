@@ -10,37 +10,38 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * 与 Token 认证等安全相关的配置。
+ * 实现 Token 认证机制所需的配置。
+ *
+ * @author 吴仙杰
  */
 @Configuration
 @PropertySource(value = "classpath:core.yml", factory = YamlSourceFactory.class)
 public class SecurityConfig {
 
-  @Value("${core.security.jwt-signing-key}")
-  private String jwtSigningKey;
+    @Value("${core.security.jwt-signing-key}")
+    private String jwtSigningKey;
 
-  @Value("${core.security.permit-all-ant-patterns}")
-  private String permitAllAntPatterns;
+    @Value("${core.security.permit-all-ant-patterns}")
+    private String permitAllAntPatterns;
 
-  @Bean
-  public SecurityConfigData securityConfigData() {
-    validateFields();
+    @Bean
+    public SecurityConfigData securityConfigData() {
+        ProcessAndValidateFields();
 
-    return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
-  }
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  private void validateFields() {
-    jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
-    permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
-
-    if (jwtSigningKey == null) {
-      throw new IllegalArgumentException(
-          "core.security.jwt-signing-key 不能为空");
+        return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
     }
-  }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    private void ProcessAndValidateFields() {
+        jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
+        permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
+
+        if (jwtSigningKey == null) {
+            throw new IllegalArgumentException("core.security.jwt-signing-key 不能为空");
+        }
+    }
 }

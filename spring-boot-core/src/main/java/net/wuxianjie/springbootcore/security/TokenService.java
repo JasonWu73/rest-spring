@@ -1,8 +1,19 @@
 package net.wuxianjie.springbootcore.security;
 
+/**
+ * Access Token 管理。
+ *
+ * @author 吴仙杰
+ */
 public interface TokenService {
 
-  TokenData getToken(String accountName, String accountRawPassword);
+    /**
+     * 获取 Access Token。
+     */
+    TokenData getToken(String accountName, String accountRawPassword);
 
-  TokenData refreshToken(String refreshToken);
+    /**
+     * 刷新 Access Token。
+     */
+    TokenData refreshToken(String refreshToken);
 }

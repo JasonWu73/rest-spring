@@ -19,23 +19,25 @@ import static java.lang.annotation.ElementType.*;
  * @Accessors(fluent = true)
  * public enum Type {
  *
- *   ME(1);
+ *     ME(1);
  *
- *   @JsonValue
- *   private final int value;
+ *     @JsonValue
+ *     private final int value;
  * }
  *
  * public class Controller {
  *
- *   public test(@RequestBody @Validated Query query) {
- *   }
+ *     public test(@RequestBody @Validated Query query) {
+ *     }
  *
- *   private static class Query {
+ *     private static class Query {
  *
- *     @EnumValidator(message = "类型错误", value = Type.class)
- *     private Integer type;
- *   }
+ *         @EnumValidator(message = "类型错误", value = Type.class)
+ *         private Integer type;
+ *     }
  * }}</pre>
+ *
+ * @author 吴仙杰
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -43,18 +45,18 @@ import static java.lang.annotation.ElementType.*;
 @Constraint(validatedBy = EnumValidatorImpl.class)
 public @interface EnumValidator {
 
-  Class<? extends Enum<?>> value();
+    Class<? extends Enum<?>> value();
 
-  String message() default "{com.qgs.trial.validator.EnumValidator.message}";
+    String message() default "{com.qgs.trial.validator.EnumValidator.message}";
 
-  Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-  Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
-  @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-  @Retention(RetentionPolicy.RUNTIME)
-  @interface List {
+    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+    @Retention(RetentionPolicy.RUNTIME)
+    @interface List {
 
-    EnumValidator[] value();
-  }
+        EnumValidator[] value();
+    }
 }

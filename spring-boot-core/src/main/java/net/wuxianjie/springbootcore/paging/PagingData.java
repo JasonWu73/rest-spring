@@ -5,39 +5,40 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 分页数据结果。
+ * 分页列表数据结果。
  *
  * @param <T> 数据列表泛型
+ * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PagingData<T> {
 
-  /**
-   * 总数。
-   */
-  private long total;
+    /**
+     * 总数。
+     */
+    private long total;
 
-  /**
-   * 当前页码。
-   */
-  private int pageNo;
+    /**
+     * 当前页码。
+     */
+    private int pageNo;
 
-  /**
-   * 每页条数。
-   */
-  private int pageSize;
+    /**
+     * 每页条数。
+     */
+    private int pageSize;
 
-  /**
-   * 数据列表。
-   */
-  private T list;
+    /**
+     * 数据列表。
+     */
+    private T list;
 
-  public PagingData(PagingQuery paging, long total, T list) {
-    this.pageNo = paging.getPageNo();
-    this.pageSize = paging.getPageSize();
-    this.total = total;
-    this.list = list;
-  }
+    public PagingData(PagingQuery paging, long total, T list) {
+        this.pageNo = paging.getPageNo();
+        this.pageSize = paging.getPageSize();
+        this.total = total;
+        this.list = list;
+    }
 }

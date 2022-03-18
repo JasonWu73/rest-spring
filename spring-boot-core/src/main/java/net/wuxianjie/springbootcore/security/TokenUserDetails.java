@@ -4,18 +4,38 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Token 认证后的详细数据。
+ *
+ * @author 吴仙杰
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TokenUserDetails {
 
-  private Integer accountId;
+    /**
+     * 账号 ID。
+     */
+    private Integer accountId;
 
-  private String accountName;
+    /**
+     * 账号名称。
+     */
+    private String accountName;
 
-  private String accountRoles;
+    /**
+     * 该账号所拥有的角色。
+     */
+    private String accountRoles;
 
-  private String accessToken;
+    /**
+     * Access Token.
+     */
+    private String accessToken;
 
-  private String refreshToken;
+    /**
+     * Refresh Token.
+     */
+    private String refreshToken;
 }

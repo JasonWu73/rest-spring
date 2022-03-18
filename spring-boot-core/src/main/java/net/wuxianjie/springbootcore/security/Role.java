@@ -11,6 +11,8 @@ import java.util.Optional;
 
 /**
  * 内置可用的 Spring Security 角色。
+ *
+ * @author 吴仙杰
  */
 @Getter
 @ToString
@@ -18,26 +20,26 @@ import java.util.Optional;
 @Accessors(fluent = true)
 public enum Role {
 
-  USER("user"),
+    USER("user"),
 
-  ADMIN("admin");
+    ADMIN("admin");
 
-  private static final Role[] VALUES;
+    private static final Role[] VALUES;
 
-  static {
-    VALUES = values();
-  }
-
-  @JsonValue
-  private final String value;
-
-  public static Optional<Role> resolve(String value) {
-    for (Role role : VALUES) {
-      if (Objects.equals(value, role.value)) {
-        return Optional.of(role);
-      }
+    static {
+        VALUES = values();
     }
 
-    return Optional.empty();
-  }
+    @JsonValue
+    private final String value;
+
+    public static Optional<Role> resolve(String value) {
+        for (Role role : VALUES) {
+            if (Objects.equals(value, role.value)) {
+                return Optional.of(role);
+            }
+        }
+
+        return Optional.empty();
+    }
 }

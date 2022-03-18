@@ -19,9 +19,11 @@ import java.lang.annotation.Target;
  *         public void test() {
  *     }
  * }}</pre>
+ *
+ * @author 吴仙杰
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole("
-    + "T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
-public @interface Admin {}
+@PreAuthorize("hasRole(T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
+public @interface Admin {
+}
