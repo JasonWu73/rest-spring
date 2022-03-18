@@ -13,10 +13,10 @@ import static java.lang.annotation.ElementType.*;
  * 枚举值校验注解，例如：
  *
  * <pre>{@code
- * @Getter
- * @ToString
  * @RequiredArgsConstructor
+ * @Getter
  * @Accessors(fluent = true)
+ * @ToString
  * public enum Type {
  *
  *     ME(1);

@@ -14,10 +14,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@Getter
-@ToString
 @RequiredArgsConstructor
+@Getter
 @Accessors(fluent = true)
+@ToString
 public enum Role {
 
     USER("user"),

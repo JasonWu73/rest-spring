@@ -11,10 +11,10 @@ import lombok.experimental.Accessors;
  *
  * @author 吴仙杰
  */
-@Getter
-@ToString
 @RequiredArgsConstructor
+@Getter
 @Accessors(fluent = true)
+@ToString
 public enum ErrorCode {
 
     /**
