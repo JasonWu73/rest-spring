@@ -23,8 +23,8 @@ public class OperationLogService {
     private final OperationLogMapper logMapper;
     private final AuthenticationFacade authenticationFacade;
 
-    public PagingData<List<ListOfOperationLogItem>> getOperationLogs(PagingQuery paging, GetOperationLogQuery query) {
-        List<ListOfOperationLogItem> logs = logMapper.findByQueryPagingOrderByOperationTimeDesc(paging, query);
+    public PagingData<List<OperationLogListItemDto>> getOperationLogs(PagingQuery paging, GetOperationLogQuery query) {
+        List<OperationLogListItemDto> logs = logMapper.findByQueryPagingOrderByOperationTimeDesc(paging, query);
         int total = logMapper.countByQuery(query);
         return new PagingData<>(paging, total, logs);
     }

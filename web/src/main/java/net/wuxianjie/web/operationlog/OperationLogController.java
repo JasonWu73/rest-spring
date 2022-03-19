@@ -34,8 +34,8 @@ public class OperationLogController {
      */
     @Admin
     @GetMapping("list")
-    public PagingData<List<ListOfOperationLogItem>> getOperationLogs(@Validated PagingQuery paging,
-                                                                     @Validated GetOperationLogQuery query) {
+    public PagingData<List<OperationLogListItemDto>> getOperationLogs(@Validated PagingQuery paging,
+                                                                      @Validated GetOperationLogQuery query) {
         LocalDateTime startTime = getStartTimeOfDay(query.getStartDate());
         query.setStartTimeInclusive(startTime);
 

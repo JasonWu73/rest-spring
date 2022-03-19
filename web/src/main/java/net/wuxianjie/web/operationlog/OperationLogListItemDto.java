@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ListOfOperationLogItem {
+public class OperationLogListItemDto {
 
     /**
      * 操作日志 ID。

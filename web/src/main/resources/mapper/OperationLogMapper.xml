@@ -13,7 +13,7 @@
     </sql>
 
     <select id="findByQueryPagingOrderByOperationTimeDesc"
-            resultType="net.wuxianjie.web.operationlog.ListOfOperationLogItem">
+            resultType="net.wuxianjie.web.operationlog.OperationLogListItemDto">
         SELECT operation_log_id AS operationLogId,
         operation_time AS operationTime,
         user_id AS userId,

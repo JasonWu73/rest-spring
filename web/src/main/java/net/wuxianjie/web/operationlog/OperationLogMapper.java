@@ -14,8 +14,8 @@ import java.util.List;
 @Mapper
 public interface OperationLogMapper {
 
-    List<ListOfOperationLogItem> findByQueryPagingOrderByOperationTimeDesc(@Param("p") PagingQuery paging,
-                                                                           @Param("q") GetOperationLogQuery query);
+    List<OperationLogListItemDto> findByQueryPagingOrderByOperationTimeDesc(@Param("p") PagingQuery paging,
+                                                                            @Param("q") GetOperationLogQuery query);
 
     int countByQuery(@Param("q") GetOperationLogQuery query);
 

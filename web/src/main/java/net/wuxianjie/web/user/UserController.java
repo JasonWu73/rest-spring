@@ -38,7 +38,7 @@ public class UserController {
      */
     @Admin
     @GetMapping("list")
-    public PagingData<List<ListOfUserItem>> getUsers(@Validated PagingQuery paging, @Validated GetUserQuery query) {
+    public PagingData<List<UserListItemDto>> getUsers(@Validated PagingQuery paging, @Validated GetUserQuery query) {
         setFuzzySearchValue(query);
 
         return userService.getUsers(paging, query);

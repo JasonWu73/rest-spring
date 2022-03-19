@@ -30,11 +30,11 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> getUser(String username) {
-        return Optional.ofNullable(userMapper.findByName(username));
+        return Optional.ofNullable(userMapper.findByUsername(username));
     }
 
-    public PagingData<List<ListOfUserItem>> getUsers(PagingQuery paging, GetUserQuery query) {
-        List<ListOfUserItem> users = userMapper.findByQueryPagingOrderByModifyTimeDesc(paging, query);
+    public PagingData<List<UserListItemDto>> getUsers(PagingQuery paging, GetUserQuery query) {
+        List<UserListItemDto> users = userMapper.findByQueryPagingOrderByModifyTimeDesc(paging, query);
         int total = userMapper.countByQuery(query);
         return new PagingData<>(paging, total, users);
     }

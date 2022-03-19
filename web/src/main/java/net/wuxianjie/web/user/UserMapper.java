@@ -16,10 +16,10 @@ public interface UserMapper {
 
     User findById(@Param("id") int userId);
 
-    User findByName(String username);
+    User findByUsername(String username);
 
-    List<ListOfUserItem> findByQueryPagingOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                                @Param("q") GetUserQuery query);
+    List<UserListItemDto> findByQueryPagingOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
+                                                                 @Param("q") GetUserQuery query);
 
     int countByQuery(@Param("q") GetUserQuery query);
 
