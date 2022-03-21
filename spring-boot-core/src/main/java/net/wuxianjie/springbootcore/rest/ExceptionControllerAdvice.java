@@ -130,8 +130,8 @@ public class ExceptionControllerAdvice {
 
     @ExceptionHandler(InternalServerException.class)
     public ResponseEntity<RestData<Void>> handleException(InternalServerException e, WebRequest request) {
-        String messageToResponse = "服务异常（已知）";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s：%s", request, messageToResponse, e.getMessage());
+        String messageToResponse = e.getMessage();
+        String messageToLog = String.format("HTTP 请求【%s】-> 服务异常（已知）：%s", request, messageToResponse);
         return getRestDataResponseEntity(request, messageToResponse, messageToLog, e);
     }
 
