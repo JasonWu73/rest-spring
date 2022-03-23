@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.shared.InternalServerException;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -45,7 +46,10 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             }
         }
 
-        if (body instanceof RestData || body instanceof ResponseEntity || body instanceof byte[]) {
+        if (body instanceof RestData
+                || body instanceof ResponseEntity
+                || body instanceof byte[]
+                || body instanceof ResourceRegion) {
             return body;
         }
 

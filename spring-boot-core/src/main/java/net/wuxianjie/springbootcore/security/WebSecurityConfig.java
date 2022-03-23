@@ -27,6 +27,9 @@ import org.springframework.web.cors.CorsConfiguration;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private static final String[] DEFAULT_PERMIT_ALL = {"/api/v1/access_token",
+            "/api/v1/refresh_token/{\\.+}", "/favicon.ico"};
+
     private final SecurityConfigData securityConfig;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final ObjectMapper objectMapper;
@@ -39,12 +42,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             permitAllAntPatterns = new String[]{};
         } else {
             // 参数：被切分字符串，分隔符逗号，0 表示无限制分片数，去除两边空格，忽略空白项
-            permitAllAntPatterns = StrSplitter.splitToArray(antPatterns, ',', 0, true, true);
+            permitAllAntPatterns = StrSplitter.splitToArray(antPatterns,
+                    ',', 0, true, true);
         }
 
         http
                 .authorizeRequests()
-                .antMatchers("/api/v1/access_token", "/api/v1/refresh_token/{\\.+}")
+                .antMatchers(DEFAULT_PERMIT_ALL)
                 .permitAll() // principal 为 anonymous
                 .antMatchers(permitAllAntPatterns)
                 .permitAll()
