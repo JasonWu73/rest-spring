@@ -1,7 +1,7 @@
 package net.wuxianjie.web.operationlog;
 
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.AuthenticationFacade;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
@@ -23,10 +23,10 @@ public class OperationLogService {
     private final OperationLogMapper logMapper;
     private final AuthenticationFacade authenticationFacade;
 
-    public PagingData<List<OperationLogListItemDto>> getOperationLogs(PagingQuery paging, GetOperationLogQuery query) {
+    public PagingResult<OperationLogListItemDto> getOperationLogs(PagingQuery paging, GetOperationLogQuery query) {
         List<OperationLogListItemDto> logs = logMapper.findByQueryPagingOrderByOperationTimeDesc(paging, query);
         int total = logMapper.countByQuery(query);
-        return new PagingData<>(paging, total, logs);
+        return new PagingResult<>(paging, total, logs);
     }
 
     @Transactional(rollbackFor = Exception.class)

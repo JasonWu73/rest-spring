@@ -1,16 +1,16 @@
 package net.wuxianjie.springbootcore.security;
 
+import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
- * 内置可用的 Spring Security 角色。
+ * 可用的 Spring Security 授权角色。
  *
  * @author 吴仙杰
  */
@@ -33,10 +33,20 @@ public enum Role {
     @JsonValue
     private final String value;
 
+    /**
+     * 将字符串值解析为枚举常量。
+     *
+     * @param value 字符串值
+     * @return 字符串值所对应的枚举常量
+     */
     public static Optional<Role> resolve(String value) {
-        for (Role role : VALUES) {
-            if (Objects.equals(value, role.value)) {
-                return Optional.of(role);
+        if (value == null) {
+            return Optional.empty();
+        }
+
+        for (Role enumConstant : VALUES) {
+            if (StrUtil.equals(value, enumConstant.value)) {
+                return Optional.of(enumConstant);
             }
         }
 

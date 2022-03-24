@@ -5,20 +5,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * REST API 服务响应结果。
+ * REST API 响应结果。
  *
- * @param <T> 数据结果泛型
+ * @param <T> 具体数据的类型
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RestData<T> {
+public class ApiResult<T> {
 
     /**
      * 错误码：0：成功，1：失败。
      */
-    private ErrorCode error;
+    private ApiErrorCode error;
 
     /**
      * 错误信息。
@@ -26,7 +26,7 @@ public class RestData<T> {
     private String errMsg;
 
     /**
-     * 数据结果。
+     * 具体数据。
      */
     private T data;
 }

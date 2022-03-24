@@ -1,18 +1,22 @@
-package net.wuxianjie.springbootcore.security;
+package net.wuxianjie.springbootcore.shared;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
+import net.wuxianjie.springbootcore.security.SecurityConfigProperties;
 
 /**
- * 实现 Token 认证机制所需的配置数据。
+ * 核心模块的配置项。
  *
  * @author 吴仙杰
+ * @see SecurityConfigProperties
+ * @see SecurityConfig
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SecurityConfigData {
+public class CoreConfigData {
 
     /**
      * JWT 签名密钥。

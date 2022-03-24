@@ -4,22 +4,40 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * JWT 载荷中包含的属性名及属性值。
+ * JWT 相关的属性名及属性值。
  *
  * @author 吴仙杰
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class TokenAttributes {
 
+    /**
+     * JWT 的过期时间，单位秒。
+     */
     public static final int EXPIRES_IN_SECONDS_VALUE = 1800;
 
+    /**
+     * JWT 载荷属性：账号名。
+     */
     public static final String ACCOUNT_KEY = "account";
 
+    /**
+     * JWT 载荷属性：角色。
+     */
     public static final String ROLE_KEY = "roles";
 
+    /**
+     * JWT 载荷属性：Token 类型。
+     */
     public static final String TOKEN_TYPE_KEY = "type";
 
+    /**
+     * JWT 载荷属性 Token 类型的值：Access Token。
+     */
     public static final String ACCESS_TOKEN_TYPE_VALUE = "access";
 
+    /**
+     * JWT 载荷属性 Token 类型的值：Refresh Token。
+     */
     public static final String REFRESH_TOKEN_TYPE_VALUE = "refresh";
 }

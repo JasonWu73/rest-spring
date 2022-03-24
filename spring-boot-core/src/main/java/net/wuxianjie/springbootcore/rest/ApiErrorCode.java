@@ -7,7 +7,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 /**
- * REST API 服务响应结果的错误码。
+ * REST API 响应结果的错误码。
  *
  * @author 吴仙杰
  */
@@ -15,15 +15,15 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 @ToString
-public enum ErrorCode {
+public enum ApiErrorCode {
 
     /**
-     * 请求成功。
+     * 服务响应成功。
      */
     SUCCESS(0),
 
     /**
-     * 请求失败。
+     * 服务响应失败。
      */
     FAIL(1);
 

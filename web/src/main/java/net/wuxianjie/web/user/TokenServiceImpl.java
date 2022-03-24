@@ -3,15 +3,13 @@ package net.wuxianjie.web.user;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.handler.YesOrNo;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.shared.CoreConfigData;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.JwtUtils;
 import net.wuxianjie.springbootcore.shared.NotFoundException;
 import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
-import net.wuxianjie.web.shared.BeanQualifiers;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Access Token 管理.
+ * 实现 Access Token 管理业务逻辑。
  *
  * @author 吴仙杰
  */
@@ -28,15 +26,14 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    @Qualifier(BeanQualifiers.TOKEN_CACHE)
     private final Cache<String, TokenUserDetails> tokenCache;
-
-    private final SecurityConfigData securityConfig;
+    private final CoreConfigData securityConfig;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     @Override
-    public TokenData getToken(String accountName, String accountRawPassword) {
+    public TokenData getToken(String accountName, String accountRawPassword)
+            throws TokenAuthenticationException {
         User user = getUserFromDbMustBeExists(accountName);
 
         validateAccountAvailable(user.getEnabled(), user.getUsername());
@@ -50,8 +47,9 @@ public class TokenServiceImpl implements TokenService {
     }
 
     @Override
-    public TokenData refreshToken(String refreshToken) {
-        Map<String, Object> payload = JwtUtils.validateJwtReturnPayload(securityConfig.getJwtSigningKey(), refreshToken);
+    public TokenData refreshToken(String refreshToken)
+            throws TokenAuthenticationException {
+        Map<String, Object> payload = JwtUtils.validateJwt(securityConfig.getJwtSigningKey(), refreshToken);
         String tokenType = (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY);
         if (!Objects.equals(tokenType, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE)) {
             throw new TokenAuthenticationException("Token 类型错误");
@@ -86,7 +84,7 @@ public class TokenServiceImpl implements TokenService {
 
     private String createNewToken(Map<String, Object> payload, String tokenType) {
         payload.put(TokenAttributes.TOKEN_TYPE_KEY, tokenType);
-        return JwtUtils.createNewJwt(securityConfig.getJwtSigningKey(), payload, TokenAttributes.EXPIRES_IN_SECONDS_VALUE);
+        return JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, TokenAttributes.EXPIRES_IN_SECONDS_VALUE);
     }
 
     private void validatePassword(String rawPassword, String hashedPassword) {

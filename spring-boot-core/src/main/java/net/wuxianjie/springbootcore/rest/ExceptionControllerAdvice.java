@@ -1,5 +1,7 @@
 package net.wuxianjie.springbootcore.rest;
 
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.shared.AbstractBaseException;
 import net.wuxianjie.springbootcore.shared.InternalServerException;
@@ -22,7 +24,10 @@ import org.springframework.web.context.request.WebRequest;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Controller 层全局异常处理。
@@ -30,162 +35,319 @@ import java.util.*;
  * @author 吴仙杰
  * @see GlobalErrorController
  */
-@Slf4j
 @ControllerAdvice
+@Slf4j
 public class ExceptionControllerAdvice {
 
+    /**
+     * 处理因 HTTP 请求的 MIME 类型与目标 API 不匹配而导致的异常。
+     *
+     * @param e       {@link HttpMediaTypeException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(HttpMediaTypeException.class)
-    public ResponseEntity<RestData<Void>> handleException(HttpMediaTypeException e, WebRequest request) {
-        String[] accepts = request.getHeaderValues(HttpHeaders.ACCEPT);
-        log.warn("HTTP 请求【{}】-> 不支持请求头 {} 中指定的资源类型【{}】：{}",
-                request, HttpHeaders.ACCEPT, Arrays.toString(accepts), e.getMessage());
+    public ResponseEntity<ApiResult<Void>> handleException(
+            HttpMediaTypeException e,
+            WebRequest request
+    ) {
+        String[] acceptArray = request.getHeaderValues(HttpHeaders.ACCEPT);
+        String mimeTypeStr = acceptArray == null
+                ? "null"
+                : ArrayUtil.join(acceptArray, ",");
+
+        log.warn("HTTP 请求【{}】-> 不支持请求头 {} 中指定的 MIME 类型【{}】：{}",
+                request, HttpHeaders.ACCEPT, mimeTypeStr, e.getMessage()
+        );
 
         return new ResponseEntity<>(null, HttpStatus.NOT_ACCEPTABLE);
     }
 
+    /**
+     * 处理因 HTTP 请求的请求方法与目标 API 不匹配而导致的异常。
+     *
+     * @param e       {@link HttpRequestMethodNotSupportedException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<RestData<Void>> handleException(HttpRequestMethodNotSupportedException e, WebRequest request) {
-        String messageToResponse = "API 不支持当前 HTTP 请求方法";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s：%s", request, messageToResponse, e.getMessage());
-        return getRestDataResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, messageToResponse, messageToLog);
+    public ResponseEntity<ApiResult<Void>> handleException(
+            HttpRequestMethodNotSupportedException e,
+            WebRequest request
+    ) {
+        String messageToResponse = "API 不支持当前请求方法";
+
+        log.warn("HTTP 请求【{}】-> {}：{}",
+                request, messageToResponse, e.getMessage()
+        );
+
+        return createResponseEntity(
+                request, HttpStatus.METHOD_NOT_ALLOWED, messageToResponse
+        );
     }
 
+    /**
+     * 处理因 HTTP 请求缺少 {@code @RequestMapping} 中指定的请求头而导致的异常。
+     *
+     * @param e       {@link MissingRequestHeaderException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<RestData<Void>> handleException(MissingRequestHeaderException e, WebRequest request) {
+    public ResponseEntity<ApiResult<Void>> handleException(
+            MissingRequestHeaderException e,
+            WebRequest request
+    ) {
         String messageToResponse = "缺少必要请求头";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s：%s", request, messageToResponse, e.getMessage());
-        return getRestDataResponseEntity(request, HttpStatus.BAD_REQUEST, messageToResponse, messageToLog);
+
+        log.warn("HTTP 请求【{}】-> {}：{}",
+                request, messageToResponse, e.getMessage()
+        );
+
+        return createResponseEntity(
+                request, HttpStatus.BAD_REQUEST, messageToResponse
+        );
     }
 
+    /**
+     * 处理因无法解析 HTTP 请求体内容而导致的异常。
+     *
+     * @param e       {@link HttpMessageNotReadableException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<RestData<Void>> handleException(HttpMessageNotReadableException e, WebRequest request) {
-        String messageToResponse = "请求体内容有误";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s：%s", request, messageToResponse, e.getMessage());
-        return getRestDataResponseEntity(request, HttpStatus.BAD_REQUEST, messageToResponse, messageToLog);
+    public ResponseEntity<ApiResult<Void>> handleException(
+            HttpMessageNotReadableException e,
+            WebRequest request
+    ) {
+        String messageToResponse = "HTTP 请求体内容不合法";
+
+        log.warn("HTTP 请求【{}】-> {}：{}",
+                request, messageToResponse, e.getMessage()
+        );
+
+        return createResponseEntity(
+                request, HttpStatus.BAD_REQUEST, messageToResponse
+        );
     }
 
+    /**
+     * 处理因 HTTP 请求缺少必填参数而导致的异常。
+     *
+     * @param e       {@link MissingServletRequestParameterException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<RestData<Void>> handleException(MissingServletRequestParameterException e, WebRequest request) {
-        String messageToResponse = String.format("缺少必填参数【%s】", e.getParameterName());
-        String messageToLog = String.format("HTTP 请求【%s】-> %s", request, messageToResponse);
-        return getRestDataResponseEntity(request, HttpStatus.BAD_REQUEST, messageToResponse, messageToLog);
+    public ResponseEntity<ApiResult<Void>> handleException(
+            MissingServletRequestParameterException e,
+            WebRequest request
+    ) {
+        String messageToResponse = StrUtil.format("缺少必填参数【{}】",
+                e.getParameterName()
+        );
+
+        log.warn("HTTP 请求【{}】-> {}", request, messageToResponse);
+
+        return createResponseEntity(
+                request, HttpStatus.BAD_REQUEST, messageToResponse
+        );
     }
 
+    /**
+     * 处理因 HTTP 请求参数校验不通过而导致的异常。
+     *
+     * @param e       {@link ConstraintViolationException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<RestData<Void>> handleException(ConstraintViolationException e, WebRequest request) {
-        List<String> errorsToLog = new ArrayList<>();
-        List<String> errorsToResponse = new ArrayList<>();
+    public ResponseEntity<ApiResult<Void>> handleException(
+            ConstraintViolationException e,
+            WebRequest request
+    ) {
+        List<String> messageListToLog = new ArrayList<>();
+        List<String> messageListToResponse = new ArrayList<>();
 
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+
         for (ConstraintViolation<?> violation : violations) {
             String messageToResponse = violation.getMessage();
-            String messageToLog = String.format("%s.%s【拒绝值【%s】：%s】",
+
+            messageListToResponse.add(messageToResponse);
+
+            String messageToLog = StrUtil.format(
+                    "{}.{}【拒绝值【{}】：{}】",
                     violation.getRootBeanClass().getName(),
                     violation.getPropertyPath(),
                     violation.getInvalidValue(),
-                    messageToResponse);
-            errorsToLog.add(messageToLog);
-            errorsToResponse.add(messageToResponse);
+                    messageToResponse
+            );
+
+            messageListToLog.add(messageToLog);
         }
 
-        String messageToResponse = String.join("；", errorsToResponse);
-        String messageToLog = String.format("HTTP 请求【%s】-> 参数错误：%s", request, String.join("；", errorsToLog));
-        return getRestDataResponseEntity(request, HttpStatus.BAD_REQUEST, messageToResponse, messageToLog);
+        log.warn("HTTP 请求【{}】-> 参数错误：{}",
+                request, String.join("；", messageListToLog)
+        );
+
+        return createResponseEntity(request, HttpStatus.BAD_REQUEST,
+                String.join("；", messageListToResponse)
+        );
     }
 
+    /**
+     * 处理因 HTTP 请求参数校验不通过而导致的异常。
+     *
+     * @param e       {@link BindException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<RestData<Void>> handleException(BindException e, WebRequest request) {
-        List<String> errorsToLog = new ArrayList<>();
-        List<String> errorsToResponse = new ArrayList<>();
+    public ResponseEntity<ApiResult<Void>> handleException(BindException e,
+                                                           WebRequest request) {
+        List<String> messageListToLog = new ArrayList<>();
+        List<String> messageListToResponse = new ArrayList<>();
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
+
         for (FieldError fieldError : fieldErrors) {
-            String errorToResponse = fieldError.getDefaultMessage();
-            String errorToLog = String.format("%s.%s【拒绝值【%s】：%s】",
+            String messageToResponse = fieldError.getDefaultMessage();
+
+            messageListToResponse.add(messageToResponse);
+
+            String messageToLog = StrUtil.format(
+                    "{}.{}【拒绝值【{}】：{}】",
                     fieldError.getObjectName(),
                     fieldError.getField(),
                     fieldError.getRejectedValue(),
-                    errorToResponse);
-            errorsToLog.add(errorToLog);
-            errorsToResponse.add(errorToResponse);
+                    messageToResponse
+            );
+
+            messageListToLog.add(messageToLog);
         }
 
-        String messageToResponse = String.join("；", errorsToResponse);
-        String messageToLog = String.format("HTTP 请求【%s】-> 参数错误：%s", request, String.join("；", errorsToLog));
-        return getRestDataResponseEntity(request, HttpStatus.BAD_REQUEST, messageToResponse, messageToLog);
+        log.warn("HTTP 请求【{}】-> 参数错误：{}",
+                request, String.join("；", messageListToLog)
+        );
+
+        return createResponseEntity(request, HttpStatus.BAD_REQUEST,
+                String.join("；", messageListToResponse)
+        );
     }
 
+    /**
+     * 处理自定义异常，且不记录异常堆栈信息。
+     *
+     * @param e       {@link AbstractBaseException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(AbstractBaseException.class)
-    public ResponseEntity<RestData<Void>> handleException(AbstractBaseException e, WebRequest request) {
-        Optional<Throwable> exceptionCauseOptional = Optional.ofNullable(e.getCause());
+    public ResponseEntity<ApiResult<Void>> handleException(
+            AbstractBaseException e,
+            WebRequest request
+    ) {
+        Throwable cause = e.getCause();
         String messageToResponse = e.getMessage();
+
         String messageToLog;
-        if (exceptionCauseOptional.isEmpty()) {
-            messageToLog = String.format("HTTP 请求【%s】-> %s", request, messageToResponse);
+
+        if (cause == null) {
+            messageToLog = StrUtil.format("HTTP 请求【{}】-> {}",
+                    request, messageToResponse
+            );
         } else {
-            messageToLog = String.format("HTTP 请求【%s】-> %s：%s", request, messageToResponse, exceptionCauseOptional.get().getMessage());
+            messageToLog = StrUtil.format("HTTP 请求【{}】-> {}：{}",
+                    request, messageToResponse, cause.getMessage()
+            );
         }
-        return getRestDataResponseEntity(request, e.getHttpStatus(), messageToResponse, messageToLog);
+
+        if (e instanceof InternalServerException) {
+            log.error(messageToLog);
+        } else {
+            log.warn(messageToLog);
+        }
+
+        return createResponseEntity(
+                request, e.getHttpStatus(), messageToResponse
+        );
     }
 
-    @ExceptionHandler(InternalServerException.class)
-    public ResponseEntity<RestData<Void>> handleException(InternalServerException e, WebRequest request) {
-        String messageToResponse = e.getMessage();
-        String messageToLog = String.format("HTTP 请求【%s】-> 服务异常（已知）：%s", request, messageToResponse);
-        return getRestDataResponseEntity(request, messageToResponse, messageToLog, e);
-    }
-
+    /**
+     * 处理 JDBC 操作异常。
+     *
+     * @param e       {@link UncategorizedDataAccessException}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(UncategorizedDataAccessException.class)
-    public ResponseEntity<RestData<Void>> handleException(UncategorizedDataAccessException e, WebRequest request) {
+    public ResponseEntity<ApiResult<Void>> handleException(
+            UncategorizedDataAccessException e,
+            WebRequest request
+    ) {
         String messageToResponse = "数据库操作异常";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s", request, messageToResponse);
-        return getRestDataResponseEntity(request, messageToResponse, messageToLog, e);
+
+        log.error("HTTP 请求【{}】-> {}", request, messageToResponse, e);
+
+        return createResponseEntity(
+                request, HttpStatus.INTERNAL_SERVER_ERROR, messageToResponse
+        );
     }
 
+    /**
+     * 处理所有未被特定 {@code handleException(...)} 方法捕获的异常。
+     *
+     * @param e       {@link Throwable}
+     * @param request {@link WebRequest}
+     * @return {@link ResponseEntity}
+     */
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<RestData<Void>> handleException(Throwable e, WebRequest request) {
+    public ResponseEntity<ApiResult<Void>> handleException(
+            Throwable e,
+            WebRequest request
+    ) {
         if (e instanceof AccessDeniedException) {
-            // 不要让全局异常处理 AccessDeniedException，而是应该由 Spring Security 处理并返回 403
+            // 不要处理 AccessDeniedException，否则会导致 Spring Security 无法处理 403
             throw (AccessDeniedException) e;
         }
 
-        String messageToResponse = "服务异常（未知）";
-        String messageToLog = String.format("HTTP 请求【%s】-> %s", request, messageToResponse);
-        return getRestDataResponseEntity(request, messageToResponse, messageToLog, e);
+        String messageToResponse = "服务异常";
+
+        log.error("HTTP 请求【{}】-> {}", request, messageToResponse, e);
+
+        return createResponseEntity(
+                request, HttpStatus.INTERNAL_SERVER_ERROR, messageToResponse
+        );
     }
 
-    private ResponseEntity<RestData<Void>> getRestDataResponseEntity(WebRequest request,
-                                                                     String messageToResponse,
-                                                                     String messageToLog,
-                                                                     Throwable e) {
-        log.error(messageToLog, e);
-
-        HttpStatus httpStatusToResponse = HttpStatus.INTERNAL_SERVER_ERROR;
+    private ResponseEntity<ApiResult<Void>> createResponseEntity(
+            WebRequest request,
+            HttpStatus httpStatus,
+            String errorMessage
+    ) {
         if (isNotJsonRequest(request)) {
-            return new ResponseEntity<>(null, httpStatusToResponse);
+            return new ResponseEntity<>(null, httpStatus);
         }
-        return new ResponseEntity<>(RestDataWrapper.fail(messageToResponse), httpStatusToResponse);
-    }
 
-    private ResponseEntity<RestData<Void>> getRestDataResponseEntity(WebRequest request,
-                                                                     HttpStatus httpStatusToResponse,
-                                                                     String messageToResponse,
-                                                                     String messageToLog) {
-        log.warn(messageToLog);
-
-        if (isNotJsonRequest(request)) {
-            return new ResponseEntity<>(null, httpStatusToResponse);
-        }
-        return new ResponseEntity<>(RestDataWrapper.fail(messageToResponse), httpStatusToResponse);
+        return new ResponseEntity<>(
+                ApiResultWrapper.fail(errorMessage), httpStatus
+        );
     }
 
     private boolean isNotJsonRequest(WebRequest request) {
-        Optional<String[]> acceptsOptional = Optional.ofNullable(request.getHeaderValues(HttpHeaders.ACCEPT));
-        if (acceptsOptional.isEmpty()) {
+        String[] acceptArray = request.getHeaderValues(HttpHeaders.ACCEPT);
+
+        if (acceptArray == null) {
             return true;
         }
-        return Arrays.stream(acceptsOptional.get())
-                .noneMatch(accept -> accept.contains(MediaType.ALL_VALUE) ||
-                        accept.toLowerCase().contains(MediaType.APPLICATION_JSON_VALUE));
+
+        return Arrays.stream(acceptArray)
+                .noneMatch(accept -> StrUtil.containsAnyIgnoreCase(accept,
+                                MediaType.ALL_VALUE,
+                                MediaType.APPLICATION_JSON_VALUE
+                        )
+                );
     }
 }

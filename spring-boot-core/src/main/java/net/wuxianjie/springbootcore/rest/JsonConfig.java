@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 配置请求提交的（JSON 反序列化）以及响应的（JSON 序列化）JSON 数据的处理方式。
+ * JSON 反序列化（请求提交的 JSON 参数）以及 JSON 序列化（API 响应结果）配置。
  *
  * @author 吴仙杰
  */
@@ -40,30 +40,54 @@ public class JsonConfig {
             // 设置中国时区，默认使用 UTC 时间
             builder.timeZone(CommonValues.CHINA_TIME_ZONE);
 
-            // 设置 Date 序列化后的日期字符串格式
-            builder.serializers(new DateSerializer(false, new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)));
-            // 设置 Java 8 LocalDate 序列化后的日期字符串格式
-            builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
-            // 设置 Java 8 LocalDateTime 序列化后的日期时间字符串格式
-            builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
+            // 设置 Date 序列化后的字符串格式
+            builder.serializers(new DateSerializer(false,
+                            new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT)
+                    )
+            );
+
+            // 设置 Java 8 LocalDate 序列化后的字符串格式
+            builder.serializers(new LocalDateSerializer(
+                            DateTimeFormatter
+                                    .ofPattern(CommonValues.DATE_FORMAT)
+                    )
+            );
+
+            // 设置 Java 8 LocalDateTime 序列化后的字符串格式
+            builder.serializers(new LocalDateTimeSerializer(
+                            DateTimeFormatter
+                                    .ofPattern(CommonValues.DATE_TIME_FORMAT)
+                    )
+            );
 
             // 在序列化时去除字符串值的首尾空格
-            builder.serializerByType(String.class, new JsonSerializer<String>() {
+            builder.serializerByType(String.class,
+                    new JsonSerializer<String>() {
 
-                @Override
-                public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-                    gen.writeString(StrUtil.trim(value));
-                }
-            });
+                        @Override
+                        public void serialize(
+                                String value,
+                                JsonGenerator gen,
+                                SerializerProvider serializers
+                        ) throws IOException {
+                            gen.writeString(StrUtil.trim(value));
+                        }
+                    }
+            );
 
             // 在反序列化时去除字符串值的首尾空格
-            builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
+            builder.deserializerByType(String.class,
+                    new StdScalarDeserializer<String>(String.class) {
 
-                @Override
-                public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-                    return StrUtil.trim(p.getValueAsString());
-                }
-            });
+                        @Override
+                        public String deserialize(
+                                JsonParser p,
+                                DeserializationContext ctxt
+                        ) throws IOException {
+                            return StrUtil.trim(p.getValueAsString());
+                        }
+                    }
+            );
         };
     }
 }

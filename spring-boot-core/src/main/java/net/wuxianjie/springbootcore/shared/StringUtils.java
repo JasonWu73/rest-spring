@@ -17,7 +17,7 @@ public class StringUtils {
     /**
      * 去除字符串的首尾空格，并转换为支持数据库 LIKE 模糊搜索的字符串（{@code %value%}）；若 {@code value} 为 null 或仅包含空白字符，则返回 null。
      */
-    public static String generateDbFuzzyStr(String value) {
+    public static String getFuzzySearchValue(String value) {
         String trimmedStr = StrUtil.trimToNull(value);
         if (trimmedStr == null) {
             return null;

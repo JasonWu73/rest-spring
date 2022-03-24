@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.AuthenticationFacade;
@@ -16,7 +16,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,7 +37,7 @@ public class UserController {
      */
     @Admin
     @GetMapping("list")
-    public PagingData<List<UserListItemDto>> getUsers(@Validated PagingQuery paging, @Validated GetUserQuery query) {
+    public PagingResult<UserListItemDto> getUsers(@Validated PagingQuery paging, @Validated GetUserQuery query) {
         setFuzzySearchValue(query);
 
         return userService.getUsers(paging, query);
@@ -144,6 +143,6 @@ public class UserController {
     }
 
     private void setFuzzySearchValue(GetUserQuery query) {
-        query.setUsername(StringUtils.generateDbFuzzyStr(query.getUsername()));
+        query.setUsername(StringUtils.getFuzzySearchValue(query.getUsername()));
     }
 }

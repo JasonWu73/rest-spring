@@ -2,7 +2,7 @@ package net.wuxianjie.web.operationlog;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.shared.BadRequestException;
@@ -15,7 +15,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 
 /**
  * 操作日志。
@@ -34,8 +33,8 @@ public class OperationLogController {
      */
     @Admin
     @GetMapping("list")
-    public PagingData<List<OperationLogListItemDto>> getOperationLogs(@Validated PagingQuery paging,
-                                                                      @Validated GetOperationLogQuery query) {
+    public PagingResult<OperationLogListItemDto> getOperationLogs(@Validated PagingQuery paging,
+                                                                  @Validated GetOperationLogQuery query) {
         LocalDateTime startTime = getStartTimeOfDay(query.getStartDate());
         query.setStartTimeInclusive(startTime);
 

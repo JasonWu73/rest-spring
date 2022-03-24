@@ -1,12 +1,17 @@
 package net.wuxianjie.springbootcore.handler;
 
 /**
- * 实现该接口后，可使枚举值被 MyBatis 正确识别，映射到数据库 int 数据类型。
+ * 实现该接口后，可映射 Java 枚举常量与数据库 INT 数据类型。
  *
  * @author 吴仙杰
  * @see EnumTypeHandler
  */
 public interface ValueEnum {
 
+    /**
+     * 获取枚举常量的整数值。
+     *
+     * @return 枚举常量对应的整数值
+     */
     int value();
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Token 响应数据。
+ * Token 响应结果。
  *
  * @author 吴仙杰
  */
@@ -20,7 +20,7 @@ public class TokenData {
     private Integer expiresIn;
 
     /**
-     * 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`。
+     * 用于 API 鉴权的 Token，在请求头中携带：`Authorization: Bearer accessToken`。
      */
     private String accessToken;
 

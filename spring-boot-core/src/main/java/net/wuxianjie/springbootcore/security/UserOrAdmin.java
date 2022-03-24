@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Spring Security 授权注解 - user 或 admin 角色都可访问的方法。如：
+ * Spring Security 授权注解：只要拥有 USER 或 ADMIN 任意一种角色就可访问的方法。如：
  *
  * <pre>{@code
  * @RestController
@@ -25,7 +25,9 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @PreAuthorize("hasAnyRole(" +
-        "T(net.wuxianjie.springbootcore.security.Role).USER.value().toUpperCase(), " +
-        "T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
+        "T(net.wuxianjie.springbootcore.security.Role).USER.name(), " +
+        "T(net.wuxianjie.springbootcore.security.Role).ADMIN.name()" +
+        ")"
+)
 public @interface UserOrAdmin {
 }

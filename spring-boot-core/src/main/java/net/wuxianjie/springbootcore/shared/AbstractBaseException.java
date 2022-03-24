@@ -4,7 +4,10 @@ import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
 import org.springframework.http.HttpStatus;
 
 /**
- * 包含获取 HTTP 状态码的抽象异常，默认仅记录 {@code message}，即不记录栈的完整信息。
+ * 自定义异常的基类：包含获取 HTTP 状态码的抽象异常，且不记录异常堆栈信息。
+ * <p>
+ * 默认子类异常仅以 WARN 级别记录日志，针对服务器异常则可使用子类 {@link InternalServerException}，它以 ERROR 级别记录日志。
+ * </p>
  *
  * @author 吴仙杰
  * @see ExceptionControllerAdvice

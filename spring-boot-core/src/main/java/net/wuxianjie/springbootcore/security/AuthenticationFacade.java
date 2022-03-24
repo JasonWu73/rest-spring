@@ -2,14 +2,13 @@ package net.wuxianjie.springbootcore.security;
 
 import net.wuxianjie.springbootcore.shared.InternalServerException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 /**
- * 封装经 Spring Security 认证后，获取用户详细数据的方法，使其可通过依赖注入方便地使用。
+ * 可通过依赖注入方便地获取 Token 认证后的用户详细数据。
  *
  * @author 吴仙杰
  */
@@ -17,18 +16,44 @@ import java.util.Optional;
 public class AuthenticationFacade {
 
     /**
-     * 获取当前已登录的用户详细数据；若无法获取，则抛出 {@link InternalServerException}。
+     * 获取 Token 认证后的用户详细数据。
+     *
+     * @return 用户详细数据
+     * @throws InternalServerException 若无法获取用户详细数据
      */
-    public TokenUserDetails getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public TokenUserDetails getCurrentUser() throws InternalServerException {
+        return Optional.ofNullable(
+                        SecurityContextHolder.getContext().getAuthentication()
+                )
+                .map(authentication -> {
+                            if (authentication
+                                    instanceof AnonymousAuthenticationToken
+                            ) {
+                                TokenUserDetails anonymous =
+                                        new TokenUserDetails();
 
-        if (authentication instanceof AnonymousAuthenticationToken) {
-            TokenUserDetails anonymous = new TokenUserDetails();
-            anonymous.setAccountName(authentication.getName());
-            return anonymous;
-        }
+                                anonymous.setAccountName(
+                                        authentication.getName()
+                                );
 
-        return (TokenUserDetails) Optional.ofNullable(authentication.getPrincipal())
-                .orElseThrow(() -> new InternalServerException("无法获取已登录用户的详细数据"));
+                                return anonymous;
+                            }
+
+                            return Optional.ofNullable(
+                                            (TokenUserDetails)
+                                                    (authentication
+                                                            .getPrincipal()
+                                                    )
+                                    )
+                                    .orElseThrow(() ->
+                                            new InternalServerException(
+                                                    "无法获取用户详细数据"
+                                            )
+                                    );
+                        }
+                )
+                .orElseThrow(() ->
+                        new InternalServerException("找不到可用的认证信息")
+                );
     }
 }

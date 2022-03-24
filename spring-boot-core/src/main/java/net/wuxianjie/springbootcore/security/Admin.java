@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Spring Security 授权注解 - 仅 admin 角色可访问的方法。如：
+ * Spring Security 授权注解：仅 ADMIN 角色可访问的方法。如：
  *
  * <pre>{@code
  * @RestController
@@ -24,6 +24,9 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole(T(net.wuxianjie.springbootcore.security.Role).ADMIN.value().toUpperCase())")
+@PreAuthorize("hasRole(" +
+        "T(net.wuxianjie.springbootcore.security.Role).ADMIN.name()" +
+        ")"
+)
 public @interface Admin {
 }

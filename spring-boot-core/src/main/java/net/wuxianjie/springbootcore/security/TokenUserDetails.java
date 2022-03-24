@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * Token 认证后的详细数据。
+ * Token 认证后的用户详细数据。
  *
  * @author 吴仙杰
  */
@@ -30,12 +30,12 @@ public class TokenUserDetails {
     private String accountRoles;
 
     /**
-     * Access Token.
+     * 用于 API 鉴权的 Token，在请求头中携带：`Authorization: Bearer accessToken`。
      */
     private String accessToken;
 
     /**
-     * Refresh Token.
+     * 用于刷新鉴权信息的 Token。
      */
     private String refreshToken;
 }

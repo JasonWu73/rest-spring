@@ -1,12 +1,14 @@
 package net.wuxianjie.springbootcore.shared;
 
 import lombok.Getter;
+import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
 import org.springframework.http.HttpStatus;
 
 /**
- * 表示因服务器本身原因而引起的操作失败，使用 500 HTTP 状态码，并会记录栈的完整信息。
+ * 表示非客户端请求原因而引起的异常，使用 500 HTTP 状态码，并以 ERROR 级别记录日志，但不记录异常堆栈信息。
  *
  * @author 吴仙杰
+ * @see ExceptionControllerAdvice
  */
 public class InternalServerException extends AbstractBaseException {
 

@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.handler.YesOrNo;
-import net.wuxianjie.springbootcore.paging.PagingData;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.shared.*;
 import net.wuxianjie.web.operationlog.OperationLogService;
@@ -33,10 +33,10 @@ public class UserService {
         return Optional.ofNullable(userMapper.findByUsername(username));
     }
 
-    public PagingData<List<UserListItemDto>> getUsers(PagingQuery paging, GetUserQuery query) {
+    public PagingResult<UserListItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
         List<UserListItemDto> users = userMapper.findByQueryPagingOrderByModifyTimeDesc(paging, query);
         int total = userMapper.countByQuery(query);
-        return new PagingData<>(paging, total, users);
+        return new PagingResult<>(paging, total, users);
     }
 
     @Transactional(rollbackFor = Exception.class)

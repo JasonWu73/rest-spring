@@ -16,29 +16,29 @@ import javax.validation.constraints.NotNull;
 public class PagingQuery {
 
     /**
-     * 页码，从 0 开始。
+     * 页码，从 1 开始。
      */
-    @NotNull(message = "页码不能 null")
-    @Min(message = "页码不能小于 0", value = 0)
+    @NotNull(message = "页码不能为 null")
+    @Min(message = "页码不能小于 1", value = 1)
     private Integer pageNo;
 
     /**
      * 每页条数。
      */
-    @NotNull(message = "每页条数不能为空")
+    @NotNull(message = "每页条数不能为 null")
     @Min(message = "每页条数不能小于 1", value = 1)
     private Integer pageSize;
 
     /**
      * MySQL、SQLite 等数据库的偏移量 OFFSET。
      *
-     * @see PagingParameterPaddingAop
+     * @see PagingOffsetFieldPaddingAop
      */
     @Setter(AccessLevel.NONE)
     private Integer offset;
 
     /**
-     * MySQL、SQLite 等数据库的偏移量 offset，如：
+     * MySQL、SQLite 等数据库的偏移量 OFFSET，如：
      *
      * <ul>
      *   <li>{@code SELECT * FROM table_name LIMIT #{pageSize} OFFSET #{offset}}</li>
@@ -46,6 +46,6 @@ public class PagingQuery {
      * </ul>
      */
     public void setOffset() {
-        offset = pageNo * pageSize;
+        offset = (pageNo - 1) * pageSize;
     }
 }

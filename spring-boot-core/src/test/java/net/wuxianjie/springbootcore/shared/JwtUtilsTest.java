@@ -32,8 +32,8 @@ class JwtUtilsTest {
 
     @Test
     @Order(1)
-    void generateSecretKeyShouldNotReturnNull() {
-        secretKey = JwtUtils.createNewBase64SigningKey();
+    void createSecretKeyShouldNotReturnNull() {
+        secretKey = JwtUtils.createSigningKey();
 
         assertNotNull(secretKey);
 
@@ -42,12 +42,12 @@ class JwtUtilsTest {
 
     @Test
     @Order(2)
-    void generateTokenShouldNotReturnNull() {
+    void createTokenShouldNotReturnNull() {
         Map<String, Object> payload = new HashMap<>() {{
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
-        token = JwtUtils.createNewJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
+        token = JwtUtils.createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
         assertNotNull(token);
 
@@ -57,7 +57,7 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        Map<String, Object> payload = JwtUtils.validateJwtReturnPayload(secretKey, token);
+        Map<String, Object> payload = JwtUtils.validateJwt(secretKey, token);
         String username = (String) payload.get(USERNAME_KEY);
         assertEquals(USERNAME_VALUE, username);
 

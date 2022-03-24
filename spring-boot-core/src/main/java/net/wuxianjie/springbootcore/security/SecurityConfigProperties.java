@@ -2,18 +2,21 @@ package net.wuxianjie.springbootcore.security;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.wuxianjie.springbootcore.shared.CoreConfigData;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 实现 Token 认证机制所需的配置属性说明。
+ * 网站安全相关的配置项属性说明。
  *
  * @author 吴仙杰
+ * @see CoreConfigData
+ * @see SecurityConfig
  */
-@Getter
-@Setter
 @Configuration
 @ConfigurationProperties(prefix = "core.security")
+@Getter
+@Setter
 public class SecurityConfigProperties {
 
     /**

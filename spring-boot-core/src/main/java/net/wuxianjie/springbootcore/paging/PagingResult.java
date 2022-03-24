@@ -4,16 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
- * 分页列表数据结果。
+ * 分页查询结果。
  *
- * @param <T> 数据列表泛型
+ * @param <E> 列表项类型
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagingData<T> {
+public class PagingResult<E> {
 
     /**
      * 总数。
@@ -21,7 +23,7 @@ public class PagingData<T> {
     private long total;
 
     /**
-     * 当前页码。
+     * 页码。
      */
     private int pageNo;
 
@@ -31,11 +33,11 @@ public class PagingData<T> {
     private int pageSize;
 
     /**
-     * 数据列表。
+     * 具体数据列表。
      */
-    private T list;
+    private List<E> list;
 
-    public PagingData(PagingQuery paging, long total, T list) {
+    public PagingResult(PagingQuery paging, long total, List<E> list) {
         this.pageNo = paging.getPageNo();
         this.pageSize = paging.getPageSize();
         this.total = total;
