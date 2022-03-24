@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.wuxianjie</groupId>
@@ -18,20 +18,27 @@
 
         <!-- 配置 UTF-8 编码 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.reporting.outputEncoding>
+            UTF-8
+        </project.reporting.outputEncoding>
 
-        <spring.boot.dependencies.version>2.6.3</spring.boot.dependencies.version>
         <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
+
+        <spring.boot.dependencies.version>
+            2.6.3
+        </spring.boot.dependencies.version>
         <jjwt.version>0.11.2</jjwt.version>
         <hutool.version>5.7.22</hutool.version>
-        <mybatis.spring.boot.starter.version>2.2.2</mybatis.spring.boot.starter.version>
+        <mybatis.spring.boot.starter.version>
+            2.2.2
+        </mybatis.spring.boot.starter.version>
     </properties>
 
-    <!-- 仅定义依赖版本，并不真正意义上使用依赖 -->
+    <!-- 仅定义依赖版本，并非使用依赖 -->
     <dependencyManagement>
         <dependencies>
-            <!-- 引入 Spring Boot 中已定义的依赖 -->
+            <!-- 引入 Spring Boot 中已定义的依赖。注意：对插件版本不生效 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -198,7 +205,7 @@
     <!-- 配置下载及部署时的私有仓库 -->
     <distributionManagement>
         <snapshotRepository>
-            <!-- 这里的 id 需要和 settings.xml 中的 server 的 id 一致 -->
+            <!-- 这里的 id 需要和 settings.xml 中 server 的 id 一致 -->
             <id>maven-snapshots</id>
             <name>Nexus 快照私有仓库</name>
             <url>http://192.168.2.41:8081/repository/maven-snapshots/</url>
