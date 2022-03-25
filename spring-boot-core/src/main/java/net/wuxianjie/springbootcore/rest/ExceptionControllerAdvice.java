@@ -144,8 +144,8 @@ public class ExceptionControllerAdvice {
             MissingServletRequestParameterException e,
             WebRequest request
     ) {
-        String messageToResponse = StrUtil.format("缺少必填参数【{}】",
-                e.getParameterName()
+        String messageToResponse = StrUtil.format(
+                "缺少必填参数【{}】", e.getParameterName()
         );
 
         log.warn("HTTP 请求【{}】-> {}", request, messageToResponse);

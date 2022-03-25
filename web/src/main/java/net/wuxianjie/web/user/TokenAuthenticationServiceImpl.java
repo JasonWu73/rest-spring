@@ -3,9 +3,8 @@ package net.wuxianjie.web.user;
 import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.shared.CoreConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
-import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.JwtUtils;
 import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class TokenAuthenticationServiceImpl
         implements TokenAuthenticationService {
 
     private final Cache<String, TokenUserDetails> tokenCache;
-    private final CoreConfigData securityConfig;
+    private final SecurityConfigData securityConfig;
 
     @Override
     public TokenUserDetails authenticate(String token)

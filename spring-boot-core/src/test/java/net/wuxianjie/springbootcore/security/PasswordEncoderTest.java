@@ -1,7 +1,8 @@
 package net.wuxianjie.springbootcore.security;
 
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,32 +15,31 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author 吴仙杰
  */
+@SpringBootTest(classes = {SecurityConfig.class})
 @Slf4j
-@SpringBootTest(classes = SecurityConfig.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PasswordEncoderTest {
 
-    private static final String RAW_PASSWORD = "123";
-
-    private static String hashedPassword;
+    private String rawPassword;
+    private String hashedPassword;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Test
-    @Order(1)
-    void encodePasswordShouldNotReturnNull() {
-        hashedPassword = passwordEncoder.encode(RAW_PASSWORD);
+    @BeforeEach
+    void init() {
+        rawPassword = "123";
+        hashedPassword = passwordEncoder.encode(rawPassword);
 
-        assertNotNull(hashedPassword);
-
-        log.info("原密码：{}，编码后为：{}", RAW_PASSWORD, hashedPassword);
+        log.info("原密码：{}，编码后为：{}", rawPassword, hashedPassword);
     }
 
     @Test
-    @Order(2)
-    void rawAndEncodedPasswordShouldEqual() {
-        boolean isMatched = passwordEncoder.matches(RAW_PASSWORD, hashedPassword);
-        assertTrue(isMatched);
+    void encodePasswordShouldNotReturnNull() {
+        assertNotNull(hashedPassword);
+    }
+
+    @Test
+    void rawAndEncodedPasswordShouldMatch() {
+        assertTrue(passwordEncoder.matches(rawPassword, hashedPassword));
     }
 }

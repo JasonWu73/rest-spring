@@ -7,7 +7,9 @@ import javax.validation.ConstraintValidatorContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 实现 {@link EnumValidator} 枚举值校验注解的业务逻辑。
@@ -15,7 +17,8 @@ import java.util.List;
  * @author 吴仙杰
  */
 @Slf4j
-public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Object> {
+public class EnumValidatorImpl
+        implements ConstraintValidator<EnumValidator, Object> {
 
     private boolean isPassed = false;
     private List<Object> values;
@@ -25,31 +28,40 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
         values = new ArrayList<>();
 
         Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
-        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        String className = enumClass.getName();
 
-        for (Enum<?> enumValue : enumConstants) {
-            Method valueMethod;
-            try {
-                valueMethod = enumValue.getClass().getDeclaredMethod("value");
-            } catch (NoSuchMethodException ignore) {
-                log.warn("枚举类中不存在 value() 方法，故无法校验枚举值");
+        Optional.of(enumClass.getEnumConstants())
+                .ifPresent(enums -> Arrays.stream(enums)
+                        .forEach(anEnum -> {
+                                    try {
+                                        Method method = anEnum.getClass()
+                                                .getDeclaredMethod(
+                                                        "value"
+                                                );
 
-                isPassed = true;
-                break;
-            }
+                                        method.setAccessible(true);
 
-            Object value;
-            try {
-                valueMethod.setAccessible(true);
-                value = valueMethod.invoke(enumValue);
-                values.add(value);
-            } catch (IllegalAccessException | InvocationTargetException ignore) {
-                log.warn("无法正确执行枚举类中的 value() 方法，故无法校验枚举值");
+                                        values.add(method.invoke(anEnum));
+                                    } catch (NoSuchMethodException e) {
+                                        log.warn("{} 不存在 value() 方法，" +
+                                                        "故无法校验枚举值",
+                                                className
+                                        );
 
-                isPassed = true;
-                break;
-            }
-        }
+                                        isPassed = true;
+                                    } catch (InvocationTargetException
+                                            | IllegalAccessException e
+                                    ) {
+                                        log.warn("无法执行 {}.value() 方法，" +
+                                                        "故无法校验枚举值",
+                                                className
+                                        );
+
+                                        isPassed = true;
+                                    }
+                                }
+                        )
+                );
     }
 
     @Override

@@ -7,11 +7,9 @@ import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.AuthenticationFacade;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.BadRequestException;
 import net.wuxianjie.springbootcore.shared.StringUtils;
-import net.wuxianjie.springbootcore.shared.Wrote2Db;
-import net.wuxianjie.springbootcore.validator.group.Add;
+import net.wuxianjie.springbootcore.validator.group.Save;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,10 +46,10 @@ public class UserController {
      */
     @Admin
     @PostMapping("add")
-    public Wrote2Db addNewUser(@RequestBody @Validated(Add.class) AddOrUpdateUserQuery query) {
+    public void addNewUser(@RequestBody @Validated(Save.class) AddOrUpdateUserQuery query) {
         setRoleAfterDeduplication(query);
 
-        return userService.addNewUser(query);
+        userService.addNewUser(query);
     }
 
     /**
@@ -61,24 +59,24 @@ public class UserController {
      */
     @Admin
     @PostMapping("update/{userId:\\d+}")
-    public Wrote2Db updateUser(@PathVariable("userId") int id, @RequestBody @Validated AddOrUpdateUserQuery query) {
+    public void updateUser(@PathVariable("userId") int id, @RequestBody @Validated AddOrUpdateUserQuery query) {
         query.setUserId(id);
 
         setRoleAfterDeduplication(query);
 
-        return userService.updateUser(query);
+        userService.updateUser(query);
     }
 
     /**
      * 修改当前用户密码。
      */
     @PostMapping("password")
-    public Wrote2Db updateCurrentUserPassword(@RequestBody @Validated UpdatePasswordQuery query) {
+    public void updateCurrentUserPassword(@RequestBody @Validated UpdatePasswordQuery query) {
         validatePasswordDifference(query.getOldPassword(), query.getNewPassword());
 
         setCurrentUserId(query);
 
-        return userService.updateUserPassword(query);
+        userService.updateUserPassword(query);
     }
 
     /**
@@ -86,12 +84,12 @@ public class UserController {
      */
     @Admin
     @GetMapping("del/{userId:\\d+}")
-    public Wrote2Db deleteUser(@PathVariable("userId") int id) {
-        return userService.deleteUser(id);
+    public void deleteUser(@PathVariable("userId") int id) {
+        userService.deleteUser(id);
     }
 
     private void setCurrentUserId(UpdatePasswordQuery query) {
-        TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
+        TokenUserDetails userDetails = (TokenUserDetails) authenticationFacade.getLoggedIn().orElseThrow();
         query.setUserId(userDetails.getAccountId());
     }
 

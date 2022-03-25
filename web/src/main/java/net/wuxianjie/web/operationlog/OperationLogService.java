@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.AuthenticationFacade;
-import net.wuxianjie.springbootcore.security.TokenUserDetails;
+import net.wuxianjie.web.user.TokenUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +31,7 @@ public class OperationLogService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addNewOperationLog(LocalDateTime operationTime, String message) {
-        TokenUserDetails userDetails = authenticationFacade.getCurrentUser();
+        TokenUserDetails userDetails = (TokenUserDetails) authenticationFacade.getLoggedIn().orElseThrow();
         OperationLog logToAdd = new OperationLog(null, operationTime,
                 userDetails.getAccountId(), userDetails.getAccountName(), message);
         logMapper.add(logToAdd);

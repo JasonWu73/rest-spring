@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Spring Security 授权注解：仅 ADMIN 角色可访问的方法。如：
+ * Spring Security 授权注解：仅 ADMIN 角色可访问的方法。例如：
  *
  * <pre>{@code
  * @RestController

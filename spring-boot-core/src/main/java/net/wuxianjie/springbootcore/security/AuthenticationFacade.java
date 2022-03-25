@@ -1,6 +1,5 @@
 package net.wuxianjie.springbootcore.security;
 
-import net.wuxianjie.springbootcore.shared.InternalServerException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -8,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * 可通过依赖注入方便地获取 Token 认证后的用户详细数据。
+ * 可通过依赖注入方便地获取已通过认证后的 Token 详细数据。
  *
  * @author 吴仙杰
  */
@@ -16,12 +15,11 @@ import java.util.Optional;
 public class AuthenticationFacade {
 
     /**
-     * 获取 Token 认证后的用户详细数据。
+     * 获取已通过认证后的 Token 详细数据。若是开放接口，即无需 Token 认证的接口，则返回空。
      *
-     * @return 用户详细数据
-     * @throws InternalServerException 若无法获取用户详细数据
+     * @return 认证后的 Token 详细数据。
      */
-    public TokenUserDetails getCurrentUser() throws InternalServerException {
+    public Optional<TokenDetails> getLoggedIn() {
         return Optional.ofNullable(
                         SecurityContextHolder.getContext().getAuthentication()
                 )
@@ -29,31 +27,13 @@ public class AuthenticationFacade {
                             if (authentication
                                     instanceof AnonymousAuthenticationToken
                             ) {
-                                TokenUserDetails anonymous =
-                                        new TokenUserDetails();
-
-                                anonymous.setAccountName(
-                                        authentication.getName()
-                                );
-
-                                return anonymous;
+                                // 匿名用户可访问的接口，则返回空
+                                // authentication.getName() 为 anonymous
+                                return null;
                             }
 
-                            return Optional.ofNullable(
-                                            (TokenUserDetails)
-                                                    (authentication
-                                                            .getPrincipal()
-                                                    )
-                                    )
-                                    .orElseThrow(() ->
-                                            new InternalServerException(
-                                                    "无法获取用户详细数据"
-                                            )
-                                    );
+                            return (TokenDetails) authentication.getPrincipal();
                         }
-                )
-                .orElseThrow(() ->
-                        new InternalServerException("找不到可用的认证信息")
                 );
     }
 }

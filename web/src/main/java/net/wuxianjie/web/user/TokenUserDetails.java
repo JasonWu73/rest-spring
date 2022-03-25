@@ -1,8 +1,9 @@
-package net.wuxianjie.springbootcore.security;
+package net.wuxianjie.web.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.springbootcore.security.TokenDetails;
 
 /**
  * Token 认证后的用户详细数据。
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenUserDetails {
+public class TokenUserDetails implements TokenDetails {
 
     /**
      * 账号 ID。
@@ -20,14 +21,14 @@ public class TokenUserDetails {
     private Integer accountId;
 
     /**
-     * 账号名称。
+     * 账号名。
      */
     private String accountName;
 
     /**
      * 该账号所拥有的角色。
      */
-    private String accountRoles;
+    private String roles;
 
     /**
      * 用于 API 鉴权的 Token，在请求头中携带：`Authorization: Bearer accessToken`。

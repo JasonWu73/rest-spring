@@ -2,17 +2,11 @@ package net.wuxianjie.springbootcore.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
+import java.lang.annotation.ElementType;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.ElementType.TYPE_USE;
 
 /**
  * 枚举值校验注解，例如：
@@ -44,10 +38,19 @@ import static java.lang.annotation.ElementType.TYPE_USE;
  *
  * @author 吴仙杰
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Target(
+        {
+                ElementType.METHOD,
+                ElementType.FIELD,
+                ElementType.ANNOTATION_TYPE,
+                ElementType.CONSTRUCTOR,
+                ElementType.PARAMETER,
+                ElementType.TYPE_USE
+        }
+)
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(EnumValidator.List.class)
 @Constraint(validatedBy = EnumValidatorImpl.class)
+@Repeatable(EnumValidator.List.class)
 public @interface EnumValidator {
 
     Class<? extends Enum<?>> value();
@@ -58,7 +61,16 @@ public @interface EnumValidator {
 
     Class<? extends Payload>[] payload() default {};
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+    @Target(
+            {
+                    ElementType.METHOD,
+                    ElementType.FIELD,
+                    ElementType.ANNOTATION_TYPE,
+                    ElementType.CONSTRUCTOR,
+                    ElementType.PARAMETER,
+                    ElementType.TYPE_USE
+            }
+    )
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
 

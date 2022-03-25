@@ -12,12 +12,12 @@ public interface TokenService {
     /**
      * 获取 Access Token。
      *
-     * @param accountName        账号名
-     * @param accountRawPassword 明文密码
+     * @param accountName 账号名
+     * @param rawPassword 明文密码
      * @return {@link TokenData}
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
-    TokenData getToken(String accountName, String accountRawPassword)
+    TokenData getToken(String accountName, String rawPassword)
             throws TokenAuthenticationException;
 
     /**

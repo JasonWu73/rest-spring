@@ -2,16 +2,15 @@ package net.wuxianjie.springbootcore.security;
 
 import lombok.Getter;
 import lombok.Setter;
-import net.wuxianjie.springbootcore.shared.CoreConfigData;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 网站安全相关的配置项属性说明。
+ * Web 安全相关的配置项属性说明。
  *
  * @author 吴仙杰
- * @see CoreConfigData
- * @see SecurityConfig
+ * @see SecurityConfigData
+ * @see WebSecurityConfig
  */
 @Configuration
 @ConfigurationProperties(prefix = "core.security")

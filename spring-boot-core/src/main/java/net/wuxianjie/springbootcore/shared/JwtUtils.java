@@ -1,13 +1,7 @@
 package net.wuxianjie.springbootcore.shared;
 
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
@@ -34,9 +28,9 @@ public class JwtUtils {
      * @return Base64 字符串格式的 JWT 签名密钥
      */
     public static String createSigningKey() {
-        SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-
-        return Encoders.BASE64.encode(secretKey.getEncoded());
+        return Encoders.BASE64.encode(
+                Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded()
+        );
     }
 
     /**
@@ -47,17 +41,18 @@ public class JwtUtils {
      * @param expiresInSeconds JWT 的过期时间，单位秒
      * @return JWT
      */
-    public static String createJwt(String signingKey,
-                                   Map<String, Object> payload,
-                                   int expiresInSeconds) {
-        SecretKey secretKey = createSecretKey(signingKey);
-        DateTime expirationDateTime = DateUtil.offsetSecond(new Date(), expiresInSeconds);
-
+    public static String createJwt(
+            String signingKey,
+            Map<String, Object> payload,
+            int expiresInSeconds
+    ) {
         return Jwts.builder()
                 .setClaims(payload)
                 .setNotBefore(new Date())
-                .setExpiration(expirationDateTime)
-                .signWith(secretKey)
+                .setExpiration(
+                        DateUtil.offsetSecond(new Date(), expiresInSeconds)
+                )
+                .signWith(createSecretKey(signingKey))
                 .compact();
     }
 
@@ -69,17 +64,16 @@ public class JwtUtils {
      * @return JWT 中的有效载荷
      * @throws TokenAuthenticationException 若 JWT 校验不通过
      */
-    public static Map<String, Object> validateJwt(String signingKey,
-                                                  String jwt) throws TokenAuthenticationException {
+    public static Map<String, Object> validateJwt(
+            String signingKey,
+            String jwt
+    ) throws TokenAuthenticationException {
         try {
-            SecretKey secretKey = createSecretKey(signingKey);
-
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(createSecretKey(signingKey))
                     .build()
-                    .parseClaimsJws(jwt);
-
-            Claims claims = jws.getBody();
+                    .parseClaimsJws(jwt)
+                    .getBody();
 
             return new HashMap<>(claims);
         } catch (MalformedJwtException e) {
@@ -92,8 +86,6 @@ public class JwtUtils {
     }
 
     private static SecretKey createSecretKey(String signingKey) {
-        byte[] decodedSigningKey = Decoders.BASE64.decode(signingKey);
-
-        return Keys.hmacShaKeyFor(decodedSigningKey);
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signingKey));
     }
 }

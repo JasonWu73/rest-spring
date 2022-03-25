@@ -27,7 +27,7 @@ public class TokenController {
      * @return {@link TokenData}
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
-    @PostMapping(SecurityConfig.ACCESS_TOKEN_PATH)
+    @PostMapping(WebSecurityConfig.ACCESS_TOKEN_PATH)
     public TokenData getToken(@RequestBody @Validated GetTokenQuery query)
             throws TokenAuthenticationException {
         return tokenService.getToken(
@@ -42,7 +42,7 @@ public class TokenController {
      * @return {@link TokenData}
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
-    @GetMapping(SecurityConfig.REFRESH_TOKEN_PATH_PREFIX + "/{refreshToken}")
+    @GetMapping(WebSecurityConfig.REFRESH_TOKEN_PATH_PREFIX + "/{refreshToken}")
     public TokenData refreshToken(@PathVariable String refreshToken)
             throws TokenAuthenticationException {
         return tokenService.refreshToken(refreshToken);

@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.handler.YesOrNo;
+import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.shared.*;
@@ -40,7 +40,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2Db addNewUser(AddOrUpdateUserQuery query) {
+    public void addNewUser(AddOrUpdateUserQuery query) {
         validateUsernameUniqueness(query.getUsername());
 
         User userToAdd = createUserToAdd(query);
@@ -53,12 +53,10 @@ public class UserService {
         String username = userToAdd.getUsername();
         String message = String.format("新增用户数据【ID：%s，用户名：%s】", userId, username);
         logService.addNewOperationLog(LocalDateTime.now(), message);
-
-        return new Wrote2Db(addedNum, "用户新增成功");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2Db updateUser(AddOrUpdateUserQuery query) {
+    public void updateUser(AddOrUpdateUserQuery query) {
         Integer userId = query.getUserId();
 
         User userToUpdate = getUserFromDbMustBeExists(userId);
@@ -67,7 +65,7 @@ public class UserService {
         List<String> logs = new ArrayList<>();
         boolean needsUpdate = needsUpdateUser(userToUpdate, query, logs);
         if (!needsUpdate) {
-            return new Wrote2Db(0, "无需修改用户");
+            return;
         }
 
         int updatedNum = userMapper.update(userToUpdate);
@@ -77,12 +75,10 @@ public class UserService {
 
         String message = String.format("修改用户数据【ID：%s，用户名：%s】：%s", userId, username, String.join("；", logs));
         logService.addNewOperationLog(LocalDateTime.now(), message);
-
-        return new Wrote2Db(updatedNum, "用户修改成功");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2Db updateUserPassword(UpdatePasswordQuery query) {
+    public void updateUserPassword(UpdatePasswordQuery query) {
         Integer userId = query.getUserId();
 
         User passwordToUpdate = getUserFromDbMustBeExists(userId);
@@ -100,12 +96,10 @@ public class UserService {
 
         String message = String.format("修改用户密码【ID：%s，用户名：%s】", userId, username);
         logService.addNewOperationLog(LocalDateTime.now(), message);
-
-        return new Wrote2Db(updatedNum, "密码修改成功");
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public Wrote2Db deleteUser(int userId) {
+    public void deleteUser(int userId) {
         User userToDelete = getUserFromDbMustBeExists(userId);
         String username = userToDelete.getUsername();
 
@@ -116,8 +110,6 @@ public class UserService {
 
         String message = String.format("删除用户数据【ID：%s，用户名：%s】", userId, username);
         logService.addNewOperationLog(LocalDateTime.now(), message);
-
-        return new Wrote2Db(deletedNum, "用户删除成功");
     }
 
     private int updateUserPasswordInDatabase(UpdatePasswordQuery query) {
@@ -183,7 +175,7 @@ public class UserService {
         }
 
         String oldRoles = userToUpdate.getRoles();
-        boolean isSame = StringUtils.isEqualsIgnoreNull(newRoles, oldRoles);
+        boolean isSame = StringUtils.equalsIgnoreBlank(newRoles, oldRoles);
         if (isSame) {
             userToUpdate.setRoles(null);
             return false;

@@ -1,22 +1,20 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.springbootcore.security.SecurityConfig;
-import net.wuxianjie.springbootcore.security.SecurityConfigProperties;
 
 /**
- * 核心模块的配置项。
+ * 核心模块的 Web 安全相关配置项。
  *
  * @author 吴仙杰
  * @see SecurityConfigProperties
- * @see SecurityConfig
+ * @see WebSecurityConfig
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CoreConfigData {
+public class SecurityConfigData {
 
     /**
      * JWT 签名密钥。

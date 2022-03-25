@@ -22,5 +22,10 @@ public abstract class AbstractBaseException extends RuntimeException {
         super(message, cause);
     }
 
+    /**
+     * 获取以响应何种 HTTP 状态码来指明异常信息。
+     *
+     * @return HTTP 状态码
+     */
     public abstract HttpStatus getHttpStatus();
 }

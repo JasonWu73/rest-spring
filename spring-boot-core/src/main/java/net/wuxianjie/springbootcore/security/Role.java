@@ -1,5 +1,6 @@
 package net.wuxianjie.springbootcore.security;
 
+import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import javax.swing.text.html.Option;
 import java.util.Optional;
 
 /**
@@ -40,16 +42,16 @@ public enum Role {
      * @return 字符串值所对应的枚举常量
      */
     public static Optional<Role> resolve(String value) {
-        if (value == null) {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(value)
+                .map(v -> {
+                            for (Role role : VALUES) {
+                                if (StrUtil.equals(value, role.value)) {
+                                    return role;
+                                }
+                            }
 
-        for (Role enumConstant : VALUES) {
-            if (StrUtil.equals(value, enumConstant.value)) {
-                return Optional.of(enumConstant);
-            }
-        }
-
-        return Optional.empty();
+                            return null;
+                        }
+                );
     }
 }

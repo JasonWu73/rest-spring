@@ -11,6 +11,8 @@ import javax.validation.constraints.NotNull;
  * 分页查询参数。
  *
  * @author 吴仙杰
+ * @see PagingResult
+ * @see PagingOffsetFieldPaddingAop
  */
 @Data
 public class PagingQuery {
@@ -38,7 +40,7 @@ public class PagingQuery {
     private Integer offset;
 
     /**
-     * MySQL、SQLite 等数据库的偏移量 OFFSET，如：
+     * MySQL、SQLite 等数据库的偏移量 OFFSET，例如：
      *
      * <ul>
      *   <li>{@code SELECT * FROM table_name LIMIT #{pageSize} OFFSET #{offset}}</li>

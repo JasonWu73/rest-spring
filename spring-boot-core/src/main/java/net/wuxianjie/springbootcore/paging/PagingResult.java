@@ -11,6 +11,8 @@ import java.util.List;
  *
  * @param <E> 列表项类型
  * @author 吴仙杰
+ * @see PagingResult
+ * @see PagingOffsetFieldPaddingAop
  */
 @Data
 @NoArgsConstructor

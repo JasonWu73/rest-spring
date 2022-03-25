@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 /**
- * 表示因客户端要请求不存在的数据而引起的操作失败，使用 404 HTTP 状态码。
+ * 表示因客户端要请求不存在的数据而导致的操作失败，使用 404 HTTP 状态码。
  *
  * @author 吴仙杰
  */

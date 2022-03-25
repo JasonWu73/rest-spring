@@ -73,8 +73,9 @@ public class AuthTestController {
     }
 
     private String getUsername() {
-        String username = authenticationFacade.getCurrentUser().getAccountName();
-        return username == null ? "未知用户" : username;
+        return authenticationFacade.getLoggedIn()
+                .map(TokenDetails::getAccountName)
+                .orElse("匿名用户");
     }
 
     @Data

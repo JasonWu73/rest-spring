@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.handler;
+package net.wuxianjie.springbootcore.mybatis;
 
 import net.wuxianjie.springbootcore.shared.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -16,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库日期时间数据类型。
  * <p>
  * 全局配置（application.yml）：<br>
- * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.handler}
+ * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
  * </p>
  *
  * @author 吴仙杰
@@ -50,8 +50,10 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex)
-            throws SQLException {
+    public LocalDateTime getNullableResult(
+            CallableStatement cs,
+            int columnIndex
+    ) throws SQLException {
         return toNullableLocalDateTime(cs.getTimestamp(columnIndex));
     }
 

@@ -2,11 +2,10 @@ package net.wuxianjie.web.user;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.handler.YesOrNo;
-import net.wuxianjie.springbootcore.shared.CoreConfigData;
+import net.wuxianjie.springbootcore.mybatis.YesOrNo;
+import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
-import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.JwtUtils;
 import net.wuxianjie.springbootcore.shared.NotFoundException;
 import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
@@ -27,18 +26,18 @@ import java.util.Objects;
 public class TokenServiceImpl implements TokenService {
 
     private final Cache<String, TokenUserDetails> tokenCache;
-    private final CoreConfigData securityConfig;
+    private final SecurityConfigData securityConfig;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     @Override
-    public TokenData getToken(String accountName, String accountRawPassword)
+    public TokenData getToken(String accountName, String rawPassword)
             throws TokenAuthenticationException {
         User user = getUserFromDbMustBeExists(accountName);
 
         validateAccountAvailable(user.getEnabled(), user.getUsername());
 
-        validatePassword(accountRawPassword, user.getHashedPassword());
+        validatePassword(rawPassword, user.getHashedPassword());
 
         TokenData token = createNewToken(user);
         addToCache(user, token);

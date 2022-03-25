@@ -61,10 +61,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            TokenUserDetails userDetails =
+            TokenDetails tokenDetails =
                     authenticationService.authenticate(tokenOptional.get());
 
-            loginToSpringSecurityContext(userDetails);
+            loginToSpringSecurityContext(tokenDetails);
         } catch (TokenAuthenticationException e) {
             SecurityContextHolder.clearContext();
 
@@ -97,13 +97,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         );
     }
 
-    private void loginToSpringSecurityContext(TokenUserDetails userDetails) {
+    private void loginToSpringSecurityContext(TokenDetails tokenDetails) {
         List<GrantedAuthority> authorityList =
-                getAuthorities(userDetails.getAccountRoles());
+                getAuthorities(tokenDetails.getRoles());
 
         UsernamePasswordAuthenticationToken token =
                 new UsernamePasswordAuthenticationToken(
-                        userDetails, null, authorityList
+                        tokenDetails, null, authorityList
                 );
 
         SecurityContextHolder.getContext().setAuthentication(token);
@@ -138,20 +138,30 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
-        String bearerValue = StrUtil.trim(
-                request.getHeader(HttpHeaders.AUTHORIZATION)
-        );
+        return Optional.ofNullable(
+                        StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION))
+                )
+                .map(bearer -> {
+                            String token = null;
 
-        if (bearerValue == null
-                || !bearerValue.startsWith(AUTHORIZATION_BEARER_PREFIX)
-        ) {
-            return Optional.empty();
-        }
+                            if (StrUtil.startWith(bearer,
+                                    AUTHORIZATION_BEARER_PREFIX
+                            )) {
+                                token = StrUtil.subAfter(bearer,
+                                        AUTHORIZATION_BEARER_PREFIX,
+                                        false
+                                );
+                            } else if (StrUtil.startWith(bearer,
+                                    AUTHORIZATION_BEARER_PREFIX.toLowerCase()
+                            )) {
+                                token = StrUtil.subAfter(bearer,
+                                        AUTHORIZATION_BEARER_PREFIX.toLowerCase(),
+                                        false
+                                );
+                            }
 
-        String token = StrUtil.subAfter(
-                bearerValue, AUTHORIZATION_BEARER_PREFIX, false
-        );
-
-        return Optional.of(token);
+                            return StrUtil.isEmpty(token) ? null : token;
+                        }
+                );
     }
 }

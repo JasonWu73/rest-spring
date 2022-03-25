@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.handler;
+package net.wuxianjie.springbootcore.mybatis;
 
 /**
  * 实现该接口后，可映射 Java 枚举常量与数据库 INT 数据类型。

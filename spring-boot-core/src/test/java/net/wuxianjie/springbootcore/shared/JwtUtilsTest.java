@@ -1,6 +1,5 @@
 package net.wuxianjie.springbootcore.shared;
 
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.MethodOrderer;
@@ -11,6 +10,10 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.util.HashMap;
 import java.util.Map;
 
+import static cn.hutool.json.JSONUtil.toJsonStr;
+import static net.wuxianjie.springbootcore.shared.JwtUtils.createJwt;
+import static net.wuxianjie.springbootcore.shared.JwtUtils.createSigningKey;
+import static net.wuxianjie.springbootcore.shared.JwtUtils.validateJwt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -19,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  *
  * @author 吴仙杰
  */
-@Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Slf4j
 class JwtUtilsTest {
 
     private static final String USERNAME_KEY = "user";
@@ -33,7 +36,7 @@ class JwtUtilsTest {
     @Test
     @Order(1)
     void createSecretKeyShouldNotReturnNull() {
-        secretKey = JwtUtils.createSigningKey();
+        secretKey = createSigningKey();
 
         assertNotNull(secretKey);
 
@@ -47,7 +50,7 @@ class JwtUtilsTest {
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
-        token = JwtUtils.createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
+        token = createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
         assertNotNull(token);
 
@@ -57,12 +60,14 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        Map<String, Object> payload = JwtUtils.validateJwt(secretKey, token);
+        Map<String, Object> payload = validateJwt(secretKey, token);
+
         String username = (String) payload.get(USERNAME_KEY);
+
         assertEquals(USERNAME_VALUE, username);
 
-        JSONObject jsonObject = JSONUtil.parseObj(payload);
-        String json = JSONUtil.toJsonStr(jsonObject, 4);
-        log.info("解析 JWT：\n{}", json);
+        log.info("解析 JWT：\n{}",
+                toJsonStr(JSONUtil.parseObj(payload), 4)
+        );
     }
 }

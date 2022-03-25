@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.handler;
+package net.wuxianjie.springbootcore.mybatis;
 
 import lombok.NoArgsConstructor;
 import org.apache.ibatis.type.BaseTypeHandler;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  * MyBatis 类型处理器：映射 Java 枚举常量与数据库 INT 数据类型。
  * <p>
  * 全局配置（application.yml）：<br>
- * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.handler}
+ * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
  * </p>
  *
  * @author 吴仙杰

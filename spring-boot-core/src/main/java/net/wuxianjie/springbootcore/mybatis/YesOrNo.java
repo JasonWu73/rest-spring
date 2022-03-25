@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.handler;
+package net.wuxianjie.springbootcore.mybatis;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
