@@ -12,17 +12,12 @@ import java.util.List;
  * @param <E> 列表项类型
  * @author 吴仙杰
  * @see PagingResult
- * @see PagingOffsetFieldPaddingAop
+ * @see PagingOffsetFieldPaddingAspect
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PagingResult<E> {
-
-    /**
-     * 总数。
-     */
-    private long total;
 
     /**
      * 页码。
@@ -33,6 +28,11 @@ public class PagingResult<E> {
      * 每页条数。
      */
     private int pageSize;
+
+    /**
+     * 总数。
+     */
+    private long total;
 
     /**
      * 具体数据列表。

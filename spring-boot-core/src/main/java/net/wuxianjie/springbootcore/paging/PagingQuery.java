@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
  *
  * @author 吴仙杰
  * @see PagingResult
- * @see PagingOffsetFieldPaddingAop
+ * @see PagingOffsetFieldPaddingAspect
  */
 @Data
 public class PagingQuery {
@@ -34,7 +34,7 @@ public class PagingQuery {
     /**
      * MySQL、SQLite 等数据库的偏移量 OFFSET。
      *
-     * @see PagingOffsetFieldPaddingAop
+     * @see PagingOffsetFieldPaddingAspect
      */
     @Setter(AccessLevel.NONE)
     private Integer offset;
