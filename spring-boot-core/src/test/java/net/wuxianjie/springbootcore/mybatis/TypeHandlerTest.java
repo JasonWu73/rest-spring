@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author 吴仙杰
  */
-@SpringBootTest(classes = TestApplication.class)
+@SpringBootTest(classes = Application.class)
 @ActiveProfiles("mybatis")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TypeHandlerTest {

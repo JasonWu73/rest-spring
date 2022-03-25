@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
         controllers = PagingSearchController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class
 )
-@ContextConfiguration(classes = TestApplication.class)
+@ContextConfiguration(classes = Application.class)
 @Import(
         {
                 AnnotationAwareAspectJAutoProxyCreator.class,
@@ -56,8 +56,7 @@ class PagingSearchTest {
                         .param("pageSize", "2")
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(PAGE_TWO_RESULT))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.content().json(PAGE_TWO_RESULT));
     }
 
     @Test
@@ -74,8 +73,7 @@ class PagingSearchTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/paging")
                         .param("pageNo", "0")
                         .param("pageSize", "2"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -83,8 +81,7 @@ class PagingSearchTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/paging")
                         .param("pageNo", "1")
                         .param("pageSize", (String) null))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
     @Test
@@ -92,7 +89,6 @@ class PagingSearchTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/paging")
                         .param("pageNo", "1")
                         .param("pageSize", "0"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }

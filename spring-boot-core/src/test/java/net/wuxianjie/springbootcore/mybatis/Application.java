@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author 吴仙杰
  */
 @SpringBootApplication
-class TestApplication {
+class Application {
 
     static void main(String[] args) {
-        SpringApplication.run(TestApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 }
