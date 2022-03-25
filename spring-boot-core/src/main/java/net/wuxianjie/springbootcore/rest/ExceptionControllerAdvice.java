@@ -27,6 +27,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -337,17 +338,15 @@ public class ExceptionControllerAdvice {
     }
 
     private boolean isNotJsonRequest(WebRequest request) {
-        String[] acceptArray = request.getHeaderValues(HttpHeaders.ACCEPT);
-
-        if (acceptArray == null) {
-            return true;
-        }
-
-        return Arrays.stream(acceptArray)
-                .noneMatch(accept -> StrUtil.containsAnyIgnoreCase(accept,
-                                MediaType.ALL_VALUE,
-                                MediaType.APPLICATION_JSON_VALUE
+        return Optional.ofNullable(request.getHeaderValues(HttpHeaders.ACCEPT))
+                .map(acceptArray -> Arrays.stream(acceptArray)
+                        .noneMatch(accept ->
+                                StrUtil.containsAnyIgnoreCase(accept,
+                                        MediaType.ALL_VALUE,
+                                        MediaType.APPLICATION_JSON_VALUE
+                                )
                         )
-                );
+                )
+                .orElse(false);
     }
 }
