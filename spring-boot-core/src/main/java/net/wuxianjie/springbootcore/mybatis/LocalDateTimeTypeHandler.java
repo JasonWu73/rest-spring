@@ -30,11 +30,11 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
             LocalDateTime parameter,
             JdbcType jdbcType
     ) throws SQLException {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-                CommonValues.DATE_TIME_FORMAT
+        ps.setString(i, parameter.format(DateTimeFormatter.ofPattern(
+                                CommonValues.DATE_TIME_FORMAT
+                        )
+                )
         );
-
-        ps.setString(i, parameter.format(formatter));
     }
 
     @Override
