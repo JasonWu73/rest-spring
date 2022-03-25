@@ -16,6 +16,8 @@ import static net.wuxianjie.springbootcore.shared.JwtUtils.createSigningKey;
 import static net.wuxianjie.springbootcore.shared.JwtUtils.validateJwt;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author 吴仙杰
@@ -27,6 +29,9 @@ class JwtUtilsTest {
     private static final String USERNAME_KEY = "user";
     private static final String USERNAME_VALUE = "吴仙杰";
     private static final int EXPIRE_IN_SECONDS_VALUE = 60;
+
+    private static final String EXPIRED_JWT_SIGNING_KEY = "2t8uwvcI4Mw+jroZNzAcUen59renhGWugL/dtW1QBfA=";
+    private static final String EXPIRED_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoi5ZC05LuZ5p2wIiwibmJmIjoxNjQ4MjI2MDEwLCJleHAiOjE2NDgyMjYwNzB9.giKO4eACSISzTUX6y9dMdAe8hSWJ-Zc-YR6Snwdy2tY";
 
     private static String secretKey = "";
     private static String token = "";
@@ -67,5 +72,38 @@ class JwtUtilsTest {
         log.info("解析 JWT：\n{}",
                 toJsonStr(JSONUtil.parseObj(payload), 4)
         );
+    }
+
+    @Test
+    void whenMalformedJwtShouldThrowException() {
+        TokenAuthenticationException thrown = assertThrows(
+                TokenAuthenticationException.class,
+                () -> validateJwt(EXPIRED_JWT_SIGNING_KEY, "JSON Web Token")
+        );
+
+        assertTrue(thrown.getMessage().contains("Token 格式错误"));
+    }
+
+    @Test
+    void whenWrongSignatureJwtShouldThrowException() {
+        TokenAuthenticationException thrown = assertThrows(
+                TokenAuthenticationException.class,
+                () -> validateJwt(
+                        "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=",
+                        EXPIRED_JWT
+                )
+        );
+
+        assertTrue(thrown.getMessage().contains("Token 签名错误"));
+    }
+
+    @Test
+    void whenExpiredJwtShouldThrowException() {
+        TokenAuthenticationException thrown = assertThrows(
+                TokenAuthenticationException.class,
+                () -> validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT)
+        );
+
+        assertTrue(thrown.getMessage().contains("Token 已过期"));
     }
 }
