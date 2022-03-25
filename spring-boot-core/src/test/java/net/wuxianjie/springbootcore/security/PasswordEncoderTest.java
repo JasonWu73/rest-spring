@@ -24,7 +24,7 @@ class PasswordEncoderTest {
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         rawPassword = "123";
         hashedPassword = passwordEncoder.encode(rawPassword);
 
