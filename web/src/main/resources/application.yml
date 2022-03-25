@@ -5,10 +5,11 @@ server:
 spring:
   datasource:
     url: jdbc:sqlite:app.db
+    # SQLite 维护多连接会导致库锁！
     hikari:
       connection-timeout: 30000
-      minimum-idle: 5
-      maximum-pool-size: 10
+      minimum-idle: 1
+      maximum-pool-size: 1
       idle-timeout: 600000
       max-lifetime: 1800000
       auto-commit: true

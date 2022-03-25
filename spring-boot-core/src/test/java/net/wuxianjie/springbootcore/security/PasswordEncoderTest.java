@@ -11,8 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 测试哈希密码的生成和匹配。
- *
  * @author 吴仙杰
  */
 @SpringBootTest(classes = {SecurityConfig.class})

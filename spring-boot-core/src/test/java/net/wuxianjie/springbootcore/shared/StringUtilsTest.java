@@ -11,6 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * @author 吴仙杰
+ */
 @Slf4j
 class StringUtilsTest {
 
