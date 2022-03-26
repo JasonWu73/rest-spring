@@ -15,11 +15,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(
-        controllers = PagingSearchController.class,
+@WebMvcTest(controllers = PagingSearchController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class
 )
-@ContextConfiguration(classes = Application.class)
 @Import(
         {
                 AnnotationAwareAspectJAutoProxyCreator.class,
@@ -28,12 +26,20 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 )
 class PagingSearchTest {
 
-    private static final String PAGE_ONE_RESULT =
-            "{\"pageNo\":1,\"pageSize\":2,\"total\":5,\"list\":[\"One\",\"Two\"]}";
+    private static final String PAGE_ONE_RESULT = "{" +
+            "\"pageNo\":1," +
+            "\"pageSize\":2," +
+            "\"total\":5," +
+            "\"list\":[\"One\",\"Two\"]" +
+            "}";
 
 
-    private static final String PAGE_TWO_RESULT =
-            "{\"pageNo\":2,\"pageSize\":2,\"total\":5,\"list\":[\"Three\",\"Four\"]}";
+    private static final String PAGE_TWO_RESULT = "{" +
+            "\"pageNo\":2," +
+            "\"pageSize\":2," +
+            "\"total\":5," +
+            "\"list\":[\"Three\",\"Four\"]" +
+            "}";
 
     @Autowired
     private MockMvc mockMvc;

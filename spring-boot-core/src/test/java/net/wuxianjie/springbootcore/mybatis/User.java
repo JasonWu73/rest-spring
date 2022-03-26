@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 class User {
 
-    private int userId;
+    private Integer userId;
     private LocalDateTime createTime;
     private String username;
     private LocalDate birthday;
