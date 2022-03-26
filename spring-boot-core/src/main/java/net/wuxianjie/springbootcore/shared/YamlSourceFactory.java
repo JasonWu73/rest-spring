@@ -26,7 +26,7 @@ public class YamlSourceFactory implements PropertySourceFactory {
     public PropertySource<?> createPropertySource(
             String name,
             EncodedResource resource
-    ) throws InternalServerException {
+    ) throws InternalException {
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
 
         Resource heldResource = resource.getResource();
@@ -34,13 +34,13 @@ public class YamlSourceFactory implements PropertySourceFactory {
         factory.setResources(heldResource);
 
         String filename = Optional.ofNullable(heldResource.getFilename())
-                .orElseThrow(() -> new InternalServerException(
+                .orElseThrow(() -> new InternalException(
                                 "无法识别 YAML 配置文件的文件名"
                         )
                 );
 
         Properties properties = Optional.ofNullable(factory.getObject())
-                .orElseThrow(() -> new InternalServerException(
+                .orElseThrow(() -> new InternalException(
                                 "YAML 配置文件读取失败"
                         )
                 );

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.shared.CommonValues;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -18,8 +19,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author 吴仙杰
@@ -57,7 +56,7 @@ class JsonConfigTest {
     void jsonSerializeShouldEquals() throws IOException {
         User user = buildUser();
 
-        assertEquals(JSON_VALUE_NO_WHITE_CHARACTER,
+        Assertions.assertEquals(JSON_VALUE_NO_WHITE_CHARACTER,
                 jacksonTester.write(user).getJson());
     }
 
@@ -68,19 +67,19 @@ class JsonConfigTest {
                 .parse(JSON_VALUE_INCLUDE_WHITE_CHARACTER)
                 .getObject();
 
-        assertAll("JSON 反序列化后的字段值应该相等",
-                () -> assertEquals(userFromJson.userId, user.userId),
-                () -> assertEquals(userFromJson.username, user.username.trim()),
-                () -> assertEquals(userFromJson.password, user.password),
-                () -> assertEquals(userFromJson.createTime, user.createTime),
-                () -> assertEquals(userFromJson.birthday, user.birthday),
-                () -> assertEquals(userFromJson.modifyTime, user.modifyTime),
-                () -> assertEquals(userFromJson.enabled, user.enabled));
+        Assertions.assertAll("JSON 反序列化后的字段值应该相等",
+                () -> Assertions.assertEquals(userFromJson.userId, user.userId),
+                () -> Assertions.assertEquals(userFromJson.username, user.username.trim()),
+                () -> Assertions.assertEquals(userFromJson.password, user.password),
+                () -> Assertions.assertEquals(userFromJson.createTime, user.createTime),
+                () -> Assertions.assertEquals(userFromJson.birthday, user.birthday),
+                () -> Assertions.assertEquals(userFromJson.modifyTime, user.modifyTime),
+                () -> Assertions.assertEquals(userFromJson.enabled, user.enabled));
     }
 
     @Test
     void whenInvalidFormatDateDeserializeShouldThrowException() {
-        assertThrows(InvalidFormatException.class,
+        Assertions.assertThrows(InvalidFormatException.class,
                 () -> jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE));
     }
 

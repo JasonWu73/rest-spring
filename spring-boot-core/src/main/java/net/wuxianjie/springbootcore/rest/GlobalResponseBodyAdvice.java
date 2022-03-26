@@ -3,7 +3,7 @@ package net.wuxianjie.springbootcore.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.shared.InternalServerException;
+import net.wuxianjie.springbootcore.shared.InternalException;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.MediaType;
@@ -48,7 +48,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                 return objectMapper.writeValueAsString(
                         ApiResultWrapper.success(body));
             } catch (JsonProcessingException e) {
-                throw new InternalServerException("响应结果 JSON 序列化失败", e);
+                throw new InternalException("响应结果 JSON 序列化失败", e);
             }
         }
 

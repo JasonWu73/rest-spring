@@ -8,16 +8,16 @@ import org.springframework.http.HttpStatus;
  *
  * @author 吴仙杰
  */
-public class DataConflictException extends AbstractBaseException {
+public class ConflictException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.CONFLICT;
 
-    public DataConflictException(String message) {
+    public ConflictException(String message) {
         super(message);
     }
 
-    public DataConflictException(String message, Throwable cause) {
+    public ConflictException(String message, Throwable cause) {
         super(message, cause);
     }
 }

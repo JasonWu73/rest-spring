@@ -10,16 +10,16 @@ import org.springframework.http.HttpStatus;
  * @author 吴仙杰
  * @see ExceptionControllerAdvice
  */
-public class InternalServerException extends AbstractBaseException {
+public class InternalException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    public InternalServerException(String message) {
+    public InternalException(String message) {
         super(message);
     }
 
-    public InternalServerException(String message, Throwable cause) {
+    public InternalException(String message, Throwable cause) {
         super(message, cause);
     }
 }

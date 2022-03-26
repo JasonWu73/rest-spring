@@ -38,15 +38,12 @@ public class GlobalErrorController implements ErrorController {
     @RequestMapping("/error")
     public ResponseEntity<ApiResult<Void>> handleError(WebRequest request) {
         Map<String, Object> attrToValue = errorAttributes.getErrorAttributes(
-                request, ErrorAttributeOptions.defaults()
-        );
+                request, ErrorAttributeOptions.defaults());
 
         HttpStatus httpStatus = Optional.ofNullable(
-                        (Integer) attrToValue.get("status")
-                )
+                        (Integer) attrToValue.get("status"))
                 .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
-                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR)
-                )
+                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
@@ -57,7 +54,6 @@ public class GlobalErrorController implements ErrorController {
 
         return new ResponseEntity<>(
                 ApiResultWrapper.fail((String) attrToValue.get("error")),
-                httpStatus
-        );
+                httpStatus);
     }
 }

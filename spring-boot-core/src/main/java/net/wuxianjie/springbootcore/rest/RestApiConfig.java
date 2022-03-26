@@ -17,16 +17,13 @@ import java.util.List;
 public class RestApiConfig implements WebMvcConfigurer {
 
     @Override
-    public void configureMessageConverters(
-            List<HttpMessageConverter<?>> converters
-    ) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         // 当涉及 JSON 序列化时，设置默认编码为 UTF-8
         converters.stream()
                 .filter(MappingJackson2HttpMessageConverter.class::isInstance)
                 .findFirst()
                 .ifPresent(converter ->
                         ((MappingJackson2HttpMessageConverter) converter)
-                                .setDefaultCharset(StandardCharsets.UTF_8)
-                );
+                                .setDefaultCharset(StandardCharsets.UTF_8));
     }
 }
