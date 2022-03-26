@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 public class PagingQuery {
 
     /**
-     * 页码，从 1 开始。
+     * 页码，从 1 开始，即第一页为 1。
      */
     @NotNull(message = "页码不能为 null")
     @Min(message = "页码不能小于 1", value = 1)

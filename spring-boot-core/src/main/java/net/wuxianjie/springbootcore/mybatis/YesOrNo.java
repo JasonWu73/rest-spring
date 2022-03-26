@@ -45,9 +45,9 @@ public enum YesOrNo implements ValueEnum {
      * @return 整数值所对应的枚举常量
      */
     public static Optional<YesOrNo> resolve(int value) {
-        for (YesOrNo enumConstant : VALUES) {
-            if (value == enumConstant.value) {
-                return Optional.of(enumConstant);
+        for (YesOrNo anEnum : VALUES) {
+            if (value == anEnum.value) {
+                return Optional.of(anEnum);
             }
         }
 

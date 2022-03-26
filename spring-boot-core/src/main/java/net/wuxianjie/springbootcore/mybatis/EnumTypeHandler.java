@@ -34,12 +34,10 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
     }
 
     @Override
-    public void setNonNullParameter(
-            PreparedStatement ps,
-            int i,
-            ValueEnum parameter,
-            JdbcType jdbcType
-    ) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps,
+                                    int i,
+                                    ValueEnum parameter,
+                                    JdbcType jdbcType) throws SQLException {
         ps.setInt(i, parameter.value());
     }
 
@@ -73,9 +71,9 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
             return null;
         }
 
-        for (E enumConstant : enumConstants) {
-            if (enumConstant.value() == value) {
-                return enumConstant;
+        for (E anEnum : enumConstants) {
+            if (value == anEnum.value()) {
+                return anEnum;
             }
         }
 

@@ -24,17 +24,12 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
     @Override
-    public void setNonNullParameter(
-            PreparedStatement ps,
-            int i,
-            LocalDateTime parameter,
-            JdbcType jdbcType
-    ) throws SQLException {
-        ps.setString(i, parameter.format(DateTimeFormatter.ofPattern(
-                                CommonValues.DATE_TIME_FORMAT
-                        )
-                )
-        );
+    public void setNonNullParameter(PreparedStatement ps,
+                                    int i,
+                                    LocalDateTime parameter,
+                                    JdbcType jdbcType) throws SQLException {
+        ps.setString(i, parameter.format(
+                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
     }
 
     @Override
@@ -50,10 +45,8 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getNullableResult(
-            CallableStatement cs,
-            int columnIndex
-    ) throws SQLException {
+    public LocalDateTime getNullableResult(CallableStatement cs,
+                                           int columnIndex) throws SQLException {
         return toNullableLocalDateTime(cs.getTimestamp(columnIndex));
     }
 

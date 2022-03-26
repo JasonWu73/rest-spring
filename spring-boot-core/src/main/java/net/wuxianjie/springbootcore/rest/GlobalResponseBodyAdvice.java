@@ -27,27 +27,26 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(
-            @NonNull MethodParameter returnType,
-            @NonNull Class<? extends HttpMessageConverter<?>> converterType
-    ) {
+    public boolean supports(@NonNull MethodParameter returnType,
+                            @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(
-            Object body,
-            @NonNull MethodParameter returnType,
-            @NonNull MediaType selectedContentType,
-            @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-            @NonNull ServerHttpRequest request,
-            @NonNull ServerHttpResponse response
-    ) {
+    public Object beforeBodyWrite(Object body,
+                                  @NonNull MethodParameter returnType,
+                                  @NonNull MediaType selectedContentType,
+                                  @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  @NonNull ServerHttpRequest request,
+                                  @NonNull ServerHttpResponse response) {
+        if (body == null) {
+            return null;
+        }
+
         if (body instanceof String) {
             try {
                 return objectMapper.writeValueAsString(
-                        ApiResultWrapper.success(body)
-                );
+                        ApiResultWrapper.success(body));
             } catch (JsonProcessingException e) {
                 throw new InternalServerException("响应结果 JSON 序列化失败", e);
             }
@@ -56,8 +55,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof ApiResult
                 || body instanceof ResponseEntity
                 || body instanceof byte[]
-                || body instanceof ResourceRegion
-        ) {
+                || body instanceof ResourceRegion) {
             return body;
         }
 

@@ -19,21 +19,17 @@ class PagingSearchController {
     }
 
     private PagingResult<String> buildPagingResult(PagingQuery paging) {
-        ArrayList<String> allList = new ArrayList<>() {
-            {
-                add("One");
-                add("Two");
-                add("Three");
-                add("Four");
-                add("Five");
-            }
-        };
+        ArrayList<String> allList = new ArrayList<>() {{
+            add("One");
+            add("Two");
+            add("Three");
+            add("Four");
+            add("Five");
+        }};
 
-        return new PagingResult<>(paging, allList.size(),
-                allList.stream()
-                        .skip(paging.getOffset())
-                        .limit(paging.getPageSize())
-                        .collect(Collectors.toList())
-        );
+        return new PagingResult<>(paging, allList.size(), allList.stream()
+                .skip(paging.getOffset())
+                .limit(paging.getPageSize())
+                .collect(Collectors.toList()));
     }
 }

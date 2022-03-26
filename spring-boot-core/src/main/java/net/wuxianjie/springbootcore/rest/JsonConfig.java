@@ -50,36 +50,29 @@ public class JsonConfig {
                     new SimpleDateFormat(CommonValues.DATE_TIME_FORMAT);
 
             builder.serializers(
-                    new DateSerializer(false, dateFormat)
-            );
+                    new DateSerializer(false, dateFormat));
 
             // 设置 Java 8 LocalDate 序列化后的字符串格式
-            builder.serializers(
-                    new LocalDateSerializer(DateTimeFormatter
-                            .ofPattern(CommonValues.DATE_FORMAT)
-                    )
-            );
+            builder.serializers(new LocalDateSerializer(
+                    DateTimeFormatter.ofPattern(CommonValues.DATE_FORMAT)));
 
             // 设置 Java 8 LocalDateTime 序列化后的字符串格式
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter
                     .ofPattern(CommonValues.DATE_TIME_FORMAT);
 
-            builder.serializers(
-                    new LocalDateTimeSerializer(dateTimeFormatter)
-            );
+            builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
 
             // 在序列化时去除字符串值的首尾空格
             builder.serializerByType(String.class, new JsonSerializer<String>() {
 
-                        @Override
-                        public void serialize(String value,
-                                              JsonGenerator gen,
-                                              SerializerProvider serializers
-                        ) throws IOException {
-                            gen.writeString(StrUtil.trim(value));
-                        }
-                    }
-            );
+                @Override
+                public void serialize(String value,
+                                      JsonGenerator gen,
+                                      SerializerProvider serializers)
+                        throws IOException {
+                    gen.writeString(StrUtil.trim(value));
+                }
+            });
 
             // 在反序列化时去除字符串值的首尾空格
             builder.deserializerByType(String.class,
@@ -87,12 +80,11 @@ public class JsonConfig {
 
                         @Override
                         public String deserialize(JsonParser p,
-                                                  DeserializationContext ctxt
-                        ) throws IOException {
+                                                  DeserializationContext ctxt)
+                                throws IOException {
                             return StrUtil.trim(p.getValueAsString());
                         }
-                    }
-            );
+                    });
 
             // 设置 Java 8 LocalDateTime / LocalDate 反序列化
             builder.deserializerByType(LocalDateTime.class,
@@ -101,36 +93,31 @@ public class JsonConfig {
                         @Override
                         public LocalDateTime deserialize(
                                 JsonParser p,
-                                DeserializationContext ctxt
-                        ) throws IOException {
-                            return LocalDateTime.parse(p.getValueAsString(),
-                                    dateTimeFormatter
-                            );
+                                DeserializationContext ctxt) throws IOException {
+                            return LocalDateTime.parse(
+                                    p.getValueAsString(), dateTimeFormatter);
                         }
-                    }
-            );
+                    });
 
             // 设置 Date 反序列化
             builder.deserializerByType(Date.class, new JsonDeserializer<Date>() {
 
-                        @Override
-                        public Date deserialize(JsonParser p,
-                                                DeserializationContext ctxt
-                        ) throws IOException {
-                            String value = null;
+                @Override
+                public Date deserialize(JsonParser p,
+                                        DeserializationContext ctxt)
+                        throws IOException {
+                    String value = null;
 
-                            try {
-                                value = p.getValueAsString();
+                    try {
+                        value = p.getValueAsString();
 
-                                return dateFormat.parse(value);
-                            } catch (ParseException e) {
-                                throw new InvalidFormatException(p,
-                                        e.getMessage(), value, Date.class
-                                );
-                            }
-                        }
+                        return dateFormat.parse(value);
+                    } catch (ParseException e) {
+                        throw new InvalidFormatException(
+                                p, e.getMessage(), value, Date.class);
                     }
-            );
+                }
+            });
         };
     }
 }

@@ -8,8 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * @author 吴仙杰
  */
@@ -34,7 +32,7 @@ class TypeHandlerTest {
         user.setBirthday(null);
         user.setEnabled(YesOrNo.resolve(1).orElseThrow());
 
-        assertEquals(1, userMapper.insertUser(user));
+        Assertions.assertEquals(1, userMapper.insertUser(user));
     }
 
     @Test
@@ -45,20 +43,20 @@ class TypeHandlerTest {
         user.setUsername(NEW_USERNAME);
         user.setEnabled(YesOrNo.resolve(2).orElse(YesOrNo.NO));
 
-        assertEquals(1, userMapper.updateUser(user));
+        Assertions.assertEquals(1, userMapper.updateUser(user));
     }
 
     @Test
     @Order(3)
     void deleteOneUserShouldDeleteOneRow() {
-        assertEquals(1, userMapper.deleteUserByName(NEW_USERNAME));
+        Assertions.assertEquals(1, userMapper.deleteUserByName(NEW_USERNAME));
     }
 
     @Test
     void selectAllUsersShouldReturnAll() {
         List<User> userList = userMapper.selectAllUsers();
 
-        assertEquals(DATA_ROWS_IN_DB, userList.size());
+        Assertions.assertEquals(DATA_ROWS_IN_DB, userList.size());
 
         userList.forEach(System.out::println);
     }

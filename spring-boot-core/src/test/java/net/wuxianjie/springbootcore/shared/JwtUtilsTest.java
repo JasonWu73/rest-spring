@@ -2,22 +2,10 @@ package net.wuxianjie.springbootcore.shared;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static cn.hutool.json.JSONUtil.toJsonStr;
-import static net.wuxianjie.springbootcore.shared.JwtUtils.createJwt;
-import static net.wuxianjie.springbootcore.shared.JwtUtils.createSigningKey;
-import static net.wuxianjie.springbootcore.shared.JwtUtils.validateJwt;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author 吴仙杰
@@ -39,9 +27,9 @@ class JwtUtilsTest {
     @Test
     @Order(1)
     void createSecretKeyShouldNotReturnNull() {
-        secretKey = createSigningKey();
+        secretKey = JwtUtils.createSigningKey();
 
-        assertNotNull(secretKey);
+        Assertions.assertNotNull(secretKey);
 
         log.info("JWT 签名密钥：{}", secretKey);
     }
@@ -53,9 +41,9 @@ class JwtUtilsTest {
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
-        token = createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
+        token = JwtUtils.createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
-        assertNotNull(token);
+        Assertions.assertNotNull(token);
 
         log.info("生成 JWT：{}", token);
     }
@@ -63,47 +51,47 @@ class JwtUtilsTest {
     @Test
     @Order(3)
     void parseTokenShouldEqualsOriginalData() {
-        Map<String, Object> payload = validateJwt(secretKey, token);
+        Map<String, Object> payload = JwtUtils.validateJwt(secretKey, token);
 
         String username = (String) payload.get(USERNAME_KEY);
 
-        assertEquals(USERNAME_VALUE, username);
+        Assertions.assertEquals(USERNAME_VALUE, username);
 
         log.info("解析 JWT：\n{}",
-                toJsonStr(JSONUtil.parseObj(payload), 4)
+                JSONUtil.toJsonStr(JSONUtil.parseObj(payload), 4)
         );
     }
 
     @Test
     void whenMalformedJwtShouldThrowException() {
-        TokenAuthenticationException thrown = assertThrows(
+        TokenAuthenticationException thrown = Assertions.assertThrows(
                 TokenAuthenticationException.class,
-                () -> validateJwt(EXPIRED_JWT_SIGNING_KEY, "JSON Web Token")
+                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, "JSON Web Token")
         );
 
-        assertTrue(thrown.getMessage().contains("Token 格式错误"));
+        Assertions.assertTrue(thrown.getMessage().contains("Token 格式错误"));
     }
 
     @Test
     void whenWrongSignatureJwtShouldThrowException() {
-        TokenAuthenticationException thrown = assertThrows(
+        TokenAuthenticationException thrown = Assertions.assertThrows(
                 TokenAuthenticationException.class,
-                () -> validateJwt(
+                () -> JwtUtils.validateJwt(
                         "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=",
                         EXPIRED_JWT
                 )
         );
 
-        assertTrue(thrown.getMessage().contains("Token 签名错误"));
+        Assertions.assertTrue(thrown.getMessage().contains("Token 签名错误"));
     }
 
     @Test
     void whenExpiredJwtShouldThrowException() {
-        TokenAuthenticationException thrown = assertThrows(
+        TokenAuthenticationException thrown = Assertions.assertThrows(
                 TokenAuthenticationException.class,
-                () -> validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT)
+                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT)
         );
 
-        assertTrue(thrown.getMessage().contains("Token 已过期"));
+        Assertions.assertTrue(thrown.getMessage().contains("Token 已过期"));
     }
 }

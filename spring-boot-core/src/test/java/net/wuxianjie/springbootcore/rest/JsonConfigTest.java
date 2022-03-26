@@ -58,8 +58,7 @@ class JsonConfigTest {
         User user = buildUser();
 
         assertEquals(JSON_VALUE_NO_WHITE_CHARACTER,
-                jacksonTester.write(user).getJson()
-        );
+                jacksonTester.write(user).getJson());
     }
 
     @Test
@@ -76,29 +75,23 @@ class JsonConfigTest {
                 () -> assertEquals(userFromJson.createTime, user.createTime),
                 () -> assertEquals(userFromJson.birthday, user.birthday),
                 () -> assertEquals(userFromJson.modifyTime, user.modifyTime),
-                () -> assertEquals(userFromJson.enabled, user.enabled)
-        );
+                () -> assertEquals(userFromJson.enabled, user.enabled));
     }
 
     @Test
     void whenInvalidFormatDateDeserializeShouldThrowException() {
         assertThrows(InvalidFormatException.class,
-                () -> jacksonTester
-                        .parse(INVALID_DATE_STRING_JSON_VALUE));
+                () -> jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE));
     }
 
     private User buildUser() {
-        LocalDateTime createTime = LocalDateTime
-                .parse("2022-03-26 10:59:30",
-                        DateTimeFormatter
-                                .ofPattern(CommonValues.DATE_TIME_FORMAT)
-                );
+        LocalDateTime createTime = LocalDateTime.parse("2022-03-26 10:59:30",
+                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT));
 
         return new User(100, "\t\n吴仙杰 ", null,
                 createTime, LocalDate.parse("2022-03-26"),
                 Date.from(createTime.atZone(ZoneId.systemDefault()).toInstant()),
-                YesOrNo.YES
-        );
+                YesOrNo.YES);
     }
 
     @Data
