@@ -219,6 +219,34 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    void whenControllerThrowsBadRequestExceptionShouldReturn400HttpStatusWarnLog()
+            throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
+                        .param("type", "bad-request"))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().json("{" +
+                        "\"error\":1," +
+                        "\"errMsg\":\"客户端请求错误\"," +
+                        "\"data\":null" +
+                        "}"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    void whenControllerThrowsConflictExceptionShouldReturn409HttpStatusWarnLog()
+            throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
+                        .param("type", "conflict"))
+                .andExpect(MockMvcResultMatchers.status().isConflict())
+                .andExpect(MockMvcResultMatchers.content().json("{" +
+                        "\"error\":1," +
+                        "\"errMsg\":\"已存在相同数据\"," +
+                        "\"data\":null" +
+                        "}"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
     void whenControllerThrowsInternalExceptionShouldReturn500HttpStatusErrorLog()
             throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/internal-error"))

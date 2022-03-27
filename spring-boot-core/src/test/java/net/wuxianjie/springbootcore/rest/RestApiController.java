@@ -2,6 +2,8 @@ package net.wuxianjie.springbootcore.rest;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.Data;
+import net.wuxianjie.springbootcore.shared.BadRequestException;
+import net.wuxianjie.springbootcore.shared.ConflictException;
 import net.wuxianjie.springbootcore.shared.InternalException;
 import net.wuxianjie.springbootcore.shared.NotFoundException;
 import org.springframework.http.MediaType;
@@ -58,6 +60,14 @@ class RestApiController {
     String getNotFound(String type) {
         if (StrUtil.equals(type, "not-found")) {
             throw new NotFoundException("未找到指定的数据");
+        }
+
+        if (StrUtil.equals(type, "bad-request")) {
+            throw new BadRequestException("客户端请求错误");
+        }
+
+        if (StrUtil.equals(type, "conflict")) {
+            throw new ConflictException("已存在相同数据");
         }
 
         if (StrUtil.equals(type, "db")) {

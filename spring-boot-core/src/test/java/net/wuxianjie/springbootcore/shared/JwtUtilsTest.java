@@ -2,7 +2,11 @@ package net.wuxianjie.springbootcore.shared;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,16 +62,14 @@ class JwtUtilsTest {
         Assertions.assertEquals(USERNAME_VALUE, username);
 
         log.info("解析 JWT：\n{}",
-                JSONUtil.toJsonStr(JSONUtil.parseObj(payload), 4)
-        );
+                JSONUtil.toJsonStr(JSONUtil.parseObj(payload), 4));
     }
 
     @Test
     void whenMalformedJwtShouldThrowException() {
         TokenAuthenticationException thrown = Assertions.assertThrows(
                 TokenAuthenticationException.class,
-                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, "JSON Web Token")
-        );
+                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, "token"));
 
         Assertions.assertTrue(thrown.getMessage().contains("Token 格式错误"));
     }
@@ -78,9 +80,7 @@ class JwtUtilsTest {
                 TokenAuthenticationException.class,
                 () -> JwtUtils.validateJwt(
                         "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=",
-                        EXPIRED_JWT
-                )
-        );
+                        EXPIRED_JWT));
 
         Assertions.assertTrue(thrown.getMessage().contains("Token 签名错误"));
     }
@@ -89,8 +89,7 @@ class JwtUtilsTest {
     void whenExpiredJwtShouldThrowException() {
         TokenAuthenticationException thrown = Assertions.assertThrows(
                 TokenAuthenticationException.class,
-                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT)
-        );
+                () -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT));
 
         Assertions.assertTrue(thrown.getMessage().contains("Token 已过期"));
     }
