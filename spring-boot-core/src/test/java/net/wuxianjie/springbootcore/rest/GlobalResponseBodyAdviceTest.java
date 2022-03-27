@@ -20,11 +20,26 @@ class GlobalResponseBodyAdviceTest {
     private MockMvc mockMvc;
 
     @Test
-    void whenNullShouldReturnNull() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/result/null"))
+    void whenVoidShouldReturnJson() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/void"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers
-                        .jsonPath("$").doesNotExist())
+                .andExpect(MockMvcResultMatchers.content().json("{" +
+                        "\"error\":0," +
+                        "\"errMsg\":null," +
+                        "\"data\":null" +
+                        "}"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    void whenNullShouldReturn500HttpStatus() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/result/null"))
+                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.content().json("{" +
+                        "\"error\":1," +
+                        "\"errMsg\":\"服务异常\"," +
+                        "\"data\":null" +
+                        "}"))
                 .andDo(MockMvcResultHandlers.print());
     }
 

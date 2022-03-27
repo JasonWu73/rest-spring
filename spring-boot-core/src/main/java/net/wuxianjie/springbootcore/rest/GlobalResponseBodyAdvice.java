@@ -39,10 +39,6 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                                   @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   @NonNull ServerHttpRequest request,
                                   @NonNull ServerHttpResponse response) {
-        if (body == null) {
-            return null;
-        }
-
         if (body instanceof String) {
             try {
                 return objectMapper.writeValueAsString(

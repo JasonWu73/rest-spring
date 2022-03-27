@@ -103,6 +103,10 @@ class RestApiController {
         return "Hello World";
     }
 
+    @GetMapping("/void")
+    void nothing() {
+    }
+
     @Data
     static class User {
 
