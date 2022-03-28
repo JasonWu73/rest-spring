@@ -23,10 +23,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-@RequiredArgsConstructor
 @Slf4j
+@EnableWebSecurity
+@RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
@@ -55,14 +55,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String[] antPatterns = Optional.ofNullable(
-                        StrUtil.trim(
-                                securityConfigData.getPermitAllAntPatterns()
-                        )
+                        StrUtil.trim(securityConfigData.getPermitAllAntPatterns())
                 )
                 .map(commaSeparatedPattern ->
-                        StrSplitter.splitToArray(commaSeparatedPattern,
-                                ',', 0,
-                                true, true
+                        StrSplitter.splitToArray(
+                                commaSeparatedPattern,
+                                ',',
+                                0,
+                                true,
+                                true
                         )
                 )
                 .orElse(new String[]{});
@@ -80,19 +81,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 // 401
                 .authenticationEntryPoint((request, response, authException) -> {
-                            String messageToResponse = "Token 认证失败";
+                            String msg = "Token 认证失败";
 
-                            log.warn("{}：{}", messageToResponse,
-                                    authException.getMessage()
-                            );
+                            log.warn("{}：{}", msg, authException.getMessage());
 
-                            response.setContentType(
-                                    CommonValues.APPLICATION_JSON_UTF8_VALUE
-                            );
+                            response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                             response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
                             String json = objectMapper.writeValueAsString(
-                                    ApiResultWrapper.fail(messageToResponse)
+                                    ApiResultWrapper.fail(msg)
                             );
 
                             response.getWriter().write(json);
@@ -101,19 +98,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 403
                 // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
                 .accessDeniedHandler((request, response, deniedException) -> {
-                            String messageToResponse = "Token 未授权";
+                            String msg = "Token 未授权";
 
-                            log.warn("{}：{}", messageToResponse,
-                                    deniedException.getMessage()
-                            );
+                            log.warn("{}：{}", msg, deniedException.getMessage());
 
-                            response.setContentType(
-                                    CommonValues.APPLICATION_JSON_UTF8_VALUE
-                            );
+                            response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                             response.setStatus(HttpStatus.FORBIDDEN.value());
 
                             String json = objectMapper.writeValueAsString(
-                                    ApiResultWrapper.fail(messageToResponse)
+                                    ApiResultWrapper.fail(msg)
                             );
 
                             response.getWriter().write(json);
@@ -134,7 +127,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .and()
                 // 添加 Token 认证过滤器
-                .addFilterBefore(authenticationFilter,
+                .addFilterBefore(
+                        authenticationFilter,
                         UsernamePasswordAuthenticationFilter.class
                 );
     }

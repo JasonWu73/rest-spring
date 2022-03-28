@@ -31,7 +31,8 @@ public class TokenController {
     public TokenData getToken(@RequestBody @Validated GetTokenQuery query)
             throws TokenAuthenticationException {
         return tokenService.getToken(
-                query.getAccountName(), query.getAccountPassword()
+                query.getAccountName(),
+                query.getRawPassword()
         );
     }
 
@@ -54,8 +55,8 @@ public class TokenController {
         /**
          * 账号名。
          */
-        @NotBlank(message = "账号名不能为空")
-        @Length(message = "账号名最长不能超过 100 个字符", max = 100)
+        @NotBlank(message = "账号不能为空")
+        @Length(message = "账号最长不能超过 100 个字符", max = 100)
         private String accountName;
 
         /**
@@ -63,6 +64,6 @@ public class TokenController {
          */
         @NotBlank(message = "密码不能为空")
         @Length(message = "密码最长不能超过 100 个字符", max = 100)
-        private String accountPassword;
+        private String rawPassword;
     }
 }

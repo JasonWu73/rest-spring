@@ -1,6 +1,5 @@
 package net.wuxianjie.springbootcore.security;
 
-import cn.hutool.core.util.EnumUtil;
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
-import javax.swing.text.html.Option;
 import java.util.Optional;
 
 /**
@@ -16,10 +14,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@RequiredArgsConstructor
 @Getter
-@Accessors(fluent = true)
 @ToString
+@Accessors(fluent = true)
+@RequiredArgsConstructor
 public enum Role {
 
     USER("user"),
@@ -45,7 +43,7 @@ public enum Role {
         return Optional.ofNullable(value)
                 .map(v -> {
                             for (Role role : VALUES) {
-                                if (StrUtil.equals(value, role.value)) {
+                                if (StrUtil.equals(v, role.value)) {
                                     return role;
                                 }
                             }

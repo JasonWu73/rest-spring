@@ -46,9 +46,7 @@ public class SecurityConfig {
         permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
 
         if (jwtSigningKey == null) {
-            throw new IllegalArgumentException(
-                    "core.security.jwt-signing-key 不能为空"
-            );
+            throw new IllegalArgumentException("core.security.jwt-signing-key 不能为空");
         }
 
         return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);

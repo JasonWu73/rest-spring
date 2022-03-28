@@ -20,13 +20,9 @@ public class AuthenticationFacade {
      * @return 认证后的 Token 详细数据。
      */
     public Optional<TokenDetails> getLoggedIn() {
-        return Optional.ofNullable(
-                        SecurityContextHolder.getContext().getAuthentication()
-                )
+        return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(authentication -> {
-                            if (authentication
-                                    instanceof AnonymousAuthenticationToken
-                            ) {
+                            if (authentication instanceof AnonymousAuthenticationToken) {
                                 // 匿名用户可访问的接口，则返回空
                                 // authentication.getName() 为 anonymous
                                 return null;

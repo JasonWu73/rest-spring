@@ -32,9 +32,9 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     /**
@@ -75,38 +75,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.clearContext();
 
-            sendToResponse(response, e.getMessage(),
+            sendToResponse(
+                    response,
+                    e.getMessage(),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
             return;
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private void sendToResponse(
-            HttpServletResponse response,
-            String message,
-            HttpStatus httpStatus
-    ) throws IOException {
-        response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
-        response.setStatus(httpStatus.value());
-
-        response.getWriter().write(
-                objectMapper.writeValueAsString(ApiResultWrapper.fail(message))
-        );
-    }
-
-    private void loginToSpringSecurityContext(TokenDetails tokenDetails) {
-        List<GrantedAuthority> authorityList =
-                getAuthorities(tokenDetails.getRoles());
-
-        UsernamePasswordAuthenticationToken token =
-                new UsernamePasswordAuthenticationToken(
-                        tokenDetails, null, authorityList
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(token);
     }
 
     private List<GrantedAuthority> getAuthorities(String roleStr) {
@@ -144,17 +121,25 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 .map(bearer -> {
                             String token = null;
 
-                            if (StrUtil.startWith(bearer,
-                                    AUTHORIZATION_BEARER_PREFIX
-                            )) {
-                                token = StrUtil.subAfter(bearer,
+                            if (
+                                    StrUtil.startWith(
+                                            bearer,
+                                            AUTHORIZATION_BEARER_PREFIX
+                                    )
+                            ) {
+                                token = StrUtil.subAfter(
+                                        bearer,
                                         AUTHORIZATION_BEARER_PREFIX,
                                         false
                                 );
-                            } else if (StrUtil.startWith(bearer,
-                                    AUTHORIZATION_BEARER_PREFIX.toLowerCase()
-                            )) {
-                                token = StrUtil.subAfter(bearer,
+                            } else if (
+                                    StrUtil.startWith(
+                                            bearer,
+                                            AUTHORIZATION_BEARER_PREFIX.toLowerCase()
+                                    )
+                            ) {
+                                token = StrUtil.subAfter(
+                                        bearer,
                                         AUTHORIZATION_BEARER_PREFIX.toLowerCase(),
                                         false
                                 );
@@ -163,5 +148,30 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                             return StrUtil.isEmpty(token) ? null : token;
                         }
                 );
+    }
+
+    private void loginToSpringSecurityContext(TokenDetails tokenDetails) {
+        List<GrantedAuthority> authorityList = getAuthorities(tokenDetails.getRoles());
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                tokenDetails,
+                null,
+                authorityList
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(token);
+    }
+
+    private void sendToResponse(
+            HttpServletResponse response,
+            String message,
+            HttpStatus httpStatus
+    ) throws IOException {
+        response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+        response.setStatus(httpStatus.value());
+
+        response.getWriter().write(
+                objectMapper.writeValueAsString(ApiResultWrapper.fail(message))
+        );
     }
 }
