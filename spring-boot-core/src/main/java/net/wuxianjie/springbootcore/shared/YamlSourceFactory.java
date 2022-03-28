@@ -23,9 +23,10 @@ public class YamlSourceFactory implements PropertySourceFactory {
 
     @NonNull
     @Override
-    public PropertySource<?> createPropertySource(String name,
-                                                  EncodedResource resource)
-            throws InternalException {
+    public PropertySource<?> createPropertySource(
+            String name,
+            EncodedResource resource
+    ) throws InternalException {
         YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
 
         Resource heldResource = resource.getResource();

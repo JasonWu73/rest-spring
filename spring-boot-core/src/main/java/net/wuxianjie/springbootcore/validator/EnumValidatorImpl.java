@@ -31,29 +31,37 @@ public class EnumValidatorImpl
 
         Optional.of(enumClass.getEnumConstants())
                 .ifPresent(enums -> {
-                    for (Enum<?> anEnum : enums) {
-                        try {
-                            Method method = anEnum.getClass()
-                                    .getDeclaredMethod("value");
+                            for (Enum<?> anEnum : enums) {
+                                try {
+                                    Method method = anEnum
+                                            .getClass()
+                                            .getDeclaredMethod("value");
 
-                            method.setAccessible(true);
+                                    method.setAccessible(true);
 
-                            values.add(method.invoke(anEnum));
-                        } catch (NoSuchMethodException e) {
-                            log.warn("{} 不存在 value() 方法，故无法校验枚举值",
-                                    className);
+                                    values.add(method.invoke(anEnum));
+                                } catch (NoSuchMethodException e) {
+                                    log.warn(
+                                            "{} 不存在 value() 方法，故无法校验枚举值",
+                                            className
+                                    );
 
-                            isPassed = true;
-                            break;
-                        } catch (InvocationTargetException | IllegalAccessException e) {
-                            log.warn("无法执行 {}.value() 方法，故无法校验枚举值",
-                                    className);
+                                    isPassed = true;
+                                    break;
+                                } catch (InvocationTargetException
+                                        | IllegalAccessException e
+                                ) {
+                                    log.warn(
+                                            "无法执行 {}.value() 方法，故无法校验枚举值",
+                                            className
+                                    );
 
-                            isPassed = true;
-                            break;
+                                    isPassed = true;
+                                    break;
+                                }
+                            }
                         }
-                    }
-                });
+                );
     }
 
     @Override
