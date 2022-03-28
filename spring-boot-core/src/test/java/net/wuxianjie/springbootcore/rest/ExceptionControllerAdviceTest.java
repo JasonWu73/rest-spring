@@ -129,8 +129,9 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> {
                             String body = result.getResponse().getContentAsString();
 
-                            assertThat(body).contains("用户 ID 不能为 null");
-                            assertThat(body).contains("用户名不能为空");
+                            assertThat(body)
+                                    .contains("用户 ID 不能为 null")
+                                    .contains("用户名不能为空");
                         }
                 );
     }
@@ -143,8 +144,9 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> {
                             String body = result.getResponse().getContentAsString();
 
-                            assertThat(body).contains("用户 ID 不能为 null");
-                            assertThat(body).contains("用户名不能为空");
+                            assertThat(body)
+                                    .contains("用户 ID 不能为 null")
+                                    .contains("用户名不能为空");
                         }
                 );
     }

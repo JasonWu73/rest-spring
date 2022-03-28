@@ -52,7 +52,7 @@ public class EnumValidatorImpl
                                         | IllegalAccessException e
                                 ) {
                                     log.warn(
-                                            "无法执行 {}.value() 方法，故无法校验枚举值",
+                                            "{}.value() 方法执行出错，故无法校验枚举值",
                                             className
                                     );
 

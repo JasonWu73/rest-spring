@@ -3,7 +3,7 @@ package net.wuxianjie.springbootcore.validator;
 /**
  * @author 吴仙杰
  */
-enum Type2 {
+enum TypeErrorValueMethod {
 
     GOOGLE,
     YOUTUBE;

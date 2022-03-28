@@ -9,54 +9,56 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
  * @author 吴仙杰
  */
+@Validated
 @RestController
 @RequestMapping("/param")
 class ParamController {
 
-    @GetMapping("/save")
+    @GetMapping("enum")
+    void test(
+            @EnumValidator(message = "状态值错误", value = YesOrNo.class)
+                    Integer enabled
+    ) {
+    }
+
+    @GetMapping("enum-2")
+    void test2(
+            @EnumValidator(message = "类型值错误", value = TypeNoValueMethod.class)
+                    String type
+    ) {
+    }
+
+    @GetMapping("enum-3")
+    void test3(
+            @EnumValidator(message = "类型值错误", value = TypeErrorValueMethod.class)
+                    String type
+    ) {
+    }
+
+    @GetMapping("save")
     void save(@Validated(Save.class) Param param) {
     }
 
-    @GetMapping("/update")
+    @GetMapping("update")
     void update(@Validated(Update.class) Param param) {
-    }
-
-    @GetMapping("/wrong")
-    void wrong(@Valid WrongParam param) {
-    }
-
-    @GetMapping("/wrong-2")
-    void wrong2(@Valid WrongParam2 param) {
-    }
-
-    @Data
-    static class WrongParam2 {
-
-        @EnumValidator(message = "HTTP 状态码错误", value = Type2.class)
-        private String type;
-    }
-
-    @Data
-    static class WrongParam {
-
-        @EnumValidator(message = "HTTP 状态码错误", value = Type.class)
-        private String type;
     }
 
     @Data
     static class Param {
 
         @NotNull(message = "启用状态不能为 null", groups = Save.class)
-        @EnumValidator(message = "启用状态错误", value = YesOrNo.class)
         private Integer enabled;
 
         @NotNull(message = "ID 不能为 null", groups = Update.class)
         private Integer id;
+
+        @NotBlank(message = "名称不能为空")
+        private String name;
     }
 }
