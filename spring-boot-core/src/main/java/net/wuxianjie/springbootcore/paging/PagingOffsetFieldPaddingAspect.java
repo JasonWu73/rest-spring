@@ -20,8 +20,12 @@ import java.util.Optional;
 public class PagingOffsetFieldPaddingAspect {
 
     // execution([方法的可见性] 返回类型 [方法所在类的全路径名].方法名(参数类型列表) [方法抛出的异常类型])
-    @Pointcut("execution(public net.wuxianjie.springbootcore.paging.PagingResult " +
-            "*..*Controller.*(net.wuxianjie.springbootcore.paging.PagingQuery, ..))")
+    @Pointcut("execution" +
+            "(" +
+            "public net.wuxianjie.springbootcore.paging.PagingResult " +
+            "*..*Controller.*(net.wuxianjie.springbootcore.paging.PagingQuery, ..)" +
+            ")"
+    )
     public void getByPaging() {
     }
 

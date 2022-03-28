@@ -1,5 +1,6 @@
 package net.wuxianjie.springbootcore.paging;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,86 +8,44 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(controllers = PagingSearchController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
-@Import({AnnotationAwareAspectJAutoProxyCreator.class,
-        PagingOffsetFieldPaddingAspect.class})
+@Import(
+        {
+                AnnotationAwareAspectJAutoProxyCreator.class,
+                PagingOffsetFieldPaddingAspect.class
+        }
+)
+@WebMvcTest(
+        controllers = PagingSearchController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class PagingOffsetFieldPaddingAspectTest {
-
-    private static final String PAGE_ONE_RESULT = "{" +
-            "\"pageNo\":1," +
-            "\"pageSize\":2," +
-            "\"total\":5," +
-            "\"list\":[\"One\",\"Two\"]" +
-            "}";
-
-
-    private static final String PAGE_TWO_RESULT = "{" +
-            "\"pageNo\":2," +
-            "\"pageSize\":2," +
-            "\"total\":5," +
-            "\"list\":[\"Three\",\"Four\"]" +
-            "}";
 
     @Autowired
     private MockMvc mockMvc;
 
+    @DisplayName("获取第二页数据")
     @Test
-    void getPageOneShouldReturnPageOneResult() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
-                        .param("pageNo", "1")
-                        .param("pageSize", "2"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(PAGE_ONE_RESULT))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void getPageTwoDataShouldReturnPageTwoResult() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
+    void canGetSecondPageData() throws Exception {
+        mockMvc.perform(get("/paging")
                         .param("pageNo", "2")
-                        .param("pageSize", "2"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(PAGE_TWO_RESULT));
-    }
-
-    @Test
-    void whenPageNoNullShouldReturn400HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
-                        .param("pageNo", (String) null)
-                        .param("pageSize", "2"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenPageNoLessThanOneShouldReturn400HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
-                        .param("pageNo", "0")
-                        .param("pageSize", "2"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @Test
-    void whenPageSizeNullShouldReturn400HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
-                        .param("pageNo", "1")
-                        .param("pageSize", (String) null))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @Test
-    void whenPageSizeLessThanOneShouldReturn400HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/paging")
-                        .param("pageNo", "1")
-                        .param("pageSize", "0"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                        .param("pageSize", "2")
+                )
+                .andExpect(status().isOk())
+                .andExpect(content().json(
+                        "{" +
+                                "\"pageNo\":2," +
+                                "\"pageSize\":2," +
+                                "\"total\":5," +
+                                "\"list\":[\"Three\",\"Four\"]" +
+                                "}")
+                );
     }
 }
