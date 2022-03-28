@@ -32,13 +32,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * 获取 Access Token 的请求路径。
      */
-    public static final String ACCESS_TOKEN_PATH = "/api/v1/access_token";
+    public static final String ACCESS_TOKEN_PATH = "/api/v1/access-token";
 
     /**
      * 刷新 Access Token 的请求路径前缀，并不包含 URL 路径参数。
      */
     public static final String REFRESH_TOKEN_PATH_PREFIX =
-            "/api/v1/refresh_token";
+            "/api/v1/refresh-token";
 
     private static final String FAVICON_PATH = "/favicon.ico";
 

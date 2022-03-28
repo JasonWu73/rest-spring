@@ -32,7 +32,7 @@ public class TokenController {
             throws TokenAuthenticationException {
         return tokenService.getToken(
                 query.getAccountName(),
-                query.getRawPassword()
+                query.getAccountPassword()
         );
     }
 
@@ -64,6 +64,6 @@ public class TokenController {
          */
         @NotBlank(message = "密码不能为空")
         @Length(message = "密码最长不能超过 100 个字符", max = 100)
-        private String rawPassword;
+        private String accountPassword;
     }
 }

@@ -7,6 +7,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author 吴仙杰
+ */
 class RoleTest {
 
     @Test

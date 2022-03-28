@@ -78,7 +78,7 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("当 Token 格式错误")
+    @DisplayName("Token 格式错误")
     void willThrowExceptionWhenMalformedJwt() {
         assertThatExceptionOfType(TokenAuthenticationException.class)
                 .isThrownBy(() ->
@@ -91,7 +91,7 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("当 Token 签名密钥改变")
+    @DisplayName("Token 签名密钥不匹配")
     void willThrowExceptionWhenSigningKeyChanged() {
         assertThatExceptionOfType(TokenAuthenticationException.class)
                 .isThrownBy(() ->
@@ -104,7 +104,7 @@ class JwtUtilsTest {
     }
 
     @Test
-    @DisplayName("当 Token 已过期")
+    @DisplayName("Token 已过期")
     void willThrowExceptionWhenExpiredJwt() {
         assertThatExceptionOfType(TokenAuthenticationException.class)
                 .isThrownBy(() ->

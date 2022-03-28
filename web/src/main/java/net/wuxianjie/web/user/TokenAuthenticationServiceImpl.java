@@ -19,8 +19,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class TokenAuthenticationServiceImpl
-        implements TokenAuthenticationService {
+public class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
     private final Cache<String, TokenUserDetails> tokenCache;
     private final SecurityConfigData securityConfig;
