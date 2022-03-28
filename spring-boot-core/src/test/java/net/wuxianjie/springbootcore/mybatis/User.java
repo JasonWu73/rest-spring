@@ -1,6 +1,8 @@
 package net.wuxianjie.springbootcore.mybatis;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -8,12 +10,14 @@ import java.time.LocalDateTime;
 /**
  * @author 吴仙杰
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 class User {
 
     private Integer userId;
-    private LocalDateTime createTime;
     private String username;
-    private LocalDate birthday;
     private YesOrNo enabled;
+    private LocalDateTime createTime;
+    private LocalDate birthday;
 }

@@ -4,11 +4,7 @@ import net.wuxianjie.springbootcore.shared.CommonValues;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
-import java.sql.CallableStatement;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -24,10 +20,12 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps,
-                                    int i,
-                                    LocalDateTime parameter,
-                                    JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(
+            PreparedStatement ps,
+            int i,
+            LocalDateTime parameter,
+            JdbcType jdbcType
+    ) throws SQLException {
         ps.setString(i, parameter.format(
                 DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
     }
@@ -45,8 +43,10 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime getNullableResult(CallableStatement cs,
-                                           int columnIndex) throws SQLException {
+    public LocalDateTime getNullableResult(
+            CallableStatement cs,
+            int columnIndex
+    ) throws SQLException {
         return toNullableLocalDateTime(cs.getTimestamp(columnIndex));
     }
 

@@ -13,10 +13,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@RequiredArgsConstructor
-@Getter
-@Accessors(fluent = true)
 @ToString
+@Accessors(fluent = true)
+@Getter
+@RequiredArgsConstructor
 public enum YesOrNo implements ValueEnum {
 
     /**

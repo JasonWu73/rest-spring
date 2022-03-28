@@ -1,8 +1,11 @@
 package net.wuxianjie.springbootcore.mybatis;
 
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author 吴仙杰
@@ -10,22 +13,16 @@ import java.util.List;
 @Mapper
 interface UserMapper {
 
-    @Select("SELECT user_id AS userId, " +
-            "create_time AS createTime, " +
-            "username, " +
-            "birthday, " +
-            "is_enabled AS enabled " +
-            "FROM users")
-    List<User> selectAllUsers();
+    @Select("SELECT birthday FROM users WHERE username = #{username}")
+    LocalDate selectBirthdayByUsername(String username);
+
+    @Select("SELECT create_time FROM users WHERE username = #{username}")
+    LocalDateTime selectCreateTimeByUsername(String username);
+
+    @Select("SELECT is_enabled FROM users WHERE username = #{username}")
+    YesOrNo selectEnabledByUsername(String username);
 
     @Insert("INSERT INTO users (create_time, username, birthday, is_enabled) " +
             "VALUES (#{createTime}, #{username}, #{birthday}, #{enabled})")
-    int insertUser(User user);
-
-    @Update("UPDATE users SET is_enabled = #{enabled} " +
-            "WHERE username = #{username}")
-    int updateUser(User user);
-
-    @Delete("DELETE FROM users WHERE username =#{username}")
-    int deleteUserByName(String newUsername);
+    void insertUser(User user);
 }
