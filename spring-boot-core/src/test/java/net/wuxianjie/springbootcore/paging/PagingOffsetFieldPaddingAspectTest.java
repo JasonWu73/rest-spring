@@ -16,23 +16,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
+@WebMvcTest(
+        controllers = PagingSearchController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 @Import(
         {
                 AnnotationAwareAspectJAutoProxyCreator.class,
                 PagingOffsetFieldPaddingAspect.class
         }
 )
-@WebMvcTest(
-        controllers = PagingSearchController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
 class PagingOffsetFieldPaddingAspectTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @DisplayName("获取第二页数据")
     @Test
+    @DisplayName("获取第二页数据")
     void canGetSecondPageData() throws Exception {
         mockMvc.perform(get("/paging")
                         .param("pageNo", "2")
@@ -40,12 +40,13 @@ class PagingOffsetFieldPaddingAspectTest {
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json(
-                        "{" +
-                                "\"pageNo\":2," +
-                                "\"pageSize\":2," +
-                                "\"total\":5," +
-                                "\"list\":[\"Three\",\"Four\"]" +
-                                "}")
+                                "{" +
+                                        "\"pageNo\":2," +
+                                        "\"pageSize\":2," +
+                                        "\"total\":5," +
+                                        "\"list\":[\"Three\",\"Four\"]" +
+                                        "}"
+                        )
                 );
     }
 }

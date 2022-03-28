@@ -11,15 +11,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author 吴仙杰
  */
-@ActiveProfiles("mybatis")
 @MybatisTest
+@ActiveProfiles("mybatis")
 class EnumTypeHandlerTest {
 
     @Autowired
     private UserMapper underTest;
 
-    @DisplayName("插入枚举字段值")
     @Test
+    @DisplayName("插入枚举字段值")
     void itShouldCheckWhenInsertEnumField() {
         // given
         String username = "测试用户";
@@ -41,8 +41,8 @@ class EnumTypeHandlerTest {
         assertThat(actual).isEqualTo(yes);
     }
 
-    @DisplayName("插入枚举字段 null 值")
     @Test
+    @DisplayName("插入枚举字段 null 值")
     void itShouldCheckWhenInsertNullEnumField() {
         // given
         String username = "测试用户";

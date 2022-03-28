@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class YesOrNoTest {
 
-    @DisplayName("可识别数值为 YesOrNo 枚举")
     @Test
+    @DisplayName("可识别数值为 YesOrNo 枚举")
     void itShouldCheckWhenCanResolve() {
         // given
         int value = 1;
@@ -25,8 +25,8 @@ class YesOrNoTest {
         assertThat(actual).isEqualTo(Optional.of(YesOrNo.YES));
     }
 
-    @DisplayName("不可识别数值为 YesOrNo 枚举")
     @Test
+    @DisplayName("不可识别数值为 YesOrNo 枚举")
     void itShouldCheckWhenCanNotResolve() {
         // given
         int value = 2;

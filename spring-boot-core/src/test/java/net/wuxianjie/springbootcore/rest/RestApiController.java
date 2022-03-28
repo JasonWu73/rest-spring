@@ -11,7 +11,6 @@ import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -20,18 +19,13 @@ import java.sql.SQLException;
 /**
  * @author 吴仙杰
  */
-@RestController
 @Validated
+@RestController
 class RestApiController {
 
     @GetMapping(value = "/html", produces = MediaType.TEXT_HTML_VALUE)
     String getHtml() {
         return "<h1>Hello World</h1>";
-    }
-
-    @GetMapping(value = "/header", headers = {"dev=吴仙杰"})
-    String getHeader(HttpServletRequest request) {
-        return request.getHeader("dev");
     }
 
     @PostMapping(value = "/body")
@@ -40,29 +34,33 @@ class RestApiController {
     }
 
     @GetMapping("/required")
-    String getRequiredParameter(@RequestParam("name") String username,
-                                @RequestParam("userId") Integer userId) {
+    String getRequiredParameter(
+            @RequestParam("name") String username,
+            @RequestParam("userId") Integer userId
+    ) {
         return username + ": " + userId;
     }
 
     @GetMapping("/validated")
-    String getValidateParameter(@NotBlank(message = "用户名不能为空") String username,
-                                @NotNull(message = "用户 ID 不能为 null") Integer userId) {
+    String getValidateParam(
+            @NotBlank(message = "用户名不能为空") String username,
+            @NotNull(message = "用户 ID 不能为 null") Integer userId
+    ) {
         return username + ": " + userId;
     }
 
     @GetMapping("/valid")
-    String getValidParameter(@Valid User user) {
+    String getValidParam(@Valid User user) {
         return user.getUsername() + ": " + user.getUserId();
     }
 
     @GetMapping("/exception")
-    String getNotFound(String type) {
-        if (StrUtil.equals(type, "not-found")) {
+    String getException(String type) {
+        if (StrUtil.equals(type, "not_found")) {
             throw new NotFoundException("未找到指定的数据");
         }
 
-        if (StrUtil.equals(type, "bad-request")) {
+        if (StrUtil.equals(type, "bad_request")) {
             throw new BadRequestException("客户端请求错误");
         }
 
@@ -70,28 +68,27 @@ class RestApiController {
             throw new ConflictException("已存在相同数据");
         }
 
+        if (StrUtil.equals(type, "internal")) {
+            try {
+                return errorMath() + "";
+            } catch (Exception e) {
+                throw new InternalException("服务内部异常", e);
+            }
+        }
+
         if (StrUtil.equals(type, "db")) {
-            throw new UncategorizedSQLException("查询语句",
-                    "SELECT field FROM table", new SQLException());
+            throw new UncategorizedSQLException(
+                    "查询语句",
+                    "SELECT field FROM table",
+                    new SQLException()
+            );
         }
 
         return errorMath() + "";
     }
 
-    @GetMapping("/internal-error")
-    String getInternalError() {
-        try {
-            return errorMath() + "";
-        } catch (Exception e) {
-            throw new InternalException("服务内部异常", e);
-        }
-    }
-
-    private double errorMath() {
-        @SuppressWarnings({"divzero", "NumericOverflow", "IntegerDivisionInFloatingPointContext"})
-        double i = 1 / 0;
-
-        return i;
+    @GetMapping("/void")
+    void nothing() {
     }
 
     @GetMapping("/result/{type}")
@@ -103,10 +100,6 @@ class RestApiController {
         return "Hello World";
     }
 
-    @GetMapping("/void")
-    void nothing() {
-    }
-
     @Data
     static class User {
 
@@ -115,5 +108,9 @@ class RestApiController {
 
         @NotBlank(message = "用户名不能为空")
         private String username;
+    }
+
+    private double errorMath() {
+        return 1 / 0;
     }
 }

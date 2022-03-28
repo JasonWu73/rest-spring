@@ -1,7 +1,7 @@
 package net.wuxianjie.springbootcore.rest;
 
 import net.wuxianjie.springbootcore.shared.CommonValues;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -9,279 +9,243 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(controllers = RestApiController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(
+        controllers = RestApiController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class ExceptionControllerAdviceTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    void whenAcceptHttpRequestHeaderNotSupportedButAcceptJsonShouldReturn406HttpStatusAndJsonBody()
+    @DisplayName("请求头 Accept 包含 JSON 但不包含目标 API 返回的 MIME 类型")
+    void itShouldCheckWhenAcceptRequestHeaderContainJsonButApiNotSupported()
             throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/html")
-                        .accept(MediaType.APPLICATION_JSON, MediaType.IMAGE_JPEG))
-                .andExpect(MockMvcResultMatchers.status().isNotAcceptable())
-                .andExpect(MockMvcResultMatchers.header()
-                        .string(HttpHeaders.CONTENT_TYPE,
-                                CommonValues.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, image/jpeg]\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+        mockMvc.perform(get("/html")
+                        .accept(
+                                MediaType.APPLICATION_JSON,
+                                MediaType.APPLICATION_XML
+                        )
+                )
+                .andExpect(status().isNotAcceptable())
+                .andExpect(header().string(
+                                HttpHeaders.CONTENT_TYPE,
+                                CommonValues.APPLICATION_JSON_UTF8_VALUE
+                        )
+                )
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, application/xml]\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenAcceptHttpRequestHeaderNotSupportedAndNotAcceptJsonShouldReturn406HttpStatusAndNoBody()
+    @DisplayName("请求头 Accept 既不包含 JSON 也不包含目标 API 返回的 MIME 类型")
+    void itShouldCheckWhenAcceptRequestHeaderNotContainJsonAndApiNotSupported()
             throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/html")
-                        .accept(MediaType.IMAGE_JPEG))
-                .andExpect(MockMvcResultMatchers.status().isNotAcceptable())
-                .andExpect(MockMvcResultMatchers.header()
-                        .doesNotExist(HttpHeaders.CONTENT_TYPE))
-                .andExpect(result -> Assertions.assertTrue(
-                        result.getResponse().getContentAsString().isEmpty()))
-                .andDo(MockMvcResultHandlers.print());
+        mockMvc.perform(get("/html")
+                        .accept(MediaType.APPLICATION_XML)
+                )
+                .andExpect(status().isNotAcceptable())
+                .andExpect(header().doesNotExist(HttpHeaders.CONTENT_TYPE))
+                .andExpect(result ->
+                        assertThat(result.getResponse().getContentAsString())
+                                .isEmpty()
+                );
     }
 
     @Test
-    void whenAcceptAllHttpRequestHeaderShouldReturnOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/html")
-                        .accept(MediaType.IMAGE_JPEG, MediaType.ALL))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header()
-                        .string(HttpHeaders.CONTENT_TYPE,
-                                "text/html;charset=UTF-8"))
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":0," +
-                        "\"errMsg\":null," +
-                        "\"data\":\"<h1>Hello World</h1>\"" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("目标 API 不支持请求方法")
+    void itShouldCheckWhenRequestMethodApiNotSupported() throws Exception {
+        mockMvc.perform(post("/html"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string(
+                                HttpHeaders.CONTENT_TYPE,
+                                CommonValues.APPLICATION_JSON_UTF8_VALUE
+                        )
+                )
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"API 不支持 POST 请求方法\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenExactlyAcceptHttpRequestHeaderSupportedShouldReturnOk()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/html")
-                        .accept(MediaType.TEXT_HTML))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header()
-                        .string(HttpHeaders.CONTENT_TYPE,
-                                "text/html;charset=UTF-8"))
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":0," +
-                        "\"errMsg\":null," +
-                        "\"data\":\"<h1>Hello World</h1>\"" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenEmptyAcceptHttpRequestHeaderSupportedShouldReturnOk()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/html"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.header()
-                        .string(HttpHeaders.CONTENT_TYPE,
-                                "text/html;charset=UTF-8"))
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":0," +
-                        "\"errMsg\":null," +
-                        "\"data\":\"<h1>Hello World</h1>\"" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenHttpRequestMethodNotSupportedShouldReturn405HttpStatus()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/html"))
-                .andExpect(MockMvcResultMatchers.status().isMethodNotAllowed())
-                .andExpect(MockMvcResultMatchers.header()
-                        .string(HttpHeaders.CONTENT_TYPE,
-                                CommonValues.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"API 不支持 POST 请求方法\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenLackOfDevHttpHeaderShouldReturn404HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/header"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenExistsDevHttpHeaderButNotEqualsShouldReturn404HttpStatus()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/header")
-                        .header("dev", "Jason"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenExactlyEqualsDevHttpHeaderShouldReturnOk() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/header")
-                        .header("dev", "吴仙杰"))
-                .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":0," +
-                        "\"errMsg\":null," +
-                        "\"data\":\"吴仙杰\"" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    void whenMalformedRequestBodyShouldReturn400HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post("/body")
+    @DisplayName("请求体内容格式错误")
+    void itShouldCheckWhenRequestBodyMalformed() throws Exception {
+        mockMvc.perform(post("/body")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"请求体内容有误\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+                        .content("{")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"请求体内容有误\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenLackOfRequiredRequestParameterShouldReturn400HttpStatus()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/required"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"缺少必填参数 name\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("请求缺少必填参数")
+    void itShouldCheckWhenRequestLackOfRequiredParam() throws Exception {
+        mockMvc.perform(get("/required"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"缺少必填参数 name\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenRequestParameterInvalidShouldReturn400HttpStatusWithValidated()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/validated"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+    @DisplayName("请求参数校验不合法 @Validated")
+    void itShouldCheckWhenRequestParamInvalidByValidatedAnnotation() throws Exception {
+        mockMvc.perform(get("/validated"))
+                .andExpect(status().isBadRequest())
                 .andExpect(result -> {
-                    String resp = result.getResponse().getContentAsString();
+                            String body = result.getResponse().getContentAsString();
 
-                    Assertions.assertAll("返回两个字段的校验结果",
-                            () -> Assertions.assertTrue(resp.contains("用户 ID 不能为 null")),
-                            () -> Assertions.assertTrue(resp.contains("用户名不能为空")));
-                })
-                .andDo(MockMvcResultHandlers.print());
+                            assertThat(body).contains("用户 ID 不能为 null");
+                            assertThat(body).contains("用户名不能为空");
+                        }
+                );
     }
 
     @Test
-    void whenRequestParameterInvalidShouldReturn400HttpStatusWithValid()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/valid"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+    @DisplayName("请求参数校验不合法 @Valid")
+    void itShouldCheckWhenRequestParamInvalidByValidAnnotation() throws Exception {
+        mockMvc.perform(get("/valid"))
+                .andExpect(status().isBadRequest())
                 .andExpect(result -> {
-                    String resp = result.getResponse().getContentAsString();
+                            String body = result.getResponse().getContentAsString();
 
-                    Assertions.assertAll("返回两个字段的校验结果",
-                            () -> Assertions.assertTrue(resp.contains("用户 ID 不能为 null")),
-                            () -> Assertions.assertTrue(resp.contains("用户名不能为空")));
-                })
-                .andDo(MockMvcResultHandlers.print());
+                            assertThat(body).contains("用户 ID 不能为 null");
+                            assertThat(body).contains("用户名不能为空");
+                        }
+                );
     }
 
     @Test
-    void whenControllerThrowsNotFoundExceptionShouldReturn404HttpStatusWarnLog()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
-                        .param("type", " not-found "))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"未找到指定的数据\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出 NotFoundException")
+    void itShouldCheckWhenThrowNotFoundException() throws Exception {
+        mockMvc.perform(get("/exception")
+                        .param("type", " not_found ")
+                )
+                .andExpect(status().isNotFound())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"未找到指定的数据\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenControllerThrowsBadRequestExceptionShouldReturn400HttpStatusWarnLog()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
-                        .param("type", "bad-request"))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"客户端请求错误\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出 BadRequestException")
+    void itShouldCheckWhenThrowBadRequestException() throws Exception {
+        mockMvc.perform(get("/exception")
+                        .param("type", "bad_request")
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"客户端请求错误\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenControllerThrowsConflictExceptionShouldReturn409HttpStatusWarnLog()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
-                        .param("type", "conflict"))
-                .andExpect(MockMvcResultMatchers.status().isConflict())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"已存在相同数据\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出 ConflictException")
+    void itShouldCheckWhenThrowConflictException() throws Exception {
+        mockMvc.perform(get("/exception")
+                        .param("type", "conflict")
+                )
+                .andExpect(status().isConflict())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"已存在相同数据\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenControllerThrowsInternalExceptionShouldReturn500HttpStatusErrorLog()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/internal-error"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"服务内部异常\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出 InternalException")
+    void itShouldCheckWhenThrowInternalException() throws Exception {
+        mockMvc.perform(get("/exception")
+                        .param("type", "internal")
+                )
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"服务内部异常\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenControllerThrowsJdbcExceptionShouldReturn500HttpStatus()
-            throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/exception")
-                        .param("type", "\tdb\n"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"数据库操作异常\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出 JDBC 异常")
+    void itShouldCheckWhenThrowJdbcException() throws Exception {
+        mockMvc.perform(get("/exception")
+                        .param("type", "\tdb\n")
+                )
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"数据库操作异常\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 
     @Test
-    void whenControllerThrowsExceptionShouldReturn500HttpStatus() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/exception"))
-                .andExpect(MockMvcResultMatchers.status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.content().json("{" +
-                        "\"error\":1," +
-                        "\"errMsg\":\"服务异常\"," +
-                        "\"data\":null" +
-                        "}"))
-                .andDo(MockMvcResultHandlers.print());
+    @DisplayName("当程序抛出非自定义异常")
+    void itShouldCheckWhenThrowException() throws Exception {
+        mockMvc.perform(get("/exception"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().json(
+                                "{" +
+                                        "\"error\":1," +
+                                        "\"errMsg\":\"服务异常\"," +
+                                        "\"data\":null" +
+                                        "}"
+                        )
+                );
     }
 }

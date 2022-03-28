@@ -24,6 +24,7 @@ public class RestApiConfig implements WebMvcConfigurer {
                 .findFirst()
                 .ifPresent(converter ->
                         ((MappingJackson2HttpMessageConverter) converter)
-                                .setDefaultCharset(StandardCharsets.UTF_8));
+                                .setDefaultCharset(StandardCharsets.UTF_8)
+                );
     }
 }

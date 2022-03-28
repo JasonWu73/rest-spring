@@ -5,11 +5,12 @@ import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库日期时间数据类型。
+ * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库 DATETIME 数据类型，以及 {@link LocalDate} 与数据库 DATE 数据类型。
  * <p>
  * 全局配置（application.yml）：<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}

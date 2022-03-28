@@ -14,15 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author 吴仙杰
  */
-@ActiveProfiles("mybatis")
 @MybatisTest
+@ActiveProfiles("mybatis")
 class LocalDateTimeTypeHandlerTest {
 
     @Autowired
     private UserMapper underTest;
 
-    @DisplayName("插入 LocalDateTime 字段值")
     @Test
+    @DisplayName("插入 LocalDateTime 字段值")
     void itShouldCheckWhenInsertLocalDateTimeField() {
         // given
         String username = "测试用户";
@@ -44,8 +44,8 @@ class LocalDateTimeTypeHandlerTest {
         assertThat(actual).isEqualToIgnoringNanos(createTime);
     }
 
-    @DisplayName("插入 LocalDateTime 字段 null 值")
     @Test
+    @DisplayName("插入 LocalDateTime 字段 null 值")
     void itShouldCheckWhenInsertNullLocalDateTimeField() {
         // given
         String username = "测试用户";
@@ -66,8 +66,8 @@ class LocalDateTimeTypeHandlerTest {
         assertThat(actual).isNull();
     }
 
-    @DisplayName("插入 LocalDate 字段值")
     @Test
+    @DisplayName("插入 LocalDate 字段值")
     void itShouldCheckWhenInsertLocalDateField() {
         // given
         String username = "测试用户";
@@ -89,8 +89,8 @@ class LocalDateTimeTypeHandlerTest {
         assertThat(actual).isEqualTo(birthday);
     }
 
-    @DisplayName("插入 LocalDate 字段 null 值")
     @Test
+    @DisplayName("插入 LocalDate 字段 null 值")
     void itShouldCheckWhenInsertNullLocalDateField() {
         // given
         String username = "测试用户";

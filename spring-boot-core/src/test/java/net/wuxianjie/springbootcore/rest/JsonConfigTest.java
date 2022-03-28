@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.shared.CommonValues;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 /**
  * @author 吴仙杰
@@ -53,44 +56,58 @@ class JsonConfigTest {
     private JacksonTester<User> jacksonTester;
 
     @Test
-    void jsonSerializeShouldEquals() throws IOException {
+    @DisplayName("JSON 序列化")
+    void itShouldCheckJsonSerialize() throws IOException {
+        // given
         User user = buildUser();
 
-        Assertions.assertEquals(JSON_VALUE_NO_WHITE_CHARACTER,
-                jacksonTester.write(user).getJson());
+        // when
+        String actual = jacksonTester.write(user).getJson();
+
+        // then
+        assertThat(actual).isEqualTo(JSON_VALUE_NO_WHITE_CHARACTER);
     }
 
     @Test
-    void jsonDeserializeShouldEquals() throws IOException {
+    @DisplayName("JSON 反序列化")
+    void itShouldCheckJsonDeserialize() throws IOException {
+        // given
         User user = buildUser();
-        User userFromJson = jacksonTester
+
+        // when
+        User actual = jacksonTester
                 .parse(JSON_VALUE_INCLUDE_WHITE_CHARACTER)
                 .getObject();
 
-        Assertions.assertAll("JSON 反序列化后的字段值应该相等",
-                () -> Assertions.assertEquals(userFromJson.userId, user.userId),
-                () -> Assertions.assertEquals(userFromJson.username, user.username.trim()),
-                () -> Assertions.assertEquals(userFromJson.password, user.password),
-                () -> Assertions.assertEquals(userFromJson.createTime, user.createTime),
-                () -> Assertions.assertEquals(userFromJson.birthday, user.birthday),
-                () -> Assertions.assertEquals(userFromJson.modifyTime, user.modifyTime),
-                () -> Assertions.assertEquals(userFromJson.enabled, user.enabled));
+        // then
+        user.setUsername(user.getUsername().trim());
+        assertThat(actual).isEqualTo(user);
     }
 
     @Test
-    void whenInvalidFormatDateDeserializeShouldThrowException() {
-        Assertions.assertThrows(InvalidFormatException.class,
-                () -> jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE));
+    @DisplayName("JSON 反序列化不符合格式要求的日期时间字符")
+    void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
+        assertThatExceptionOfType(InvalidFormatException.class)
+                .isThrownBy(() ->
+                        jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE)
+                );
     }
 
     private User buildUser() {
-        LocalDateTime createTime = LocalDateTime.parse("2022-03-26 10:59:30",
-                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT));
+        LocalDateTime createTime = LocalDateTime.parse(
+                "2022-03-26 10:59:30",
+                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)
+        );
 
-        return new User(100, "\t\n吴仙杰 ", null,
-                createTime, LocalDate.parse("2022-03-26"),
+        return new User(
+                100,
+                "\t\n吴仙杰 ",
+                null,
+                createTime,
+                LocalDate.parse("2022-03-26"),
                 Date.from(createTime.atZone(ZoneId.systemDefault()).toInstant()),
-                YesOrNo.YES);
+                YesOrNo.YES
+        );
     }
 
     @Data

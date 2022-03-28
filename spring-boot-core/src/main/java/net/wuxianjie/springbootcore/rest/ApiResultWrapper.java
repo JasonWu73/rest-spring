@@ -30,14 +30,14 @@ public class ApiResultWrapper {
     /**
      * 构造服务响应失败的结果。
      *
-     * @param errorMessage 失败的原因
+     * @param errMsg 失败的原因
      * @return 服务响应失败的结果
      */
-    public static ApiResult<Void> fail(String errorMessage) {
+    public static ApiResult<Void> fail(String errMsg) {
         ApiResult<Void> result = new ApiResult<>();
 
         result.setError(ApiErrorCode.FAIL);
-        result.setErrMsg(errorMessage);
+        result.setErrMsg(errMsg);
 
         return result;
     }

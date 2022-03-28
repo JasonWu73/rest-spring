@@ -21,9 +21,9 @@ import java.util.Optional;
  * @author 吴仙杰
  * @see ExceptionControllerAdvice
  */
+@Slf4j
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class GlobalErrorController implements ErrorController {
 
     private final ErrorAttributes errorAttributes;
@@ -37,23 +37,26 @@ public class GlobalErrorController implements ErrorController {
     @ResponseBody
     @RequestMapping("/error")
     public ResponseEntity<ApiResult<Void>> handleError(WebRequest request) {
-        Map<String, Object> attrToValue = errorAttributes.getErrorAttributes(
-                request, ErrorAttributeOptions.defaults());
+        Map<String, Object> errMap = errorAttributes.getErrorAttributes(
+                request,
+                ErrorAttributeOptions.defaults()
+        );
 
-        HttpStatus httpStatus = Optional.ofNullable(
-                        (Integer) attrToValue.get("status"))
+        HttpStatus httpStatus = Optional.ofNullable((Integer) errMap.get("status"))
                 .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
-                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
+                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR)
+                )
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
-            log.warn("Spring Boot 全局 404 处理：{}", attrToValue);
+            log.warn("Spring Boot 全局 404 处理：{}", errMap);
         } else {
-            log.error("Spring Boot 全局异常处理：{}", attrToValue);
+            log.error("Spring Boot 全局异常处理：{}", errMap);
         }
 
         return new ResponseEntity<>(
-                ApiResultWrapper.fail((String) attrToValue.get("error")),
-                httpStatus);
+                ApiResultWrapper.fail((String) errMap.get("error")),
+                httpStatus
+        );
     }
 }
