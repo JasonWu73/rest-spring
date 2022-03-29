@@ -3,6 +3,7 @@ package net.wuxianjie.springbootcore.security;
 import cn.hutool.core.util.StrUtil;
 import net.wuxianjie.springbootcore.rest.*;
 import net.wuxianjie.springbootcore.shared.CommonValues;
+import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -86,6 +88,62 @@ class AuthControllerTest {
                         .value("无需 Token 认证即可访问的开放 API"))
                 .andExpect(jsonPath("$.data.username")
                         .value(userDetails.getAccountName()));
+    }
+
+    @Test
+    @DisplayName("当有 Token 但 Token 错误时访问开放 API")
+    void itShouldCheckWhenRequestPublicApiProvideInvalidAccessToken() throws Exception {
+        // given
+        String token = "fake_access_token";
+        TokenUserDetails userDetails = new TokenUserDetails();
+
+        userDetails.setAccountName("测试用户");
+
+        String errMsg = "Token 已过期";
+
+        given(authenticationService.authenticate(anyString()))
+                .willThrow(new TokenAuthenticationException(errMsg));
+
+        // when
+        mockMvc.perform(get("/api/v1/auth-test/public")
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "bearer " + token
+                        ))
+                // then
+                .andExpect(status().isUnauthorized())
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(1))
+                .andExpect(jsonPath("$.errMsg").value(errMsg));
+    }
+
+    @Test
+    @DisplayName("当有 Token 但 Token 认证过滤器错误时访问开放 API")
+    void itShouldCheckWhenRequestPublicApiProvideAccessTokenButTokenFilterError() throws Exception {
+        // given
+        String token = "fake_access_token";
+        TokenUserDetails userDetails = new TokenUserDetails();
+
+        userDetails.setAccountName("测试用户");
+
+        String errMsg = "执行 Token 认证发生未知错误";
+
+        given(authenticationService.authenticate(anyString()))
+                .willThrow(new RuntimeException(errMsg));
+
+        // when
+        mockMvc.perform(get("/api/v1/auth-test/public")
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                "bearer " + token
+                        ))
+                // then
+                .andExpect(status().isInternalServerError())
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(1))
+                .andExpect(jsonPath("$.errMsg").value(errMsg));
     }
 
     @Test

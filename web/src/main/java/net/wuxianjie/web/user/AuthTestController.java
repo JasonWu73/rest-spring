@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthTestController {
 
-    private final AuthenticationFacade authenticationFacade;
-
     /**
      * 开放访问的 API，即无需 Access Token 也可访问。
      */
@@ -73,7 +71,7 @@ public class AuthTestController {
     }
 
     private String getUsername() {
-        return authenticationFacade.getLoggedIn()
+        return AuthUtils.getLoggedIn()
                 .map(TokenDetails::getAccountName)
                 .orElse("匿名用户");
     }

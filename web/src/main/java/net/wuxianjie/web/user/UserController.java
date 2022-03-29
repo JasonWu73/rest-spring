@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.Admin;
-import net.wuxianjie.springbootcore.security.AuthenticationFacade;
+import net.wuxianjie.springbootcore.security.AuthUtils;
 import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.shared.BadRequestException;
 import net.wuxianjie.springbootcore.shared.StringUtils;
@@ -28,7 +28,6 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
-    private final AuthenticationFacade authenticationFacade;
 
     /**
      * 获取用户列表。
@@ -89,7 +88,7 @@ public class UserController {
     }
 
     private void setCurrentUserId(UpdatePasswordQuery query) {
-        TokenUserDetails userDetails = (TokenUserDetails) authenticationFacade.getLoggedIn().orElseThrow();
+        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getLoggedIn().orElseThrow();
         query.setUserId(userDetails.getAccountId());
     }
 
