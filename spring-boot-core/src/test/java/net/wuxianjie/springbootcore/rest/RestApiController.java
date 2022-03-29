@@ -57,7 +57,7 @@ class RestApiController {
     @GetMapping("/exception")
     String getException(String type) {
         if (StrUtil.equals(type, "not_found")) {
-            throw new NotFoundException("未找到指定的数据");
+            throw new NotFoundException("未找到 id 为 x 的数据");
         }
 
         if (StrUtil.equals(type, "bad_request")) {
@@ -70,7 +70,7 @@ class RestApiController {
 
         if (StrUtil.equals(type, "internal")) {
             try {
-                return errorMath() + "";
+                return errorMath();
             } catch (Exception e) {
                 throw new InternalException("服务内部异常", e);
             }
@@ -84,7 +84,7 @@ class RestApiController {
             );
         }
 
-        return errorMath() + "";
+        return errorMath();
     }
 
     @GetMapping("/void")
@@ -97,7 +97,7 @@ class RestApiController {
             return null;
         }
 
-        return "Hello World";
+        return " Hello World\t\n";
     }
 
     @Data
@@ -110,7 +110,7 @@ class RestApiController {
         private String username;
     }
 
-    private double errorMath() {
-        return 1 / 0;
+    private String errorMath() {
+        return (1 / 0) + "";
     }
 }

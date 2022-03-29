@@ -22,14 +22,13 @@ public class AuthenticationFacade {
     public Optional<TokenDetails> getLoggedIn() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(authentication -> {
-                            if (authentication instanceof AnonymousAuthenticationToken) {
-                                // 匿名用户可访问的接口，则返回空
-                                // authentication.getName() 为 anonymous
-                                return null;
-                            }
+                    if (authentication instanceof AnonymousAuthenticationToken) {
+                        // 匿名用户可访问的接口，则返回空
+                        // authentication.getName() 为 anonymous
+                        return null;
+                    }
 
-                            return (TokenDetails) authentication.getPrincipal();
-                        }
-                );
+                    return (TokenDetails) authentication.getPrincipal();
+                });
     }
 }

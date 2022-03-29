@@ -14,8 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static net.wuxianjie.springbootcore.security.TokenAuthenticationServiceImpl.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author 吴仙杰
@@ -37,12 +36,10 @@ class TokenAuthenticationServiceTest {
     void itShouldCheckWhenAllRight() {
         // given
         String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {
-            {
-                put(ACCOUNT_KEY, username);
-                put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
-            }
-        };
+        Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
+        }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
         TokenUserDetails user = new TokenUserDetails();
 
@@ -74,10 +71,11 @@ class TokenAuthenticationServiceTest {
 
         cache.put(username, user);
 
+        // when
         // then
-        assertThatExceptionOfType(TokenAuthenticationException.class)
-                .isThrownBy(() -> underTest.authenticate(token))
-                .withMessageContaining("Token 缺少 account 信息");
+        assertThatThrownBy(() -> underTest.authenticate(token))
+                .isInstanceOf(TokenAuthenticationException.class)
+                .hasMessageContaining("Token 缺少 account 信息");
     }
 
     @Test
@@ -97,6 +95,7 @@ class TokenAuthenticationServiceTest {
 
         cache.put(username, user);
 
+        // when
         // then
         assertThatExceptionOfType(TokenAuthenticationException.class)
                 .isThrownBy(() -> underTest.authenticate(token))
@@ -121,9 +120,10 @@ class TokenAuthenticationServiceTest {
 
         cache.put(username, user);
 
+        // when
         // then
-        assertThatExceptionOfType(TokenAuthenticationException.class)
-                .isThrownBy(() -> underTest.authenticate(token))
-                .withMessageContaining("Token 类型错误");
+        assertThatThrownBy(() -> underTest.authenticate(token))
+                .isInstanceOf(TokenAuthenticationException.class)
+                .hasMessageContaining("Token 类型错误");
     }
 }

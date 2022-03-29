@@ -13,14 +13,17 @@ import java.time.LocalDateTime;
 @Mapper
 interface UserMapper {
 
-    @Select("SELECT birthday FROM users WHERE username = #{username}")
-    LocalDate selectBirthdayByUsername(String username);
+    @Select("SELECT is_enabled FROM users WHERE username = #{username}")
+    YesOrNo selectEnabledByUsername(String username);
+
+    @Select("SELECT is_enabled FROM users WHERE username = #{username}")
+    Integer selectEnabledByUsernameReturnInt(String username);
 
     @Select("SELECT create_time FROM users WHERE username = #{username}")
     LocalDateTime selectCreateTimeByUsername(String username);
 
-    @Select("SELECT is_enabled FROM users WHERE username = #{username}")
-    YesOrNo selectEnabledByUsername(String username);
+    @Select("SELECT birthday FROM users WHERE username = #{username}")
+    LocalDate selectBirthdayByUsername(String username);
 
     @Insert("INSERT INTO users (create_time, username, birthday, is_enabled) " +
             "VALUES (#{createTime}, #{username}, #{birthday}, #{enabled})")

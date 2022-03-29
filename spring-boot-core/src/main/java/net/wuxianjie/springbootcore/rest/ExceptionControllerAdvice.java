@@ -15,6 +15,7 @@ import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -43,9 +44,9 @@ public class ExceptionControllerAdvice {
      * @param request {@link HttpServletRequest}
      * @return {@link ResponseEntity}
      */
-    @ExceptionHandler(HttpMediaTypeException.class)
-    public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeException(
-            HttpMediaTypeException e,
+    @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
+    public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeNotAcceptableException(
+            HttpMediaTypeNotAcceptableException e,
             HttpServletRequest request
     ) {
         String mimeType = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
@@ -71,7 +72,7 @@ public class ExceptionControllerAdvice {
                 mimeType
         );
 
-        log.warn("{} -> {}", request.getRequestURI(), msg);
+        log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
 
         return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, msg);
     }
@@ -88,9 +89,12 @@ public class ExceptionControllerAdvice {
             HttpRequestMethodNotSupportedException e,
             HttpServletRequest request
     ) {
-        String msg = StrUtil.format("API 不支持 {} 请求方法", request.getMethod());
+        String msg = StrUtil.format(
+                "API 不支持 {} 请求方法",
+                request.getMethod()
+        );
 
-        log.warn("{} -> {}", request.getRequestURI(), msg);
+        log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
 
         return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, msg);
     }
@@ -107,7 +111,7 @@ public class ExceptionControllerAdvice {
             HttpMessageNotReadableException e,
             HttpServletRequest request
     ) {
-        String msg = "请求体内容有误";
+        String msg = "请求体内容不合法";
 
         log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
 
@@ -126,7 +130,10 @@ public class ExceptionControllerAdvice {
             MissingServletRequestParameterException e,
             HttpServletRequest request
     ) {
-        String msg = StrUtil.format("缺少必填参数 {}", e.getParameterName());
+        String msg = StrUtil.format(
+                "缺少必填参数 {}",
+                e.getParameterName()
+        );
 
         log.warn("{} -> {}", request.getRequestURI(), msg);
 
@@ -170,7 +177,7 @@ public class ExceptionControllerAdvice {
         }
 
         log.warn(
-                "{} -> 参数错误：{}",
+                "{} -> 参数不合法：{}",
                 request.getRequestURI(),
                 String.join("；", logMsgList)
         );
@@ -215,7 +222,7 @@ public class ExceptionControllerAdvice {
         }
 
         log.warn(
-                "{} -> 参数错误：{}",
+                "{} -> 参数不合法：{}",
                 request.getRequestURI(),
                 String.join("；", logMsgList)
         );
@@ -314,10 +321,10 @@ public class ExceptionControllerAdvice {
     private ResponseEntity<ApiResult<Void>> buildResponseEntity(
             HttpServletRequest request,
             HttpStatus httpStatus,
-            String errorMessage
+            String msg
     ) {
         if (isJsonRequest(request)) {
-            return new ResponseEntity<>(ApiResultWrapper.fail(errorMessage), httpStatus);
+            return new ResponseEntity<>(ApiResultWrapper.fail(msg), httpStatus);
         }
 
         return new ResponseEntity<>(null, httpStatus);
@@ -327,27 +334,26 @@ public class ExceptionControllerAdvice {
         // 只有在明确指定 Accept 请求头，且不包含 JSON 时才认为非 JSON 请求
         return Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
                 .map(enumeration -> {
-                            Iterator<String> iterator = enumeration.asIterator();
+                    Iterator<String> iterator = enumeration.asIterator();
 
-                            if (!iterator.hasNext()) {
-                                return true;
-                            }
+                    if (!iterator.hasNext()) {
+                        return true;
+                    }
 
-                            while (iterator.hasNext()) {
-                                boolean containsJson = StrUtil.containsAnyIgnoreCase(
-                                        iterator.next(),
-                                        MediaType.ALL_VALUE,
-                                        MediaType.APPLICATION_JSON_VALUE
-                                );
+                    while (iterator.hasNext()) {
+                        boolean containsJson = StrUtil.containsAnyIgnoreCase(
+                                iterator.next(),
+                                MediaType.ALL_VALUE,
+                                MediaType.APPLICATION_JSON_VALUE
+                        );
 
-                                if (containsJson) {
-                                    return true;
-                                }
-                            }
-
-                            return false;
+                        if (containsJson) {
+                            return true;
                         }
-                )
+                    }
+
+                    return false;
+                })
                 .orElse(true);
     }
 }

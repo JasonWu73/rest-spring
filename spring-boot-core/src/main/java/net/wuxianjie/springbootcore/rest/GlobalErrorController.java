@@ -37,25 +37,24 @@ public class GlobalErrorController implements ErrorController {
     @ResponseBody
     @RequestMapping("/error")
     public ResponseEntity<ApiResult<Void>> handleError(WebRequest request) {
-        Map<String, Object> errMap = errorAttributes.getErrorAttributes(
+        Map<String, Object> attrs = this.errorAttributes.getErrorAttributes(
                 request,
                 ErrorAttributeOptions.defaults()
         );
 
-        HttpStatus httpStatus = Optional.ofNullable((Integer) errMap.get("status"))
+        HttpStatus httpStatus = Optional.ofNullable((Integer) attrs.get("status"))
                 .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
-                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR)
-                )
+                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
-            log.warn("Spring Boot 全局 404 处理：{}", errMap);
+            log.warn("Spring Boot 全局 404 处理：{}", attrs);
         } else {
-            log.error("Spring Boot 全局异常处理：{}", errMap);
+            log.error("Spring Boot 全局异常处理：{}", attrs);
         }
 
         return new ResponseEntity<>(
-                ApiResultWrapper.fail((String) errMap.get("error")),
+                ApiResultWrapper.fail((String) attrs.get("error")),
                 httpStatus
         );
     }

@@ -42,14 +42,13 @@ public enum Role {
     public static Optional<Role> resolve(String value) {
         return Optional.ofNullable(value)
                 .map(v -> {
-                            for (Role role : VALUES) {
-                                if (StrUtil.equals(v, role.value)) {
-                                    return role;
-                                }
-                            }
-
-                            return null;
+                    for (Role role : VALUES) {
+                        if (StrUtil.equals(v, role.value)) {
+                            return role;
                         }
-                );
+                    }
+
+                    return null;
+                });
     }
 }

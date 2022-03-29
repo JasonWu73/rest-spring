@@ -11,10 +11,10 @@ import lombok.experimental.Accessors;
  *
  * @author 吴仙杰
  */
-@ToString
-@Accessors(fluent = true)
 @Getter
+@ToString
 @RequiredArgsConstructor
+@Accessors(fluent = true)
 public enum ApiErrorCode {
 
     /**

@@ -69,19 +69,19 @@ public class JsonConfig {
             // 在序列化时去除字符串值的首尾空白字符
             builder.serializerByType(String.class, new JsonSerializer<String>() {
 
-                        @Override
-                        public void serialize(
-                                String value,
-                                JsonGenerator gen,
-                                SerializerProvider serializers
-                        ) throws IOException {
-                            gen.writeString(StrUtil.trim(value));
-                        }
-                    }
-            );
+                @Override
+                public void serialize(
+                        String value,
+                        JsonGenerator gen,
+                        SerializerProvider serializers
+                ) throws IOException {
+                    gen.writeString(StrUtil.trim(value));
+                }
+            });
 
             // 在反序列化时去除字符串值的首尾空白字符
-            builder.deserializerByType(String.class,
+            builder.deserializerByType(
+                    String.class,
                     new StdScalarDeserializer<String>(String.class) {
 
                         @Override
@@ -95,7 +95,8 @@ public class JsonConfig {
             );
 
             // 设置 Java 8 LocalDateTime / LocalDate 反序列化
-            builder.deserializerByType(LocalDateTime.class,
+            builder.deserializerByType(
+                    LocalDateTime.class,
                     new JsonDeserializer<LocalDateTime>() {
 
                         @Override
@@ -114,27 +115,27 @@ public class JsonConfig {
             // 设置 Date 反序列化
             builder.deserializerByType(Date.class, new JsonDeserializer<Date>() {
 
-                        @Override
-                        public Date deserialize(
-                                JsonParser p,
-                                DeserializationContext ctxt
-                        ) throws IOException {
-                            String value = null;
+                @Override
+                public Date deserialize(
+                        JsonParser p,
+                        DeserializationContext ctxt
+                ) throws IOException {
+                    String value = null;
 
-                            try {
-                                value = p.getValueAsString();
+                    try {
+                        value = p.getValueAsString();
 
-                                return dateFormat.parse(value);
-                            } catch (ParseException e) {
-                                throw new InvalidFormatException(p,
-                                        e.getMessage(),
-                                        value,
-                                        Date.class
-                                );
-                            }
-                        }
+                        return dateFormat.parse(value);
+                    } catch (ParseException e) {
+                        throw new InvalidFormatException(
+                                p,
+                                e.getMessage(),
+                                value,
+                                Date.class
+                        );
                     }
-            );
+                }
+            });
         };
     }
 }

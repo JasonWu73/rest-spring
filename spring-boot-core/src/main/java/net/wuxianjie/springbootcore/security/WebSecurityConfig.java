@@ -57,15 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String[] antPatterns = Optional.ofNullable(
                         StrUtil.trim(securityConfigData.getPermitAllAntPatterns())
                 )
-                .map(commaSeparatedPattern ->
-                        StrSplitter.splitToArray(
-                                commaSeparatedPattern,
-                                ',',
-                                0,
-                                true,
-                                true
-                        )
-                )
+                .map(commaSeparatedPattern -> StrSplitter.splitToArray(
+                        commaSeparatedPattern,
+                        ',',
+                        0,
+                        true,
+                        true
+                ))
                 .orElse(new String[]{});
 
         http.authorizeRequests()
@@ -81,37 +79,35 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 // 401
                 .authenticationEntryPoint((request, response, authException) -> {
-                            String msg = "Token 认证失败";
+                    String msg = "Token 认证失败";
 
-                            log.warn("{}：{}", msg, authException.getMessage());
+                    log.warn("{}：{}", msg, authException.getMessage());
 
-                            response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
-                            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+                    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-                            String json = objectMapper.writeValueAsString(
-                                    ApiResultWrapper.fail(msg)
-                            );
+                    String json = objectMapper.writeValueAsString(
+                            ApiResultWrapper.fail(msg)
+                    );
 
-                            response.getWriter().write(json);
-                        }
-                )
+                    response.getWriter().write(json);
+                })
                 // 403
                 // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
                 .accessDeniedHandler((request, response, deniedException) -> {
-                            String msg = "Token 未授权";
+                    String msg = "Token 未授权";
 
-                            log.warn("{}：{}", msg, deniedException.getMessage());
+                    log.warn("{}：{}", msg, deniedException.getMessage());
 
-                            response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
-                            response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
 
-                            String json = objectMapper.writeValueAsString(
-                                    ApiResultWrapper.fail(msg)
-                            );
+                    String json = objectMapper.writeValueAsString(
+                            ApiResultWrapper.fail(msg)
+                    );
 
-                            response.getWriter().write(json);
-                        }
-                )
+                    response.getWriter().write(json);
+                })
                 .and()
                 // 禁用 CSRF 措施
                 .csrf()
@@ -123,8 +119,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 解决浏览器发送 OPTIONS 跨域检查请求时返回 401 的问题
                 .cors()
                 .configurationSource(request ->
-                        new CorsConfiguration().applyPermitDefaultValues()
-                )
+                        new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 // 添加 Token 认证过滤器
                 .addFilterBefore(

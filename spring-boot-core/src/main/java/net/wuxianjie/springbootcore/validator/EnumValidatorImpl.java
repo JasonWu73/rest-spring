@@ -16,8 +16,7 @@ import java.util.Optional;
  * @author 吴仙杰
  */
 @Slf4j
-public class EnumValidatorImpl
-        implements ConstraintValidator<EnumValidator, Object> {
+public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Object> {
 
     private boolean isPassed = false;
     private List<Object> values;
@@ -31,37 +30,34 @@ public class EnumValidatorImpl
 
         Optional.of(enumClass.getEnumConstants())
                 .ifPresent(enums -> {
-                            for (Enum<?> anEnum : enums) {
-                                try {
-                                    Method method = anEnum
-                                            .getClass()
-                                            .getDeclaredMethod("value");
+                    for (Enum<?> anEnum : enums) {
+                        try {
+                            Method method = anEnum
+                                    .getClass()
+                                    .getDeclaredMethod("value");
 
-                                    method.setAccessible(true);
+                            method.setAccessible(true);
 
-                                    values.add(method.invoke(anEnum));
-                                } catch (NoSuchMethodException e) {
-                                    log.warn(
-                                            "{} 不存在 value() 方法，故无法校验枚举值",
-                                            className
-                                    );
+                            values.add(method.invoke(anEnum));
+                        } catch (NoSuchMethodException e) {
+                            log.warn(
+                                    "{} 不存在 value() 方法，故无法校验枚举值",
+                                    className
+                            );
 
-                                    isPassed = true;
-                                    break;
-                                } catch (InvocationTargetException
-                                        | IllegalAccessException e
-                                ) {
-                                    log.warn(
-                                            "{}.value() 方法执行出错，故无法校验枚举值",
-                                            className
-                                    );
+                            isPassed = true;
+                            break;
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            log.warn(
+                                    "{}.value() 方法执行出错，故无法校验枚举值",
+                                    className
+                            );
 
-                                    isPassed = true;
-                                    break;
-                                }
-                            }
+                            isPassed = true;
+                            break;
                         }
-                );
+                    }
+                });
     }
 
     @Override

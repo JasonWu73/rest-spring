@@ -35,6 +35,7 @@ class PasswordEncoderTest {
     @Test
     @DisplayName("编码明文密码")
     void canGetHashedPassword() {
+        //given
         // when
         hashedPassword = passwordEncoder.encode(rawPassword);
 
@@ -44,7 +45,8 @@ class PasswordEncoderTest {
 
     @Test
     @DisplayName("校验哈希密码是否匹配")
-    void itShouldCheckMatch() {
+    void itShouldCheckMatchRawAndHashedPassword() {
+        // given
         // when
         boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
 

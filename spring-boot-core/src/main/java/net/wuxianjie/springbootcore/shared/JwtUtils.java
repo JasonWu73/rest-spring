@@ -77,7 +77,7 @@ public class JwtUtils {
         } catch (MalformedJwtException e) {
             throw new TokenAuthenticationException("Token 格式错误", e);
         } catch (SignatureException e) {
-            throw new TokenAuthenticationException("Token 签名不匹配", e);
+            throw new TokenAuthenticationException("Token 签名密钥不匹配", e);
         } catch (ExpiredJwtException e) {
             throw new TokenAuthenticationException("Token 已过期", e);
         }

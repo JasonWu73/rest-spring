@@ -3,6 +3,7 @@ package net.wuxianjie.springbootcore.paging;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 class PagingSearchController {
 
     @GetMapping("/paging")
-    public PagingResult<String> getPagingList(PagingQuery paging) {
+    public PagingResult<String> getPagingList(@Valid PagingQuery paging) {
         return buildPagingResult(paging);
     }
 

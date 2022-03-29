@@ -94,18 +94,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         } else {
             String roles = Arrays.stream(roleStr.split(","))
                     .reduce("", (roleOne, roleTwo) -> {
-                                // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
-                                String roleToAppend =
-                                        SPRING_SECURITY_ROLE_PREFIX +
-                                                roleTwo.trim().toUpperCase();
+                        // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
+                        String roleToAppend =
+                                SPRING_SECURITY_ROLE_PREFIX +
+                                        roleTwo.trim().toUpperCase();
 
-                                if (StrUtil.isEmpty(roleOne)) {
-                                    return roleToAppend;
-                                }
+                        if (StrUtil.isEmpty(roleOne)) {
+                            return roleToAppend;
+                        }
 
-                                return roleOne + "," + roleToAppend;
-                            }
-                    );
+                        return roleOne + "," + roleToAppend;
+                    });
 
             authorityList =
                     AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
@@ -115,39 +114,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
-        return Optional.ofNullable(
-                        StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION))
-                )
+        return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
                 .map(bearer -> {
-                            String token = null;
+                    String token = null;
 
-                            if (
-                                    StrUtil.startWith(
-                                            bearer,
-                                            AUTHORIZATION_BEARER_PREFIX
-                                    )
-                            ) {
-                                token = StrUtil.subAfter(
-                                        bearer,
-                                        AUTHORIZATION_BEARER_PREFIX,
-                                        false
-                                );
-                            } else if (
-                                    StrUtil.startWith(
-                                            bearer,
-                                            AUTHORIZATION_BEARER_PREFIX.toLowerCase()
-                                    )
-                            ) {
-                                token = StrUtil.subAfter(
-                                        bearer,
-                                        AUTHORIZATION_BEARER_PREFIX.toLowerCase(),
-                                        false
-                                );
-                            }
+                    if (StrUtil.startWith(bearer, AUTHORIZATION_BEARER_PREFIX)) {
+                        token = StrUtil.subAfter(
+                                bearer,
+                                AUTHORIZATION_BEARER_PREFIX,
+                                false
+                        );
+                    } else if (StrUtil.startWith(
+                            bearer,
+                            AUTHORIZATION_BEARER_PREFIX.toLowerCase()
+                    )) {
+                        token = StrUtil.subAfter(
+                                bearer,
+                                AUTHORIZATION_BEARER_PREFIX.toLowerCase(),
+                                false
+                        );
+                    }
 
-                            return StrUtil.isEmpty(token) ? null : token;
-                        }
-                );
+                    return StrUtil.isEmpty(token) ? null : token;
+                });
     }
 
     private void loginToSpringSecurityContext(TokenDetails tokenDetails) {

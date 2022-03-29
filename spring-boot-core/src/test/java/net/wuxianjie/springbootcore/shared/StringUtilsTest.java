@@ -1,9 +1,10 @@
 package net.wuxianjie.springbootcore.shared;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author 吴仙杰
@@ -12,35 +13,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class StringUtilsTest {
 
     @Test
-    void getFuzzySearchValueShouldEqualsExpected() {
-        assertAll("返回 null",
-                () -> assertNull(StringUtils.getFuzzySearchValue(null)),
-                () -> assertNull(StringUtils.getFuzzySearchValue("")),
-                () -> assertNull(StringUtils.getFuzzySearchValue(" ")),
-                () -> assertNull(StringUtils.getFuzzySearchValue(" \t\n")));
+    @DisplayName("获取数据库 LIKE 字符串格式")
+    void canGetFuzzySearchValue() {
+        assertThat(StringUtils.getFuzzySearchValue(null)).isNull();
+        assertThat(StringUtils.getFuzzySearchValue("")).isNull();
+        assertThat(StringUtils.getFuzzySearchValue(" ")).isNull();
+        assertThat(StringUtils.getFuzzySearchValue(" \t\n")).isNull();
 
-        assertAll("返回 %str% 形式的字符串",
-                () -> assertEquals("%null%", StringUtils.getFuzzySearchValue("null")),
-                () -> assertEquals("%ja%", StringUtils.getFuzzySearchValue("ja")),
-                () -> assertEquals("%ja%", StringUtils.getFuzzySearchValue(" ja")),
-                () -> assertEquals("%ja%", StringUtils.getFuzzySearchValue("ja ")),
-                () -> assertEquals("%ja%", StringUtils.getFuzzySearchValue(" ja ")));
+
+        assertThat(StringUtils.getFuzzySearchValue("null")).isEqualTo("%null%");
+        assertThat(StringUtils.getFuzzySearchValue("ja")).isEqualTo("%ja%");
+        assertThat(StringUtils.getFuzzySearchValue(" ja")).isEqualTo("%ja%");
+        assertThat(StringUtils.getFuzzySearchValue("ja ")).isEqualTo("%ja%");
+        assertThat(StringUtils.getFuzzySearchValue(" ja ")).isEqualTo("%ja%");
     }
 
     @Test
-    void equalsIgnoreEmptyShouldExpected() {
-        assertAll("字符串值判断为相等的情况",
-                () -> assertTrue(StringUtils.equalsIgnoreBlank(null, null)),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank(null, "")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank(null, " ")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank(null, " \t\n")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank("abc", "abc ")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank("abc", " abc")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank("abc", "abc ")),
-                () -> assertTrue(StringUtils.equalsIgnoreBlank("abc", " abc ")));
+    @DisplayName("判断字符串是否相等")
+    void canEqualsIgnoreEmptyStr() {
+        assertThat(StringUtils.equalsIgnoreBlank(null, null)).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank(null, "")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank(null, " ")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank(null, " \t\n")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank("abc", "abc ")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank("abc", " abc")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank("abc", "abc ")).isTrue();
+        assertThat(StringUtils.equalsIgnoreBlank("abc", " abc ")).isTrue();
 
-        assertAll("字符串值判断为不相等的情况",
-                () -> assertFalse(StringUtils.equalsIgnoreBlank(null, "null")),
-                () -> assertFalse(StringUtils.equalsIgnoreBlank("abc", "abC")));
+        assertThat(StringUtils.equalsIgnoreBlank(null, "null")).isFalse();
+        assertThat(StringUtils.equalsIgnoreBlank("abc", "abC")).isFalse();
     }
 }

@@ -19,7 +19,7 @@ class EnumTypeHandlerTest {
     private UserMapper underTest;
 
     @Test
-    @DisplayName("插入枚举字段值")
+    @DisplayName("插入枚举字段枚举值")
     void itShouldCheckWhenInsertEnumField() {
         // given
         String username = "测试用户";
@@ -42,8 +42,8 @@ class EnumTypeHandlerTest {
     }
 
     @Test
-    @DisplayName("插入枚举字段 null 值")
-    void itShouldCheckWhenInsertNullEnumField() {
+    @DisplayName("插入枚举字段 null 值并获取枚举值")
+    void itShouldCheckWhenInsertNullEnumFieldReturnEnum() {
         // given
         String username = "测试用户";
         User user = new User(
@@ -61,5 +61,27 @@ class EnumTypeHandlerTest {
 
         // then
         assertThat(actual).isEqualTo(YesOrNo.NO);
+    }
+
+    @Test
+    @DisplayName("插入枚举字段 null 值并获取 Integer")
+    void itShouldCheckWhenInsertNullEnumFieldReturnInteger() {
+        // given
+        String username = "测试用户";
+        User user = new User(
+                null,
+                username,
+                null,
+                null,
+                null
+        );
+
+        underTest.insertUser(user);
+
+        // when
+        Integer actual = underTest.selectEnabledByUsernameReturnInt(username);
+
+        // then
+        assertThat(actual).isNull();
     }
 }

@@ -65,7 +65,7 @@ public class AuthController {
     @GetMapping("user-or-admin")
     public Result testUserOrAdmin() {
         String msg = String.format(
-                "通过 Token 认证且必须拥有【%s】或【%s】角色才可访问的 API",
+                "通过 Token 认证且必须拥有 [%s] 或 [%s] 角色才可访问的 API",
                 Role.USER.value(),
                 Role.ADMIN.value()
         );
@@ -75,7 +75,7 @@ public class AuthController {
 
     private Result getResult(Role role) {
         String msg = String.format(
-                "通过 Token 认证且必须拥有【%s】角色才可访问的 API",
+                "通过 Token 认证且必须拥有 [%s] 角色才可访问的 API",
                 role.value()
         );
 

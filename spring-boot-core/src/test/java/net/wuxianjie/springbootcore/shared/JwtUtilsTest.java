@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author 吴仙杰
@@ -45,11 +45,9 @@ class JwtUtilsTest {
     @DisplayName("生成 JWT")
     void itShouldGenerateNewJwt() {
         // given
-        Map<String, Object> payload = new HashMap<>() {
-            {
-                put(USERNAME_KEY, USERNAME_VALUE);
-            }
-        };
+        Map<String, Object> payload = new HashMap<>() {{
+            put(USERNAME_KEY, USERNAME_VALUE);
+        }};
 
         // when
         token = JwtUtils.createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
@@ -64,6 +62,7 @@ class JwtUtilsTest {
     @Order(3)
     @DisplayName("校验并解析 JWT")
     void itShouldValidateJwt() {
+        // given
         // when
         Map<String, Object> payload = JwtUtils.validateJwt(secretKey, token);
         String username = (String) payload.get(USERNAME_KEY);
@@ -80,39 +79,34 @@ class JwtUtilsTest {
     @Test
     @DisplayName("Token 格式错误")
     void willThrowExceptionWhenMalformedJwt() {
-        assertThatExceptionOfType(TokenAuthenticationException.class)
-                .isThrownBy(() ->
-                        JwtUtils.validateJwt(
-                                EXPIRED_JWT_SIGNING_KEY,
-                                "token"
-                        )
-                )
-                .withMessageContaining("Token 格式错误");
+        // give
+        String token = "token";
+
+        // when
+        // then
+        assertThatThrownBy(() -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, token))
+                .hasMessageContaining("Token 格式错误");
     }
 
     @Test
     @DisplayName("Token 签名密钥不匹配")
     void willThrowExceptionWhenSigningKeyChanged() {
-        assertThatExceptionOfType(TokenAuthenticationException.class)
-                .isThrownBy(() ->
-                        JwtUtils.validateJwt(
-                                "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=",
-                                EXPIRED_JWT
-                        )
-                )
-                .withMessageContaining("Token 签名不匹配");
+        // give
+        String signingKey = "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=";
+
+        // when
+        // then
+        assertThatThrownBy(() -> JwtUtils.validateJwt(signingKey, EXPIRED_JWT))
+                .hasMessageContaining("Token 签名密钥不匹配");
     }
 
     @Test
     @DisplayName("Token 已过期")
     void willThrowExceptionWhenExpiredJwt() {
-        assertThatExceptionOfType(TokenAuthenticationException.class)
-                .isThrownBy(() ->
-                        JwtUtils.validateJwt(
-                                EXPIRED_JWT_SIGNING_KEY,
-                                EXPIRED_JWT
-                        )
-                )
-                .withMessageContaining("Token 已过期");
+        // give
+        // when
+        // then
+        assertThatThrownBy(() -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT))
+                .hasMessageContaining("Token 已过期");
     }
 }

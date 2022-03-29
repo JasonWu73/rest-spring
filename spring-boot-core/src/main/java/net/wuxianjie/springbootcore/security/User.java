@@ -24,10 +24,8 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole" +
-        "(" +
+@PreAuthorize("hasRole(" +
         "T(net.wuxianjie.springbootcore.security.Role).USER.name()" +
-        ")"
-)
+        ")")
 public @interface User {
 }

@@ -27,14 +27,14 @@ class ParamController {
     ) {
     }
 
-    @GetMapping("enum-2")
+    @GetMapping("enum-no-value-method")
     void test2(
             @EnumValidator(message = "类型值错误", value = TypeNoValueMethod.class)
                     String type
     ) {
     }
 
-    @GetMapping("enum-3")
+    @GetMapping("enum-error-value-method")
     void test3(
             @EnumValidator(message = "类型值错误", value = TypeErrorValueMethod.class)
                     String type

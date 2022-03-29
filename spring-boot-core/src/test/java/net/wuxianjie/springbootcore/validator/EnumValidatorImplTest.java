@@ -1,7 +1,7 @@
 package net.wuxianjie.springbootcore.validator;
 
-import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
-import net.wuxianjie.springbootcore.rest.GlobalResponseBodyAdvice;
+import net.wuxianjie.springbootcore.rest.*;
+import net.wuxianjie.springbootcore.shared.CommonValues;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @author 吴仙杰
@@ -21,12 +20,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         controllers = ParamController.class,
         excludeAutoConfiguration = SecurityAutoConfiguration.class
 )
-@Import(
-        {
-                ExceptionControllerAdvice.class,
-                GlobalResponseBodyAdvice.class
-        }
-)
+@Import({
+        JsonConfig.class,
+        UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class,
+        GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class,
+        RestApiConfig.class
+})
 class EnumValidatorImplTest {
 
     @Autowired
@@ -35,50 +36,73 @@ class EnumValidatorImplTest {
     @Test
     @DisplayName("枚举值参数值错误")
     void itShouldCheckWhenEnumValueIsError() throws Exception {
+        // given
+        String enabled = "11";
+
+        // when
         mockMvc.perform(get("/param/enum")
-                        .param("enabled", "11")
-                )
+                        .param("enabled", enabled))
+                // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().json(
-                                "{" +
-                                        "\"error\":1," +
-                                        "\"errMsg\":\"状态值错误\"," +
-                                        "\"data\":null" +
-                                        "}"
-                        )
-                );
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(1))
+                .andExpect(jsonPath("$.errMsg")
+                        .value("状态值错误"))
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
     @DisplayName("枚举值参数值正确")
     void itShouldCheckWhenEnumValueIsCorrect() throws Exception {
+        // given
+        String enabled = "1";
+
+        // when
         mockMvc.perform(get("/param/enum")
-                        .param("enabled", "1")
-                )
+                        .param("enabled", enabled))
+                // then
                 .andExpect(status().isOk())
-                .andExpect(content().json(
-                                "{" +
-                                        "\"error\":0," +
-                                        "\"errMsg\":null," +
-                                        "\"data\":null" +
-                                        "}"
-                        )
-                );
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(0))
+                .andExpect(jsonPath("$.errMsg").doesNotExist())
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
     @DisplayName("当枚举类没有 value 方法")
     void itShouldCheckEnumNotHaveValueMethod() throws Exception {
-        mockMvc.perform(get("/param/enum-2")
-                        .param("type", "FACEBOOK"))
-                .andExpect(status().isOk());
+        // given
+        String type = "FACEBOOK";
+
+        // when
+        mockMvc.perform(get("/param/enum-no-value-method")
+                        .param("type", type))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(0))
+                .andExpect(jsonPath("$.errMsg").doesNotExist())
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
     @DisplayName("当枚举类 value 方法执行错误")
     void itShouldCheckEnumValueExecuteError() throws Exception {
-        mockMvc.perform(get("/param/enum-3")
-                        .param("type", "FACEBOOK"))
-                .andExpect(status().isOk());
+        // given
+        String type = "FACEBOOK";
+
+        // when
+        mockMvc.perform(get("/param/enum-error-value-method")
+                        .param("type", type))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$.error").value(0))
+                .andExpect(jsonPath("$.errMsg").doesNotExist())
+                .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

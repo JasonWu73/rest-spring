@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * @author 吴仙杰
@@ -87,10 +87,11 @@ class JsonConfigTest {
     @Test
     @DisplayName("JSON 反序列化不符合格式要求的日期时间字符")
     void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
-        assertThatExceptionOfType(InvalidFormatException.class)
-                .isThrownBy(() ->
-                        jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE)
-                );
+        // given
+        // when
+        // then
+        assertThatThrownBy(() -> jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE))
+                .isInstanceOf(InvalidFormatException.class);
     }
 
     private User buildUser() {
