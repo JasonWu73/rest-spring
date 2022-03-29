@@ -74,7 +74,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/public")
                         .header(
                                 HttpHeaders.AUTHORIZATION,
-                                "Bearer " + token
+                                "bearer " + token
                         ))
                 // then
                 .andExpect(status().isOk())
@@ -119,7 +119,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/authenticated")
                         .header(
                                 HttpHeaders.AUTHORIZATION,
-                                "Bearer " + token
+                                " bearer " + token
                         ))
                 // then
                 .andExpect(status().isOk())

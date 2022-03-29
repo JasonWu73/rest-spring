@@ -114,7 +114,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
-        return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
+        return Optional.ofNullable(
+                        StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION))
+                )
                 .map(bearer -> {
                     String token = null;
 
