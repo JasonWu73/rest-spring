@@ -20,7 +20,6 @@ class StringUtilsTest {
         assertThat(StringUtils.getFuzzySearchValue(" ")).isNull();
         assertThat(StringUtils.getFuzzySearchValue(" \t\n")).isNull();
 
-
         assertThat(StringUtils.getFuzzySearchValue("null")).isEqualTo("%null%");
         assertThat(StringUtils.getFuzzySearchValue("ja")).isEqualTo("%ja%");
         assertThat(StringUtils.getFuzzySearchValue(" ja")).isEqualTo("%ja%");

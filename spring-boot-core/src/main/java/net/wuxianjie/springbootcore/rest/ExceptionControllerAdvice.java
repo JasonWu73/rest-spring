@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.shared.AbstractBaseException;
 import net.wuxianjie.springbootcore.shared.InternalException;
+import net.wuxianjie.springbootcore.shared.NetUtils;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,7 +15,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -25,7 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * Controller 层全局异常处理。
@@ -40,29 +43,22 @@ public class ExceptionControllerAdvice {
     /**
      * 处理因 HTTP 请求的 MIME 类型与目标 API 不匹配而导致的异常。
      *
-     * @param e       {@link HttpMediaTypeException}
      * @param request {@link HttpServletRequest}
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeNotAcceptableException(
-            HttpMediaTypeNotAcceptableException e,
             HttpServletRequest request
     ) {
         String mimeType = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
-                .map(enumeration -> {
-                    StringBuilder builder = new StringBuilder();
-                    Iterator<String> iterator = enumeration.asIterator();
+                .map(acceptEnumeration -> {
+                    List<String> accepts = new ArrayList<>();
 
-                    while (iterator.hasNext()) {
-                        if (builder.length() > 0) {
-                            builder.append(", ");
-                        }
-
-                        builder.append(iterator.next());
+                    while (acceptEnumeration.hasMoreElements()) {
+                        accepts.add(acceptEnumeration.nextElement().trim());
                     }
 
-                    return builder.toString();
+                    return String.join(", ", accepts);
                 })
                 .orElse("null");
 
@@ -72,7 +68,12 @@ public class ExceptionControllerAdvice {
                 mimeType
         );
 
-        log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
+        log.warn(
+                "{} - {} -> {}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg
+        );
 
         return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, msg);
     }
@@ -80,13 +81,11 @@ public class ExceptionControllerAdvice {
     /**
      * 处理因 HTTP 请求的请求方法与目标 API 要求的请求方法不匹配而导致的异常。
      *
-     * @param e       {@link HttpRequestMethodNotSupportedException}
      * @param request {@link HttpServletRequest}
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResult<Void>> handleHttpRequestMethodNotSupportedException(
-            HttpRequestMethodNotSupportedException e,
             HttpServletRequest request
     ) {
         String msg = StrUtil.format(
@@ -94,7 +93,12 @@ public class ExceptionControllerAdvice {
                 request.getMethod()
         );
 
-        log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
+        log.warn(
+                "{} - {} -> {}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg
+        );
 
         return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, msg);
     }
@@ -113,7 +117,13 @@ public class ExceptionControllerAdvice {
     ) {
         String msg = "请求体内容不合法";
 
-        log.warn("{} -> {}：{}", request.getRequestURI(), msg, e.getMessage());
+        log.warn(
+                "{} - {} -> {}：{}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg,
+                e.getMessage()
+        );
 
         return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
     }
@@ -135,7 +145,12 @@ public class ExceptionControllerAdvice {
                 e.getParameterName()
         );
 
-        log.warn("{} -> {}", request.getRequestURI(), msg);
+        log.warn(
+                "{} - {} -> {}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg
+        );
 
         return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
     }
@@ -177,7 +192,8 @@ public class ExceptionControllerAdvice {
         }
 
         log.warn(
-                "{} -> 参数不合法：{}",
+                "{} - {} -> 参数不合法：{}",
+                NetUtils.getClientIp(request),
                 request.getRequestURI(),
                 String.join("；", logMsgList)
         );
@@ -222,7 +238,8 @@ public class ExceptionControllerAdvice {
         }
 
         log.warn(
-                "{} -> 参数不合法：{}",
+                "{} - {} -> 参数不合法：{}",
+                NetUtils.getClientIp(request),
                 request.getRequestURI(),
                 String.join("；", logMsgList)
         );
@@ -253,13 +270,15 @@ public class ExceptionControllerAdvice {
 
         if (cause == null) {
             logMsg = StrUtil.format(
-                    "{} -> {}",
+                    "{} - {} -> {}",
+                    NetUtils.getClientIp(request),
                     request.getRequestURI(),
                     msg
             );
         } else {
             logMsg = StrUtil.format(
-                    "{} -> {}：{}",
+                    "{} - {} -> {}：{}",
+                    NetUtils.getClientIp(request),
                     request.getRequestURI(),
                     msg,
                     cause.getMessage()
@@ -289,7 +308,13 @@ public class ExceptionControllerAdvice {
     ) {
         String msg = "数据库操作异常";
 
-        log.error("{} -> {}", request.getRequestURI(), msg, e);
+        log.error(
+                "{} - {} -> {}：{}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg,
+                e
+        );
 
         return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
@@ -313,7 +338,13 @@ public class ExceptionControllerAdvice {
 
         String msg = "服务异常";
 
-        log.error("{} -> {}", request.getRequestURI(), msg, e);
+        log.error(
+                "{} - {} -> {}：{}",
+                NetUtils.getClientIp(request),
+                request.getRequestURI(),
+                msg,
+                e
+        );
 
         return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
@@ -333,16 +364,14 @@ public class ExceptionControllerAdvice {
     private boolean isJsonRequest(HttpServletRequest request) {
         // 只有在明确指定 Accept 请求头，且不包含 JSON 时才认为非 JSON 请求
         return Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
-                .map(enumeration -> {
-                    Iterator<String> iterator = enumeration.asIterator();
-
-                    if (!iterator.hasNext()) {
+                .map(acceptEnumeration -> {
+                    if (!acceptEnumeration.hasMoreElements()) {
                         return true;
                     }
 
-                    while (iterator.hasNext()) {
+                    while (acceptEnumeration.hasMoreElements()) {
                         boolean containsJson = StrUtil.containsAnyIgnoreCase(
-                                iterator.next(),
+                                acceptEnumeration.nextElement(),
                                 MediaType.ALL_VALUE,
                                 MediaType.APPLICATION_JSON_VALUE
                         );

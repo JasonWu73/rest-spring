@@ -289,7 +289,6 @@ class ExceptionControllerAdviceTest {
     @DisplayName("当程序抛出其他异常")
     void itShouldCheckWhenThrowOtherException() throws Exception {
         // given
-
         // when
         mockMvc.perform(get("/exception"))
                 // then
