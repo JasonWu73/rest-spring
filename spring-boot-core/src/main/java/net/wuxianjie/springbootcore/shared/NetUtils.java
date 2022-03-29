@@ -1,5 +1,6 @@
 package net.wuxianjie.springbootcore.shared;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,7 @@ public class NetUtils {
      */
     public static String getClientIp(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader("X-FORWARDED-FOR"))
+                .map(StrUtil::trimToNull)
                 .orElse(request.getRemoteAddr());
     }
 }
