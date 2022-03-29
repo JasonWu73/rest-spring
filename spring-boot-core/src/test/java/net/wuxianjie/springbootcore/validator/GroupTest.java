@@ -17,10 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(
-        controllers = ParamController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
 @Import({
         JsonConfig.class,
         UrlAndFormRequestParameterConfig.class,
@@ -29,6 +25,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         GlobalResponseBodyAdvice.class,
         RestApiConfig.class
 })
+@WebMvcTest(
+        controllers = ParamController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class GroupTest {
 
     @Autowired

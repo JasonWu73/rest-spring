@@ -20,8 +20,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@SpringBootTest
-@AutoConfigureMockMvc
 @Import({
         JsonConfig.class,
         UrlAndFormRequestParameterConfig.class,
@@ -30,6 +28,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         GlobalResponseBodyAdvice.class,
         RestApiConfig.class
 })
+@SpringBootTest
+@AutoConfigureMockMvc
 class AuthControllerTest {
 
     @MockBean

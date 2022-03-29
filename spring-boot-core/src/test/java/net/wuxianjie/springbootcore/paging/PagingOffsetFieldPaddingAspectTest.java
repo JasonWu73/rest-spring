@@ -18,14 +18,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(
-        controllers = PagingSearchController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
 @Import({
         AnnotationAwareAspectJAutoProxyCreator.class,
         PagingOffsetFieldPaddingAspect.class
 })
+@WebMvcTest(
+        controllers = PagingSearchController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class PagingOffsetFieldPaddingAspectTest {
 
     @Autowired
