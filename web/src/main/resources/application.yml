@@ -21,4 +21,4 @@ mybatis:
 core:
   security:
     jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=
-    permit-all-ant-patterns: /api/v1/auth-test/public
+    permit-all-ant-patterns:

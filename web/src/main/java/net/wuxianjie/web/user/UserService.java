@@ -41,7 +41,7 @@ public class UserService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addNewUser(AddOrUpdateUserQuery query) {
-        validateUsernameUniqueness(query.getUsername());
+        verifyUsernameUniqueness(query.getUsername());
 
         User userToAdd = createUserToAdd(query);
         int addedNum = userMapper.add(userToAdd);
@@ -85,9 +85,9 @@ public class UserService {
         String username = passwordToUpdate.getUsername();
         String hashedPassword = passwordToUpdate.getHashedPassword();
 
-        validateOldPassword(query.getOldPassword(), hashedPassword);
+        verifyOldPassword(query.getOldPassword(), hashedPassword);
 
-        validateNewPasswordIsChanged(query.getNewPassword(), hashedPassword);
+        verifyNewPasswordIsChanged(query.getNewPassword(), hashedPassword);
 
         int updatedNum = updateUserPasswordInDatabase(query);
         if (updatedNum <= 0) {
@@ -124,14 +124,14 @@ public class UserService {
         return userMapper.update(user);
     }
 
-    private void validateNewPasswordIsChanged(String newPassword, String hashedPassword) {
+    private void verifyNewPasswordIsChanged(String newPassword, String hashedPassword) {
         boolean isMatched = passwordEncoder.matches(newPassword, hashedPassword);
         if (isMatched) {
             throw new BadRequestException("新密码不能与原密码相同");
         }
     }
 
-    private void validateOldPassword(String oldPassword, String hashedPassword) {
+    private void verifyOldPassword(String oldPassword, String hashedPassword) {
         boolean isMatched = passwordEncoder.matches(oldPassword, hashedPassword);
         if (!isMatched) {
             throw new BadRequestException("旧密码错误");
@@ -220,7 +220,7 @@ public class UserService {
         return userToAdd;
     }
 
-    private void validateUsernameUniqueness(String username) {
+    private void verifyUsernameUniqueness(String username) {
         boolean isExists = userMapper.existsUsername(username);
         if (isExists) {
             throw new ConflictException(String.format("用户名【%s】已存在", username));

@@ -35,9 +35,9 @@ public class TokenServiceImpl implements TokenService {
             throws TokenAuthenticationException {
         User user = getUserFromDbMustBeExists(accountName);
 
-        validateAccountAvailable(user.getEnabled(), user.getUsername());
+        verifyAccountAvailable(user.getEnabled(), user.getUsername());
 
-        validatePassword(rawPassword, user.getHashedPassword());
+        VerifyPassword(rawPassword, user.getHashedPassword());
 
         TokenData token = createNewToken(user);
         addToCache(user, token);
@@ -48,7 +48,7 @@ public class TokenServiceImpl implements TokenService {
     @Override
     public TokenData refreshToken(String refreshToken)
             throws TokenAuthenticationException {
-        Map<String, Object> payload = JwtUtils.validateJwt(securityConfig.getJwtSigningKey(), refreshToken);
+        Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), refreshToken);
         String tokenType = (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY);
         if (!Objects.equals(tokenType, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE)) {
             throw new TokenAuthenticationException("Token 类型错误");
@@ -57,7 +57,7 @@ public class TokenServiceImpl implements TokenService {
         String username = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
         User user = getUserFromDbMustBeExists(username);
 
-        validateAccountAvailable(user.getEnabled(), username);
+        verifyAccountAvailable(user.getEnabled(), username);
 
         TokenData token = createNewToken(user);
         addToCache(user, token);
@@ -86,14 +86,14 @@ public class TokenServiceImpl implements TokenService {
         return JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, TokenAttributes.EXPIRES_IN_SECONDS_VALUE);
     }
 
-    private void validatePassword(String rawPassword, String hashedPassword) {
+    private void VerifyPassword(String rawPassword, String hashedPassword) {
         boolean isMatched = passwordEncoder.matches(rawPassword, hashedPassword);
         if (!isMatched) {
             throw new TokenAuthenticationException("密码错误");
         }
     }
 
-    private void validateAccountAvailable(YesOrNo enabled, String username) {
+    private void verifyAccountAvailable(YesOrNo enabled, String username) {
         if (enabled != YesOrNo.YES) {
             throw new TokenAuthenticationException(String.format("账号【%s】已被禁用", username));
         }

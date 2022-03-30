@@ -60,11 +60,11 @@ class JwtUtilsTest {
 
     @Test
     @Order(3)
-    @DisplayName("校验并解析 JWT")
-    void itShouldValidateJwt() {
+    @DisplayName("验证并解析 JWT")
+    void itShouldVerifyJwt() {
         // given
         // when
-        Map<String, Object> payload = JwtUtils.validateJwt(secretKey, token);
+        Map<String, Object> payload = JwtUtils.verifyJwt(secretKey, token);
         String username = (String) payload.get(USERNAME_KEY);
 
         // then
@@ -84,7 +84,7 @@ class JwtUtilsTest {
 
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, token))
+        assertThatThrownBy(() -> JwtUtils.verifyJwt(EXPIRED_JWT_SIGNING_KEY, token))
                 .hasMessageContaining("Token 格式错误");
     }
 
@@ -96,7 +96,7 @@ class JwtUtilsTest {
 
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.validateJwt(signingKey, EXPIRED_JWT))
+        assertThatThrownBy(() -> JwtUtils.verifyJwt(signingKey, EXPIRED_JWT))
                 .hasMessageContaining("Token 签名密钥不匹配");
     }
 
@@ -106,7 +106,7 @@ class JwtUtilsTest {
         // give
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.validateJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT))
+        assertThatThrownBy(() -> JwtUtils.verifyJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT))
                 .hasMessageContaining("Token 已过期");
     }
 }

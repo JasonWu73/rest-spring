@@ -26,7 +26,7 @@ class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
     @Override
     public TokenUserDetails authenticate(String token) throws TokenAuthenticationException {
-        Map<String, Object> payload = JwtUtils.validateJwt(SIGNING_KEY, token);
+        Map<String, Object> payload = JwtUtils.verifyJwt(SIGNING_KEY, token);
 
         String tokenType = Optional.ofNullable((String) payload.get(TOKEN_TYPE_KEY))
                 .orElseThrow(() -> new TokenAuthenticationException(

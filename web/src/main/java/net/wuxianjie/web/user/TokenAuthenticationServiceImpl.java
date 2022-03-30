@@ -28,7 +28,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
     public TokenUserDetails authenticate(String token)
             throws TokenAuthenticationException {
         Map<String, Object> payload =
-                JwtUtils.validateJwt(securityConfig.getJwtSigningKey(), token);
+                JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
         String tokenType = Optional.ofNullable(
                         (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY)

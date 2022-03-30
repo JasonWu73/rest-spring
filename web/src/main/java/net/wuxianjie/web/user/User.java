@@ -19,17 +19,17 @@ import java.time.LocalDateTime;
 public class User {
 
     /**
-     * 用户表 ID。
+     * 用户 ID。
      */
     private Integer userId;
 
     /**
-     * 记录创建时间。
+     * 创建时间。
      */
     private LocalDateTime createTime;
 
     /**
-     * 记录修改时间。
+     * 修改时间。
      */
     private LocalDateTime modifyTime;
 

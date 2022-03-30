@@ -55,14 +55,14 @@ public class JwtUtils {
     }
 
     /**
-     * 返回 JWT 的有效载荷（即解析结果）。
+     * 验证 JWT 有效期，并返回 JWT 的有效载荷（即解析结果）。
      *
      * @param signingKey JWT 签名密钥
      * @param jwt        JWT
      * @return JWT 中的有效载荷
      * @throws TokenAuthenticationException 若 JWT 校验不通过
      */
-    public static Map<String, Object> validateJwt(
+    public static Map<String, Object> verifyJwt(
             String signingKey,
             String jwt
     ) throws TokenAuthenticationException {

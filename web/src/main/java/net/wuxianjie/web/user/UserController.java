@@ -71,7 +71,7 @@ public class UserController {
      */
     @PostMapping("password")
     public void updateCurrentUserPassword(@RequestBody @Validated UpdatePasswordQuery query) {
-        validatePasswordDifference(query.getOldPassword(), query.getNewPassword());
+        verifyPasswordDifference(query.getOldPassword(), query.getNewPassword());
 
         setCurrentUserId(query);
 
@@ -92,7 +92,7 @@ public class UserController {
         query.setUserId(userDetails.getAccountId());
     }
 
-    private void validatePasswordDifference(String oldPassword, String newPassword) {
+    private void verifyPasswordDifference(String oldPassword, String newPassword) {
         if (Objects.equals(oldPassword, newPassword)) {
             throw new BadRequestException("新旧密码不能相同");
         }
@@ -101,13 +101,13 @@ public class UserController {
     private void setRoleAfterDeduplication(AddOrUpdateUserQuery query) {
         toDeduplicatedCommaSeparatedLowerCase(query.getRoles())
                 .ifPresent(roleStr -> {
-                    validateRole(roleStr);
+                    verifyRole(roleStr);
 
                     query.setRoles(roleStr);
                 });
     }
 
-    private void validateRole(String commaSeparatedRole) {
+    private void verifyRole(String commaSeparatedRole) {
         if (StrUtil.isEmpty(commaSeparatedRole)) {
             return;
         }

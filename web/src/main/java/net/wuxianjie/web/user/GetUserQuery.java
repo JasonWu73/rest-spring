@@ -21,7 +21,8 @@ public class GetUserQuery {
     /**
      * 用户名。
      */
-    @Pattern(message = "用户名只能包含汉字、字母、数字和下划线，且最多包含 100 个字符", regexp = "(^$|^[\\u4E00-\\u9FA5A-Za-z0-9_]{0,100}$)")
+    @Pattern(message = "用户名只能包含汉字、字母、数字和下划线，且最多包含 32 个字符",
+            regexp = "(^$|^[\\u4E00-\\u9FA5A-Za-z0-9_]{0,32}$)")
     private String username;
 
     /**
