@@ -48,9 +48,16 @@ public class GlobalErrorController implements ErrorController {
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
         if (httpStatus == HttpStatus.NOT_FOUND) {
-            log.warn("Spring Boot 全局 404 处理：{}", attrs);
+            log.warn(
+                    "{} - Spring Boot 全局 404 处理：{}",
+                    request.getDescription(true), attrs
+            );
         } else {
-            log.error("Spring Boot 全局异常处理：{}", attrs);
+            log.error(
+                    "{} - Spring Boot 全局异常处理：{}",
+                    request.getDescription(true),
+                    attrs
+            );
         }
 
         return new ResponseEntity<>(
