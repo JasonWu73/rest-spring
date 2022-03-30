@@ -34,7 +34,7 @@
     </sql>
 
     <select id="findByQueryPagingOrderByModifyTimeDesc"
-            resultType="net.wuxianjie.web.user.UserListItemDto">
+            resultType="net.wuxianjie.web.user.UserManagerDto">
         SELECT user_id AS userId,
         STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
         is_enabled AS enabled,

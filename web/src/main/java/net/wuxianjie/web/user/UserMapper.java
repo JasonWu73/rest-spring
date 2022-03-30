@@ -18,10 +18,10 @@ public interface UserMapper {
 
     User findByUsername(String username);
 
-    List<UserListItemDto> findByQueryPagingOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                                 @Param("q") GetUserQuery query);
+    List<UserManagerDto> findByQueryPagingOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
+                                                                @Param("q") UserManagerQuery query);
 
-    int countByQuery(@Param("q") GetUserQuery query);
+    int countByQuery(@Param("q") UserManagerQuery query);
 
     boolean existsUsername(String username);
 

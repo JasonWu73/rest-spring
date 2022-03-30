@@ -9,14 +9,14 @@ import net.wuxianjie.springbootcore.security.Role;
 import java.time.LocalDateTime;
 
 /**
- * 用户分页列表项。
+ * 用于用户管理的数据传输对象。
  *
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserListItemDto {
+public class UserManagerDto {
 
     /**
      * 用户 ID。

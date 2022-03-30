@@ -1,7 +1,7 @@
 package net.wuxianjie.springbootcore.security;
 
 /**
- * Token 认证所需的数据接口。
+ * Token 认证所需的用户详细数据接口。
  *
  * @author 吴仙杰
  * @see AuthUtils
@@ -23,9 +23,10 @@ public interface UserDetails {
     String getAccountName();
 
     /**
-     * 获取以英文逗号分隔的角色。
+     * 用户绑定的角色，多个角色以英文逗号分隔。
      *
      * @return Token 所绑定的角色
+     * @see Role#value()
      */
     String getRoles();
 

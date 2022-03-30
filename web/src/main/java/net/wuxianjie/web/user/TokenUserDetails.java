@@ -3,6 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.security.UserDetails;
 
 /**
@@ -16,17 +17,19 @@ import net.wuxianjie.springbootcore.security.UserDetails;
 public class TokenUserDetails implements UserDetails {
 
     /**
-     * 账号 ID。
+     * 用户 ID。
      */
     private Integer accountId;
 
     /**
-     * 账号名。
+     * 用户名。
      */
     private String accountName;
 
     /**
-     * 该账号所拥有的角色。
+     * 用户绑定的角色，多个角色以英文逗号分隔。
+     *
+     * @see Role#value()
      */
     private String roles;
 

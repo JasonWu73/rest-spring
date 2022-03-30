@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 实现 Token 认证。
+ * Token 认证业务逻辑。
  *
  * @author 吴仙杰
  */
@@ -25,50 +25,37 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
     private final SecurityConfigData securityConfig;
 
     @Override
-    public TokenUserDetails authenticate(String token)
-            throws TokenAuthenticationException {
-        Map<String, Object> payload =
-                JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
+    public TokenUserDetails authenticate(String token) throws TokenAuthenticationException {
+        Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
-        String tokenType = Optional.ofNullable(
-                        (String) payload.get(TokenAttributes.TOKEN_TYPE_KEY)
-                )
-                .orElseThrow(() ->
-                        new TokenAuthenticationException(
-                                StrUtil.format("Token 缺少 {} 信息",
-                                        TokenAttributes.TOKEN_TYPE_KEY)
-                        )
-                );
+        checkTokenType(payload);
 
-        if (!StrUtil.equals(tokenType,
-                TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)
-        ) {
-            throw new TokenAuthenticationException("Token 类型错误");
-        }
-
-        String username = Optional.ofNullable(
-                        (String) payload.get(TokenAttributes.ACCOUNT_KEY)
-                )
-                .orElseThrow(() ->
-                        new TokenAuthenticationException(
-                                StrUtil.format("Token 缺少 {} 信息",
-                                        TokenAttributes.ACCOUNT_KEY)
-                        )
-                );
+        String username = Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
+                .orElseThrow(() -> new TokenAuthenticationException(
+                        StrUtil.format("Token 缺少 {} 信息", TokenAttributes.ACCOUNT_KEY)
+                ));
 
         return getUserDetailsFromCache(username, token);
     }
 
-    private TokenUserDetails getUserDetailsFromCache(String username,
-                                                     String token
-    ) {
+    private TokenUserDetails getUserDetailsFromCache(String username, String token) {
         TokenUserDetails userDetails = tokenCache.getIfPresent(username);
 
-        if (userDetails == null
-                || !StrUtil.equals(token, userDetails.getAccessToken())) {
+        if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {
             throw new TokenAuthenticationException("Token 已过期");
         }
 
         return userDetails;
+    }
+
+    private void checkTokenType(Map<String, Object> payload) {
+        String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
+                .orElseThrow(() -> new TokenAuthenticationException(
+                        StrUtil.format("Token 缺少 {} 信息", TokenAttributes.TOKEN_TYPE_KEY)
+                ));
+
+        if (!StrUtil.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
+            throw new TokenAuthenticationException("Token 类型错误");
+        }
     }
 }

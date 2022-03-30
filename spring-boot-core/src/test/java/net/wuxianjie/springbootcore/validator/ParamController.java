@@ -2,8 +2,8 @@ package net.wuxianjie.springbootcore.validator;
 
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.validator.group.Save;
-import net.wuxianjie.springbootcore.validator.group.Update;
+import net.wuxianjie.springbootcore.validator.group.GroupOne;
+import net.wuxianjie.springbootcore.validator.group.GroupTwo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,20 +42,20 @@ class ParamController {
     }
 
     @GetMapping("save")
-    void save(@Validated(Save.class) Param param) {
+    void save(@Validated(GroupOne.class) Param param) {
     }
 
     @GetMapping("update")
-    void update(@Validated(Update.class) Param param) {
+    void update(@Validated(GroupTwo.class) Param param) {
     }
 
     @Data
     static class Param {
 
-        @NotNull(message = "启用状态不能为 null", groups = Save.class)
+        @NotNull(message = "启用状态不能为 null", groups = GroupOne.class)
         private Integer enabled;
 
-        @NotNull(message = "ID 不能为 null", groups = Update.class)
+        @NotNull(message = "ID 不能为 null", groups = GroupTwo.class)
         private Integer id;
 
         @NotBlank(message = "名称不能为空")

@@ -33,14 +33,14 @@ public class UserService {
         return Optional.ofNullable(userMapper.findByUsername(username));
     }
 
-    public PagingResult<UserListItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
-        List<UserListItemDto> users = userMapper.findByQueryPagingOrderByModifyTimeDesc(paging, query);
+    public PagingResult<UserManagerDto> getUsers(PagingQuery paging, UserManagerQuery query) {
+        List<UserManagerDto> users = userMapper.findByQueryPagingOrderByModifyTimeDesc(paging, query);
         int total = userMapper.countByQuery(query);
         return new PagingResult<>(paging, total, users);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void addNewUser(AddOrUpdateUserQuery query) {
+    public void addNewUser(UserManagerQuery query) {
         verifyUsernameUniqueness(query.getUsername());
 
         User userToAdd = createUserToAdd(query);
@@ -56,7 +56,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUser(AddOrUpdateUserQuery query) {
+    public void updateUser(UserManagerQuery query) {
         Integer userId = query.getUserId();
 
         User userToUpdate = getUserFromDbMustBeExists(userId);
@@ -78,7 +78,7 @@ public class UserService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(UpdatePasswordQuery query) {
+    public void updateUserPassword(UserManagerQuery query) {
         Integer userId = query.getUserId();
 
         User passwordToUpdate = getUserFromDbMustBeExists(userId);
@@ -112,7 +112,7 @@ public class UserService {
         logService.addNewOperationLog(LocalDateTime.now(), message);
     }
 
-    private int updateUserPasswordInDatabase(UpdatePasswordQuery query) {
+    private int updateUserPasswordInDatabase(UserManagerQuery query) {
         String rawPassword = query.getNewPassword();
         String hashedPassword = passwordEncoder.encode(rawPassword);
 
@@ -138,7 +138,7 @@ public class UserService {
         }
     }
 
-    private boolean needsUpdateUser(User userToUpdate, AddOrUpdateUserQuery query, List<String> logs) {
+    private boolean needsUpdateUser(User userToUpdate, UserManagerQuery query, List<String> logs) {
         boolean needsUpdatePassword = needsUpdatePassword(userToUpdate, query, logs);
 
         boolean needsUpdateRoles = needsUpdateRoles(userToUpdate, query, logs);
@@ -148,7 +148,7 @@ public class UserService {
         return needsUpdatePassword || needsUpdateRoles || needsUpdateEnabled;
     }
 
-    private boolean needsUpdateEnabled(User userToUpdate, AddOrUpdateUserQuery query, List<String> logs) {
+    private boolean needsUpdateEnabled(User userToUpdate, UserManagerQuery query, List<String> logs) {
         YesOrNo newEnabled = YesOrNo.resolve(query.getEnabled()).orElse(null);
         if (newEnabled == null) {
             return false;
@@ -168,7 +168,7 @@ public class UserService {
         }
     }
 
-    private boolean needsUpdateRoles(User userToUpdate, AddOrUpdateUserQuery query, List<String> logs) {
+    private boolean needsUpdateRoles(User userToUpdate, UserManagerQuery query, List<String> logs) {
         String newRoles = query.getRoles();
         if (newRoles == null) {
             return false;
@@ -187,7 +187,7 @@ public class UserService {
         }
     }
 
-    private boolean needsUpdatePassword(User userToUpdate, AddOrUpdateUserQuery query, List<String> logs) {
+    private boolean needsUpdatePassword(User userToUpdate, UserManagerQuery query, List<String> logs) {
         String newRawPassword = query.getPassword();
         if (newRawPassword == null) {
             return false;
@@ -212,7 +212,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException(String.format("用户 ID【%s】不存在", userId)));
     }
 
-    private User createUserToAdd(AddOrUpdateUserQuery query) {
+    private User createUserToAdd(UserManagerQuery query) {
         User userToAdd = new User();
         BeanUtil.copyProperties(query, userToAdd, "enabled");
         userToAdd.setHashedPassword(passwordEncoder.encode(query.getPassword()));

@@ -2,14 +2,14 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.AuthUtils;
 import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.shared.BadRequestException;
 import net.wuxianjie.springbootcore.shared.StringUtils;
-import net.wuxianjie.springbootcore.validator.group.Save;
+import net.wuxianjie.springbootcore.validator.group.GroupOne;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +34,7 @@ public class UserController {
      */
     @Admin
     @GetMapping("list")
-    public PagingResult<UserListItemDto> getUsers(@Validated PagingQuery paging, @Validated GetUserQuery query) {
+    public PagingResult<UserManagerDto> getUsers(@Validated PagingQuery paging, @Validated UserManagerQuery query) {
         setFuzzySearchValue(query);
 
         return userService.getUsers(paging, query);
@@ -45,7 +45,7 @@ public class UserController {
      */
     @Admin
     @PostMapping("add")
-    public void addNewUser(@RequestBody @Validated(Save.class) AddOrUpdateUserQuery query) {
+    public void addNewUser(@RequestBody @Validated(GroupOne.class) UserManagerQuery query) {
         setRoleAfterDeduplication(query);
 
         userService.addNewUser(query);
@@ -58,7 +58,7 @@ public class UserController {
      */
     @Admin
     @PostMapping("update/{userId:\\d+}")
-    public void updateUser(@PathVariable("userId") int id, @RequestBody @Validated AddOrUpdateUserQuery query) {
+    public void updateUser(@PathVariable("userId") int id, @RequestBody @Validated UserManagerQuery query) {
         query.setUserId(id);
 
         setRoleAfterDeduplication(query);
@@ -70,7 +70,7 @@ public class UserController {
      * 修改当前用户密码。
      */
     @PostMapping("password")
-    public void updateCurrentUserPassword(@RequestBody @Validated UpdatePasswordQuery query) {
+    public void updateCurrentUserPassword(@RequestBody @Validated UserManagerQuery query) {
         verifyPasswordDifference(query.getOldPassword(), query.getNewPassword());
 
         setCurrentUserId(query);
@@ -87,7 +87,7 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    private void setCurrentUserId(UpdatePasswordQuery query) {
+    private void setCurrentUserId(UserManagerQuery query) {
         TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getCurrentUser().orElseThrow();
         query.setUserId(userDetails.getAccountId());
     }
@@ -98,7 +98,7 @@ public class UserController {
         }
     }
 
-    private void setRoleAfterDeduplication(AddOrUpdateUserQuery query) {
+    private void setRoleAfterDeduplication(UserManagerQuery query) {
         toDeduplicatedCommaSeparatedLowerCase(query.getRoles())
                 .ifPresent(roleStr -> {
                     verifyRole(roleStr);
@@ -139,7 +139,7 @@ public class UserController {
         );
     }
 
-    private void setFuzzySearchValue(GetUserQuery query) {
+    private void setFuzzySearchValue(UserManagerQuery query) {
         query.setUsername(StringUtils.getFuzzySearchValue(query.getUsername()));
     }
 }

@@ -16,7 +16,9 @@ import java.util.concurrent.TimeUnit;
 public class TokenCacheConfig {
 
     /**
-     * Key: {@code username}.
+     * Token 本地缓存。
+     *
+     * @return {@code username: TokenUserDetails}
      */
     @Bean
     public Cache<String, TokenUserDetails> tokenCache() {

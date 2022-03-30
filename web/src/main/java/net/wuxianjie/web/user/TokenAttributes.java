@@ -32,12 +32,12 @@ public final class TokenAttributes {
     public static final String TOKEN_TYPE_KEY = "type";
 
     /**
-     * JWT 载荷属性 Token 类型的值：Access Token。
+     * JWT 载荷属性的 Access Token 类型值。
      */
     public static final String ACCESS_TOKEN_TYPE_VALUE = "access";
 
     /**
-     * JWT 载荷属性 Token 类型的值：Refresh Token。
+     * JWT 载荷属性的 Refresh Token 类型的值。
      */
     public static final String REFRESH_TOKEN_TYPE_VALUE = "refresh";
 }
