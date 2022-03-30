@@ -88,7 +88,7 @@ public class UserController {
     }
 
     private void setCurrentUserId(UpdatePasswordQuery query) {
-        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getLoggedIn().orElseThrow();
+        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getCurrentUser().orElseThrow();
         query.setUserId(userDetails.getAccountId());
     }
 

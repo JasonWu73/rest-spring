@@ -30,7 +30,7 @@ public class OperationLogService {
 
     @Transactional(rollbackFor = Exception.class)
     public void addNewOperationLog(LocalDateTime operationTime, String message) {
-        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getLoggedIn().orElseThrow();
+        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getCurrentUser().orElseThrow();
         OperationLog logToAdd = new OperationLog(null, operationTime,
                 userDetails.getAccountId(), userDetails.getAccountName(), message);
         logMapper.add(logToAdd);

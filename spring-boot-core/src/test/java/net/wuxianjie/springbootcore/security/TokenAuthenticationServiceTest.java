@@ -48,7 +48,7 @@ class TokenAuthenticationServiceTest {
         cache.put(username, user);
 
         // when
-        TokenDetails actual = underTest.authenticate(token);
+        UserDetails actual = underTest.authenticate(token);
 
         // then
         assertThat(actual).isEqualTo(cache.get(username));

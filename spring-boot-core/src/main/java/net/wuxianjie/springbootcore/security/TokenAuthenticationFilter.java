@@ -61,10 +61,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            TokenDetails tokenDetails =
+            UserDetails userDetails =
                     authenticationService.authenticate(tokenOptional.get());
 
-            loginToSpringSecurityContext(tokenDetails);
+            loginToSpringSecurityContext(userDetails);
         } catch (TokenAuthenticationException e) {
             SecurityContextHolder.clearContext();
 
@@ -141,11 +141,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 });
     }
 
-    private void loginToSpringSecurityContext(TokenDetails tokenDetails) {
-        List<GrantedAuthority> authorityList = getAuthorities(tokenDetails.getRoles());
+    private void loginToSpringSecurityContext(UserDetails userDetails) {
+        List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                tokenDetails,
+                userDetails,
                 null,
                 authorityList
         );

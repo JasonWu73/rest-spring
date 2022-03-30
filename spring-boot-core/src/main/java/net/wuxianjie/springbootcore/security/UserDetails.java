@@ -6,7 +6,7 @@ package net.wuxianjie.springbootcore.security;
  * @author 吴仙杰
  * @see AuthUtils
  */
-public interface TokenDetails {
+public interface UserDetails {
 
     /**
      * 获取账号 ID。

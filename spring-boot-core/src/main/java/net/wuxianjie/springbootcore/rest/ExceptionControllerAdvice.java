@@ -2,6 +2,8 @@ package net.wuxianjie.springbootcore.rest;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.UserDetails;
 import net.wuxianjie.springbootcore.shared.AbstractBaseException;
 import net.wuxianjie.springbootcore.shared.InternalException;
 import net.wuxianjie.springbootcore.shared.NetUtils;
@@ -68,10 +70,14 @@ public class ExceptionControllerAdvice {
                 mimeType
         );
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> {}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}",
                 request.getRequestURI(),
+                NetUtils.getRealIpAddress(request),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg
         );
 
@@ -93,10 +99,14 @@ public class ExceptionControllerAdvice {
                 request.getMethod()
         );
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> {}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg
         );
 
@@ -117,10 +127,14 @@ public class ExceptionControllerAdvice {
     ) {
         String msg = "请求体内容不合法";
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> {}：{}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg,
                 e.getMessage()
         );
@@ -145,10 +159,14 @@ public class ExceptionControllerAdvice {
                 e.getParameterName()
         );
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> {}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg
         );
 
@@ -191,10 +209,14 @@ public class ExceptionControllerAdvice {
             logMsgList.add(logMsg);
         }
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> 参数不合法：{}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 String.join("；", logMsgList)
         );
 
@@ -237,10 +259,14 @@ public class ExceptionControllerAdvice {
             logMsgList.add(logMsg);
         }
 
+        UserDetails currentUser = getCurrentUser();
+
         log.warn(
-                "{} - {} -> 参数不合法：{}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 String.join("；", logMsgList)
         );
 
@@ -265,21 +291,25 @@ public class ExceptionControllerAdvice {
     ) {
         Throwable cause = e.getCause();
         String msg = e.getMessage();
-
+        UserDetails currentUser = getCurrentUser();
         String logMsg;
 
         if (cause == null) {
             logMsg = StrUtil.format(
-                    "{} - {} -> {}",
-                    NetUtils.getClientIp(request),
+                    "uri={}；client={}；accountName={}；accountId={} -> {}",
+                    NetUtils.getRealIpAddress(request),
                     request.getRequestURI(),
+                    currentUser.getAccountName(),
+                    currentUser.getAccountId(),
                     msg
             );
         } else {
             logMsg = StrUtil.format(
-                    "{} - {} -> {}：{}",
-                    NetUtils.getClientIp(request),
+                    "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
+                    NetUtils.getRealIpAddress(request),
                     request.getRequestURI(),
+                    currentUser.getAccountName(),
+                    currentUser.getAccountId(),
                     msg,
                     cause.getMessage()
             );
@@ -307,11 +337,14 @@ public class ExceptionControllerAdvice {
             HttpServletRequest request
     ) {
         String msg = "数据库操作异常";
+        UserDetails currentUser = getCurrentUser();
 
         log.error(
-                "{} - {} -> {}：{}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg,
                 e
         );
@@ -337,11 +370,14 @@ public class ExceptionControllerAdvice {
         }
 
         String msg = "服务异常";
+        UserDetails currentUser = getCurrentUser();
 
         log.error(
-                "{} - {} -> {}：{}",
-                NetUtils.getClientIp(request),
+                "uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request),
                 request.getRequestURI(),
+                currentUser.getAccountName(),
+                currentUser.getAccountId(),
                 msg,
                 e
         );
@@ -384,5 +420,35 @@ public class ExceptionControllerAdvice {
                     return false;
                 })
                 .orElse(true);
+    }
+
+    private UserDetails getCurrentUser() {
+        return AuthUtils.getCurrentUser()
+                .orElse(new UserDetails() {
+                    @Override
+                    public Integer getAccountId() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getAccountName() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getRoles() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getAccessToken() {
+                        return null;
+                    }
+
+                    @Override
+                    public String getRefreshToken() {
+                        return null;
+                    }
+                });
     }
 }

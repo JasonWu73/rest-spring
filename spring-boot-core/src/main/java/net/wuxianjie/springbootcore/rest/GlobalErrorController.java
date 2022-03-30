@@ -2,6 +2,8 @@ package net.wuxianjie.springbootcore.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.UserDetails;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -47,15 +49,31 @@ public class GlobalErrorController implements ErrorController {
                         .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
+        Optional<UserDetails> userOptional = AuthUtils.getCurrentUser();
+        Integer accountId = userOptional
+                .map(UserDetails::getAccountId)
+                .orElse(null);
+        String accountName = userOptional
+                .map(UserDetails::getAccountName)
+                .orElse(null);
+        String requestDescription = request
+                .getDescription(true)
+                .replaceAll(";", "；");
+
         if (httpStatus == HttpStatus.NOT_FOUND) {
             log.warn(
-                    "{} - Spring Boot 全局 404 处理：{}",
-                    request.getDescription(true), attrs
+                    "{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
+                    requestDescription,
+                    accountName,
+                    accountId,
+                    attrs
             );
         } else {
             log.error(
-                    "{} - Spring Boot 全局异常处理：{}",
-                    request.getDescription(true),
+                    "{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
+                    requestDescription,
+                    accountName,
+                    accountId,
                     attrs
             );
         }

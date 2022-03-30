@@ -26,7 +26,7 @@ class NetUtilsTest {
         request.setRemoteAddr(ip);
 
         // when
-        String actual = NetUtils.getClientIp(request);
+        String actual = NetUtils.getRealIpAddress(request);
 
         // then
         assertThat(actual).isEqualTo(ip);
@@ -44,7 +44,7 @@ class NetUtilsTest {
         request.addHeader("X-FORWARDED-FOR", proxyIp);
 
         // when
-        String actual = NetUtils.getClientIp(request);
+        String actual = NetUtils.getRealIpAddress(request);
 
         // then
         assertThat(actual).isEqualTo(proxyIp);

@@ -15,12 +15,12 @@ import lombok.NoArgsConstructor;
 public class OperationLog {
 
     /**
-     * 操作员 ID，当为开放 API 时，则值为 {@code -1}。
+     * 操作员 ID，当为开放 API 时，则为 {@code null}。
      */
     private Integer operatorId;
 
     /**
-     * 操作员账号，当为开放 API 时，则值为 {@code 匿名用户}。
+     * 操作员账号，当为开放 API 时，则为 {@code null}。
      */
     private String operatorName;
 

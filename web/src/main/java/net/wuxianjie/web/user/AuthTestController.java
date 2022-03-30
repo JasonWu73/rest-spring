@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.security.User;
 import net.wuxianjie.springbootcore.security.*;
+import net.wuxianjie.springbootcore.security.AuthUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,8 +72,8 @@ public class AuthTestController {
     }
 
     private String getUsername() {
-        return AuthUtils.getLoggedIn()
-                .map(TokenDetails::getAccountName)
+        return AuthUtils.getCurrentUser()
+                .map(UserDetails::getAccountName)
                 .orElse("匿名用户");
     }
 

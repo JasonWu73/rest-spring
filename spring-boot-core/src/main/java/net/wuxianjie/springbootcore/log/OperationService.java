@@ -7,5 +7,10 @@ package net.wuxianjie.springbootcore.log;
  */
 public interface OperationService {
 
+    /**
+     * 保存操作日志数据。
+     *
+     * @param log 日志数据
+     */
     void saveLog(OperationLog log);
 }

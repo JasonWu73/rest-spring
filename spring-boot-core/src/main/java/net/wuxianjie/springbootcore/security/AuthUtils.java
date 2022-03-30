@@ -16,11 +16,11 @@ import java.util.Optional;
 public class AuthUtils {
 
     /**
-     * 获取已通过认证后的 Token 详细数据。若是开放接口，即无需 Token 认证的接口，则返回空。
+     * 获取已通过认证后的用户详细数据。若是开放接口，即无需 Token 认证的接口，则返回空。
      *
-     * @return 认证后的 Token 详细数据。
+     * @return 认证后的用户详细数据。
      */
-    public static Optional<TokenDetails> getLoggedIn() {
+    public static Optional<UserDetails> getCurrentUser() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
                 .map(authentication -> {
                     if (authentication instanceof AnonymousAuthenticationToken) {
@@ -29,7 +29,7 @@ public class AuthUtils {
                         return null;
                     }
 
-                    return (TokenDetails) authentication.getPrincipal();
+                    return (UserDetails) authentication.getPrincipal();
                 });
     }
 }

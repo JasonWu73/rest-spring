@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.springbootcore.security.TokenDetails;
+import net.wuxianjie.springbootcore.security.UserDetails;
 
 /**
  * Token 认证后的用户详细数据。
@@ -13,7 +13,7 @@ import net.wuxianjie.springbootcore.security.TokenDetails;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenUserDetails implements TokenDetails {
+public class TokenUserDetails implements UserDetails {
 
     /**
      * 账号 ID。

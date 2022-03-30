@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.security.AuthUtils;
-import net.wuxianjie.springbootcore.security.TokenDetails;
+import net.wuxianjie.springbootcore.security.UserDetails;
 import net.wuxianjie.springbootcore.shared.InternalException;
 import net.wuxianjie.springbootcore.shared.NetUtils;
 import org.aspectj.lang.JoinPoint;
@@ -47,19 +47,19 @@ public class OperationLogAspect {
     @AfterReturning(pointcut = "@annotation(Logger)", returning = "returnObj")
     public void log(JoinPoint joinPoint, Object returnObj) throws JsonProcessingException {
         Optional<HttpServletRequest> requestOptional = NetUtils.getRequest();
-        Optional<TokenDetails> account = AuthUtils.getLoggedIn();
+        Optional<UserDetails> userOptional = AuthUtils.getCurrentUser();
 
-        // 操作员 ID，当为开放 API 时，则值为 `-1`
-        int operatorId = account.isPresent()
-                ? account.get().getAccountId()
-                : -1;
-        // 操作员账号，当为开放 API 时，则值为 `匿名用户`
-        String operatorName = account.isPresent()
-                ? account.get().getAccountName()
-                : "匿名用户";
+        // 操作员 ID，当为开放 API 时，则值为 null
+        Integer operatorId = userOptional
+                .map(UserDetails::getAccountId)
+                .orElse(null);
+        // 操作员账号，当为开放 API 时，则值为 null
+        String operatorName = userOptional
+                .map(UserDetails::getAccountName)
+                .orElse(null);
         // 请求 IP
         String requestIp = requestOptional.isPresent()
-                ? NetUtils.getClientIp(requestOptional.get())
+                ? NetUtils.getRealIpAddress(requestOptional.get())
                 : "无法获取 IP";
         // 请求 URI
         String requestUri = requestOptional.isPresent()
@@ -80,9 +80,9 @@ public class OperationLogAspect {
                 : objectMapper.writeValueAsString(returnObj);
 
         log.info(
-                "{} - {} -> {} [ID = {}] - {} [{}]；入参：{}；返回值：{}",
-                requestIp,
+                "uri={}；client={}；accountName={}；accountId={} -> {} [{}]；入参：{}；返回值：{}",
                 requestUri,
+                requestIp,
                 operatorName,
                 operatorId,
                 methodMsg,
@@ -135,7 +135,7 @@ public class OperationLogAspect {
         String className = joinPoint.getTarget().getClass().getName();
         String methodName = method.getName();
 
-        return className + methodName;
+        return StrUtil.format("{}.{}", className, methodName);
     }
 
     private boolean isVoidReturnType(JoinPoint joinPoint) {
