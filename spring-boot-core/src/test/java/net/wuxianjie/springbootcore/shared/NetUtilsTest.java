@@ -3,9 +3,17 @@ package net.wuxianjie.springbootcore.shared;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * @author 吴仙杰
+ */
 class NetUtilsTest {
 
     @Test
@@ -40,5 +48,31 @@ class NetUtilsTest {
 
         // then
         assertThat(actual).isEqualTo(proxyIp);
+    }
+
+    @Test
+    @DisplayName("获取请求对象")
+    void canGetRequest() {
+        // given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        // when
+        Optional<HttpServletRequest> actual = NetUtils.getRequest();
+
+        // then
+        assertThat(actual.isPresent()).isTrue();
+    }
+
+    @Test
+    @DisplayName("无法请求对象")
+    void canNotGetRequest() {
+        // given
+        // when
+        Optional<HttpServletRequest> actual = NetUtils.getRequest();
+
+        // then
+        assertThat(actual.isEmpty()).isTrue();
     }
 }

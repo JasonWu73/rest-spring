@@ -29,13 +29,17 @@ public class PagingOffsetFieldPaddingAspect {
     public void getByPaging() {
     }
 
-    /*
+    /**
      * 匹配所有符合以下条件的方法：
-     * 1. 类名后缀为 Controller
-     * 2. 方法的访问修饰符为 public
-     * 3. 方法的第一个参数为 net.wuxianjie.springbootcore.paging.PagingQuery
-     * 4. 方法的返回值为 net.wuxianjie.springbootcore.paging.PagingData
-     * */
+     * <ol>
+     *     <li>类名后缀为 Controller</li>
+     *     <li>方法的访问修饰符为 public</li>
+     *     <li>方法的第一个参数为 {@link PagingQuery}</li>
+     *     <li>方法的返回值为 {@link PagingResult}</li>
+     * </ol>
+     *
+     * @param joinpoint {@link JoinPoint}
+     */
     @Before("getByPaging()")
     public void beforeCallControllerMethodGetByPaging(JoinPoint joinpoint) {
         Optional.ofNullable(joinpoint.getArgs())

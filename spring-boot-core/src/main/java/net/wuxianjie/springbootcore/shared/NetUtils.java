@@ -3,6 +3,8 @@ package net.wuxianjie.springbootcore.shared;
 import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -27,5 +29,20 @@ public class NetUtils {
         return Optional.ofNullable(request.getHeader("X-FORWARDED-FOR"))
                 .map(StrUtil::trimToNull)
                 .orElse(request.getRemoteAddr());
+    }
+
+    /**
+     * 获取 Servlet 环境中当前线程中的请求对象。
+     *
+     * @return {@link Optional<HttpServletRequest>}
+     */
+    public static Optional<HttpServletRequest> getRequest() throws InternalException {
+        return Optional.ofNullable(
+                        RequestContextHolder.getRequestAttributes()
+                )
+                .map(reqAttr ->
+                        (HttpServletRequest) reqAttr.resolveReference(
+                                RequestAttributes.REFERENCE_REQUEST
+                        ));
     }
 }
