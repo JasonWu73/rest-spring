@@ -15,9 +15,6 @@ public class UrlAndFormRequestParameterConfig {
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
-        binder.registerCustomEditor(
-                String.class,
-                new StringTrimmerEditor(false)
-        );
+        binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
 }

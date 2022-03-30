@@ -17,18 +17,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        JsonConfig.class,
-        UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class,
-        GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class,
-        RestApiConfig.class
-})
-@WebMvcTest(
-        controllers = ParamController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
+@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class, GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class, RestApiConfig.class})
+@WebMvcTest(controllers = ParamController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class GroupTest {
 
     @Autowired
@@ -42,12 +34,10 @@ class GroupTest {
         mockMvc.perform(get("/param/save"))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
                     String body = result.getResponse().getContentAsString();
-
                     assertThat(body)
                             .contains("启用状态不能为 null")
                             .contains("名称不能为空");
@@ -86,7 +76,6 @@ class GroupTest {
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
                     String body = result.getResponse().getContentAsString();
-
                     assertThat(body)
                             .contains("ID 不能为 null")
                             .contains("名称不能为空");

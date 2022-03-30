@@ -26,14 +26,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        JsonConfig.class,
-        UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class,
-        GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class,
-        RestApiConfig.class
-})
+@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class, GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class, RestApiConfig.class})
 @SpringBootTest
 @AutoConfigureMockMvc
 class TokenControllerTest {
@@ -56,18 +51,13 @@ class TokenControllerTest {
         // given
         String accessToken = "fake_access_token";
         String refreshToken = "fake_refresh_token";
-        TokenData tokenData = new TokenData(
-                1800,
-                accessToken,
-                refreshToken
-        );
+        TokenData tokenData = new TokenData(1800, accessToken, refreshToken);
         String accountName = "吴仙杰";
         String password = "213";
         Map<String, Object> params = new HashMap<>() {{
             put("accountName", accountName);
             put("accountPassword", password);
         }};
-
         given(tokenService.getToken(accountName, password)).willReturn(tokenData);
 
         // when
@@ -76,12 +66,10 @@ class TokenControllerTest {
                         .content(objectMapper.writeValueAsString(params)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.expiresIn")
-                        .value(1800))
+                .andExpect(jsonPath("$.data.expiresIn").value(1800))
                 .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                 .andExpect(jsonPath("$.data.refreshToken").value(refreshToken));
     }
@@ -96,7 +84,6 @@ class TokenControllerTest {
             put("accountName", accountName);
             put("accountPassword", password);
         }};
-
         given(tokenService.getToken(anyString(), anyString()))
                 .willThrow(new TokenAuthenticationException("用户名或密码错误"));
 
@@ -106,11 +93,9 @@ class TokenControllerTest {
                         .content(objectMapper.writeValueAsString(params)))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg")
-                        .value("用户名或密码错误"))
+                .andExpect(jsonPath("$.errMsg").value("用户名或密码错误"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
@@ -120,24 +105,17 @@ class TokenControllerTest {
         // given
         String accessToken = "fake_access_token";
         String refreshToken = "fake_refresh_token";
-        TokenData tokenData = new TokenData(
-                1800,
-                accessToken,
-                refreshToken
-        );
-
+        TokenData tokenData = new TokenData(1800, accessToken, refreshToken);
         given(tokenService.refreshToken(refreshToken)).willReturn(tokenData);
 
         // when
         mockMvc.perform(get("/api/v1/refresh-token/" + refreshToken))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.expiresIn")
-                        .value(1800))
+                .andExpect(jsonPath("$.data.expiresIn").value(1800))
                 .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                 .andExpect(jsonPath("$.data.refreshToken").value(refreshToken));
     }
@@ -148,12 +126,7 @@ class TokenControllerTest {
         // given
         String accessToken = "fake_access_token";
         String refreshToken = "fake_refresh_token";
-        TokenData tokenData = new TokenData(
-                1800,
-                accessToken,
-                refreshToken
-        );
-
+        TokenData tokenData = new TokenData(1800, accessToken, refreshToken);
         given(tokenService.refreshToken(anyString()))
                 .willThrow(new TokenAuthenticationException("Token 已过期"));
 
@@ -164,8 +137,7 @@ class TokenControllerTest {
                 .andExpect(content()
                         .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg")
-                        .value("Token 已过期"))
+                .andExpect(jsonPath("$.errMsg").value("Token 已过期"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

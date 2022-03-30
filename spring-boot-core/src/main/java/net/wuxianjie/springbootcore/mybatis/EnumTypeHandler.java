@@ -12,7 +12,7 @@ import java.sql.SQLException;
 /**
  * MyBatis 类型处理器：映射 Java 枚举常量与数据库 INT 数据类型。
  * <p>
- * 全局配置（application.yml）：<br>
+ * 全局配置（application.yml）<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
  * </p>
  *
@@ -20,8 +20,7 @@ import java.sql.SQLException;
  * @see ValueEnum
  */
 @NoArgsConstructor
-public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
-        extends BaseTypeHandler<ValueEnum> {
+public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHandler<ValueEnum> {
 
     private Class<E> enumType;
 
@@ -34,33 +33,27 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
     }
 
     @Override
-    public void setNonNullParameter(
-            PreparedStatement ps,
-            int i,
-            ValueEnum parameter,
-            JdbcType jdbcType
-    ) throws SQLException {
+    public void setNonNullParameter(PreparedStatement ps,
+                                    int i,
+                                    ValueEnum parameter,
+                                    JdbcType jdbcType) throws SQLException {
         ps.setInt(i, parameter.value());
     }
 
     @Override
-    public ValueEnum getNullableResult(ResultSet rs, String columnName)
-            throws SQLException {
+    public ValueEnum getNullableResult(ResultSet rs, String columnName) throws SQLException {
         return toNullableValueNum(enumType, rs.getInt(columnName));
     }
 
     @Override
-    public ValueEnum getNullableResult(ResultSet rs, int columnIndex)
-            throws SQLException {
+    public ValueEnum getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         return toNullableValueNum(enumType, rs.getInt(columnIndex));
     }
 
     @Override
-    public ValueEnum getNullableResult(CallableStatement cs, int columnIndex)
-            throws SQLException {
+    public ValueEnum getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return toNullableValueNum(enumType, cs.getInt(columnIndex));
     }
-
 
     private E toNullableValueNum(Class<E> enumClass, Integer value) {
         if (enumClass == null || value == null) {
@@ -68,11 +61,9 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum>
         }
 
         E[] enumConstants = enumClass.getEnumConstants();
-
         if (enumConstants == null) {
             return null;
         }
-
         for (E anEnum : enumConstants) {
             if (value == anEnum.value()) {
                 return anEnum;

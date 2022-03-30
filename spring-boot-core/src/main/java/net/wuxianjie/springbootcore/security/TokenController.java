@@ -28,12 +28,8 @@ public class TokenController {
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
     @PostMapping(WebSecurityConfig.ACCESS_TOKEN_PATH)
-    public TokenData getToken(@RequestBody @Validated GetTokenQuery query)
-            throws TokenAuthenticationException {
-        return tokenService.getToken(
-                query.getAccountName(),
-                query.getAccountPassword()
-        );
+    public TokenData getToken(@RequestBody @Validated GetTokenQuery query) throws TokenAuthenticationException {
+        return tokenService.getToken(query.getAccountName(), query.getAccountPassword());
     }
 
     /**
@@ -44,8 +40,7 @@ public class TokenController {
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
     @GetMapping(WebSecurityConfig.REFRESH_TOKEN_PATH_PREFIX + "/{refreshToken}")
-    public TokenData refreshToken(@PathVariable String refreshToken)
-            throws TokenAuthenticationException {
+    public TokenData refreshToken(@PathVariable String refreshToken) throws TokenAuthenticationException {
         return tokenService.refreshToken(refreshToken);
     }
 

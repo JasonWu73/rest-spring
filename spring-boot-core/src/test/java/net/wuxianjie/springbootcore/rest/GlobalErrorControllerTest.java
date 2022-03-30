@@ -18,18 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        JsonConfig.class,
-        UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class,
-        GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class,
-        RestApiConfig.class
-})
-@WebMvcTest(
-        controllers = RestApiController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
+@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class, GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class, RestApiConfig.class})
+@WebMvcTest(controllers = RestApiController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class GlobalErrorControllerTest {
 
     @Autowired
@@ -46,11 +38,9 @@ class GlobalErrorControllerTest {
                         .requestAttr(RequestDispatcher.ERROR_STATUS_CODE, httpStatus))
                 // then
                 .andExpect(status().isNotFound())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg")
-                        .value("Not Found"))
+                .andExpect(jsonPath("$.errMsg").value("Not Found"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
@@ -62,11 +52,9 @@ class GlobalErrorControllerTest {
         mockMvc.perform(get("/error"))
                 // then
                 .andExpect(status().isInternalServerError())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg")
-                        .value("None"))
+                .andExpect(jsonPath("$.errMsg").value("None"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

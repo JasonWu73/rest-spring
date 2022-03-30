@@ -2,7 +2,12 @@ package net.wuxianjie.springbootcore.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import java.lang.annotation.*;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.ElementType.*;
 
 /**
  * 枚举值校验注解，例如：
@@ -34,14 +39,7 @@ import java.lang.annotation.*;
  *
  * @author 吴仙杰
  */
-@Target({
-        ElementType.METHOD,
-        ElementType.FIELD,
-        ElementType.ANNOTATION_TYPE,
-        ElementType.CONSTRUCTOR,
-        ElementType.PARAMETER,
-        ElementType.TYPE_USE
-})
+@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = EnumValidatorImpl.class)
 @Repeatable(EnumValidator.List.class)
@@ -55,14 +53,7 @@ public @interface EnumValidator {
 
     Class<? extends Payload>[] payload() default {};
 
-    @Target({
-            ElementType.METHOD,
-            ElementType.FIELD,
-            ElementType.ANNOTATION_TYPE,
-            ElementType.CONSTRUCTOR,
-            ElementType.PARAMETER,
-            ElementType.TYPE_USE
-    })
+    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface List {
 

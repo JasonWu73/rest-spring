@@ -29,31 +29,23 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(
-            @NonNull MethodParameter returnType,
-            @NonNull Class<? extends HttpMessageConverter<?>> converterType
-    ) {
+    public boolean supports(@NonNull MethodParameter returnType,
+                            @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(
-            Object body,
-            @NonNull MethodParameter returnType,
-            @NonNull MediaType selectedContentType,
-            @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-            @NonNull ServerHttpRequest request,
-            @NonNull ServerHttpResponse response
-    ) {
+    public Object beforeBodyWrite(Object body,
+                                  @NonNull MethodParameter returnType,
+                                  @NonNull MediaType selectedContentType,
+                                  @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  @NonNull ServerHttpRequest request,
+                                  @NonNull ServerHttpResponse response) {
         // 自动包装字符串为 JSON
         if (body instanceof String) {
+            response.getHeaders()
+                    .set(HttpHeaders.CONTENT_TYPE, CommonValues.APPLICATION_JSON_UTF8_VALUE);
             try {
-                response.getHeaders()
-                        .set(
-                                HttpHeaders.CONTENT_TYPE,
-                                CommonValues.APPLICATION_JSON_UTF8_VALUE
-                        );
-
                 return objectMapper.writeValueAsString(ApiResultWrapper.success(body));
             } catch (JsonProcessingException e) {
                 throw new InternalException("响应结果 JSON 序列化失败", e);

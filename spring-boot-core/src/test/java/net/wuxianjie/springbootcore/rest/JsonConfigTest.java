@@ -30,28 +30,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import(JsonConfig.class)
 class JsonConfigTest {
 
-    private static final String JSON_VALUE_NO_WHITE_CHARACTER = "{" +
-            "\"userId\":100," +
-            "\"username\":\"吴仙杰\"," +
-            "\"createTime\":\"2022-03-26 10:59:30\"," +
-            "\"birthday\":\"2022-03-26\"," +
-            "\"modifyTime\":\"2022-03-26 10:59:30\"," +
-            "\"enabled\":1" +
-            "}";
-
-    private static final String JSON_VALUE_INCLUDE_WHITE_CHARACTER = "{" +
-            "\"userId\":100," +
-            "\"username\":\"\\t\\n吴仙杰 \"," +
-            "\"createTime\":\"2022-03-26 10:59:30\"," +
-            "\"birthday\":\"2022-03-26\"," +
-            "\"modifyTime\":\"2022-03-26 10:59:30\"," +
-            "\"enabled\":1" +
-            "}";
-
-    private static final String INVALID_DATE_STRING_JSON_VALUE = "{" +
-            "\"modifyTime\":\"2022-03-26T10:59:30\"" +
-            "}";
-
     @Autowired
     private JacksonTester<User> jacksonTester;
 
@@ -59,24 +37,40 @@ class JsonConfigTest {
     @DisplayName("JSON 序列化")
     void itShouldCheckJsonSerialize() throws IOException {
         // given
+        String json = "{" +
+                "\"userId\":100," +
+                "\"username\":\"吴仙杰\"," +
+                "\"createTime\":\"2022-03-26 10:59:30\"," +
+                "\"birthday\":\"2022-03-26\"," +
+                "\"modifyTime\":\"2022-03-26 10:59:30\"," +
+                "\"enabled\":1" +
+                "}";
         User user = buildUser();
 
         // when
         String actual = jacksonTester.write(user).getJson();
 
         // then
-        assertThat(actual).isEqualTo(JSON_VALUE_NO_WHITE_CHARACTER);
+        assertThat(actual).isEqualTo(json);
     }
 
     @Test
     @DisplayName("JSON 反序列化")
     void itShouldCheckJsonDeserialize() throws IOException {
         // given
+        String json = "{" +
+                "\"userId\":100," +
+                "\"username\":\"\\t\\n吴仙杰 \"," +
+                "\"createTime\":\"2022-03-26 10:59:30\"," +
+                "\"birthday\":\"2022-03-26\"," +
+                "\"modifyTime\":\"2022-03-26 10:59:30\"," +
+                "\"enabled\":1" +
+                "}";
         User user = buildUser();
 
         // when
         User actual = jacksonTester
-                .parse(JSON_VALUE_INCLUDE_WHITE_CHARACTER)
+                .parse(json)
                 .getObject();
 
         // then
@@ -88,17 +82,17 @@ class JsonConfigTest {
     @DisplayName("JSON 反序列化不符合格式要求的日期时间字符")
     void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
         // given
+        String json = "{\"modifyTime\":\"2022-03-26T10:59:30\"}";
+
         // when
         // then
-        assertThatThrownBy(() -> jacksonTester.parse(INVALID_DATE_STRING_JSON_VALUE))
+        assertThatThrownBy(() -> jacksonTester.parse(json))
                 .isInstanceOf(InvalidFormatException.class);
     }
 
     private User buildUser() {
-        LocalDateTime createTime = LocalDateTime.parse(
-                "2022-03-26 10:59:30",
-                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)
-        );
+        LocalDateTime createTime = LocalDateTime.parse("2022-03-26 10:59:30",
+                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT));
 
         return new User(
                 100,

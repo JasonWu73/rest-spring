@@ -16,18 +16,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        JsonConfig.class,
-        UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class,
-        GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class,
-        RestApiConfig.class
-})
-@WebMvcTest(
-        controllers = ParamController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
+@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class, GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class, RestApiConfig.class})
+@WebMvcTest(controllers = ParamController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class EnumValidatorImplTest {
 
     @Autowired
@@ -44,11 +36,9 @@ class EnumValidatorImplTest {
                         .param("enabled", enabled))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg")
-                        .value("状态值错误"))
+                .andExpect(jsonPath("$.errMsg").value("状态值错误"))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
@@ -63,8 +53,7 @@ class EnumValidatorImplTest {
                         .param("enabled", enabled))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -81,8 +70,7 @@ class EnumValidatorImplTest {
                         .param("type", type))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -99,8 +87,7 @@ class EnumValidatorImplTest {
                         .param("type", type))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data").doesNotExist());

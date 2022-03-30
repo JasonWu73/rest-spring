@@ -26,9 +26,7 @@ class PasswordEncoderTest {
     @BeforeEach
     void setUp() {
         rawPassword = "123";
-
         hashedPassword = passwordEncoder.encode(rawPassword);
-
         log.info("原密码：{}，编码后为：{}", rawPassword, hashedPassword);
     }
 

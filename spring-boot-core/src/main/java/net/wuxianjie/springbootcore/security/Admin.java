@@ -24,8 +24,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-@PreAuthorize("hasRole(" +
-        "T(net.wuxianjie.springbootcore.security.Role).ADMIN.name()" +
-        ")")
+@PreAuthorize("hasRole(T(net.wuxianjie.springbootcore.security.Role).ADMIN.name())")
 public @interface Admin {
 }

@@ -49,37 +49,23 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
-    public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeNotAcceptableException(
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeNotAcceptableException(HttpServletRequest request) {
         String mimeType = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
                 .map(acceptEnumeration -> {
                     List<String> accepts = new ArrayList<>();
-
                     while (acceptEnumeration.hasMoreElements()) {
                         accepts.add(acceptEnumeration.nextElement().trim());
                     }
-
                     return String.join(", ", accepts);
                 })
                 .orElse("null");
 
-        String msg = StrUtil.format(
-                "API 不支持返回请求头指定的 MIME 类型 [{}: {}]",
-                HttpHeaders.ACCEPT,
-                mimeType
-        );
-
+        String msg = StrUtil.format("API 不支持返回请求头指定的 MIME 类型 [{}: {}]",
+                HttpHeaders.ACCEPT, mimeType);
         UserDetails currentUser = getCurrentUser();
-
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> {}",
-                request.getRequestURI(),
-                NetUtils.getRealIpAddress(request),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg
-        );
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> {}",
+                request.getRequestURI(), NetUtils.getRealIpAddress(request),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg);
 
         return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, msg);
     }
@@ -91,24 +77,12 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ApiResult<Void>> handleHttpRequestMethodNotSupportedException(
-            HttpServletRequest request
-    ) {
-        String msg = StrUtil.format(
-                "API 不支持 {} 请求方法",
-                request.getMethod()
-        );
-
+    public ResponseEntity<ApiResult<Void>> handleHttpRequestMethodNotSupportedException(HttpServletRequest request) {
+        String msg = StrUtil.format("API 不支持 {} 请求方法", request.getMethod());
         UserDetails currentUser = getCurrentUser();
-
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> {}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg
-        );
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg);
 
         return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, msg);
     }
@@ -121,23 +95,13 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ApiResult<Void>> handleHttpMessageNotReadableException(
-            HttpMessageNotReadableException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleHttpMessageNotReadableException(HttpMessageNotReadableException e,
+                                                                                 HttpServletRequest request) {
         String msg = "请求体内容不合法";
-
         UserDetails currentUser = getCurrentUser();
-
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg,
-                e.getMessage()
-        );
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> {}：{}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg, e.getMessage());
 
         return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
     }
@@ -150,25 +114,13 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ApiResult<Void>> handleMissingServletRequestParameterException(
-            MissingServletRequestParameterException e,
-            HttpServletRequest request
-    ) {
-        String msg = StrUtil.format(
-                "缺少必填参数 {}",
-                e.getParameterName()
-        );
-
+    public ResponseEntity<ApiResult<Void>> handleMissingServletRequestParameterException(MissingServletRequestParameterException e,
+                                                                                         HttpServletRequest request) {
+        String msg = StrUtil.format("缺少必填参数 {}", e.getParameterName());
         UserDetails currentUser = getCurrentUser();
-
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> {}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg
-        );
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg);
 
         return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
     }
@@ -181,50 +133,33 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ApiResult<Void>> handleConstraintViolationException(
-            ConstraintViolationException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleConstraintViolationException(ConstraintViolationException e,
+                                                                              HttpServletRequest request) {
         List<String> logMsgList = new ArrayList<>();
         List<String> msgList = new ArrayList<>();
 
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
-
         for (ConstraintViolation<?> violation : violations) {
             String msg = violation.getMessage();
-
             msgList.add(msg);
 
             String queryParamPath = violation.getPropertyPath().toString();
             String queryParam = queryParamPath.contains(".")
                     ? queryParamPath.substring(queryParamPath.indexOf(".") + 1)
                     : queryParamPath;
-            String logMsg = StrUtil.format(
-                    "{} [{} = {}]",
-                    msg,
-                    queryParam,
-                    violation.getInvalidValue()
-            );
-
+            String logMsg = StrUtil.format("{} [{} = {}]",
+                    msg, queryParam, violation.getInvalidValue());
             logMsgList.add(logMsg);
         }
 
         UserDetails currentUser = getCurrentUser();
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(),
+                String.join("；", logMsgList));
 
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                String.join("；", logMsgList)
-        );
-
-        return buildResponseEntity(
-                request,
-                HttpStatus.BAD_REQUEST,
-                String.join("；", msgList)
-        );
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST,
+                String.join("；", msgList));
     }
 
     /**
@@ -235,46 +170,29 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ApiResult<Void>> handleBindException(
-            BindException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleBindException(BindException e,
+                                                               HttpServletRequest request) {
         List<String> logMsgList = new ArrayList<>();
         List<String> msgList = new ArrayList<>();
 
         List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
-
         for (FieldError fieldError : fieldErrors) {
             String msg = fieldError.getDefaultMessage();
-
             msgList.add(msg);
 
-            String logMsg = StrUtil.format(
-                    "{} [{} = {}]",
-                    msg,
-                    fieldError.getField(),
-                    fieldError.getRejectedValue()
-            );
-
+            String logMsg = StrUtil.format("{} [{} = {}]",
+                    msg, fieldError.getField(), fieldError.getRejectedValue());
             logMsgList.add(logMsg);
         }
 
         UserDetails currentUser = getCurrentUser();
+        log.warn("uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(),
+                String.join("；", logMsgList));
 
-        log.warn(
-                "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                String.join("；", logMsgList)
-        );
-
-        return buildResponseEntity(
-                request,
-                HttpStatus.BAD_REQUEST,
-                String.join("；", msgList)
-        );
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST,
+                String.join("；", msgList));
     }
 
     /**
@@ -285,36 +203,21 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(AbstractBaseException.class)
-    public ResponseEntity<ApiResult<Void>> handleCustomException(
-            AbstractBaseException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleCustomException(AbstractBaseException e,
+                                                                 HttpServletRequest request) {
         Throwable cause = e.getCause();
         String msg = e.getMessage();
         UserDetails currentUser = getCurrentUser();
         String logMsg;
-
         if (cause == null) {
-            logMsg = StrUtil.format(
-                    "uri={}；client={}；accountName={}；accountId={} -> {}",
-                    NetUtils.getRealIpAddress(request),
-                    request.getRequestURI(),
-                    currentUser.getAccountName(),
-                    currentUser.getAccountId(),
-                    msg
-            );
+            logMsg = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}",
+                    NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                    currentUser.getAccountName(), currentUser.getAccountId(), msg);
         } else {
-            logMsg = StrUtil.format(
-                    "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
-                    NetUtils.getRealIpAddress(request),
-                    request.getRequestURI(),
-                    currentUser.getAccountName(),
-                    currentUser.getAccountId(),
-                    msg,
-                    cause.getMessage()
-            );
+            logMsg = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}：{}",
+                    NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                    currentUser.getAccountName(), currentUser.getAccountId(), msg, cause.getMessage());
         }
-
         if (e instanceof InternalException) {
             log.error(logMsg);
         } else {
@@ -332,22 +235,13 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(UncategorizedDataAccessException.class)
-    public ResponseEntity<ApiResult<Void>> handleJdbcException(
-            UncategorizedDataAccessException e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleJdbcException(UncategorizedDataAccessException e,
+                                                               HttpServletRequest request) {
         String msg = "数据库操作异常";
         UserDetails currentUser = getCurrentUser();
-
-        log.error(
-                "uri={}；client={}；accountName={}；accountId={} -> {}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg,
-                e
-        );
+        log.error("uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg, e);
 
         return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
@@ -360,10 +254,8 @@ public class ExceptionControllerAdvice {
      * @return {@link ResponseEntity}
      */
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<ApiResult<Void>> handleAllException(
-            Throwable e,
-            HttpServletRequest request
-    ) {
+    public ResponseEntity<ApiResult<Void>> handleAllException(Throwable e,
+                                                              HttpServletRequest request) {
         if (e instanceof AccessDeniedException) {
             // 不要处理 AccessDeniedException，否则会导致 Spring Security 无法处理 403
             throw (AccessDeniedException) e;
@@ -371,25 +263,16 @@ public class ExceptionControllerAdvice {
 
         String msg = "服务异常";
         UserDetails currentUser = getCurrentUser();
-
-        log.error(
-                "uri={}；client={}；accountName={}；accountId={} -> {}",
-                NetUtils.getRealIpAddress(request),
-                request.getRequestURI(),
-                currentUser.getAccountName(),
-                currentUser.getAccountId(),
-                msg,
-                e
-        );
+        log.error("uri={}；client={}；accountName={}；accountId={} -> {}",
+                NetUtils.getRealIpAddress(request), request.getRequestURI(),
+                currentUser.getAccountName(), currentUser.getAccountId(), msg, e);
 
         return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
     }
 
-    private ResponseEntity<ApiResult<Void>> buildResponseEntity(
-            HttpServletRequest request,
-            HttpStatus httpStatus,
-            String msg
-    ) {
+    private ResponseEntity<ApiResult<Void>> buildResponseEntity(HttpServletRequest request,
+                                                                HttpStatus httpStatus,
+                                                                String msg) {
         if (isJsonRequest(request)) {
             return new ResponseEntity<>(ApiResultWrapper.fail(msg), httpStatus);
         }
@@ -411,7 +294,6 @@ public class ExceptionControllerAdvice {
                                 MediaType.ALL_VALUE,
                                 MediaType.APPLICATION_JSON_VALUE
                         );
-
                         if (containsJson) {
                             return true;
                         }

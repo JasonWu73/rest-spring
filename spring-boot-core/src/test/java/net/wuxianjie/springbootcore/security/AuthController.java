@@ -21,10 +21,7 @@ public class AuthController {
      */
     @GetMapping("public")
     public Result testPublic() {
-        return new Result(
-                "无需 Token 认证即可访问的开放 API",
-                getUsername()
-        );
+        return new Result("无需 Token 认证即可访问的开放 API", getUsername());
     }
 
     /**
@@ -32,10 +29,7 @@ public class AuthController {
      */
     @GetMapping("authenticated")
     public Result testAuthenticated() {
-        return new Result(
-                "只要通过 Token 认证（登录后）即可访问的 API",
-                getUsername()
-        );
+        return new Result("只要通过 Token 认证（登录后）即可访问的 API", getUsername());
     }
 
     /**
@@ -62,21 +56,13 @@ public class AuthController {
     @UserOrAdmin
     @GetMapping("user-or-admin")
     public Result testUserOrAdmin() {
-        String msg = String.format(
-                "通过 Token 认证且必须拥有 [%s] 或 [%s] 角色才可访问的 API",
-                Role.USER.value(),
-                Role.ADMIN.value()
-        );
-
+        String msg = String.format("通过 Token 认证且必须拥有 [%s] 或 [%s] 角色才可访问的 API",
+                Role.USER.value(), Role.ADMIN.value());
         return new Result(msg, getUsername());
     }
 
     private Result getResult(Role role) {
-        String msg = String.format(
-                "通过 Token 认证且必须拥有 [%s] 角色才可访问的 API",
-                role.value()
-        );
-
+        String msg = String.format("通过 Token 认证且必须拥有 [%s] 角色才可访问的 API", role.value());
         return new Result(msg, getUsername());
     }
 

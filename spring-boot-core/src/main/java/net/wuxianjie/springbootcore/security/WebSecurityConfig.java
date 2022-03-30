@@ -37,8 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * 刷新 Access Token 的请求路径前缀，并不包含 URL 路径参数。
      */
-    public static final String REFRESH_TOKEN_PATH_PREFIX =
-            "/api/v1/refresh-token";
+    public static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
 
     private static final String FAVICON_PATH = "/favicon.ico";
 
@@ -54,16 +53,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] antPatterns = Optional.ofNullable(
-                        StrUtil.trim(securityConfigData.getPermitAllAntPatterns())
-                )
-                .map(commaSeparatedPattern -> StrSplitter.splitToArray(
-                        commaSeparatedPattern,
-                        ',',
-                        0,
-                        true,
-                        true
-                ))
+        String[] antPatterns = Optional.ofNullable(StrUtil.trim(securityConfigData.getPermitAllAntPatterns()))
+                .map(commaSeparatedPattern -> StrSplitter.splitToArray(commaSeparatedPattern,
+                        ',', 0, true, true))
                 .orElse(new String[]{});
 
         http.authorizeRequests()
@@ -80,32 +72,22 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 401
                 .authenticationEntryPoint((request, response, authException) -> {
                     String msg = "Token 认证失败";
-
                     log.warn("{}：{}", msg, authException.getMessage());
 
                     response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-                    String json = objectMapper.writeValueAsString(
-                            ApiResultWrapper.fail(msg)
-                    );
-
+                    String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(msg));
                     response.getWriter().write(json);
                 })
                 // 403
                 // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
                 .accessDeniedHandler((request, response, deniedException) -> {
                     String msg = "Token 未授权";
-
                     log.warn("{}：{}", msg, deniedException.getMessage());
 
                     response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
-
-                    String json = objectMapper.writeValueAsString(
-                            ApiResultWrapper.fail(msg)
-                    );
-
+                    String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(msg));
                     response.getWriter().write(json);
                 })
                 .and()
@@ -122,9 +104,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 // 添加 Token 认证过滤器
-                .addFilterBefore(
-                        authenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                );
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

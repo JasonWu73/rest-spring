@@ -24,34 +24,22 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
     @Override
     public void initialize(EnumValidator constraintAnnotation) {
         values = new ArrayList<>();
-
         Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
         String className = enumClass.getName();
-
         Optional.of(enumClass.getEnumConstants())
                 .ifPresent(enums -> {
                     for (Enum<?> anEnum : enums) {
                         try {
-                            Method method = anEnum
-                                    .getClass()
-                                    .getDeclaredMethod("value");
-
+                            Method method = anEnum.getClass().getDeclaredMethod("value");
                             method.setAccessible(true);
-
                             values.add(method.invoke(anEnum));
                         } catch (NoSuchMethodException e) {
-                            log.warn(
-                                    "{} 不存在 value() 方法，故无法校验枚举值",
-                                    className
-                            );
+                            log.warn("{} 不存在 value() 方法，故无法校验枚举值", className);
 
                             isPassed = true;
                             break;
                         } catch (InvocationTargetException | IllegalAccessException e) {
-                            log.warn(
-                                    "{}.value() 方法执行出错，故无法校验枚举值",
-                                    className
-                            );
+                            log.warn("{}.value() 方法执行出错，故无法校验枚举值", className);
 
                             isPassed = true;
                             break;

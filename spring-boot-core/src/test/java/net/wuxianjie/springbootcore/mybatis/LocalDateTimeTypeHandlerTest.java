@@ -27,14 +27,7 @@ class LocalDateTimeTypeHandlerTest {
         // given
         String username = "测试用户";
         LocalDateTime createTime = LocalDateTime.now();
-        User user = new User(
-                null,
-                username,
-                null,
-                createTime,
-                null
-        );
-
+        User user = new User(null, username, null, createTime, null);
         underTest.insertUser(user);
 
         // when
@@ -49,14 +42,7 @@ class LocalDateTimeTypeHandlerTest {
     void itShouldCheckWhenInsertNullLocalDateTimeField() {
         // given
         String username = "测试用户";
-        User user = new User(
-                null,
-                username,
-                null,
-                null,
-                null
-        );
-
+        User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
@@ -72,14 +58,7 @@ class LocalDateTimeTypeHandlerTest {
         // given
         String username = "测试用户";
         LocalDate birthday = LocalDate.now();
-        User user = new User(
-                null,
-                username,
-                null,
-                null,
-                birthday
-        );
-
+        User user = new User(null, username, null, null, birthday);
         underTest.insertUser(user);
 
         // when
@@ -94,14 +73,7 @@ class LocalDateTimeTypeHandlerTest {
     void itShouldCheckWhenInsertNullLocalDateField() {
         // given
         String username = "测试用户";
-        User user = new User(
-                null,
-                username,
-                null,
-                null,
-                null
-        );
-
+        User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when

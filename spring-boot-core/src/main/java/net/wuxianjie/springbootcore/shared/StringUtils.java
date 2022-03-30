@@ -46,7 +46,6 @@ public class StringUtils {
     public static boolean equalsIgnoreBlank(String valueOne, String valueTwo) {
         String trimmedOne = StrUtil.trimToNull(valueOne);
         String trimmedTwo = StrUtil.trimToNull(valueTwo);
-
         if (trimmedOne == null && trimmedTwo == null) {
             return true;
         }

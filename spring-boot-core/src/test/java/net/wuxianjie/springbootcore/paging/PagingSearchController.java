@@ -19,13 +19,7 @@ class PagingSearchController {
     }
 
     private PagingResult<String> buildPagingResult(PagingQuery paging) {
-        List<String> allData = List.of(
-                "One",
-                "Two",
-                "Three",
-                "Four",
-                "Five"
-        );
+        List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
 
         return new PagingResult<>(
                 paging,

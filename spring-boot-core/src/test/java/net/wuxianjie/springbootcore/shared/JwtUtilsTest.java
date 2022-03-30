@@ -70,10 +70,7 @@ class JwtUtilsTest {
         // then
         assertThat(username).isEqualTo(USERNAME_VALUE);
 
-        log.info(
-                "解析 JWT：\n{}",
-                JSONUtil.toJsonStr(JSONUtil.parseObj(payload), 4)
-        );
+        log.info("解析 JWT：\n{}", JSONUtil.toJsonStr(JSONUtil.parseObj(payload), 4));
     }
 
     @Test

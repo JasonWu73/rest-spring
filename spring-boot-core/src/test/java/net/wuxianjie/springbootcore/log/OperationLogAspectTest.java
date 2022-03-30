@@ -21,15 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        AnnotationAwareAspectJAutoProxyCreator.class,
-        OperationLogAspect.class,
-        ApiService.class
-})
-@WebMvcTest(
-        controllers = ApiController.class,
-        excludeAutoConfiguration = SecurityAutoConfiguration.class
-)
+@Import({AnnotationAwareAspectJAutoProxyCreator.class, OperationLogAspect.class, ApiService.class})
+@WebMvcTest(controllers = ApiController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class OperationLogAspectTest {
 
     @MockBean
@@ -88,7 +81,6 @@ class OperationLogAspectTest {
 
         // then
         verify(logService).saveLog(isA(OperationLog.class));
-
         assertThat(actual).isNull();
     }
 
@@ -103,7 +95,6 @@ class OperationLogAspectTest {
 
         // then
         verify(logService).saveLog(isA(OperationLog.class));
-
         assertThat(actual).isEqualTo(i);
     }
 }

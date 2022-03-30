@@ -24,14 +24,7 @@ class EnumTypeHandlerTest {
         // given
         String username = "测试用户";
         YesOrNo yes = YesOrNo.YES;
-        User user = new User(
-                null,
-                username,
-                yes,
-                null,
-                null
-        );
-
+        User user = new User(null, username, yes, null, null);
         underTest.insertUser(user);
 
         // when
@@ -46,14 +39,7 @@ class EnumTypeHandlerTest {
     void itShouldCheckWhenInsertNullEnumFieldReturnEnum() {
         // given
         String username = "测试用户";
-        User user = new User(
-                null,
-                username,
-                null,
-                null,
-                null
-        );
-
+        User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
@@ -68,14 +54,7 @@ class EnumTypeHandlerTest {
     void itShouldCheckWhenInsertNullEnumFieldReturnInteger() {
         // given
         String username = "测试用户";
-        User user = new User(
-                null,
-                username,
-                null,
-                null,
-                null
-        );
-
+        User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when

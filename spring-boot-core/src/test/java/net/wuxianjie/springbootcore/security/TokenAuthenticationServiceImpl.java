@@ -27,14 +27,9 @@ class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
     @Override
     public TokenUserDetails authenticate(String token) throws TokenAuthenticationException {
         Map<String, Object> payload = JwtUtils.verifyJwt(SIGNING_KEY, token);
-
         String tokenType = Optional.ofNullable((String) payload.get(TOKEN_TYPE_KEY))
                 .orElseThrow(() -> new TokenAuthenticationException(
-                        StrUtil.format(
-                                "Token 缺少 {} 信息",
-                                TOKEN_TYPE_KEY
-                        )
-                ));
+                        StrUtil.format("Token 缺少 {} 信息", TOKEN_TYPE_KEY)));
 
         if (!StrUtil.equals(tokenType, ACCESS_TOKEN_TYPE_VALUE)) {
             throw new TokenAuthenticationException("Token 类型错误");
@@ -42,19 +37,12 @@ class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
         String username = Optional.ofNullable((String) payload.get(ACCOUNT_KEY))
                 .orElseThrow(() -> new TokenAuthenticationException(
-                        StrUtil.format(
-                                "Token 缺少 {} 信息",
-                                ACCOUNT_KEY
-                        )
-                ));
+                        StrUtil.format("Token 缺少 {} 信息", ACCOUNT_KEY)));
 
         return getUserDetailsFromCache(username, token);
     }
 
-    private TokenUserDetails getUserDetailsFromCache(
-            String username,
-            String token
-    ) {
+    private TokenUserDetails getUserDetailsFromCache(String username, String token) {
         TokenUserDetails userDetails = tokenCache.get(username);
 
         if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {

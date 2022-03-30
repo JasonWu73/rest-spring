@@ -22,7 +22,6 @@ class NetUtilsTest {
         // given
         String ip = "192.168.1.98";
         MockHttpServletRequest request = new MockHttpServletRequest();
-
         request.setRemoteAddr(ip);
 
         // when
@@ -39,7 +38,6 @@ class NetUtilsTest {
         String ip = "192.168.1.98";
         String proxyIp = "192.168.129.89";
         MockHttpServletRequest request = new MockHttpServletRequest();
-
         request.setRemoteAddr(ip);
         request.addHeader("X-FORWARDED-FOR", proxyIp);
 
@@ -55,7 +53,6 @@ class NetUtilsTest {
     void canGetRequest() {
         // given
         MockHttpServletRequest request = new MockHttpServletRequest();
-
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         // when

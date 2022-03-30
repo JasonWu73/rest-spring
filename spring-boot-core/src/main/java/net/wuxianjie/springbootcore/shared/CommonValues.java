@@ -29,6 +29,5 @@ public final class CommonValues {
     /**
      * MIME 类型（Multipurpose Internet Mail Extensions，媒体类型）：包含 UTF-8 编码的 JSON。
      */
-    public static final String APPLICATION_JSON_UTF8_VALUE =
-            "application/json;charset=UTF-8";
+    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 }

@@ -20,10 +20,8 @@ public class ApiResultWrapper {
      */
     public static <T> ApiResult<T> success(T data) {
         ApiResult<T> result = new ApiResult<>();
-
         result.setError(ApiErrorCode.SUCCESS);
         result.setData(data);
-
         return result;
     }
 
@@ -35,10 +33,8 @@ public class ApiResultWrapper {
      */
     public static ApiResult<Void> fail(String errMsg) {
         ApiResult<Void> result = new ApiResult<>();
-
         result.setError(ApiErrorCode.FAIL);
         result.setErrMsg(errMsg);
-
         return result;
     }
 }

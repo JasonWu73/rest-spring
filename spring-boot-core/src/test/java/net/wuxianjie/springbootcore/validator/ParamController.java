@@ -21,24 +21,15 @@ import javax.validation.constraints.NotNull;
 class ParamController {
 
     @GetMapping("enum")
-    void test(
-            @EnumValidator(message = "状态值错误", value = YesOrNo.class)
-                    Integer enabled
-    ) {
+    void test(@EnumValidator(message = "状态值错误", value = YesOrNo.class) Integer enabled) {
     }
 
     @GetMapping("enum-no-value-method")
-    void test2(
-            @EnumValidator(message = "类型值错误", value = TypeNoValueMethod.class)
-                    String type
-    ) {
+    void test2(@EnumValidator(message = "类型值错误", value = TypeNoValueMethod.class) String type) {
     }
 
     @GetMapping("enum-error-value-method")
-    void test3(
-            @EnumValidator(message = "类型值错误", value = TypeErrorValueMethod.class)
-                    String type
-    ) {
+    void test3(@EnumValidator(message = "类型值错误", value = TypeErrorValueMethod.class) String type) {
     }
 
     @GetMapping("save")

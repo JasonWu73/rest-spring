@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库 DATETIME 数据类型，以及 {@link LocalDate} 与数据库 DATE 数据类型。
  * <p>
- * 全局配置（application.yml）：<br>
+ * 全局配置（application.yml）<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
  * </p>
  *
@@ -21,33 +21,25 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
     @Override
-    public void setNonNullParameter(
-            PreparedStatement ps,
-            int i,
-            LocalDateTime parameter,
-            JdbcType jdbcType
-    ) throws SQLException {
-        ps.setString(i, parameter.format(
-                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
+    public void setNonNullParameter(PreparedStatement ps,
+                                    int i,
+                                    LocalDateTime parameter,
+                                    JdbcType jdbcType) throws SQLException {
+        ps.setString(i, parameter.format(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
     }
 
     @Override
-    public LocalDateTime getNullableResult(ResultSet rs, String columnName)
-            throws SQLException {
+    public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
         return toNullableLocalDateTime(rs.getTimestamp(columnName));
     }
 
     @Override
-    public LocalDateTime getNullableResult(ResultSet rs, int columnIndex)
-            throws SQLException {
+    public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
         return toNullableLocalDateTime(rs.getTimestamp(columnIndex));
     }
 
     @Override
-    public LocalDateTime getNullableResult(
-            CallableStatement cs,
-            int columnIndex
-    ) throws SQLException {
+    public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
         return toNullableLocalDateTime(cs.getTimestamp(columnIndex));
     }
 

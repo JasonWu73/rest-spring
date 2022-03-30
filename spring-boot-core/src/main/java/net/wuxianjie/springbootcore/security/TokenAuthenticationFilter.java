@@ -48,11 +48,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final TokenAuthenticationService authenticationService;
 
     @Override
-    protected void doFilterInternal(
-            @NonNull HttpServletRequest request,
-            @NonNull HttpServletResponse response,
-            @NonNull FilterChain filterChain
-    ) throws IOException, ServletException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request,
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws IOException, ServletException {
         Optional<String> tokenOptional = getTokenFromRequest(request);
 
         if (tokenOptional.isEmpty()) {
@@ -61,8 +59,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            UserDetails userDetails =
-                    authenticationService.authenticate(tokenOptional.get());
+            UserDetails userDetails = authenticationService.authenticate(tokenOptional.get());
 
             loginToSpringSecurityContext(userDetails);
         } catch (TokenAuthenticationException e) {
@@ -75,11 +72,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
             SecurityContextHolder.clearContext();
 
-            sendToResponse(
-                    response,
-                    e.getMessage(),
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
+            sendToResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             return;
         }
 
@@ -88,55 +81,34 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private List<GrantedAuthority> getAuthorities(String roleStr) {
         List<GrantedAuthority> authorityList;
-
         if (StrUtil.isEmpty(roleStr)) {
             authorityList = Collections.emptyList();
         } else {
             String roles = Arrays.stream(roleStr.split(","))
                     .reduce("", (roleOne, roleTwo) -> {
                         // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
-                        String roleToAppend =
-                                SPRING_SECURITY_ROLE_PREFIX +
-                                        roleTwo.trim().toUpperCase();
-
+                        String roleToAppend = SPRING_SECURITY_ROLE_PREFIX + roleTwo.trim().toUpperCase();
                         if (StrUtil.isEmpty(roleOne)) {
                             return roleToAppend;
                         }
-
                         return roleOne + "," + roleToAppend;
                     });
 
-            authorityList =
-                    AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+            authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
         }
 
         return authorityList;
     }
 
     private Optional<String> getTokenFromRequest(HttpServletRequest request) {
-        return Optional.ofNullable(
-                        StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION))
-                )
+        return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
                 .map(bearer -> {
                     String token = null;
-
                     if (StrUtil.startWith(bearer, AUTHORIZATION_BEARER_PREFIX)) {
-                        token = StrUtil.subAfter(
-                                bearer,
-                                AUTHORIZATION_BEARER_PREFIX,
-                                false
-                        );
-                    } else if (StrUtil.startWith(
-                            bearer,
-                            AUTHORIZATION_BEARER_PREFIX.toLowerCase()
-                    )) {
-                        token = StrUtil.subAfter(
-                                bearer,
-                                AUTHORIZATION_BEARER_PREFIX.toLowerCase(),
-                                false
-                        );
+                        token = StrUtil.subAfter(bearer, AUTHORIZATION_BEARER_PREFIX, false);
+                    } else if (StrUtil.startWith(bearer, AUTHORIZATION_BEARER_PREFIX.toLowerCase())) {
+                        token = StrUtil.subAfter(bearer, AUTHORIZATION_BEARER_PREFIX.toLowerCase(), false);
                     }
-
                     return StrUtil.isEmpty(token) ? null : token;
                 });
     }
@@ -145,24 +117,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                userDetails,
-                null,
-                authorityList
-        );
+                userDetails, null, authorityList);
 
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    private void sendToResponse(
-            HttpServletResponse response,
-            String message,
-            HttpStatus httpStatus
-    ) throws IOException {
+    private void sendToResponse(HttpServletResponse response, String message, HttpStatus httpStatus) throws IOException {
         response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(httpStatus.value());
 
-        response.getWriter().write(
-                objectMapper.writeValueAsString(ApiResultWrapper.fail(message))
-        );
+        response.getWriter().write(objectMapper.writeValueAsString(ApiResultWrapper.fail(message)));
     }
 }

@@ -42,9 +42,7 @@ class TokenAuthenticationServiceTest {
         }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
         TokenUserDetails user = new TokenUserDetails();
-
         user.setAccessToken(token);
-
         cache.put(username, user);
 
         // when
@@ -59,16 +57,12 @@ class TokenAuthenticationServiceTest {
     void willThrowExceptionWhenTokenNotContainAccountField() {
         // given
         String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {
-            {
-                put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
-            }
-        };
+        Map<String, Object> payload = new HashMap<>() {{
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
+        }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
         TokenUserDetails user = new TokenUserDetails();
-
         user.setAccessToken(token);
-
         cache.put(username, user);
 
         // when
@@ -83,16 +77,12 @@ class TokenAuthenticationServiceTest {
     void willThrowExceptionWhenTokenNotContainTypeField() {
         // given
         String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {
-            {
-                put(ACCOUNT_KEY, username);
-            }
-        };
+        Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+        }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
         TokenUserDetails user = new TokenUserDetails();
-
         user.setAccessToken(token);
-
         cache.put(username, user);
 
         // when
@@ -107,17 +97,13 @@ class TokenAuthenticationServiceTest {
     void willThrowExceptionWhenTokenTypeError() {
         // given
         String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {
-            {
-                put(ACCOUNT_KEY, username);
-                put(TOKEN_TYPE_KEY, "refresh");
-            }
-        };
+        Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, "refresh");
+        }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
         TokenUserDetails user = new TokenUserDetails();
-
         user.setAccessToken(token);
-
         cache.put(username, user);
 
         // when

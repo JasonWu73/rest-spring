@@ -37,12 +37,7 @@ public class NetUtils {
      * @return {@link Optional<HttpServletRequest>}
      */
     public static Optional<HttpServletRequest> getRequest() throws InternalException {
-        return Optional.ofNullable(
-                        RequestContextHolder.getRequestAttributes()
-                )
-                .map(reqAttr ->
-                        (HttpServletRequest) reqAttr.resolveReference(
-                                RequestAttributes.REFERENCE_REQUEST
-                        ));
+        return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+                .map(reqAttr -> (HttpServletRequest) reqAttr.resolveReference(RequestAttributes.REFERENCE_REQUEST));
     }
 }

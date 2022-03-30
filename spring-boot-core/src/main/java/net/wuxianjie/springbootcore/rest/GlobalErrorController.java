@@ -39,48 +39,23 @@ public class GlobalErrorController implements ErrorController {
     @ResponseBody
     @RequestMapping("/error")
     public ResponseEntity<ApiResult<Void>> handleError(WebRequest request) {
-        Map<String, Object> attrs = this.errorAttributes.getErrorAttributes(
-                request,
-                ErrorAttributeOptions.defaults()
-        );
-
+        Map<String, Object> attrs = this.errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
         HttpStatus httpStatus = Optional.ofNullable((Integer) attrs.get("status"))
                 .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
                         .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-
         Optional<UserDetails> userOptional = AuthUtils.getCurrentUser();
-        Integer accountId = userOptional
-                .map(UserDetails::getAccountId)
-                .orElse(null);
-        String accountName = userOptional
-                .map(UserDetails::getAccountName)
-                .orElse(null);
-        String requestDescription = request
-                .getDescription(true)
-                .replaceAll(";", "；");
-
+        Integer accountId = userOptional.map(UserDetails::getAccountId).orElse(null);
+        String accountName = userOptional.map(UserDetails::getAccountName).orElse(null);
+        String reqDesc = request.getDescription(true).replaceAll(";", "；");
         if (httpStatus == HttpStatus.NOT_FOUND) {
-            log.warn(
-                    "{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
-                    requestDescription,
-                    accountName,
-                    accountId,
-                    attrs
-            );
+            log.warn("{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
+                    reqDesc, accountName, accountId, attrs);
         } else {
-            log.error(
-                    "{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
-                    requestDescription,
-                    accountName,
-                    accountId,
-                    attrs
-            );
+            log.error("{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
+                    reqDesc, accountName, accountId, attrs);
         }
 
-        return new ResponseEntity<>(
-                ApiResultWrapper.fail((String) attrs.get("error")),
-                httpStatus
-        );
+        return new ResponseEntity<>(ApiResultWrapper.fail((String) attrs.get("error")), httpStatus);
     }
 }

@@ -34,18 +34,14 @@ class RestApiController {
     }
 
     @GetMapping("/required")
-    String getRequiredParameter(
-            @RequestParam("name") String username,
-            @RequestParam("userId") Integer userId
-    ) {
+    String getRequiredParameter(@RequestParam("name") String username,
+                                @RequestParam("userId") Integer userId) {
         return username + ": " + userId;
     }
 
     @GetMapping("/validated")
-    String getValidateParam(
-            @NotBlank(message = "用户名不能为空") String username,
-            @NotNull(message = "用户 ID 不能为 null") Integer userId
-    ) {
+    String getValidateParam(@NotBlank(message = "用户名不能为空") String username,
+                            @NotNull(message = "用户 ID 不能为 null") Integer userId) {
         return username + ": " + userId;
     }
 

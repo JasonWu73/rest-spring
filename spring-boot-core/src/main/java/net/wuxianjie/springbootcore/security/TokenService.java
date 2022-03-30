@@ -17,8 +17,7 @@ public interface TokenService {
      * @return {@link TokenData}
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
-    TokenData getToken(String accountName, String rawPassword)
-            throws TokenAuthenticationException;
+    TokenData getToken(String accountName, String rawPassword) throws TokenAuthenticationException;
 
     /**
      * 刷新 Access Token。
@@ -27,6 +26,5 @@ public interface TokenService {
      * @return {@link TokenData}
      * @throws TokenAuthenticationException 若因账号原因而导致无法获取 Token
      */
-    TokenData refreshToken(String refreshToken)
-            throws TokenAuthenticationException;
+    TokenData refreshToken(String refreshToken) throws TokenAuthenticationException;
 }
