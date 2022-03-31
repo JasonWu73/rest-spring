@@ -16,38 +16,39 @@ class RoleTest {
     @DisplayName("可解析为枚举值")
     void canResolve() {
         // given
-        String value = "admin";
+        final String value = "admin";
 
         // when
-        Optional<Role> actual = Role.resolve(value);
+        final Optional<Role> actual = Role.resolve(value);
 
         // then
-        assertThat(actual).isEqualTo(Optional.of(Role.ADMIN));
+        assertThat(actual.isPresent()).isTrue();
+        assertThat(actual.get()).isEqualTo(Role.ADMIN);
     }
 
     @Test
     @DisplayName("不可解析为枚举值")
     void canNotResolve() {
         // given
-        String value = "super";
+        final String value = "super";
 
         // when
-        Optional<Role> actual = Role.resolve(value);
+        final Optional<Role> actual = Role.resolve(value);
 
         // then
-        assertThat(actual).isEqualTo(Optional.empty());
+        assertThat(actual.isEmpty()).isTrue();
     }
 
     @Test
     @DisplayName("将 null 解析为枚举值")
     void canNotResolveNull() {
         // given
-        String value = null;
+        final String value = null;
 
         // when
-        Optional<Role> actual = Role.resolve(value);
+        final Optional<Role> actual = Role.resolve(value);
 
         // then
-        assertThat(actual).isEqualTo(Optional.empty());
+        assertThat(actual.isEmpty()).isTrue();
     }
 }

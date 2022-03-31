@@ -28,7 +28,7 @@ public class TokenController {
      * @throws TokenAuthenticationException 当 Token 认证失败时
      */
     @PostMapping(WebSecurityConfig.ACCESS_TOKEN_PATH)
-    public TokenData getToken(@RequestBody @Validated Query query) throws TokenAuthenticationException {
+    public TokenData getToken(@RequestBody @Validated final Query query) throws TokenAuthenticationException {
         return tokenService.getToken(query.getAccount(), query.getPassword());
     }
 
@@ -40,7 +40,7 @@ public class TokenController {
      * @throws TokenAuthenticationException 当 Token 认证失败时
      */
     @GetMapping(WebSecurityConfig.REFRESH_TOKEN_PATH_PREFIX + "/{refreshToken}")
-    public TokenData refreshToken(@PathVariable String refreshToken) throws TokenAuthenticationException {
+    public TokenData refreshToken(@PathVariable final String refreshToken) throws TokenAuthenticationException {
         return tokenService.refreshToken(refreshToken);
     }
 

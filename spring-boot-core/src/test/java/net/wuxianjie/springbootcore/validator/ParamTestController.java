@@ -18,7 +18,7 @@ import javax.validation.constraints.NotNull;
 @Validated
 @RestController
 @RequestMapping("/param")
-class ParamController {
+class ParamTestController {
 
     @GetMapping("enum")
     void test(@EnumValidator(message = "状态值错误", value = YesOrNo.class) Integer enabled) {

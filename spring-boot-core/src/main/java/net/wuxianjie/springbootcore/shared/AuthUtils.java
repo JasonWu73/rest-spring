@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.security;
+package net.wuxianjie.springbootcore.shared;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -16,6 +16,9 @@ interface UserMapper {
     @Select("SELECT is_enabled FROM users WHERE username = #{username}")
     YesOrNo selectEnabledByUsername(String username);
 
+    @Select("SELECT -1")
+    YesOrNo selectNegativeOne();
+
     @Select("SELECT is_enabled FROM users WHERE username = #{username}")
     Integer selectEnabledByUsernameReturnInt(String username);
 

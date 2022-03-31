@@ -15,7 +15,7 @@ class ApiTestController {
 
     @Logger("测试方法")
     @PostMapping("/test")
-    Result getResult(@RequestBody Param param) {
+    Result getResult(@RequestBody final Param param) {
         return new Result() {{
             setError(0);
             setMessage("成功");
@@ -24,6 +24,20 @@ class ApiTestController {
                 setSize(2);
             }});
         }};
+    }
+
+    @Logger("调用无参无返回值方法")
+    void callMethod() {
+    }
+
+    @Logger("调用有原始类型入参及返回 null 值方法")
+    Integer callMethodReturnNull(final int i) {
+        return null;
+    }
+
+    @Logger("调用有原始类型入参及返回原始类型值方法")
+    int callMethod(final int i) {
+        return i;
     }
 
     @Data

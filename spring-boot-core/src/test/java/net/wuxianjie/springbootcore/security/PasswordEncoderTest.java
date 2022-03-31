@@ -42,13 +42,26 @@ class PasswordEncoderTest {
     }
 
     @Test
-    @DisplayName("校验哈希密码是否匹配")
-    void itShouldCheckMatchRawAndHashedPassword() {
+    @DisplayName("哈希密码与明文密码匹配")
+    void itShouldCheckMatch() {
         // given
         // when
-        boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
+        final boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
 
         // then
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    @DisplayName("哈希密码与明文密码不匹配")
+    void itShouldCheckNotMatch() {
+        // given
+        rawPassword = "234";
+
+        // when
+        final boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
+
+        // then
+        assertThat(actual).isFalse();
     }
 }

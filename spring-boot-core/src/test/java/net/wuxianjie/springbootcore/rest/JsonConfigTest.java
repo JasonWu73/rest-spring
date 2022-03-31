@@ -1,11 +1,12 @@
 package net.wuxianjie.springbootcore.rest;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.shared.CommonValues;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,7 +37,7 @@ class JsonConfigTest {
     @DisplayName("JSON 序列化")
     void itShouldCheckJsonSerialize() throws IOException {
         // given
-        String json = "{" +
+        final String json = "{" +
                 "\"userId\":100," +
                 "\"username\":\"吴仙杰\"," +
                 "\"createTime\":\"2022-03-26 10:59:30\"," +
@@ -45,10 +45,10 @@ class JsonConfigTest {
                 "\"modifyTime\":\"2022-03-26 10:59:30\"," +
                 "\"enabled\":1" +
                 "}";
-        User user = buildUser();
+        final User user = buildUser();
 
         // when
-        String actual = jacksonTester.write(user).getJson();
+        final String actual = jacksonTester.write(user).getJson();
 
         // then
         assertThat(actual).isEqualTo(json);
@@ -58,7 +58,7 @@ class JsonConfigTest {
     @DisplayName("JSON 反序列化")
     void itShouldCheckJsonDeserialize() throws IOException {
         // given
-        String json = "{" +
+        final String json = "{" +
                 "\"userId\":100," +
                 "\"username\":\"\\t\\n吴仙杰 \"," +
                 "\"createTime\":\"2022-03-26 10:59:30\"," +
@@ -66,12 +66,10 @@ class JsonConfigTest {
                 "\"modifyTime\":\"2022-03-26 10:59:30\"," +
                 "\"enabled\":1" +
                 "}";
-        User user = buildUser();
+        final User user = buildUser();
 
         // when
-        User actual = jacksonTester
-                .parse(json)
-                .getObject();
+        final User actual = jacksonTester.parse(json).getObject();
 
         // then
         user.setUsername(user.getUsername().trim());
@@ -82,7 +80,7 @@ class JsonConfigTest {
     @DisplayName("JSON 反序列化不符合格式要求的日期时间字符")
     void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
         // given
-        String json = "{\"modifyTime\":\"2022-03-26T10:59:30\"}";
+        final String json = "{\"modifyTime\":\"2022-03-26T10:59:30\"}";
 
         // when
         // then
@@ -91,9 +89,8 @@ class JsonConfigTest {
     }
 
     private User buildUser() {
-        LocalDateTime createTime = LocalDateTime.parse("2022-03-26 10:59:30",
-                DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT));
-
+        final String dateStr = "2022-03-26 10:59:30";
+        final LocalDateTime createTime = LocalDateTimeUtil.parse(dateStr, DatePattern.NORM_DATETIME_PATTERN);
         return new User(
                 100,
                 "\t\n吴仙杰 ",

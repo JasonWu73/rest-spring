@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 class TestApplication {
 
-    static void main(String[] args) {
+    static void main(final String[] args) {
         SpringApplication.run(TestApplication.class, args);
     }
 }

@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
-import net.wuxianjie.springbootcore.shared.util.NetUtils;
+import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -40,12 +41,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     /**
      * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
      */
-    public static final String BEARER_PREFIX = "Bearer ";
+    static final String BEARER_PREFIX = "Bearer ";
 
     /**
      * Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
      */
-    public static final String ROLE_PREFIX = "ROLE_";
+    static final String ROLE_PREFIX = "ROLE_";
 
     private final ObjectMapper objectMapper;
     private final TokenAuthenticationService authService;

@@ -83,7 +83,7 @@ public class TokenServiceImpl implements TokenService {
 
     private String createNewToken(Map<String, Object> payload, String tokenType) {
         payload.put(TokenAttributes.TOKEN_TYPE_KEY, tokenType);
-        return JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, TokenAttributes.EXPIRES_IN_SECONDS_VALUE);
+        return JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, TokenAttributes.EXPIRES_IN_SECONDS_VALUE);
     }
 
     private void VerifyPassword(String rawPassword, String hashedPassword) {

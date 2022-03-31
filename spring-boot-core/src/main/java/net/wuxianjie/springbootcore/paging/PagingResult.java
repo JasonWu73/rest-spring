@@ -39,9 +39,7 @@ public class PagingResult<E> {
      */
     private List<E> list;
 
-    public PagingResult(final PagingQuery paging,
-                        final long total,
-                        final List<E> list) {
+    public PagingResult(final PagingQuery paging, final long total, final List<E> list) {
         this.pageNo = paging.getPageNo();
         this.pageSize = paging.getPageSize();
         this.total = total;

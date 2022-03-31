@@ -5,9 +5,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
-import net.wuxianjie.springbootcore.security.TokenUserDetails;
-import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.wuxianjie.web.user.TokenAttributes.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -38,19 +39,19 @@ class TokenAuthenticationServiceImplTest {
     @DisplayName("通过身份认证")
     void itShouldCheckWhenAllRight() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.ACCOUNT_KEY, username);
-            put(TokenAttributes.TOKEN_TYPE_KEY, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        UserDetails user = new UserDetails();
+        final UserDetails user = new UserDetails();
         user.setAccessToken(token);
         tokenCache.put(username, user);
 
         // when
-        TokenUserDetails actual = underTest.authenticate(token);
+        final TokenUserDetails actual = underTest.authenticate(token);
 
         // then
         assertThat(actual).isEqualTo(tokenCache.getIfPresent(username));
@@ -58,19 +59,19 @@ class TokenAuthenticationServiceImplTest {
 
     @Test
     @DisplayName("缓存中 Token 已刷新")
-    void itShouldCheckWhenCacheTokenRefreshed() throws InterruptedException {
+    void itShouldCheckWhenCacheTokenRefreshed() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.ACCOUNT_KEY, username);
-            put(TokenAttributes.TOKEN_TYPE_KEY, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        Thread.sleep(100); // 保障两次生成不同的 Token
-        String refreshedToken = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        payload.put("a", "b"); // 使两次生成不同的 Token
+        final String refreshedToken = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        UserDetails userDetails = new UserDetails();
+        final UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(refreshedToken);
         tokenCache.put(username, userDetails);
 
@@ -87,12 +88,12 @@ class TokenAuthenticationServiceImplTest {
     @DisplayName("缓存不存在")
     void itShouldCheckWhenCacheNotExists() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.ACCOUNT_KEY, username);
-            put(TokenAttributes.TOKEN_TYPE_KEY, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
         // when
         assertThat(tokenCache.getIfPresent(username)).isNull();
@@ -107,20 +108,19 @@ class TokenAuthenticationServiceImplTest {
     @DisplayName("Token 类型错误")
     void itShouldCheckWhenProvideRefreshToken() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.ACCOUNT_KEY, username);
-            put(TokenAttributes.TOKEN_TYPE_KEY, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
+            put(TOKEN_TYPE_KEY, REFRESH_TOKEN_TYPE_VALUE);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        UserDetails userDetails = new UserDetails();
+        final UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 
         // when
-        assertThat(payload.get(TokenAttributes.TOKEN_TYPE_KEY))
-                .isNotEqualTo(TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+        assertThat(payload.get(TOKEN_TYPE_KEY)).isNotEqualTo(ACCESS_TOKEN_TYPE_VALUE);
 
         // then
         assertThatThrownBy(() -> underTest.authenticate(token))
@@ -132,45 +132,45 @@ class TokenAuthenticationServiceImplTest {
     @DisplayName("Token 缺少类型")
     void itShouldCheckWhenTokenLackOfType() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.ACCOUNT_KEY, username);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(ACCOUNT_KEY, username);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        UserDetails userDetails = new UserDetails();
+        final UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 
         // when
-        assertThat(payload.get(TokenAttributes.TOKEN_TYPE_KEY)).isNull();
+        assertThat(payload.get(TOKEN_TYPE_KEY)).isNull();
 
         // then
         assertThatThrownBy(() -> underTest.authenticate(token))
                 .isInstanceOf(TokenAuthenticationException.class)
-                .hasMessage(StrUtil.format("Token 缺少 {} 信息", TokenAttributes.TOKEN_TYPE_KEY));
+                .hasMessage(StrUtil.format("Token 缺少 {} 信息", TOKEN_TYPE_KEY));
     }
 
     @Test
     @DisplayName("Token 缺少账号")
     void itShouldCheckWhenTokenLackOfAccount() {
         // given
-        String username = "测试用户";
-        Map<String, Object> payload = new HashMap<>() {{
-            put(TokenAttributes.TOKEN_TYPE_KEY, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+        final String username = "测试用户";
+        final Map<String, Object> payload = new HashMap<>() {{
+            put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
-        String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
+        final String token = JwtUtils.generateJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        UserDetails userDetails = new UserDetails();
+        final UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 
         // when
-        assertThat(payload.get(TokenAttributes.ACCOUNT_KEY)).isNull();
+        assertThat(payload.get(ACCOUNT_KEY)).isNull();
 
         // then
         assertThatThrownBy(() -> underTest.authenticate(token))
                 .isInstanceOf(TokenAuthenticationException.class)
-                .hasMessage(StrUtil.format("Token 缺少 {} 信息", TokenAttributes.ACCOUNT_KEY));
+                .hasMessage(StrUtil.format("Token 缺少 {} 信息", ACCOUNT_KEY));
     }
 }

@@ -1,13 +1,13 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.util;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.shared.util.JwtUtils;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.wuxianjie.springbootcore.shared.util.JwtUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -33,7 +33,7 @@ class JwtUtilsTest {
     @DisplayName("生成 JWT 签名密钥")
     void itShouldGenerateNewJwtSigningKey() {
         // when
-        secretKey = JwtUtils.createSigningKey();
+        secretKey = generateSigningKey();
 
         // then
         assertThat(secretKey).isNotNull();
@@ -46,12 +46,12 @@ class JwtUtilsTest {
     @DisplayName("生成 JWT")
     void itShouldGenerateNewJwt() {
         // given
-        Map<String, Object> payload = new HashMap<>() {{
+        final Map<String, Object> payload = new HashMap<>() {{
             put(USERNAME_KEY, USERNAME_VALUE);
         }};
 
         // when
-        token = JwtUtils.createJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
+        token = generateJwt(secretKey, payload, EXPIRE_IN_SECONDS_VALUE);
 
         // then
         assertThat(token).isNotNull();
@@ -65,8 +65,8 @@ class JwtUtilsTest {
     void itShouldVerifyJwt() {
         // given
         // when
-        Map<String, Object> payload = JwtUtils.verifyJwt(secretKey, token);
-        String username = (String) payload.get(USERNAME_KEY);
+        final Map<String, Object> payload = verifyJwt(secretKey, token);
+        final String username = (String) payload.get(USERNAME_KEY);
 
         // then
         assertThat(username).isEqualTo(USERNAME_VALUE);
@@ -78,11 +78,11 @@ class JwtUtilsTest {
     @DisplayName("Token 格式错误")
     void willThrowExceptionWhenMalformedJwt() {
         // give
-        String token = "token";
+        final String token = "token";
 
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.verifyJwt(EXPIRED_JWT_SIGNING_KEY, token))
+        assertThatThrownBy(() -> verifyJwt(EXPIRED_JWT_SIGNING_KEY, token))
                 .hasMessageContaining("Token 格式错误");
     }
 
@@ -90,11 +90,11 @@ class JwtUtilsTest {
     @DisplayName("Token 签名密钥不匹配")
     void willThrowExceptionWhenSigningKeyChanged() {
         // give
-        String signingKey = "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=";
+        final String signingKey = "qzW6sC+lngkBGVA1ZCikkOF3qbuvC7eT9RGMtKS8OCI=";
 
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.verifyJwt(signingKey, EXPIRED_JWT))
+        assertThatThrownBy(() -> verifyJwt(signingKey, EXPIRED_JWT))
                 .hasMessageContaining("Token 签名密钥不匹配");
     }
 
@@ -104,7 +104,7 @@ class JwtUtilsTest {
         // give
         // when
         // then
-        assertThatThrownBy(() -> JwtUtils.verifyJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT))
+        assertThatThrownBy(() -> verifyJwt(EXPIRED_JWT_SIGNING_KEY, EXPIRED_JWT))
                 .hasMessageContaining("Token 已过期");
     }
 }

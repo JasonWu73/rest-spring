@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.springbootcore.shared.AuthUtils;
+import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,21 +16,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth-test")
 @RequiredArgsConstructor
-public class AuthController {
+class AuthTestController {
 
     /**
      * 开放访问的 API，即无需 Access Token 也可访问。
      */
     @GetMapping("public")
-    public Result testPublic() {
+    Result testPublic() {
         return new Result("无需 Token 认证即可访问的开放 API", getUsername());
     }
 
     /**
      * 只要通过 Token 认证就可访问，即未绑定角色的 Token 也可访问。
      */
-    @GetMapping("authenticated")
-    public Result testAuthenticated() {
+    @GetMapping("protected")
+    Result testProtected() {
         return new Result("只要通过 Token 认证（登录后）即可访问的 API", getUsername());
     }
 
@@ -37,7 +39,7 @@ public class AuthController {
      */
     @User
     @GetMapping("user")
-    public Result testUserRole() {
+    Result testUserRole() {
         return getResult(Role.USER);
     }
 
@@ -46,7 +48,7 @@ public class AuthController {
      */
     @Admin
     @GetMapping("admin")
-    public Result testAdminRole() {
+    Result testAdminRole() {
         return getResult(Role.ADMIN);
     }
 
@@ -55,14 +57,14 @@ public class AuthController {
      */
     @UserOrAdmin
     @GetMapping("user-or-admin")
-    public Result testUserOrAdmin() {
-        String msg = String.format("通过 Token 认证且必须拥有 [%s] 或 [%s] 角色才可访问的 API",
+    Result testUserOrAdmin() {
+        final String msg = String.format("通过 Token 认证且必须拥有 [%s] 或 [%s] 角色才可访问的 API",
                 Role.USER.value(), Role.ADMIN.value());
         return new Result(msg, getUsername());
     }
 
     private Result getResult(Role role) {
-        String msg = String.format("通过 Token 认证且必须拥有 [%s] 角色才可访问的 API", role.value());
+        final String msg = String.format("通过 Token 认证且必须拥有 [%s] 角色才可访问的 API", role.value());
         return new Result(msg, getUsername());
     }
 

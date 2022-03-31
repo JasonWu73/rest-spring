@@ -11,15 +11,15 @@ import java.util.stream.Collectors;
  * @author 吴仙杰
  */
 @RestController
-class PagingSearchController {
+class PagingTestController {
 
     @GetMapping("/paging")
-    public PagingResult<String> getPagingList(@Valid PagingQuery paging) {
+    public PagingResult<String> getPagingList(final @Valid PagingQuery paging) {
         return buildPagingResult(paging);
     }
 
-    private PagingResult<String> buildPagingResult(PagingQuery paging) {
-        List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
+    private PagingResult<String> buildPagingResult(final PagingQuery paging) {
+        final List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
 
         return new PagingResult<>(
                 paging,

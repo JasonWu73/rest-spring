@@ -1,18 +1,13 @@
 package net.wuxianjie.springbootcore.rest;
 
-import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
-import net.wuxianjie.springbootcore.shared.exception.InternalException;
-import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
+import net.wuxianjie.springbootcore.shared.exception.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindException;
@@ -24,6 +19,8 @@ import javax.validation.ConstraintViolationException;
 
 import static net.wuxianjie.springbootcore.rest.GlobalResponseBodyAdvice.APPLICATION_JSON_UTF8_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_XML;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -31,25 +28,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class, GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class, RestApiConfig.class})
-@WebMvcTest(controllers = RestApiController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(controllers = ApiTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 class ExceptionControllerAdviceTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("API 不支持请求头 Accept 中指定的 MIME 类型，但 Accept 中包含 JSON")
+    @DisplayName("Accept 中包含 JSON MIME 类型，但目标 API 不支持")
     void itShouldCheckWhenAcceptRequestHeaderContainJsonButApiNotSupported() throws Exception {
         // given
-        String errMsg = "API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, application/xml]";
-        Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
+        final String errMsg = "API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, application/xml]";
+        final Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
 
         // when
         mockMvc.perform(get("/html")
-                        .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
+                        .accept(APPLICATION_JSON, APPLICATION_XML))
                 // then
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
@@ -60,14 +54,14 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("API 不支持请求头 Accept 中指定的 MIME 类型，且 Accept 中也不包含 JSON")
+    @DisplayName("Accept 不包含 JSON MIME 类型，且目标 API 也不支持")
     void itShouldCheckWhenGetAcceptRequestHeaderNotContainJsonAndApiNotSupported() throws Exception {
         // given
-        Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
+        final Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
 
         // when
         mockMvc.perform(get("/html")
-                        .accept(MediaType.APPLICATION_XML))
+                        .accept(APPLICATION_XML))
                 // then
                 .andExpect(status().isNotAcceptable())
                 .andExpect(header().doesNotExist(HttpHeaders.CONTENT_TYPE))
@@ -79,7 +73,7 @@ class ExceptionControllerAdviceTest {
     @DisplayName("API 不支持请求方法")
     void itShouldCheckWhenRequestMethodApiNotSupported() throws Exception {
         // given
-        Class<HttpRequestMethodNotSupportedException> errorType = HttpRequestMethodNotSupportedException.class;
+        final Class<HttpRequestMethodNotSupportedException> errorType = HttpRequestMethodNotSupportedException.class;
 
         // when
         mockMvc.perform(post("/html"))
@@ -96,12 +90,12 @@ class ExceptionControllerAdviceTest {
     @DisplayName("请求体内容不合法")
     void itShouldCheckWhenMalformedRequestBody() throws Exception {
         // given
-        String reqBody = "{";
-        Class<HttpMessageNotReadableException> errorType = HttpMessageNotReadableException.class;
+        final String reqBody = "{";
+        final Class<HttpMessageNotReadableException> errorType = HttpMessageNotReadableException.class;
 
         // when
         mockMvc.perform(post("/body")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(APPLICATION_JSON)
                         .content(reqBody))
                 // then
                 .andExpect(status().isBadRequest())
@@ -116,7 +110,7 @@ class ExceptionControllerAdviceTest {
     @DisplayName("请求缺少必填参数")
     void itShouldCheckWhenRequestLackOfRequiredParam() throws Exception {
         // given
-        Class<MissingServletRequestParameterException> errorType = MissingServletRequestParameterException.class;
+        final Class<MissingServletRequestParameterException> errorType = MissingServletRequestParameterException.class;
 
         // when
         mockMvc.perform(get("/required"))
@@ -133,7 +127,7 @@ class ExceptionControllerAdviceTest {
     @DisplayName("请求参数不合法 @Validated")
     void itShouldCheckWhenRequestParamInvalidByValidatedAnnotation() throws Exception {
         // given
-        Class<ConstraintViolationException> errorType = ConstraintViolationException.class;
+        final Class<ConstraintViolationException> errorType = ConstraintViolationException.class;
 
         // when
         mockMvc.perform(get("/validated"))
@@ -143,7 +137,7 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
-                    String body = result.getResponse().getContentAsString();
+                    final String body = result.getResponse().getContentAsString();
                     assertThat(body)
                             .contains("用户 ID 不能为 null")
                             .contains("用户名不能为空");
@@ -155,7 +149,7 @@ class ExceptionControllerAdviceTest {
     @DisplayName("请求参数不合法 @Valid")
     void itShouldCheckWhenRequestParamInvalidByValidAnnotation() throws Exception {
         // given
-        Class<BindException> errorType = BindException.class;
+        final Class<BindException> errorType = BindException.class;
 
         // when
         mockMvc.perform(get("/valid"))
@@ -165,7 +159,7 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
-                    String body = result.getResponse().getContentAsString();
+                    final String body = result.getResponse().getContentAsString();
                     assertThat(body)
                             .contains("用户 ID 不能为 null")
                             .contains("用户名不能为空");
@@ -177,8 +171,8 @@ class ExceptionControllerAdviceTest {
     @DisplayName("当程序抛出自定义异常 NotFoundException")
     void itShouldCheckWhenThrowNotFoundException() throws Exception {
         // given
-        String type = "not_found";
-        Class<NotFoundException> errorType = NotFoundException.class;
+        final String type = "not_found";
+        final Class<NotFoundException> errorType = NotFoundException.class;
 
         // when
         mockMvc.perform(get("/exception")
@@ -196,8 +190,8 @@ class ExceptionControllerAdviceTest {
     @DisplayName("当程序抛出自定义异常 BadRequestException")
     void itShouldCheckWhenThrowBadRequestException() throws Exception {
         // given
-        String type = "bad_request";
-        Class<BadRequestException> errorType = BadRequestException.class;
+        final String type = "bad_request";
+        final Class<BadRequestException> errorType = BadRequestException.class;
 
         // when
         mockMvc.perform(get("/exception")
@@ -212,11 +206,11 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 ConflictException")
-    void itShouldCheckWhenThrowConflictException() throws Exception {
+    @DisplayName("当程序抛出自定义异常 DataConflictException")
+    void itShouldCheckWhenThrowDataConflictException() throws Exception {
         // given
-        String type = "conflict";
-        Class<DataConflictException> errorType = DataConflictException.class;
+        final String type = "conflict";
+        final Class<DataConflictException> errorType = DataConflictException.class;
 
         // when
         mockMvc.perform(get("/exception")
@@ -234,8 +228,8 @@ class ExceptionControllerAdviceTest {
     @DisplayName("当程序抛出自定义异常 InternalException")
     void itShouldCheckWhenThrowInternalException() throws Exception {
         // given
-        String type = "internal";
-        Class<InternalException> errorType = InternalException.class;
+        final String type = "internal";
+        final Class<InternalException> errorType = InternalException.class;
 
         // when
         mockMvc.perform(get("/exception")
@@ -250,11 +244,30 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
+    @DisplayName("当程序抛出自定义异常 ExternalException")
+    void itShouldCheckWhenThrowExternalException() throws Exception {
+        // given
+        final String type = " external";
+        final Class<ExternalException> errorType = ExternalException.class;
+
+        // when
+        mockMvc.perform(get("/exception")
+                        .param("type", type))
+                // then
+                .andExpect(status().isServiceUnavailable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
+                .andExpect(jsonPath("$.error").value(1))
+                .andExpect(jsonPath("$.errMsg").value("外部 API 不可用"))
+                .andExpect(jsonPath("$.data").doesNotExist());
+    }
+
+    @Test
     @DisplayName("当程序抛出 JDBC 异常")
     void itShouldCheckWhenThrowJdbcException() throws Exception {
         // given
-        String type = "\tdb\n";
-        Class<UncategorizedDataAccessException> errorType = UncategorizedDataAccessException.class;
+        final String type = "\tdb\n";
+        final Class<UncategorizedDataAccessException> errorType = UncategorizedDataAccessException.class;
 
         // when
         mockMvc.perform(get("/exception")
@@ -271,7 +284,7 @@ class ExceptionControllerAdviceTest {
     @DisplayName("当程序抛出其他异常")
     void itShouldCheckWhenThrowOtherException() throws Exception {
         // given
-        Class<Throwable> errorType = Throwable.class;
+        final Class<Throwable> errorType = Throwable.class;
 
         // when
         mockMvc.perform(get("/exception"))

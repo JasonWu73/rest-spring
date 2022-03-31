@@ -25,7 +25,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+    static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 
     private final ObjectMapper objectMapper;
 
@@ -42,6 +42,8 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                                   final @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   final @NonNull ServerHttpRequest request,
                                   final @NonNull ServerHttpResponse response) {
+        if (!selectedContentType.isCompatibleWith(MediaType.APPLICATION_JSON)) return body;
+
         // 自动包装字符串为 JSON
         if (body instanceof String) {
             response.getHeaders().set(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);

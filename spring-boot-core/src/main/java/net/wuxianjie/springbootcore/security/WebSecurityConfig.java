@@ -32,17 +32,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     /**
      * 获取 Access Token 的请求路径。
      */
-    public static final String ACCESS_TOKEN_PATH = "/api/v1/access-token";
+    static final String ACCESS_TOKEN_PATH = "/api/v1/access-token";
 
     /**
      * 刷新 Access Token 的请求路径前缀，并不包含 URL 路径参数。
      */
-    public static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
+    static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
 
-    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+    static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 
-    private static final String FAVICON_PATH = "/favicon.ico";
-    private static final String[] DEFAULT_PERMIT_ALL = {
+    static final String FAVICON_PATH = "/favicon.ico";
+
+    static final String[] DEFAULT_PERMIT_ALL = {
             ACCESS_TOKEN_PATH,
             REFRESH_TOKEN_PATH_PREFIX + "/{\\\\.+}",
             FAVICON_PATH
@@ -74,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     final String msg = "Token 认证失败";
 
-                    logWarn(request, msg, authException);
+                    logWarn(request, msg);
 
                     response.setContentType(APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -87,7 +88,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .accessDeniedHandler((request, response, deniedException) -> {
                     final String msg = "Token 未授权";
 
-                    logWarn(request, msg, deniedException);
+                    logWarn(request, msg);
 
                     response.setContentType(APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
@@ -111,10 +112,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    private void logWarn(final HttpServletRequest request,
-                         final String message,
-                         final Exception e) {
-        log.warn("uri={}；client={} -> {}：{}",
-                request.getRequestURI(), NetUtils.getRealIpAddress(request), message, e.getMessage());
+    private void logWarn(final HttpServletRequest request, final String message) {
+        log.warn("uri={}；client={} -> {}",
+                request.getRequestURI(), NetUtils.getRealIpAddress(request), message);
     }
 }

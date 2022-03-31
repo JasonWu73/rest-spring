@@ -2,10 +2,7 @@ package net.wuxianjie.springbootcore.rest;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.Data;
-import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
-import net.wuxianjie.springbootcore.shared.exception.InternalException;
-import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
+import net.wuxianjie.springbootcore.shared.exception.*;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 /**
@@ -21,7 +19,7 @@ import java.sql.SQLException;
  */
 @Validated
 @RestController
-class RestApiController {
+class ApiTestController {
 
     @GetMapping(value = "/html", produces = MediaType.TEXT_HTML_VALUE)
     String getHtml() {
@@ -29,46 +27,48 @@ class RestApiController {
     }
 
     @PostMapping(value = "/body")
-    User getBody(@RequestBody User user) {
+    User getBody(@RequestBody final User user) {
         return user;
     }
 
     @GetMapping("/required")
-    String getRequiredParameter(@RequestParam("name") String username,
-                                @RequestParam("userId") Integer userId) {
+    String getRequiredParameter(@RequestParam("name") final String username,
+                                @RequestParam("userId") final Integer userId) {
         return username + ": " + userId;
     }
 
     @GetMapping("/validated")
-    String getValidateParam(@NotBlank(message = "用户名不能为空") String username,
-                            @NotNull(message = "用户 ID 不能为 null") Integer userId) {
+    String getValidateParam(@NotBlank(message = "用户名不能为空") final String username,
+                            @NotNull(message = "用户 ID 不能为 null") final Integer userId) {
         return username + ": " + userId;
     }
 
     @GetMapping("/valid")
-    String getValidParam(@Valid User user) {
+    String getValidParam(@Valid final User user) {
         return user.getUsername() + ": " + user.getUserId();
     }
 
     @GetMapping("/exception")
-    String getException(String type) {
-        if (StrUtil.equals(type, "not_found")) {
-            throw new NotFoundException("未找到 id 为 x 的数据");
-        }
+    String getException(final String type) {
+        if (StrUtil.equals(type, "not_found")) throw new NotFoundException("未找到 id 为 x 的数据");
 
-        if (StrUtil.equals(type, "bad_request")) {
-            throw new BadRequestException("客户端请求错误");
-        }
+        if (StrUtil.equals(type, "bad_request")) throw new BadRequestException("客户端请求错误");
 
-        if (StrUtil.equals(type, "conflict")) {
-            throw new DataConflictException("已存在相同数据");
-        }
+        if (StrUtil.equals(type, "conflict")) throw new DataConflictException("已存在相同数据");
 
         if (StrUtil.equals(type, "internal")) {
             try {
                 return errorMath();
             } catch (Exception e) {
                 throw new InternalException("服务内部异常", e);
+            }
+        }
+
+        if (StrUtil.equals(type, "external")) {
+            try {
+                throw new RuntimeException("请求 Google API 失败");
+            } catch (Exception e) {
+                throw new ExternalException("外部 API 不可用", e);
             }
         }
 
@@ -87,13 +87,24 @@ class RestApiController {
     void nothing() {
     }
 
-    @GetMapping("/result/{type}")
-    String getResult(@PathVariable String type) {
-        if (StrUtil.equals(type, "null")) {
-            return null;
-        }
+    @GetMapping("/null-obj")
+    User getObjectNullResult() {
+        return null;
+    }
 
+    @GetMapping("/null-str")
+    String getStringNullResult() {
+        return null;
+    }
+
+    @GetMapping("/str")
+    String getStringResult() {
         return " Hello World\t\n";
+    }
+
+    @GetMapping(value = "/bytes")
+    byte[] getBytes() {
+        return "Hello Bytes" .getBytes(StandardCharsets.UTF_8);
     }
 
     @Data
@@ -106,7 +117,6 @@ class RestApiController {
         private String username;
     }
 
-    @SuppressWarnings({"NumericOverflow", "divzero"})
     private String errorMath() {
         return (1 / 0) + "";
     }

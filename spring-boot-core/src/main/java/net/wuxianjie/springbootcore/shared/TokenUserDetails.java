@@ -1,4 +1,6 @@
-package net.wuxianjie.springbootcore.security;
+package net.wuxianjie.springbootcore.shared;
+
+import net.wuxianjie.springbootcore.security.Role;
 
 /**
  * Token 认证所需的用户详细数据接口。

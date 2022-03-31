@@ -1,5 +1,6 @@
 package net.wuxianjie.springbootcore.security;
 
+import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 
 /**

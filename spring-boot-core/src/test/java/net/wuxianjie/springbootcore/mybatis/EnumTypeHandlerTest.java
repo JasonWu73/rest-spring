@@ -19,46 +19,57 @@ class EnumTypeHandlerTest {
     private UserMapper underTest;
 
     @Test
-    @DisplayName("插入枚举字段枚举值")
-    void itShouldCheckWhenInsertEnumField() {
+    @DisplayName("插入枚举值")
+    void itShouldCheckWhenInsertEnum() {
         // given
-        String username = "测试用户";
-        YesOrNo yes = YesOrNo.YES;
-        User user = new User(null, username, yes, null, null);
+        final String username = "测试用户";
+        final YesOrNo yes = YesOrNo.YES;
+        final User user = new User(null, username, yes, null, null);
         underTest.insertUser(user);
 
         // when
-        YesOrNo actual = underTest.selectEnabledByUsername(username);
+        final YesOrNo actual = underTest.selectEnabledByUsername(username);
 
         // then
         assertThat(actual).isEqualTo(yes);
     }
 
     @Test
-    @DisplayName("插入枚举字段 null 值并获取枚举值")
-    void itShouldCheckWhenInsertNullEnumFieldReturnEnum() {
+    @DisplayName("插入 null 值并获取枚举值")
+    void itShouldCheckWhenInsertNullReturnEnum() {
         // given
-        String username = "测试用户";
-        User user = new User(null, username, null, null, null);
+        final String username = "测试用户";
+        final User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
-        YesOrNo actual = underTest.selectEnabledByUsername(username);
+        final YesOrNo actual = underTest.selectEnabledByUsername(username);
 
         // then
         assertThat(actual).isEqualTo(YesOrNo.NO);
     }
 
     @Test
-    @DisplayName("插入枚举字段 null 值并获取 Integer")
-    void itShouldCheckWhenInsertNullEnumFieldReturnInteger() {
+    @DisplayName("获取一个无法映射的枚举值")
+    void itShouldCheckWhenReturnCanNotResolvedEnum() {
         // given
-        String username = "测试用户";
-        User user = new User(null, username, null, null, null);
+        // when
+        final YesOrNo actual = underTest.selectNegativeOne();
+
+        // then
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    @DisplayName("插入 null 值并获取原始类型值")
+    void itShouldCheckWhenInsertNullReturnPrimitive() {
+        // given
+        final String username = "测试用户";
+        final User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
-        Integer actual = underTest.selectEnabledByUsernameReturnInt(username);
+        final Integer actual = underTest.selectEnabledByUsernameReturnInt(username);
 
         // then
         assertThat(actual).isNull();

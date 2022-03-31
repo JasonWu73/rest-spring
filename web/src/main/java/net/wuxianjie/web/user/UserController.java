@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
-import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.shared.AuthUtils;
 import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
 import net.wuxianjie.springbootcore.shared.util.StringUtils;

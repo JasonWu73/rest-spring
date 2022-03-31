@@ -22,62 +22,62 @@ class LocalDateTimeTypeHandlerTest {
     private UserMapper underTest;
 
     @Test
-    @DisplayName("插入 LocalDateTime 字段值")
-    void itShouldCheckWhenInsertLocalDateTimeField() {
+    @DisplayName("插入 LocalDateTime")
+    void itShouldCheckWhenInsertLocalDateTime() {
         // given
-        String username = "测试用户";
-        LocalDateTime createTime = LocalDateTime.now();
-        User user = new User(null, username, null, createTime, null);
+        final String username = "测试用户";
+        final LocalDateTime createTime = LocalDateTime.now();
+        final User user = new User(null, username, null, createTime, null);
         underTest.insertUser(user);
 
         // when
-        LocalDateTime actual = underTest.selectCreateTimeByUsername(username);
+        final LocalDateTime actual = underTest.selectCreateTimeByUsername(username);
 
         // then
         assertThat(actual).isEqualToIgnoringNanos(createTime);
     }
 
     @Test
-    @DisplayName("插入 LocalDateTime 字段 null 值")
-    void itShouldCheckWhenInsertNullLocalDateTimeField() {
+    @DisplayName("插入 LocalDateTime null 值")
+    void itShouldCheckWhenInsertLocalDateTimeNull() {
         // given
-        String username = "测试用户";
-        User user = new User(null, username, null, null, null);
+        final String username = "测试用户";
+        final User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
-        LocalDateTime actual = underTest.selectCreateTimeByUsername(username);
+        final LocalDateTime actual = underTest.selectCreateTimeByUsername(username);
 
         // then
         assertThat(actual).isNull();
     }
 
     @Test
-    @DisplayName("插入 LocalDate 字段值")
-    void itShouldCheckWhenInsertLocalDateField() {
+    @DisplayName("插入 LocalDate")
+    void itShouldCheckWhenInsertLocalDate() {
         // given
-        String username = "测试用户";
-        LocalDate birthday = LocalDate.now();
-        User user = new User(null, username, null, null, birthday);
+        final String username = "测试用户";
+        final LocalDate birthday = LocalDate.now();
+        final User user = new User(null, username, null, null, birthday);
         underTest.insertUser(user);
 
         // when
-        LocalDate actual = underTest.selectBirthdayByUsername(username);
+        final LocalDate actual = underTest.selectBirthdayByUsername(username);
 
         // then
         assertThat(actual).isEqualTo(birthday);
     }
 
     @Test
-    @DisplayName("插入 LocalDate 字段 null 值")
-    void itShouldCheckWhenInsertNullLocalDateField() {
+    @DisplayName("插入 LocalDate null 值")
+    void itShouldCheckWhenInsertNullLocalDate() {
         // given
-        String username = "测试用户";
-        User user = new User(null, username, null, null, null);
+        final String username = "测试用户";
+        final User user = new User(null, username, null, null, null);
         underTest.insertUser(user);
 
         // when
-        LocalDate actual = underTest.selectBirthdayByUsername(username);
+        final LocalDate actual = underTest.selectBirthdayByUsername(username);
 
         // then
         assertThat(actual).isNull();

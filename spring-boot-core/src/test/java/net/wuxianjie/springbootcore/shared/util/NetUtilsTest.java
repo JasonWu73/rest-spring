@@ -1,6 +1,5 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.util;
 
-import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -10,6 +9,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
+import static net.wuxianjie.springbootcore.shared.util.NetUtils.getRealIpAddress;
+import static net.wuxianjie.springbootcore.shared.util.NetUtils.getRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -18,32 +19,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 class NetUtilsTest {
 
     @Test
-    @DisplayName("当客户端没有代理服务器时获取客户端请求 IP")
+    @DisplayName("获取客户端请求 IP - 客户端没有代理服务器")
     void canGetClientIp() {
         // given
-        String ip = "192.168.1.98";
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final String ip = "192.168.1.98";
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr(ip);
 
         // when
-        String actual = NetUtils.getRealIpAddress(request);
+        final String actual = getRealIpAddress(request);
 
         // then
         assertThat(actual).isEqualTo(ip);
     }
 
     @Test
-    @DisplayName("当客户端存在代理服务器时获取客户端请求 IP")
+    @DisplayName("获取客户端请求 IP - 客户端存在代理服务器")
     void canGetRealClientIp() {
         // given
-        String ip = "192.168.1.98";
-        String proxyIp = "192.168.129.89";
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final String ip = "192.168.1.98";
+        final String proxyIp = "192.168.129.89";
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setRemoteAddr(ip);
         request.addHeader("X-FORWARDED-FOR", proxyIp);
 
         // when
-        String actual = NetUtils.getRealIpAddress(request);
+        final String actual = getRealIpAddress(request);
 
         // then
         assertThat(actual).isEqualTo(proxyIp);
@@ -53,11 +54,11 @@ class NetUtilsTest {
     @DisplayName("获取请求对象")
     void canGetRequest() {
         // given
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         // when
-        Optional<HttpServletRequest> actual = NetUtils.getRequest();
+        final Optional<HttpServletRequest> actual = getRequest();
 
         // then
         assertThat(actual.isPresent()).isTrue();
@@ -68,7 +69,7 @@ class NetUtilsTest {
     void canNotGetRequest() {
         // given
         // when
-        Optional<HttpServletRequest> actual = NetUtils.getRequest();
+        final Optional<HttpServletRequest> actual = getRequest();
 
         // then
         assertThat(actual.isEmpty()).isTrue();
