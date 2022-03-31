@@ -24,7 +24,6 @@ public class SecurityConfig {
     @Value("${core.security.permit-all-ant-patterns}")
     private String permitAllAntPatterns;
 
-
     /**
      * 密码哈希编码器。
      *

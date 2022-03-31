@@ -23,7 +23,7 @@ public class PagingOffsetFieldPaddingAspect {
     // [方法所在类的全路径名].方法名(参数类型列表) [方法抛出的异常类型])
     @Pointcut("execution(public net.wuxianjie.springbootcore.paging.PagingResult " +
             "*..*Controller.*(net.wuxianjie.springbootcore.paging.PagingQuery, ..))")
-    public void getByPaging() {
+    public void pagingSearchPointcut() {
     }
 
     /**
@@ -37,8 +37,8 @@ public class PagingOffsetFieldPaddingAspect {
      *
      * @param joinpoint {@link JoinPoint}
      */
-    @Before("getByPaging()")
-    public void beforeCallControllerMethodGetByPaging(JoinPoint joinpoint) {
+    @Before("pagingSearchPointcut()")
+    public void beforeCallControllerMethodGetByPaging(final JoinPoint joinpoint) {
         Optional.ofNullable(joinpoint.getArgs())
                 .ifPresent(args -> Arrays.stream(args)
                         .filter(PagingQuery.class::isInstance)

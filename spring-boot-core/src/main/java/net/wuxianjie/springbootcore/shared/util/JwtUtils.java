@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.util;
 
 import cn.hutool.core.date.DateUtil;
 import io.jsonwebtoken.*;
@@ -8,6 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -39,7 +40,9 @@ public class JwtUtils {
      * @param expiresInSeconds JWT 的过期时间，单位秒
      * @return JWT
      */
-    public static String createJwt(String signingKey, Map<String, Object> payload, int expiresInSeconds) {
+    public static String createJwt(final String signingKey,
+                                   final Map<String, Object> payload,
+                                   final int expiresInSeconds) {
         return Jwts.builder()
                 .setClaims(payload)
                 .setNotBefore(new Date())
@@ -56,9 +59,10 @@ public class JwtUtils {
      * @return JWT 中的有效载荷
      * @throws TokenAuthenticationException 若 JWT 校验不通过
      */
-    public static Map<String, Object> verifyJwt(String signingKey, String jwt) throws TokenAuthenticationException {
+    public static Map<String, Object> verifyJwt(final String signingKey,
+                                                final String jwt) throws TokenAuthenticationException {
         try {
-            Claims claims = Jwts.parserBuilder()
+            final Claims claims = Jwts.parserBuilder()
                     .setSigningKey(createSecretKey(signingKey))
                     .build()
                     .parseClaimsJws(jwt)
@@ -74,7 +78,7 @@ public class JwtUtils {
         }
     }
 
-    private static SecretKey createSecretKey(String signingKey) {
+    private static SecretKey createSecretKey(final String signingKey) {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(signingKey));
     }
 }

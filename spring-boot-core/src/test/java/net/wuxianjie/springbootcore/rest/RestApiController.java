@@ -2,10 +2,10 @@ package net.wuxianjie.springbootcore.rest;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.Data;
-import net.wuxianjie.springbootcore.shared.BadRequestException;
-import net.wuxianjie.springbootcore.shared.ConflictException;
-import net.wuxianjie.springbootcore.shared.InternalException;
-import net.wuxianjie.springbootcore.shared.NotFoundException;
+import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
+import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
+import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.validation.annotation.Validated;
@@ -61,7 +61,7 @@ class RestApiController {
         }
 
         if (StrUtil.equals(type, "conflict")) {
-            throw new ConflictException("已存在相同数据");
+            throw new DataConflictException("已存在相同数据");
         }
 
         if (StrUtil.equals(type, "internal")) {
@@ -106,6 +106,7 @@ class RestApiController {
         private String username;
     }
 
+    @SuppressWarnings({"NumericOverflow", "divzero"})
     private String errorMath() {
         return (1 / 0) + "";
     }

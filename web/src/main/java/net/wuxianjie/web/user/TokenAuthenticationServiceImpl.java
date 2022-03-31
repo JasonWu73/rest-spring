@@ -5,8 +5,8 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
-import net.wuxianjie.springbootcore.shared.JwtUtils;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -21,11 +21,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
-    private final Cache<String, TokenUserDetails> tokenCache;
+    private final Cache<String, UserDetails> tokenCache;
     private final SecurityConfigData securityConfig;
 
     @Override
-    public TokenUserDetails authenticate(String token) throws TokenAuthenticationException {
+    public UserDetails authenticate(String token) throws TokenAuthenticationException {
         Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
         String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
@@ -43,8 +43,8 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
         return getUserDetailsFromCache(username, token);
     }
 
-    private TokenUserDetails getUserDetailsFromCache(String username, String token) {
-        TokenUserDetails userDetails = tokenCache.getIfPresent(username);
+    private UserDetails getUserDetailsFromCache(String username, String token) {
+        UserDetails userDetails = tokenCache.getIfPresent(username);
         if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {
             throw new TokenAuthenticationException("Token 已过期");
         }

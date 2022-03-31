@@ -1,8 +1,9 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.util;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -25,7 +26,7 @@ public class NetUtils {
      *
      * @return 客户端 IP
      */
-    public static String getRealIpAddress(HttpServletRequest request) {
+    public static String getRealIpAddress(final HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader("X-FORWARDED-FOR"))
                 .map(StrUtil::trimToNull)
                 .orElse(request.getRemoteAddr());

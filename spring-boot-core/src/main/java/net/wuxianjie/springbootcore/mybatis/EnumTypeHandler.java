@@ -24,7 +24,7 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHand
 
     private Class<E> enumType;
 
-    public EnumTypeHandler(Class<E> enumType) {
+    public EnumTypeHandler(final Class<E> enumType) {
         if (enumType == null) {
             throw new IllegalArgumentException("enumType 参数不能为 null");
         }
@@ -33,42 +33,39 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHand
     }
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps,
-                                    int i,
-                                    ValueEnum parameter,
-                                    JdbcType jdbcType) throws SQLException {
+    public void setNonNullParameter(final PreparedStatement ps,
+                                    final int i,
+                                    final ValueEnum parameter,
+                                    final JdbcType jdbcType) throws SQLException {
         ps.setInt(i, parameter.value());
     }
 
     @Override
-    public ValueEnum getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public ValueEnum getNullableResult(final ResultSet rs,
+                                       final String columnName) throws SQLException {
         return toNullableValueNum(enumType, rs.getInt(columnName));
     }
 
     @Override
-    public ValueEnum getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    public ValueEnum getNullableResult(final ResultSet rs,
+                                       final int columnIndex) throws SQLException {
         return toNullableValueNum(enumType, rs.getInt(columnIndex));
     }
 
     @Override
-    public ValueEnum getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public ValueEnum getNullableResult(final CallableStatement cs,
+                                       final int columnIndex) throws SQLException {
         return toNullableValueNum(enumType, cs.getInt(columnIndex));
     }
 
-    private E toNullableValueNum(Class<E> enumClass, Integer value) {
-        if (enumClass == null || value == null) {
-            return null;
-        }
+    private E toNullableValueNum(final Class<E> enumClass,
+                                 final Integer value) {
+        if (enumClass == null || value == null) return null;
 
-        E[] enumConstants = enumClass.getEnumConstants();
-        if (enumConstants == null) {
-            return null;
-        }
-        for (E anEnum : enumConstants) {
-            if (value == anEnum.value()) {
-                return anEnum;
-            }
-        }
+        E[] enumConsts = enumClass.getEnumConstants();
+        if (enumConsts == null) return null;
+
+        for (final E es : enumConsts) if (value == es.value()) return es;
 
         return null;
     }

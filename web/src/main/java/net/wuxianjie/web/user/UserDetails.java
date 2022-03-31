@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.security.UserDetails;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 
 /**
  * Token 认证后的用户详细数据。
@@ -14,7 +14,7 @@ import net.wuxianjie.springbootcore.security.UserDetails;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenUserDetails implements UserDetails {
+public class UserDetails implements TokenUserDetails {
 
     /**
      * 用户 ID。

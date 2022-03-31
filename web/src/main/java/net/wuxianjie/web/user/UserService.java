@@ -2,10 +2,14 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
+import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
+import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
-import net.wuxianjie.springbootcore.shared.*;
+import net.wuxianjie.springbootcore.shared.util.StringUtils;
 import net.wuxianjie.web.operationlog.OperationLogService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -223,7 +227,7 @@ public class UserService {
     private void verifyUsernameUniqueness(String username) {
         boolean isExists = userMapper.existsUsername(username);
         if (isExists) {
-            throw new ConflictException(String.format("用户名【%s】已存在", username));
+            throw new DataConflictException(String.format("用户名【%s】已存在", username));
         }
     }
 }

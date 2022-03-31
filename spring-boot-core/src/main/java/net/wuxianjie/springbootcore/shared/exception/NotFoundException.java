@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -13,11 +13,11 @@ public class NotFoundException extends AbstractBaseException {
     @Getter
     private final HttpStatus httpStatus = HttpStatus.NOT_FOUND;
 
-    public NotFoundException(String message) {
+    public NotFoundException(final String message) {
         super(message);
     }
 
-    public NotFoundException(String message, Throwable cause) {
+    public NotFoundException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

@@ -3,8 +3,8 @@ package net.wuxianjie.springbootcore.security;
 import cn.hutool.cache.Cache;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.shared.JwtUtils;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,10 +22,10 @@ class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
     static final String ACCESS_TOKEN_TYPE_VALUE = "access";
     static final String ACCOUNT_KEY = "account";
 
-    private final Cache<String, TokenUserDetails> tokenCache;
+    private final Cache<String, UserDetails> tokenCache;
 
     @Override
-    public TokenUserDetails authenticate(String token) throws TokenAuthenticationException {
+    public UserDetails authenticate(String token) throws TokenAuthenticationException {
         Map<String, Object> payload = JwtUtils.verifyJwt(SIGNING_KEY, token);
         String tokenType = Optional.ofNullable((String) payload.get(TOKEN_TYPE_KEY))
                 .orElseThrow(() -> new TokenAuthenticationException(
@@ -42,8 +42,8 @@ class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
         return getUserDetailsFromCache(username, token);
     }
 
-    private TokenUserDetails getUserDetailsFromCache(String username, String token) {
-        TokenUserDetails userDetails = tokenCache.get(username);
+    private UserDetails getUserDetailsFromCache(String username, String token) {
+        UserDetails userDetails = tokenCache.get(username);
 
         if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {
             throw new TokenAuthenticationException("Token 已过期");

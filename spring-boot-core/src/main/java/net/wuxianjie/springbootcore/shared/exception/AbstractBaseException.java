@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.exception;
 
 import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
 import org.springframework.http.HttpStatus;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 /**
  * 自定义异常的基类：包含获取 HTTP 状态码的抽象异常，且不记录异常堆栈信息。
  * <p>
- * 默认子类异常仅以 WARN 级别记录日志，针对服务器异常则可使用子类 {@link InternalException}，它以 ERROR 级别记录日志。
+ * 默认子类异常仅以 WARN 级别记录日志，针对服务器异常则可使用子类 {@link AbstractServerBaseException}，它以 ERROR 级别记录日志。
  * </p>
  *
  * @author 吴仙杰
@@ -14,11 +14,11 @@ import org.springframework.http.HttpStatus;
  */
 public abstract class AbstractBaseException extends RuntimeException {
 
-    public AbstractBaseException(String message) {
+    public AbstractBaseException(final String message) {
         super(message);
     }
 
-    public AbstractBaseException(String message, Throwable cause) {
+    public AbstractBaseException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

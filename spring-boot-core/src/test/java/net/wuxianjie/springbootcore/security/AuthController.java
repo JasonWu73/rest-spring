@@ -68,7 +68,7 @@ public class AuthController {
 
     private String getUsername() {
         return AuthUtils.getCurrentUser()
-                .map(UserDetails::getAccountName)
+                .map(TokenUserDetails::getAccountName)
                 .orElse("匿名用户");
     }
 

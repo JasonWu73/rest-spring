@@ -1,5 +1,6 @@
 package net.wuxianjie.springbootcore.shared;
 
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
@@ -23,14 +24,16 @@ public class YamlSourceFactory implements PropertySourceFactory {
 
     @NonNull
     @Override
-    public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws InternalException {
-        YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-        Resource heldResource = resource.getResource();
+    public PropertySource<?> createPropertySource(final String name,
+                                                  final EncodedResource resource) throws InternalException {
+        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+        final Resource heldResource = resource.getResource();
         factory.setResources(heldResource);
-        String filename = Optional.ofNullable(heldResource.getFilename())
+
+        final String filename = Optional.ofNullable(heldResource.getFilename())
                 .orElseThrow(() -> new InternalException("无法识别 YAML 配置文件的文件名"));
 
-        Properties properties = Optional.ofNullable(factory.getObject())
+        final Properties properties = Optional.ofNullable(factory.getObject())
                 .orElseThrow(() -> new InternalException("YAML 配置文件读取失败"));
 
         return new PropertiesPropertySource(filename, properties);

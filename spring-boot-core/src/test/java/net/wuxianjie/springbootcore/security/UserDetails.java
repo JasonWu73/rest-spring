@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-class TokenUserDetails implements UserDetails {
+class UserDetails implements TokenUserDetails {
 
     private Integer accountId;
 

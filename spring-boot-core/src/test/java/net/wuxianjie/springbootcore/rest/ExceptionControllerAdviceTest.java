@@ -1,6 +1,9 @@
 package net.wuxianjie.springbootcore.rest;
 
-import net.wuxianjie.springbootcore.shared.*;
+import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
+import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
+import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 
 import javax.validation.ConstraintViolationException;
 
+import static net.wuxianjie.springbootcore.rest.GlobalResponseBodyAdvice.APPLICATION_JSON_UTF8_VALUE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -48,7 +52,7 @@ class ExceptionControllerAdviceTest {
                         .accept(MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML))
                 // then
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value(errMsg))
@@ -81,7 +85,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(post("/html"))
                 // then
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("API 不支持 POST 请求方法"))
@@ -101,7 +105,7 @@ class ExceptionControllerAdviceTest {
                         .content(reqBody))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("请求体内容不合法"))
@@ -118,7 +122,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(get("/required"))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("缺少必填参数 name"))
@@ -135,7 +139,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(get("/validated"))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
@@ -157,7 +161,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(get("/valid"))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(result -> {
@@ -181,7 +185,7 @@ class ExceptionControllerAdviceTest {
                         .param("type", type))
                 // then
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("未找到 id 为 x 的数据"))
@@ -200,7 +204,7 @@ class ExceptionControllerAdviceTest {
                         .param("type", type))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("客户端请求错误"))
@@ -212,14 +216,14 @@ class ExceptionControllerAdviceTest {
     void itShouldCheckWhenThrowConflictException() throws Exception {
         // given
         String type = "conflict";
-        Class<ConflictException> errorType = ConflictException.class;
+        Class<DataConflictException> errorType = DataConflictException.class;
 
         // when
         mockMvc.perform(get("/exception")
                         .param("type", type))
                 // then
                 .andExpect(status().isConflict())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("已存在相同数据"))
@@ -238,7 +242,7 @@ class ExceptionControllerAdviceTest {
                         .param("type", type))
                 // then
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("服务内部异常"))
@@ -256,7 +260,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(get("/exception")
                         .param("type", type))
                 // then
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("数据库操作异常"))
@@ -273,7 +277,7 @@ class ExceptionControllerAdviceTest {
         mockMvc.perform(get("/exception"))
                 // then
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("服务异常"))

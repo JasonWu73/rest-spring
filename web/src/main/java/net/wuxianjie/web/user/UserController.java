@@ -7,8 +7,8 @@ import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.AuthUtils;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.shared.BadRequestException;
-import net.wuxianjie.springbootcore.shared.StringUtils;
+import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
+import net.wuxianjie.springbootcore.shared.util.StringUtils;
 import net.wuxianjie.springbootcore.validator.group.GroupOne;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -88,7 +88,7 @@ public class UserController {
     }
 
     private void setCurrentUserId(UserManagerQuery query) {
-        TokenUserDetails userDetails = (TokenUserDetails) AuthUtils.getCurrentUser().orElseThrow();
+        UserDetails userDetails = (UserDetails) AuthUtils.getCurrentUser().orElseThrow();
         query.setUserId(userDetails.getAccountId());
     }
 

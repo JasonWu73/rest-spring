@@ -6,7 +6,7 @@ package net.wuxianjie.springbootcore.security;
  * @author 吴仙杰
  * @see AuthUtils
  */
-public interface UserDetails {
+public interface TokenUserDetails {
 
     /**
      * 获取账号 ID。
@@ -16,9 +16,9 @@ public interface UserDetails {
     Integer getAccountId();
 
     /**
-     * 获取账号名。
+     * 获取账号。
      *
-     * @return Token 所绑定的账号名
+     * @return Token 所绑定的账号
      */
     String getAccountName();
 

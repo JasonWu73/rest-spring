@@ -21,7 +21,7 @@ public class TokenCacheConfig {
      * @return {@code username: TokenUserDetails}
      */
     @Bean
-    public Cache<String, TokenUserDetails> tokenCache() {
+    public Cache<String, UserDetails> tokenCache() {
         return Caffeine.newBuilder()
                 .expireAfterWrite(TokenAttributes.EXPIRES_IN_SECONDS_VALUE, TimeUnit.SECONDS)
                 .build();

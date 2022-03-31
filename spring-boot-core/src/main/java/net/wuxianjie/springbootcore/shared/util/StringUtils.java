@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.util;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
@@ -20,9 +20,9 @@ public class StringUtils {
      * @param value 需要转换的原字符串
      * @return 去除字符串首尾空白字符后的 {@code %value%} 字符串；若 {@code value} 为 null 或仅包含空白字符，则返回 null
      */
-    public static String getFuzzySearchValue(String value) {
+    public static String getFuzzySearchValue(final String value) {
         return Optional.ofNullable(StrUtil.trimToNull(value))
-                .map(str -> "%" + str + "%")
+                .map(v -> "%" + v + "%")
                 .orElse(null);
     }
 
@@ -43,13 +43,9 @@ public class StringUtils {
      * @param valueTwo 需要比较的字符串
      * @return 忽略 null 后，若两个字符串值相等，则返回 true；否则返回 false
      */
-    public static boolean equalsIgnoreBlank(String valueOne, String valueTwo) {
-        String trimmedOne = StrUtil.trimToNull(valueOne);
-        String trimmedTwo = StrUtil.trimToNull(valueTwo);
-        if (trimmedOne == null && trimmedTwo == null) {
-            return true;
-        }
-
+    public static boolean equalsIgnoreBlank(final String valueOne, final String valueTwo) {
+        final String trimmedOne = StrUtil.trimToNull(valueOne);
+        final String trimmedTwo = StrUtil.trimToNull(valueTwo);
         return StrUtil.equals(trimmedOne, trimmedTwo);
     }
 }

@@ -5,9 +5,9 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
-import net.wuxianjie.springbootcore.security.UserDetails;
-import net.wuxianjie.springbootcore.shared.JwtUtils;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class TokenAuthenticationServiceImplTest {
 
-    private Cache<String, TokenUserDetails> tokenCache;
+    private Cache<String, UserDetails> tokenCache;
     private SecurityConfigData securityConfig;
     private TokenAuthenticationService underTest;
 
@@ -45,12 +45,12 @@ class TokenAuthenticationServiceImplTest {
         }};
         String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        TokenUserDetails user = new TokenUserDetails();
+        UserDetails user = new UserDetails();
         user.setAccessToken(token);
         tokenCache.put(username, user);
 
         // when
-        UserDetails actual = underTest.authenticate(token);
+        TokenUserDetails actual = underTest.authenticate(token);
 
         // then
         assertThat(actual).isEqualTo(tokenCache.getIfPresent(username));
@@ -70,7 +70,7 @@ class TokenAuthenticationServiceImplTest {
         Thread.sleep(100); // 保障两次生成不同的 Token
         String refreshedToken = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(refreshedToken);
         tokenCache.put(username, userDetails);
 
@@ -114,7 +114,7 @@ class TokenAuthenticationServiceImplTest {
         }};
         String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 
@@ -138,7 +138,7 @@ class TokenAuthenticationServiceImplTest {
         }};
         String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 
@@ -161,7 +161,7 @@ class TokenAuthenticationServiceImplTest {
         }};
         String token = JwtUtils.createJwt(securityConfig.getJwtSigningKey(), payload, 60);
 
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccessToken(token);
         tokenCache.put(username, userDetails);
 

@@ -2,8 +2,7 @@ package net.wuxianjie.springbootcore.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.wuxianjie.springbootcore.rest.*;
-import net.wuxianjie.springbootcore.shared.CommonValues;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 import java.util.Map;
 
+import static net.wuxianjie.springbootcore.security.WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,7 +66,7 @@ class TokenControllerTest {
                         .content(objectMapper.writeValueAsString(params)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.expiresIn").value(1800))
@@ -93,7 +93,7 @@ class TokenControllerTest {
                         .content(objectMapper.writeValueAsString(params)))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("用户名或密码错误"))
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -112,7 +112,7 @@ class TokenControllerTest {
         mockMvc.perform(get("/api/v1/refresh-token/" + refreshToken))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.expiresIn").value(1800))
@@ -135,7 +135,7 @@ class TokenControllerTest {
                 // then
                 .andExpect(status().isUnauthorized())
                 .andExpect(content()
-                        .contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                        .contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 已过期"))
                 .andExpect(jsonPath("$.data").doesNotExist());

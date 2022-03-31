@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
-import net.wuxianjie.springbootcore.shared.CommonValues;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.NetUtils;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -40,27 +40,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     /**
      * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
      */
-    private static final String AUTHORIZATION_BEARER_PREFIX = "Bearer ";
+    public static final String BEARER_PREFIX = "Bearer ";
 
-    private static final String SPRING_SECURITY_ROLE_PREFIX = "ROLE_";
+    /**
+     * Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
+     */
+    public static final String ROLE_PREFIX = "ROLE_";
 
     private final ObjectMapper objectMapper;
-    private final TokenAuthenticationService authenticationService;
+    private final TokenAuthenticationService authService;
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain) throws IOException, ServletException {
-        Optional<String> tokenOptional = getTokenFromRequest(request);
+    protected void doFilterInternal(final @NonNull HttpServletRequest request,
+                                    final @NonNull HttpServletResponse response,
+                                    final @NonNull FilterChain filterChain) throws IOException, ServletException {
+        final Optional<String> tokenOpt = getTokenFromRequest(request);
 
-        if (tokenOptional.isEmpty()) {
+        if (tokenOpt.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            UserDetails userDetails = authenticationService.authenticate(tokenOptional.get());
-
+            final TokenUserDetails userDetails = authService.authenticate(tokenOpt.get());
             loginToSpringSecurityContext(userDetails);
         } catch (TokenAuthenticationException e) {
             SecurityContextHolder.clearContext();
@@ -68,7 +70,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             sendToResponse(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
             return;
         } catch (Throwable e) {
-            log.error("Token 认证异常", e);
+            log.error("uri={}；client={} -> Token 认证异常",
+                    request.getRequestURI(), NetUtils.getRealIpAddress(request), e);
 
             SecurityContextHolder.clearContext();
 
@@ -79,53 +82,45 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private List<GrantedAuthority> getAuthorities(String roleStr) {
-        List<GrantedAuthority> authorityList;
-        if (StrUtil.isEmpty(roleStr)) {
-            authorityList = Collections.emptyList();
-        } else {
-            String roles = Arrays.stream(roleStr.split(","))
-                    .reduce("", (roleOne, roleTwo) -> {
-                        // Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
-                        String roleToAppend = SPRING_SECURITY_ROLE_PREFIX + roleTwo.trim().toUpperCase();
-                        if (StrUtil.isEmpty(roleOne)) {
-                            return roleToAppend;
-                        }
-                        return roleOne + "," + roleToAppend;
-                    });
-
-            authorityList = AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
-        }
-
-        return authorityList;
-    }
-
-    private Optional<String> getTokenFromRequest(HttpServletRequest request) {
+    private Optional<String> getTokenFromRequest(final HttpServletRequest request) {
         return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
                 .map(bearer -> {
-                    String token = null;
-                    if (StrUtil.startWith(bearer, AUTHORIZATION_BEARER_PREFIX)) {
-                        token = StrUtil.subAfter(bearer, AUTHORIZATION_BEARER_PREFIX, false);
-                    } else if (StrUtil.startWith(bearer, AUTHORIZATION_BEARER_PREFIX.toLowerCase())) {
-                        token = StrUtil.subAfter(bearer, AUTHORIZATION_BEARER_PREFIX.toLowerCase(), false);
-                    }
-                    return StrUtil.isEmpty(token) ? null : token;
+                    if (!StrUtil.startWith(bearer, BEARER_PREFIX)) return null;
+
+                    final String token = StrUtil.subAfter(bearer, BEARER_PREFIX, false);
+                    return StrUtil.trimToNull(token);
                 });
     }
 
-    private void loginToSpringSecurityContext(UserDetails userDetails) {
-        List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
+    private void loginToSpringSecurityContext(final TokenUserDetails userDetails) {
+        final List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
 
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+        final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
                 userDetails, null, authorityList);
-
         SecurityContextHolder.getContext().setAuthentication(token);
     }
 
-    private void sendToResponse(HttpServletResponse response, String message, HttpStatus httpStatus) throws IOException {
-        response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+    private List<GrantedAuthority> getAuthorities(final String commaSeparatedRole) {
+        if (StrUtil.isEmpty(commaSeparatedRole)) return Collections.emptyList();
+
+        final String roles = Arrays.stream(commaSeparatedRole.split(","))
+                .reduce("", (roleOne, roleTwo) -> {
+                    final String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
+                    if (StrUtil.isEmpty(roleOne)) return appended;
+
+                    return roleOne + "," + appended;
+                });
+
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+    }
+
+    private void sendToResponse(final HttpServletResponse response,
+                                final String message,
+                                final HttpStatus httpStatus) throws IOException {
+        response.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
         response.setStatus(httpStatus.value());
 
-        response.getWriter().write(objectMapper.writeValueAsString(ApiResultWrapper.fail(message)));
+        final String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(message));
+        response.getWriter().write(json);
     }
 }

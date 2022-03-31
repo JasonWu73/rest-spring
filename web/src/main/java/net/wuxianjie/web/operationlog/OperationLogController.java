@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.security.Admin;
-import net.wuxianjie.springbootcore.shared.BadRequestException;
+import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

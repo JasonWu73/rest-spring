@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 public class UrlAndFormRequestParameterConfig {
 
     @InitBinder
-    public void initBinder(WebDataBinder binder) {
+    public void initBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
     }
 }

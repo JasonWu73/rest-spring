@@ -3,7 +3,7 @@ package net.wuxianjie.springbootcore.rest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.security.AuthUtils;
-import net.wuxianjie.springbootcore.security.UserDetails;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -38,16 +38,18 @@ public class GlobalErrorController implements ErrorController {
      */
     @ResponseBody
     @RequestMapping("/error")
-    public ResponseEntity<ApiResult<Void>> handleError(WebRequest request) {
-        Map<String, Object> attrs = this.errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
-        HttpStatus httpStatus = Optional.ofNullable((Integer) attrs.get("status"))
-                .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
-                        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
+    public ResponseEntity<ApiResult<Void>> handleError(final WebRequest request) {
+        final Map<String, Object> attrs = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+
+        final HttpStatus httpStatus = Optional.ofNullable((Integer) attrs.get("status"))
+                .map(code -> Optional.ofNullable(HttpStatus.resolve(code)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
-        Optional<UserDetails> userOptional = AuthUtils.getCurrentUser();
-        Integer accountId = userOptional.map(UserDetails::getAccountId).orElse(null);
-        String accountName = userOptional.map(UserDetails::getAccountName).orElse(null);
-        String reqDesc = request.getDescription(true).replaceAll(";", "；");
+
+        Optional<TokenUserDetails> curUserOpt = AuthUtils.getCurrentUser();
+        final Integer accountId = curUserOpt.map(TokenUserDetails::getAccountId).orElse(null);
+        final String accountName = curUserOpt.map(TokenUserDetails::getAccountName).orElse(null);
+
+        final String reqDesc = request.getDescription(true).replaceAll(";", "；");
         if (httpStatus == HttpStatus.NOT_FOUND) {
             log.warn("{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
                     reqDesc, accountName, accountId, attrs);
@@ -56,6 +58,7 @@ public class GlobalErrorController implements ErrorController {
                     reqDesc, accountName, accountId, attrs);
         }
 
-        return new ResponseEntity<>(ApiResultWrapper.fail((String) attrs.get("error")), httpStatus);
+        final String errMsg = (String) attrs.get("error");
+        return new ResponseEntity<>(ApiResultWrapper.fail(errMsg), httpStatus);
     }
 }

@@ -18,8 +18,8 @@ public class ApiResultWrapper {
      * @param <T>  具体数据的类型
      * @return 服务响应成功的结果
      */
-    public static <T> ApiResult<T> success(T data) {
-        ApiResult<T> result = new ApiResult<>();
+    public static <T> ApiResult<T> success(final T data) {
+        final ApiResult<T> result = new ApiResult<>();
         result.setError(ApiErrorCode.SUCCESS);
         result.setData(data);
         return result;
@@ -28,13 +28,13 @@ public class ApiResultWrapper {
     /**
      * 构造服务响应失败的结果。
      *
-     * @param errMsg 失败的原因
+     * @param errorMessage 失败的原因
      * @return 服务响应失败的结果
      */
-    public static ApiResult<Void> fail(String errMsg) {
-        ApiResult<Void> result = new ApiResult<>();
+    public static ApiResult<Void> fail(final String errorMessage) {
+        final ApiResult<Void> result = new ApiResult<>();
         result.setError(ApiErrorCode.FAIL);
-        result.setErrMsg(errMsg);
+        result.setErrMsg(errorMessage);
         return result;
     }
 }

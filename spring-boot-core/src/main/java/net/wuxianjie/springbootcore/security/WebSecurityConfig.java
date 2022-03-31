@@ -1,12 +1,11 @@
 package net.wuxianjie.springbootcore.security;
 
 import cn.hutool.core.text.StrSplitter;
-import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
-import net.wuxianjie.springbootcore.shared.CommonValues;
+import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -39,8 +39,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     public static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
 
-    private static final String FAVICON_PATH = "/favicon.ico";
+    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 
+    private static final String FAVICON_PATH = "/favicon.ico";
     private static final String[] DEFAULT_PERMIT_ALL = {
             ACCESS_TOKEN_PATH,
             REFRESH_TOKEN_PATH_PREFIX + "/{\\\\.+}",
@@ -48,13 +49,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private final ObjectMapper objectMapper;
-    private final TokenAuthenticationFilter authenticationFilter;
     private final SecurityConfigData securityConfigData;
+    private final TokenAuthenticationFilter authenticationFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] antPatterns = Optional.ofNullable(StrUtil.trim(securityConfigData.getPermitAllAntPatterns()))
-                .map(commaSeparatedPattern -> StrSplitter.splitToArray(commaSeparatedPattern,
+        final String[] antPatterns = Optional.ofNullable(securityConfigData.getPermitAllAntPatterns())
+                .map(patterns -> StrSplitter.splitToArray(patterns,
                         ',', 0, true, true))
                 .orElse(new String[]{});
 
@@ -71,22 +72,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 // 401
                 .authenticationEntryPoint((request, response, authException) -> {
-                    String msg = "Token 认证失败";
-                    log.warn("{}：{}", msg, authException.getMessage());
+                    final String msg = "Token 认证失败";
 
-                    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+                    logWarn(request, msg, authException);
+
+                    response.setContentType(APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
+
                     String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(msg));
                     response.getWriter().write(json);
                 })
                 // 403
                 // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
                 .accessDeniedHandler((request, response, deniedException) -> {
-                    String msg = "Token 未授权";
-                    log.warn("{}：{}", msg, deniedException.getMessage());
+                    final String msg = "Token 未授权";
 
-                    response.setContentType(CommonValues.APPLICATION_JSON_UTF8_VALUE);
+                    logWarn(request, msg, deniedException);
+
+                    response.setContentType(APPLICATION_JSON_UTF8_VALUE);
                     response.setStatus(HttpStatus.FORBIDDEN.value());
+
                     String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(msg));
                     response.getWriter().write(json);
                 })
@@ -100,10 +105,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 解决浏览器发送 OPTIONS 跨域检查请求时返回 401 的问题
                 .cors()
-                .configurationSource(request ->
-                        new CorsConfiguration().applyPermitDefaultValues())
+                .configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues())
                 .and()
                 // 添加 Token 认证过滤器
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    private void logWarn(final HttpServletRequest request,
+                         final String message,
+                         final Exception e) {
+        log.warn("uri={}；client={} -> {}：{}",
+                request.getRequestURI(), NetUtils.getRealIpAddress(request), message, e.getMessage());
     }
 }

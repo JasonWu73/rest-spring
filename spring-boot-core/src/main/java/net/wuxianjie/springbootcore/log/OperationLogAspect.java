@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.security.AuthUtils;
-import net.wuxianjie.springbootcore.security.UserDetails;
-import net.wuxianjie.springbootcore.shared.InternalException;
-import net.wuxianjie.springbootcore.shared.NetUtils;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
+import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
@@ -45,22 +45,23 @@ public class OperationLogAspect {
      * @throws JsonProcessingException 当对入参或返回值执行 JSON 序列化时出错时
      */
     @AfterReturning(pointcut = "@annotation(Logger)", returning = "returnObj")
-    public void log(JoinPoint joinPoint, Object returnObj) throws JsonProcessingException {
+    public void log(final JoinPoint joinPoint,
+                    final Object returnObj) throws JsonProcessingException {
         // 请求信息
-        Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
-        String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
-        String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
+        final Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
+        final String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
+        final String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
 
         // 用户信息
-        Optional<UserDetails> userOpt = AuthUtils.getCurrentUser();
-        Integer oprId = userOpt.map(UserDetails::getAccountId).orElse(null);
-        String oprName = userOpt.map(UserDetails::getAccountName).orElse(null);
+        final Optional<TokenUserDetails> userOpt = AuthUtils.getCurrentUser();
+        final Integer oprId = userOpt.map(TokenUserDetails::getAccountId).orElse(null);
+        final String oprName = userOpt.map(TokenUserDetails::getAccountName).orElse(null);
 
         // 方法信息
-        String methodMsg = getMethodMessage(joinPoint);
-        String methodName = getFullyQualifiedMethodName(joinPoint);
-        String paramJson = objectMapper.writeValueAsString(getParams(joinPoint));
-        String rtnJson = isVoidReturnType(joinPoint) ? "void" : objectMapper.writeValueAsString(returnObj);
+        final String methodMsg = getMethodMessage(joinPoint);
+        final String methodName = getFullyQualifiedMethodName(joinPoint);
+        final String paramJson = objectMapper.writeValueAsString(getParams(joinPoint));
+        final String rtnJson = isVoidReturnType(joinPoint) ? "void" : objectMapper.writeValueAsString(returnObj);
 
         log.info("uri={}；client={}；accountName={}；accountId={} -> {} [{}]；入参：{}；返回值：{}",
                 reqUri, reqIp, oprName, oprId, methodMsg, methodName, paramJson, rtnJson);
@@ -68,25 +69,25 @@ public class OperationLogAspect {
         logService.saveLog(new OperationLog(oprId, oprName, reqIp, reqUri, methodName, methodMsg, paramJson, rtnJson));
     }
 
-    private String getMethodMessage(JoinPoint joinPoint) {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+    private String getMethodMessage(final JoinPoint joinPoint) {
+        final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         return Optional.ofNullable(method.getAnnotation(Logger.class))
                 .map(Logger::value)
                 .orElseThrow(() -> new InternalException("无法获取 Logger 注解"));
     }
 
-    private String getFullyQualifiedMethodName(JoinPoint joinPoint) {
-        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        String methodName = method.getName();
+    private String getFullyQualifiedMethodName(final JoinPoint joinPoint) {
+        final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        final String methodName = method.getName();
 
-        Class<?> clazz = joinPoint.getTarget().getClass();
-        String className = clazz.getName();
+        final Class<?> clazz = joinPoint.getTarget().getClass();
+        final String className = clazz.getName();
 
         return StrUtil.format("{}.{}", className, methodName);
     }
 
-    private Map<String, Object> getParams(JoinPoint joinPoint) {
-        MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
+    private Map<String, Object> getParams(final JoinPoint joinPoint) {
+        final MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
         return Optional.ofNullable(joinPoint.getArgs())
                 .map(args -> {
                     String[] paramNames = methodSig.getParameterNames();
@@ -95,9 +96,9 @@ public class OperationLogAspect {
                 .orElse(new HashMap<>());
     }
 
-    private boolean isVoidReturnType(JoinPoint joinPoint) {
-        MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
-        String rtnType = methodSig.getReturnType().toString();
+    private boolean isVoidReturnType(final JoinPoint joinPoint) {
+        final MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
+        final String rtnType = methodSig.getReturnType().toString();
         return StrUtil.equalsIgnoreCase(rtnType, "void");
     }
 }

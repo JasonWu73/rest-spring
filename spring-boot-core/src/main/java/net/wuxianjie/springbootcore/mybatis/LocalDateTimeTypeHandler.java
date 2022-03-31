@@ -1,13 +1,13 @@
 package net.wuxianjie.springbootcore.mybatis;
 
-import net.wuxianjie.springbootcore.shared.CommonValues;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库 DATETIME 数据类型，以及 {@link LocalDate} 与数据库 DATE 数据类型。
@@ -21,32 +21,33 @@ import java.time.format.DateTimeFormatter;
 public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
 
     @Override
-    public void setNonNullParameter(PreparedStatement ps,
-                                    int i,
-                                    LocalDateTime parameter,
-                                    JdbcType jdbcType) throws SQLException {
-        ps.setString(i, parameter.format(DateTimeFormatter.ofPattern(CommonValues.DATE_TIME_FORMAT)));
+    public void setNonNullParameter(final PreparedStatement ps,
+                                    final int i,
+                                    final LocalDateTime param,
+                                    final JdbcType jdbcType) throws SQLException {
+        ps.setString(i, LocalDateTimeUtil.format(param, DatePattern.NORM_DATETIME_PATTERN));
     }
 
     @Override
-    public LocalDateTime getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    public LocalDateTime getNullableResult(final ResultSet rs,
+                                           final String columnName) throws SQLException {
         return toNullableLocalDateTime(rs.getTimestamp(columnName));
     }
 
     @Override
-    public LocalDateTime getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    public LocalDateTime getNullableResult(final ResultSet rs,
+                                           final int columnIndex) throws SQLException {
         return toNullableLocalDateTime(rs.getTimestamp(columnIndex));
     }
 
     @Override
-    public LocalDateTime getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    public LocalDateTime getNullableResult(final CallableStatement cs,
+                                           final int columnIndex) throws SQLException {
         return toNullableLocalDateTime(cs.getTimestamp(columnIndex));
     }
 
-    private static LocalDateTime toNullableLocalDateTime(Timestamp timestamp) {
-        if (timestamp == null) {
-            return null;
-        }
+    private static LocalDateTime toNullableLocalDateTime(final Timestamp timestamp) {
+        if (timestamp == null) return null;
 
         return timestamp.toLocalDateTime();
     }

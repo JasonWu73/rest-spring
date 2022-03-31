@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -8,16 +8,16 @@ import org.springframework.http.HttpStatus;
  *
  * @author 吴仙杰
  */
-public class ConflictException extends AbstractBaseException {
+public class DataConflictException extends AbstractBaseException {
 
     @Getter
     private final HttpStatus httpStatus = HttpStatus.CONFLICT;
 
-    public ConflictException(String message) {
+    public DataConflictException(final String message) {
         super(message);
     }
 
-    public ConflictException(String message, Throwable cause) {
+    public DataConflictException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

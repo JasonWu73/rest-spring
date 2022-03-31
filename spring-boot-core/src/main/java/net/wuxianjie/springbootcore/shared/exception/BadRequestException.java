@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared;
+package net.wuxianjie.springbootcore.shared.exception;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -13,11 +13,11 @@ public class BadRequestException extends AbstractBaseException {
     @Getter
     private final HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
 
-    public BadRequestException(String message) {
+    public BadRequestException(final String message) {
         super(message);
     }
 
-    public BadRequestException(String message, Throwable cause) {
+    public BadRequestException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

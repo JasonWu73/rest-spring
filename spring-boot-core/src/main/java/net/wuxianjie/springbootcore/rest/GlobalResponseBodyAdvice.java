@@ -3,8 +3,7 @@ package net.wuxianjie.springbootcore.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.shared.CommonValues;
-import net.wuxianjie.springbootcore.shared.InternalException;
+import net.wuxianjie.springbootcore.shared.exception.InternalException;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.http.HttpHeaders;
@@ -26,25 +25,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
+    public static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+
     private final ObjectMapper objectMapper;
 
     @Override
-    public boolean supports(@NonNull MethodParameter returnType,
-                            @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
+    public boolean supports(final @NonNull MethodParameter returnType,
+                            final @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
         return true;
     }
 
     @Override
-    public Object beforeBodyWrite(Object body,
-                                  @NonNull MethodParameter returnType,
-                                  @NonNull MediaType selectedContentType,
-                                  @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
-                                  @NonNull ServerHttpRequest request,
-                                  @NonNull ServerHttpResponse response) {
+    public Object beforeBodyWrite(final Object body,
+                                  final @NonNull MethodParameter returnType,
+                                  final @NonNull MediaType selectedContentType,
+                                  final @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  final @NonNull ServerHttpRequest request,
+                                  final @NonNull ServerHttpResponse response) {
         // 自动包装字符串为 JSON
         if (body instanceof String) {
-            response.getHeaders()
-                    .set(HttpHeaders.CONTENT_TYPE, CommonValues.APPLICATION_JSON_UTF8_VALUE);
+            response.getHeaders().set(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON_UTF8_VALUE);
             try {
                 return objectMapper.writeValueAsString(ApiResultWrapper.success(body));
             } catch (JsonProcessingException e) {
@@ -52,12 +52,13 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
             }
         }
 
-        // 若已经是响应对象，则直接返回
-        if (body instanceof ApiResult // 自定义统一 REST API 响应对象
-                || body instanceof ResponseEntity // Spring 自带的响应对象
-                || body instanceof byte[] // 如图片
-                || body instanceof ResourceRegion // 如视频点播（HTTP STATUS 206）
-        ) {
+        // 若已经是可用的响应对象，则直接返回
+        if (body instanceof ApiResult
+                || body instanceof ResponseEntity
+                // 字节数组，如用于返回浏览器可直接打开的图片
+                || body instanceof byte[]
+                // 资源类型，如视频点播（HTTP STATUS 206）
+                || body instanceof ResourceRegion) {
             return body;
         }
 

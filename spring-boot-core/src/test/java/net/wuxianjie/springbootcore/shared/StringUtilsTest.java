@@ -1,6 +1,7 @@
 package net.wuxianjie.springbootcore.shared;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.springbootcore.shared.util.StringUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

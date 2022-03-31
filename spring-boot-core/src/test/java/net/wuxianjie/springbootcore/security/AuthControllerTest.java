@@ -2,8 +2,7 @@ package net.wuxianjie.springbootcore.security;
 
 import cn.hutool.core.util.StrUtil;
 import net.wuxianjie.springbootcore.rest.*;
-import net.wuxianjie.springbootcore.shared.CommonValues;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static net.wuxianjie.springbootcore.security.WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -46,7 +46,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/public"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value("无需 Token 认证即可访问的开放 API"))
@@ -58,7 +58,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestPublicApiProvideAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -67,7 +67,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value("无需 Token 认证即可访问的开放 API"))
@@ -79,7 +79,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestPublicApiProvideInvalidAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         String errMsg = "Token 已过期";
         given(authenticationService.authenticate(anyString()))
@@ -90,7 +90,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "bearer " + token))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value(errMsg));
     }
@@ -100,7 +100,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestPublicApiProvideAccessTokenButTokenFilterError() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         String errMsg = "执行 Token 认证发生未知错误";
         given(authenticationService.authenticate(anyString()))
@@ -111,7 +111,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "bearer " + token))
                 // then
                 .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value(errMsg));
     }
@@ -124,7 +124,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/authenticated"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 认证失败"))
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -135,7 +135,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestLoggedInApiProvideAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -144,7 +144,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, " bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value("只要通过 Token 认证（登录后）即可访问的 API"))
@@ -157,7 +157,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.USER.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -167,7 +167,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -180,7 +180,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.USER.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value() + ", " + Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -190,7 +190,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -202,7 +202,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestUserApiProvideNoRoleAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -211,7 +211,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isForbidden())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 未授权"));
     }
@@ -222,7 +222,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestUserApiProvideAdminRoleAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -232,7 +232,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isForbidden())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 未授权"));
     }
@@ -242,7 +242,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestUserApiProvideNoAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -250,7 +250,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/user"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 认证失败"));
     }
@@ -261,7 +261,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.ADMIN.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -271,7 +271,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -284,7 +284,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.ADMIN.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value() + ", " + Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -294,7 +294,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -306,7 +306,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestAdminApiProvideNoRoleAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -315,7 +315,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isForbidden())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 未授权"));
     }
@@ -326,7 +326,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestAdminApiProvideUserRoleAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -336,7 +336,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isForbidden())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 未授权"));
     }
@@ -346,7 +346,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestAdminApiProvideNoAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -354,7 +354,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/admin"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 认证失败"));
     }
@@ -365,7 +365,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API", Role.USER.value(), Role.ADMIN.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -375,7 +375,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -388,7 +388,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API", Role.USER.value(), Role.ADMIN.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -398,7 +398,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -411,7 +411,7 @@ class AuthControllerTest {
         // given
         String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API", Role.USER.value(), Role.ADMIN.value());
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         userDetails.setRoles(Role.USER.value() + ", " + Role.ADMIN.value());
         given(authenticationService.authenticate(token)).willReturn(userDetails);
@@ -421,7 +421,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
                 .andExpect(jsonPath("$.data.message").value(msg))
@@ -433,7 +433,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestUserOrAdminApiProvideNoRoleAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -442,7 +442,7 @@ class AuthControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 // then
                 .andExpect(status().isForbidden())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 未授权"));
     }
@@ -452,7 +452,7 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestUserOrAdminApiProvideNoAccessToken() throws Exception {
         // given
         String token = "fake_access_token";
-        TokenUserDetails userDetails = new TokenUserDetails();
+        UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
         given(authenticationService.authenticate(token)).willReturn(userDetails);
 
@@ -460,7 +460,7 @@ class AuthControllerTest {
         mockMvc.perform(get("/api/v1/auth-test/user-or-admin"))
                 // then
                 .andExpect(status().isUnauthorized())
-                .andExpect(content().contentType(CommonValues.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
                 .andExpect(jsonPath("$.errMsg").value("Token 认证失败"));
     }

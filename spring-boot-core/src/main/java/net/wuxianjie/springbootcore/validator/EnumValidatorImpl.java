@@ -22,15 +22,16 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
     private List<Object> values;
 
     @Override
-    public void initialize(EnumValidator constraintAnnotation) {
+    public void initialize(final EnumValidator constraintAnnotation) {
         values = new ArrayList<>();
-        Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
-        String className = enumClass.getName();
+        final Class<? extends Enum<?>> enumClass = constraintAnnotation.value();
         Optional.of(enumClass.getEnumConstants())
                 .ifPresent(enums -> {
-                    for (Enum<?> anEnum : enums) {
+                    final String className = enumClass.getName();
+
+                    for (final Enum<?> anEnum : enums) {
                         try {
-                            Method method = anEnum.getClass().getDeclaredMethod("value");
+                            final Method method = anEnum.getClass().getDeclaredMethod("value");
                             method.setAccessible(true);
                             values.add(method.invoke(anEnum));
                         } catch (NoSuchMethodException e) {
@@ -49,7 +50,7 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
     }
 
     @Override
-    public boolean isValid(Object value, ConstraintValidatorContext context) {
+    public boolean isValid(final Object value, final ConstraintValidatorContext context) {
         return isPassed || value == null || values.contains(value);
     }
 }

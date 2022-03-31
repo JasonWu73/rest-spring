@@ -6,9 +6,9 @@ import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.security.SecurityConfigData;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
-import net.wuxianjie.springbootcore.shared.JwtUtils;
-import net.wuxianjie.springbootcore.shared.NotFoundException;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,19 +25,19 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private final Cache<String, TokenUserDetails> tokenCache;
+    private final Cache<String, UserDetails> tokenCache;
     private final SecurityConfigData securityConfig;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     @Override
-    public TokenData getToken(String accountName, String rawPassword)
+    public TokenData getToken(String account, String password)
             throws TokenAuthenticationException {
-        User user = getUserFromDbMustBeExists(accountName);
+        User user = getUserFromDbMustBeExists(account);
 
         verifyAccountAvailable(user.getEnabled(), user.getUsername());
 
-        VerifyPassword(rawPassword, user.getHashedPassword());
+        VerifyPassword(password, user.getHashedPassword());
 
         TokenData token = createNewToken(user);
         addToCache(user, token);
@@ -66,7 +66,7 @@ public class TokenServiceImpl implements TokenService {
     }
 
     private void addToCache(User user, TokenData token) {
-        TokenUserDetails userDetails = new TokenUserDetails(user.getUserId(), user.getUsername(), user.getRoles(),
+        UserDetails userDetails = new UserDetails(user.getUserId(), user.getUsername(), user.getRoles(),
                 token.getAccessToken(), token.getRefreshToken());
         tokenCache.put(user.getUsername(), userDetails);
     }

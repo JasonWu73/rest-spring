@@ -39,14 +39,10 @@ public enum Role {
      * @param value 字符串值
      * @return 字符串值所对应的枚举常量
      */
-    public static Optional<Role> resolve(String value) {
+    public static Optional<Role> resolve(final String value) {
         return Optional.ofNullable(value)
                 .map(v -> {
-                    for (Role role : VALUES) {
-                        if (StrUtil.equals(v, role.value)) {
-                            return role;
-                        }
-                    }
+                    for (final Role e : VALUES) if (StrUtil.equals(v, e.value)) return e;
 
                     return null;
                 });

@@ -2,8 +2,8 @@ package net.wuxianjie.springbootcore.security;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.FIFOCache;
-import net.wuxianjie.springbootcore.shared.JwtUtils;
-import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
+import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 class TokenAuthenticationServiceTest {
 
-    private FIFOCache<String, TokenUserDetails> cache;
+    private FIFOCache<String, UserDetails> cache;
     private TokenAuthenticationService underTest;
 
     @BeforeEach
@@ -38,12 +38,12 @@ class TokenAuthenticationServiceTest {
             put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
-        TokenUserDetails user = new TokenUserDetails();
+        UserDetails user = new UserDetails();
         user.setAccessToken(token);
         cache.put(username, user);
 
         // when
-        UserDetails actual = underTest.authenticate(token);
+        TokenUserDetails actual = underTest.authenticate(token);
 
         // then
         assertThat(actual).isEqualTo(cache.get(username));
@@ -58,7 +58,7 @@ class TokenAuthenticationServiceTest {
             put(TOKEN_TYPE_KEY, ACCESS_TOKEN_TYPE_VALUE);
         }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
-        TokenUserDetails user = new TokenUserDetails();
+        UserDetails user = new UserDetails();
         user.setAccessToken(token);
         cache.put(username, user);
 
@@ -78,7 +78,7 @@ class TokenAuthenticationServiceTest {
             put(ACCOUNT_KEY, username);
         }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
-        TokenUserDetails user = new TokenUserDetails();
+        UserDetails user = new UserDetails();
         user.setAccessToken(token);
         cache.put(username, user);
 
@@ -99,7 +99,7 @@ class TokenAuthenticationServiceTest {
             put(TOKEN_TYPE_KEY, "refresh");
         }};
         String token = JwtUtils.createJwt(SIGNING_KEY, payload, 60);
-        TokenUserDetails user = new TokenUserDetails();
+        UserDetails user = new UserDetails();
         user.setAccessToken(token);
         cache.put(username, user);
 

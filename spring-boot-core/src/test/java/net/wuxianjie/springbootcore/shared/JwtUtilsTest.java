@@ -2,6 +2,7 @@ package net.wuxianjie.springbootcore.shared;
 
 import cn.hutool.json.JSONUtil;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.springbootcore.shared.util.JwtUtils;
 import org.junit.jupiter.api.*;
 
 import java.util.HashMap;
