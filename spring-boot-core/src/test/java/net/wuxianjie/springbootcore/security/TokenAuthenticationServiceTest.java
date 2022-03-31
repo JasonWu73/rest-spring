@@ -7,8 +7,6 @@ import net.wuxianjie.springbootcore.shared.TokenAuthenticationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +17,6 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author 吴仙杰
  */
-@ExtendWith(MockitoExtension.class)
 class TokenAuthenticationServiceTest {
 
     private FIFOCache<String, TokenUserDetails> cache;

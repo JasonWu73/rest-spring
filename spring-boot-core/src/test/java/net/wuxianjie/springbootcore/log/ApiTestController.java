@@ -11,7 +11,7 @@ import java.util.List;
  * @author 吴仙杰
  */
 @RestController
-class ApiController {
+class ApiTestController {
 
     @Logger("测试方法")
     @PostMapping("/test")

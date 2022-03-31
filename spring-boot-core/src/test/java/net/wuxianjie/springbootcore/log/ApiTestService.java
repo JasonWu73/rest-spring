@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
  * @author 吴仙杰
  */
 @Service
-class ApiService {
+class ApiTestService {
 
     @Logger("调用无参无返回值方法")
     void callMethod() {
@@ -17,7 +17,7 @@ class ApiService {
         return null;
     }
 
-    @Logger("调用有原始类型入参及返回值方法")
+    @Logger("调用有原始类型入参及返回原始类型值方法")
     int callMethod(int i) {
         return i;
     }

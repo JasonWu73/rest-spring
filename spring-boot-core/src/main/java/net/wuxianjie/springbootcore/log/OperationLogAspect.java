@@ -46,69 +46,58 @@ public class OperationLogAspect {
      */
     @AfterReturning(pointcut = "@annotation(Logger)", returning = "returnObj")
     public void log(JoinPoint joinPoint, Object returnObj) throws JsonProcessingException {
-        Optional<UserDetails> userOpt = AuthUtils.getCurrentUser();
-        // 操作员 ID，当为开放 API 时，则值为 null
-        Integer operatorId = userOpt.map(UserDetails::getAccountId).orElse(null);
-        // 操作员账号，当为开放 API 时，则值为 null
-        String operatorName = userOpt.map(UserDetails::getAccountName).orElse(null);
-
+        // 请求信息
         Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
-        // 请求 IP
-        String requestIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
-        // 请求 URI
-        String requestUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
+        String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
+        String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
 
-        // 目标方法的描述，即操作描述
+        // 用户信息
+        Optional<UserDetails> userOpt = AuthUtils.getCurrentUser();
+        Integer oprId = userOpt.map(UserDetails::getAccountId).orElse(null);
+        String oprName = userOpt.map(UserDetails::getAccountName).orElse(null);
+
+        // 方法信息
         String methodMsg = getMethodMessage(joinPoint);
-        // 目标方法的全限定名
         String methodName = getFullyQualifiedMethodName(joinPoint);
-        // 方法入参
         String paramJson = objectMapper.writeValueAsString(getParams(joinPoint));
-        // 返回值
-        String returnJson = isVoidReturnType(joinPoint) ? "void" : objectMapper.writeValueAsString(returnObj);
+        String rtnJson = isVoidReturnType(joinPoint) ? "void" : objectMapper.writeValueAsString(returnObj);
 
         log.info("uri={}；client={}；accountName={}；accountId={} -> {} [{}]；入参：{}；返回值：{}",
-                requestUri, requestIp, operatorName, operatorId, methodMsg, methodName, paramJson, returnJson);
+                reqUri, reqIp, oprName, oprId, methodMsg, methodName, paramJson, rtnJson);
 
-        logService.saveLog(new OperationLog(operatorId, operatorName,
-                requestIp, requestUri, methodName, methodMsg, paramJson, returnJson));
-    }
-
-    private String getFullyQualifiedMethodName(JoinPoint joinPoint) {
-        Method method = getMethod(joinPoint);
-        String className = joinPoint.getTarget().getClass().getName();
-        String methodName = method.getName();
-        return StrUtil.format("{}.{}", className, methodName);
+        logService.saveLog(new OperationLog(oprId, oprName, reqIp, reqUri, methodName, methodMsg, paramJson, rtnJson));
     }
 
     private String getMethodMessage(JoinPoint joinPoint) {
-        Method method = getMethod(joinPoint);
-        Logger logger = Optional.ofNullable(method.getAnnotation(Logger.class))
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        return Optional.ofNullable(method.getAnnotation(Logger.class))
+                .map(Logger::value)
                 .orElseThrow(() -> new InternalException("无法获取 Logger 注解"));
-        return logger.value();
+    }
+
+    private String getFullyQualifiedMethodName(JoinPoint joinPoint) {
+        Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        String methodName = method.getName();
+
+        Class<?> clazz = joinPoint.getTarget().getClass();
+        String className = clazz.getName();
+
+        return StrUtil.format("{}.{}", className, methodName);
     }
 
     private Map<String, Object> getParams(JoinPoint joinPoint) {
-        MethodSignature methodSignature = getMethodSignature(joinPoint);
+        MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
         return Optional.ofNullable(joinPoint.getArgs())
                 .map(args -> {
-                    String[] paramNames = methodSignature.getParameterNames();
+                    String[] paramNames = methodSig.getParameterNames();
                     return ArrayUtil.zip(paramNames, args, true);
                 })
                 .orElse(new HashMap<>());
     }
 
     private boolean isVoidReturnType(JoinPoint joinPoint) {
-        MethodSignature methodSignature = getMethodSignature(joinPoint);
-        String returnType = methodSignature.getReturnType().toString();
-        return StrUtil.equalsIgnoreCase(returnType, "void");
-    }
-
-    private Method getMethod(JoinPoint joinPoint) {
-        return getMethodSignature(joinPoint).getMethod();
-    }
-
-    private MethodSignature getMethodSignature(JoinPoint joinPoint) {
-        return (MethodSignature) joinPoint.getSignature();
+        MethodSignature methodSig = (MethodSignature) joinPoint.getSignature();
+        String rtnType = methodSig.getReturnType().toString();
+        return StrUtil.equalsIgnoreCase(rtnType, "void");
     }
 }

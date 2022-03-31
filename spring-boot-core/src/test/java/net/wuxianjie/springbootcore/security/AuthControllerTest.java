@@ -22,14 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({
-        JsonConfig.class,
-        UrlAndFormRequestParameterConfig.class,
-        ExceptionControllerAdvice.class,
-        GlobalErrorController.class,
-        GlobalResponseBodyAdvice.class,
-        RestApiConfig.class
-})
+@Import({JsonConfig.class, UrlAndFormRequestParameterConfig.class,
+        ExceptionControllerAdvice.class, GlobalErrorController.class,
+        GlobalResponseBodyAdvice.class, RestApiConfig.class})
 @SpringBootTest
 @AutoConfigureMockMvc
 class AuthControllerTest {
