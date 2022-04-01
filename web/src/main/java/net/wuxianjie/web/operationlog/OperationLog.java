@@ -67,7 +67,7 @@ public class OperationLog {
      */
     private String returnJson;
 
-    public OperationLog(OperationLogData logData) {
+    public OperationLog(final OperationLogData logData) {
         this.operationTime = logData.getOperationTime();
         this.userId = logData.getOperatorId();
         this.username = logData.getOperatorName();

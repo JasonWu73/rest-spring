@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.user.UserMapper">
-    <select id="findById" resultType="net.wuxianjie.web.user.User">
+    <select id="selectUserById" resultType="net.wuxianjie.web.user.User">
         SELECT user_id         AS userId,
                is_enabled      AS enabled,
                username,
@@ -12,7 +12,7 @@
         WHERE user_id = #{id}
     </select>
 
-    <select id="findByUsername" resultType="net.wuxianjie.web.user.User">
+    <select id="selectUserByName" resultType="net.wuxianjie.web.user.User">
         SELECT user_id         AS userId,
                is_enabled      AS enabled,
                username,
@@ -22,7 +22,7 @@
         WHERE username = #{username}
     </select>
 
-    <sql id="queryWhereClause">
+    <sql id="selectUsersWhereClause">
         <where>
             <if test="q.username != null">
                 username LIKE #{q.username}
@@ -33,53 +33,55 @@
         </where>
     </sql>
 
-    <select id="findByQueryPagingOrderByModifyTimeDesc"
-            resultType="net.wuxianjie.web.user.UserManagerDto">
+    <select id="selectUsers" resultType="net.wuxianjie.web.user.UserDto">
         SELECT user_id AS userId,
         STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
         is_enabled AS enabled,
         username,
         IFNULL(roles, '') AS roles
         FROM users
-        <include refid="queryWhereClause"/>
+        <include refid="selectUsersWhereClause"/>
         ORDER BY modify_time DESC
         LIMIT #{p.offset}, #{p.pageSize}
     </select>
 
-    <select id="countByQuery" resultType="int">
+    <select id="countUsers" resultType="int">
         SELECT COUNT(1)
         FROM users
-        <include refid="queryWhereClause"/>
+        <include refid="selectUsersWhereClause"/>
     </select>
 
-    <select id="existsUsername" resultType="boolean">
+    <select id="existsUserByName" resultType="boolean">
         SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})
     </select>
 
-    <insert id="add" useGeneratedKeys="true" keyProperty="userId"
-            parameterType="net.wuxianjie.web.user.User">
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId" parameterType="net.wuxianjie.web.user.User">
         INSERT INTO users (create_time,
                            modify_time,
-                           is_enabled, username, hashed_password, roles)
+                           is_enabled,
+                           username,
+                           hashed_password,
+                           roles)
         VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
                 DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-                #{enabled}, #{username}, #{hashedPassword}, #{roles})
+                #{enabled},
+                #{username},
+                #{hashedPassword},
+                #{roles})
     </insert>
 
-    <update id="update">
+    <update id="updateUser">
         UPDATE users
         <set>
             modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-            <if test="hashedPassword != null">
-                hashed_password = #{hashedPassword},
-            </if>
+            <if test="hashedPassword != null">hashed_password = #{hashedPassword},</if>
             <if test="roles != null">roles = #{roles},</if>
             <if test="enabled != null">is_enabled = #{enabled}</if>
         </set>
         WHERE user_id = #{userId}
     </update>
 
-    <delete id="deleteById">
+    <delete id="deleteUserById">
         DELETE
         FROM users
         WHERE user_id = #{id}

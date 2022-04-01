@@ -19,5 +19,5 @@ public interface OperationLogMapper {
 
     int countLogs(@Param("q") OperationLogQuery query);
 
-    int insertLog(OperationLog log);
+    void insertLog(OperationLog log);
 }

@@ -14,20 +14,20 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    User findById(@Param("id") int userId);
+    User selectUserById(@Param("id") int userId);
 
-    User findByUsername(String username);
+    User selectUserByName(String username);
 
-    List<UserManagerDto> findByQueryPagingOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                                @Param("q") UserManagerQuery query);
+    List<UserDto> selectUsers(@Param("p") PagingQuery paging,
+                              @Param("q") UserQuery query);
 
-    int countByQuery(@Param("q") UserManagerQuery query);
+    int countUsers(@Param("q") UserQuery query);
 
-    boolean existsUsername(String username);
+    boolean existsUserByName(String username);
 
-    int add(User user);
+    void insertUser(User user);
 
-    int update(User user);
+    void updateUser(User user);
 
-    int deleteById(@Param("id") int userId);
+    void deleteUserById(@Param("id") int userId);
 }

@@ -32,7 +32,7 @@ class TokenAuthenticationServiceImplTest {
     void setUp() {
         tokenCache = Caffeine.newBuilder().build();
         securityConfig = new SecurityConfigData("kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=", null);
-        underTest = new TokenAuthenticationServiceImpl(tokenCache, securityConfig);
+        underTest = new TokenAuthenticationServiceImpl(securityConfig, tokenCache);
     }
 
     @Test

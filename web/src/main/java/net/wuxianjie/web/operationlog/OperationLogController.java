@@ -17,16 +17,16 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
 /**
- * 操作日志管理控制器。
+ * 操作日志控制器。
  *
  * @author 吴仙杰
  */
 @RestController
 @RequestMapping("/api/v1/operation-log")
 @RequiredArgsConstructor
-public class OperationLogMgmtController {
+public class OperationLogController {
 
-    private final OperationLogMgmtService logService;
+    private final OperationLogServiceImpl logService;
 
     /**
      * 获取操作日志列表。
@@ -37,8 +37,8 @@ public class OperationLogMgmtController {
      */
     @Admin
     @GetMapping("list")
-    public PagingResult<OperationLogDto> getLogs(@Validated PagingQuery paging,
-                                                 @Validated OperationLogQuery query) {
+    public PagingResult<OperationLogDto> getLogs(@Validated final PagingQuery paging,
+                                                 @Validated final OperationLogQuery query) {
         final LocalDateTime startTime = toStartTimeOfDay(query.getStartDate());
         query.setStartTimeInclusive(startTime);
 
@@ -48,7 +48,7 @@ public class OperationLogMgmtController {
         return logService.getLogs(paging, query);
     }
 
-    private LocalDateTime toEndTimeOfDay(String dateStr) {
+    private LocalDateTime toEndTimeOfDay(final String dateStr) {
         if (StrUtil.isEmpty(dateStr)) return null;
 
         final LocalDate endDate;
@@ -61,7 +61,7 @@ public class OperationLogMgmtController {
         return endDate.atTime(LocalTime.MAX);
     }
 
-    private LocalDateTime toStartTimeOfDay(String dateStr) {
+    private LocalDateTime toStartTimeOfDay(final String dateStr) {
         if (StrUtil.isEmpty(dateStr)) return null;
 
         final LocalDate startDate;

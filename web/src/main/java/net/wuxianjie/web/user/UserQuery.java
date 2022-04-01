@@ -15,14 +15,14 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 用于用户管理的请求参数。
+ * 用户查询参数。
  *
  * @author 吴仙杰
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserManagerQuery {
+public class UserQuery {
 
     /**
      * 用户 ID。
