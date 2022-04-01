@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.oprlog;
+package net.wuxianjie.springbootcore.operationlog;
 
 import lombok.Data;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 class ApiTestController {
 
-    @Logger("测试方法")
+    @OperationLogger("测试方法")
     @PostMapping("/test")
     Result getResult(@RequestBody final Param param) {
         return new Result() {{
@@ -26,18 +26,18 @@ class ApiTestController {
         }};
     }
 
-    @Logger("调用无参无返回值方法")
+    @OperationLogger("调用无参无返回值方法")
     void callMethod() {
     }
 
     @SuppressWarnings({"unused", "SameParameterValue"})
-    @Logger("调用有原始类型入参及返回 null 值方法")
+    @OperationLogger("调用有原始类型入参及返回 null 值方法")
     Integer callMethodReturnNull(final int i) {
         return null;
     }
 
     @SuppressWarnings({"unused", "SameParameterValue"})
-    @Logger("调用有原始类型入参及返回原始类型值方法")
+    @OperationLogger("调用有原始类型入参及返回原始类型值方法")
     int callMethod(final int i) {
         return i;
     }

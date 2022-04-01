@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.oprlog;
+package net.wuxianjie.springbootcore.operationlog;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -27,25 +27,25 @@ import java.util.Optional;
  * 记录操作日志。
  *
  * @author 吴仙杰
- * @see Logger
+ * @see OperationLogger
  */
 @Slf4j
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class LogAspect {
+public class OperationLogAspect {
 
     private final ObjectMapper objectMapper;
-    private final LogService logService;
+    private final OperationLogService logService;
 
     /**
-     * 对标有 {@link Logger} 注解的方法记录操作日志。
+     * 对标有 {@link OperationLogger} 注解的方法记录操作日志。
      *
      * @param joinPoint {@link JoinPoint}
      * @param returnObj 方法返回值
      * @throws JsonProcessingException 当对入参或返回值执行 JSON 序列化时出错时
      */
-    @AfterReturning(pointcut = "@annotation(net.wuxianjie.springbootcore.oprlog.Logger)", returning = "returnObj")
+    @AfterReturning(pointcut = "@annotation(net.wuxianjie.springbootcore.operationlog.OperationLogger)", returning = "returnObj")
     public void log(final JoinPoint joinPoint,
                     final Object returnObj) throws JsonProcessingException {
         // 请求信息
@@ -67,7 +67,7 @@ public class LogAspect {
         log.info("uri={}；client={}；accountName={}；accountId={} -> {} [{}]；入参：{}；返回值：{}",
                 reqUri, reqIp, oprName, oprId, methodMsg, methodName, paramJson, rtnJson);
 
-        final LogData logData = new LogData(
+        final OperationLogData logData = new OperationLogData(
                 oprId,
                 oprName,
                 LocalDateTime.now(),
@@ -83,8 +83,8 @@ public class LogAspect {
 
     private String getMethodMessage(final JoinPoint joinPoint) {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
-        return Optional.ofNullable(method.getAnnotation(Logger.class))
-                .map(Logger::value)
+        return Optional.ofNullable(method.getAnnotation(OperationLogger.class))
+                .map(OperationLogger::value)
                 .orElseThrow(() -> new InternalException("无法获取 Logger 注解"));
     }
 

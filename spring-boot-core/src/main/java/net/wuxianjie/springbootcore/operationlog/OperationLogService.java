@@ -1,16 +1,16 @@
-package net.wuxianjie.springbootcore.oprlog;
+package net.wuxianjie.springbootcore.operationlog;
 
 /**
  * 操作日志持久化保存接口。
  *
  * @author 吴仙杰
  */
-public interface LogService {
+public interface OperationLogService {
 
     /**
      * 保存操作日志数据。
      *
      * @param logData 日志数据
      */
-    void saveLog(LogData logData);
+    void saveLog(OperationLogData logData);
 }
