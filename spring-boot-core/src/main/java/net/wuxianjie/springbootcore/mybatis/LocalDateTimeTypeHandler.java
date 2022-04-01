@@ -1,6 +1,5 @@
 package net.wuxianjie.springbootcore.mybatis;
 
-import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
@@ -25,7 +24,7 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
                                     final int i,
                                     final LocalDateTime param,
                                     final JdbcType jdbcType) throws SQLException {
-        ps.setString(i, LocalDateTimeUtil.format(param, DatePattern.NORM_DATETIME_PATTERN));
+        ps.setString(i, LocalDateTimeUtil.formatNormal(param));
     }
 
     @Override
