@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
-    <sql id="queryWhereClause">
+    <sql id="selectLogsWhereClause">
         <where>
             <if test="q.startTimeInclusive != null">
                 AND operation_time &gt;= #{q.startTimeInclusive}
@@ -13,29 +12,47 @@
         </where>
     </sql>
 
-    <select id="findByQueryPagingOrderByOperationTimeDesc"
-            resultType="net.wuxianjie.web.operationlog.OperationLogListItemDto">
-        SELECT operation_log_id AS operationLogId,
+    <select id="selectLogs" resultType="net.wuxianjie.web.operationlog.OperationLogDto">
+        SELECT log_id AS logId,
         operation_time AS operationTime,
         user_id AS userId,
         username,
-        message
+        request_ip AS requestIp,
+        request_uri AS requestUri,
+        method_name AS methodName,
+        method_message AS methodMessage,
+        param_json AS paramJson,
+        return_json AS returnJSON
         FROM operation_logs
-        <include refid="queryWhereClause"/>
+        <include refid="selectLogsWhereClause"/>
         ORDER BY operation_time DESC
         LIMIT #{p.offset}, #{p.pageSize}
     </select>
 
-    <select id="countByQuery" resultType="int">
+    <select id="countLogs" resultType="int">
         SELECT COUNT(1)
         FROM operation_logs
-        <include refid="queryWhereClause"/>
+        <include refid="selectLogsWhereClause"/>
     </select>
 
-    <insert id="add">
+    <insert id="insertLog">
         INSERT INTO operation_logs (operation_time,
-                                    user_id, username, message)
+                              user_id,
+                              username,
+                              request_ip,
+                              request_uri,
+                              method_name,
+                              method_message,
+                              param_json,
+                              return_json)
         VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
-                #{userId}, #{username}, #{message})
+                #{userId},
+                #{username},
+                #{requestIp},
+                #{requestUri},
+                #{methodName},
+                #{methodMessage},
+                #{paramJson},
+                #{returnJson})
     </insert>
 </mapper>

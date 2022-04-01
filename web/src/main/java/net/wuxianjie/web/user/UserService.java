@@ -2,20 +2,19 @@ package net.wuxianjie.web.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.springbootcore.mybatis.YesOrNo;
+import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
 import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
 import net.wuxianjie.springbootcore.shared.exception.InternalException;
 import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
-import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.paging.PagingResult;
-import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.shared.util.StringUtils;
-import net.wuxianjie.web.operationlog.OperationLogService;
+import net.wuxianjie.web.operationlog.OperationLogServiceImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +29,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserMapper userMapper;
-    private final OperationLogService logService;
+    private final OperationLogServiceImpl logService;
     private final PasswordEncoder passwordEncoder;
 
     public Optional<User> getUser(String username) {
@@ -56,7 +55,7 @@ public class UserService {
         Integer userId = userToAdd.getUserId();
         String username = userToAdd.getUsername();
         String message = String.format("新增用户数据【ID：%s，用户名：%s】", userId, username);
-        logService.addNewOperationLog(LocalDateTime.now(), message);
+        // logService.addNewOperationLog(LocalDateTime.now(), message);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -78,7 +77,7 @@ public class UserService {
         }
 
         String message = String.format("修改用户数据【ID：%s，用户名：%s】：%s", userId, username, String.join("；", logs));
-        logService.addNewOperationLog(LocalDateTime.now(), message);
+        // logService.addNewOperationLog(LocalDateTime.now(), message);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -99,7 +98,7 @@ public class UserService {
         }
 
         String message = String.format("修改用户密码【ID：%s，用户名：%s】", userId, username);
-        logService.addNewOperationLog(LocalDateTime.now(), message);
+        // logService.addNewOperationLog(LocalDateTime.now(), message);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -113,7 +112,7 @@ public class UserService {
         }
 
         String message = String.format("删除用户数据【ID：%s，用户名：%s】", userId, username);
-        logService.addNewOperationLog(LocalDateTime.now(), message);
+        // logService.addNewOperationLog(LocalDateTime.now(), message);
     }
 
     private int updateUserPasswordInDatabase(UserManagerQuery query) {

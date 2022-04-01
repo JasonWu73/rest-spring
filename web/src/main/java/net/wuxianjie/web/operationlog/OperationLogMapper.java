@@ -14,10 +14,10 @@ import java.util.List;
 @Mapper
 public interface OperationLogMapper {
 
-    List<OperationLogListItemDto> findByQueryPagingOrderByOperationTimeDesc(@Param("p") PagingQuery paging,
-                                                                            @Param("q") GetOperationLogQuery query);
+    List<OperationLogDto> selectLogs(@Param("p") PagingQuery paging,
+                                     @Param("q") OperationLogQuery query);
 
-    int countByQuery(@Param("q") GetOperationLogQuery query);
+    int countLogs(@Param("q") OperationLogQuery query);
 
-    int add(OperationLog log);
+    int insertLog(OperationLog log);
 }

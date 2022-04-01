@@ -2,8 +2,8 @@ package net.wuxianjie.web.operationlog;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
 import org.springframework.validation.annotation.Validated;
@@ -17,58 +17,60 @@ import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
 /**
- * 操作日志。
+ * 操作日志管理控制器。
  *
  * @author 吴仙杰
  */
 @RestController
 @RequestMapping("/api/v1/operation-log")
 @RequiredArgsConstructor
-public class OperationLogController {
+public class OperationLogMgmtController {
 
-    private final OperationLogService logService;
+    private final OperationLogMgmtService logService;
 
     /**
      * 获取操作日志列表。
+     *
+     * @param paging 分页参数
+     * @param query  查询参数
+     * @return 日志列表
      */
     @Admin
     @GetMapping("list")
-    public PagingResult<OperationLogListItemDto> getOperationLogs(@Validated PagingQuery paging,
-                                                                  @Validated GetOperationLogQuery query) {
-        LocalDateTime startTime = getStartTimeOfDay(query.getStartDate());
+    public PagingResult<OperationLogDto> getLogs(@Validated PagingQuery paging,
+                                                 @Validated OperationLogQuery query) {
+        final LocalDateTime startTime = toStartTimeOfDay(query.getStartDate());
         query.setStartTimeInclusive(startTime);
 
-        LocalDateTime endTime = getEndTimeOfDay(query.getEndDate());
+        final LocalDateTime endTime = toEndTimeOfDay(query.getEndDate());
         query.setEndTimeInclusive(endTime);
 
-        return logService.getOperationLogs(paging, query);
+        return logService.getLogs(paging, query);
     }
 
-    private LocalDateTime getEndTimeOfDay(String dateStr) {
-        if (StrUtil.isEmpty(dateStr)) {
-            return null;
-        }
+    private LocalDateTime toEndTimeOfDay(String dateStr) {
+        if (StrUtil.isEmpty(dateStr)) return null;
 
-        LocalDate endDate;
+        final LocalDate endDate;
         try {
             endDate = LocalDate.parse(dateStr);
         } catch (DateTimeParseException e) {
             throw new BadRequestException("结束日期不合法", e);
         }
+
         return endDate.atTime(LocalTime.MAX);
     }
 
-    private LocalDateTime getStartTimeOfDay(String dateStr) {
-        if (StrUtil.isEmpty(dateStr)) {
-            return null;
-        }
+    private LocalDateTime toStartTimeOfDay(String dateStr) {
+        if (StrUtil.isEmpty(dateStr)) return null;
 
-        LocalDate startDate;
+        final LocalDate startDate;
         try {
             startDate = LocalDate.parse(dateStr);
         } catch (DateTimeParseException e) {
             throw new BadRequestException("开始日期不合法", e);
         }
+
         return startDate.atStartOfDay();
     }
 }
