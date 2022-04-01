@@ -1,7 +1,7 @@
-package net.wuxianjie.springbootcore.log;
+package net.wuxianjie.springbootcore.oprlog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.wuxianjie.springbootcore.log.ApiTestController.Param;
+import net.wuxianjie.springbootcore.oprlog.ApiTestController.Param;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +21,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * @author 吴仙杰
  */
-@Import({AnnotationAwareAspectJAutoProxyCreator.class, OperationLogAspect.class})
+@Import({AnnotationAwareAspectJAutoProxyCreator.class, LogAspect.class})
 @WebMvcTest(controllers = ApiTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
-class OperationLogAspectTest {
+class LogAspectTest {
 
     @MockBean
-    private OperationService logService;
+    private LogService logService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -55,7 +55,7 @@ class OperationLogAspectTest {
                 .content(objectMapper.writeValueAsString(param)));
 
         // then
-        verify(logService).saveLog(isA(OperationLog.class));
+        verify(logService).saveLog(isA(LogData.class));
     }
 
     @Test
@@ -66,7 +66,7 @@ class OperationLogAspectTest {
         underTest.callMethod();
 
         // then
-        verify(logService).saveLog(isA(OperationLog.class));
+        verify(logService).saveLog(isA(LogData.class));
     }
 
     @Test
@@ -79,7 +79,7 @@ class OperationLogAspectTest {
         final Integer actual = underTest.callMethodReturnNull(i);
 
         // then
-        verify(logService).saveLog(isA(OperationLog.class));
+        verify(logService).saveLog(isA(LogData.class));
         Assertions.assertThat(actual).isNull();
     }
 
@@ -93,7 +93,7 @@ class OperationLogAspectTest {
         final int actual = underTest.callMethod(i);
 
         // then
-        verify(logService).saveLog(isA(OperationLog.class));
+        verify(logService).saveLog(isA(LogData.class));
         Assertions.assertThat(actual).isEqualTo(i);
     }
 }

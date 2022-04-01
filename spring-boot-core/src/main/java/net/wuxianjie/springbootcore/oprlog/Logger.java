@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.log;
+package net.wuxianjie.springbootcore.oprlog;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * 日志记录器注解。
  *
  * @author 吴仙杰
- * @see OperationLogAspect
+ * @see LogAspect
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

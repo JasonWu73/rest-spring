@@ -1,8 +1,10 @@
-package net.wuxianjie.springbootcore.log;
+package net.wuxianjie.springbootcore.oprlog;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 /**
  * 操作日志数据。
@@ -12,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OperationLog {
+public class LogData {
 
     /**
      * 操作员 ID，当为开放 API 时，则为 {@code null}。
@@ -25,12 +27,17 @@ public class OperationLog {
     private String operatorName;
 
     /**
+     * 操作时间。
+     */
+    private LocalDateTime operationTime;
+
+    /**
      * 请求 IP。
      */
     private String requestIp;
 
     /**
-     * 请求 URI
+     * 请求 URI。
      */
     private String requestUri;
 

@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.log;
+package net.wuxianjie.springbootcore.oprlog;
 
 import lombok.Data;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,11 +30,13 @@ class ApiTestController {
     void callMethod() {
     }
 
+    @SuppressWarnings({"unused", "SameParameterValue"})
     @Logger("调用有原始类型入参及返回 null 值方法")
     Integer callMethodReturnNull(final int i) {
         return null;
     }
 
+    @SuppressWarnings({"unused", "SameParameterValue"})
     @Logger("调用有原始类型入参及返回原始类型值方法")
     int callMethod(final int i) {
         return i;

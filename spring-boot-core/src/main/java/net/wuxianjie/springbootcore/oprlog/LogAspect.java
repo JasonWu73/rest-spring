@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.log;
+package net.wuxianjie.springbootcore.oprlog;
 
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.StrUtil;
@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -32,10 +33,10 @@ import java.util.Optional;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class OperationLogAspect {
+public class LogAspect {
 
     private final ObjectMapper objectMapper;
-    private final OperationService logService;
+    private final LogService logService;
 
     /**
      * 对标有 {@link Logger} 注解的方法记录操作日志。
@@ -44,7 +45,7 @@ public class OperationLogAspect {
      * @param returnObj 方法返回值
      * @throws JsonProcessingException 当对入参或返回值执行 JSON 序列化时出错时
      */
-    @AfterReturning(pointcut = "@annotation(Logger)", returning = "returnObj")
+    @AfterReturning(pointcut = "@annotation(net.wuxianjie.springbootcore.oprlog.Logger)", returning = "returnObj")
     public void log(final JoinPoint joinPoint,
                     final Object returnObj) throws JsonProcessingException {
         // 请求信息
@@ -66,7 +67,18 @@ public class OperationLogAspect {
         log.info("uri={}；client={}；accountName={}；accountId={} -> {} [{}]；入参：{}；返回值：{}",
                 reqUri, reqIp, oprName, oprId, methodMsg, methodName, paramJson, rtnJson);
 
-        logService.saveLog(new OperationLog(oprId, oprName, reqIp, reqUri, methodName, methodMsg, paramJson, rtnJson));
+        final LogData logData = new LogData(
+                oprId,
+                oprName,
+                LocalDateTime.now(),
+                reqIp,
+                reqUri,
+                methodName,
+                methodMsg,
+                paramJson,
+                rtnJson
+        );
+        logService.saveLog(logData);
     }
 
     private String getMethodMessage(final JoinPoint joinPoint) {
