@@ -45,6 +45,10 @@ public class OperationLogController {
         final LocalDateTime endTime = toEndTimeOfDay(query.getEndDate());
         query.setEndTimeInclusive(endTime);
 
+        if (startTime != null && endTime != null && startTime.isAfter(endTime)) {
+            throw new BadRequestException("开始日期不能晚于结束日期");
+        }
+
         return logService.getLogs(paging, query);
     }
 
