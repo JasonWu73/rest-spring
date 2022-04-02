@@ -39,7 +39,7 @@ class ApiTestController {
 
     @GetMapping("/validated")
     String getValidateParam(@NotBlank(message = "用户名不能为空") final String username,
-                            @NotNull(message = "用户 ID 不能为 null") final Integer userId) {
+                            @NotNull(message = "用户 id 不能为 null") final Integer userId) {
         return username + ": " + userId;
     }
 
@@ -110,13 +110,14 @@ class ApiTestController {
     @Data
     static class User {
 
-        @NotNull(message = "用户 ID 不能为 null")
+        @NotNull(message = "用户 id 不能为 null")
         private Integer userId;
 
         @NotBlank(message = "用户名不能为空")
         private String username;
     }
 
+    @SuppressWarnings({"divzero", "NumericOverflow"})
     private String errorMath() {
         return (1 / 0) + "";
     }

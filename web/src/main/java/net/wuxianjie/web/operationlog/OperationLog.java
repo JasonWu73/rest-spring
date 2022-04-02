@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class OperationLog {
 
     /**
-     * 日志 ID。
+     * 日志 id。
      */
     private Integer logId;
 
@@ -28,7 +28,7 @@ public class OperationLog {
     private LocalDateTime operationTime;
 
     /**
-     * 用户 ID，当为开放 API 时，则为 null。
+     * 用户 id，当为开放 API 时，则为 null。
      */
     private Integer userId;
 

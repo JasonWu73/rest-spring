@@ -46,7 +46,7 @@ class ParamTestController {
         @NotNull(message = "启用状态不能为 null", groups = GroupOne.class)
         private Integer enabled;
 
-        @NotNull(message = "ID 不能为 null", groups = GroupTwo.class)
+        @NotNull(message = "id 不能为 null", groups = GroupTwo.class)
         private Integer id;
 
         @NotBlank(message = "名称不能为空")

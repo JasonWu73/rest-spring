@@ -25,7 +25,7 @@ import javax.validation.constraints.Pattern;
 public class UserQuery {
 
     /**
-     * 用户 ID。
+     * 用户 id。
      */
     private Integer userId;
 

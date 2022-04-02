@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 public class User {
 
     /**
-     * 用户 ID。
+     * 用户 id。
      */
     private Integer userId;
 

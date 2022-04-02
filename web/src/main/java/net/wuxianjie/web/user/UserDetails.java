@@ -17,7 +17,7 @@ import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 public class UserDetails implements TokenUserDetails {
 
     /**
-     * 用户 ID。
+     * 用户 id。
      */
     private Integer accountId;
 

@@ -66,7 +66,7 @@ public class UserController {
      * 注意：此处为重置密码，即无需验证旧密码。
      * </p>
      *
-     * @param id    用户 ID
+     * @param id    用户 id
      * @param query 查询参数
      */
     @Admin
@@ -87,18 +87,18 @@ public class UserController {
      * @param query 查询参数
      */
     @PostMapping("password")
-    public void updateCurrentUserPassword(@RequestBody @Validated(GroupTwo.class) final UserQuery query) {
+    public void updatePassword(@RequestBody @Validated(GroupTwo.class) final UserQuery query) {
         verifyPasswordDifference(query.getOldPassword(), query.getNewPassword());
 
         setCurrentUserId(query);
 
-        userService.updateUserPassword(query);
+        userService.updatePassword(query);
     }
 
     /**
      * 删除用户。
      *
-     * @param id 用户 ID
+     * @param id 用户 id
      */
     @Admin
     @OperationLogger("删除用户")

@@ -139,7 +139,7 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> {
                     final String body = result.getResponse().getContentAsString();
                     assertThat(body)
-                            .contains("用户 ID 不能为 null")
+                            .contains("用户 id 不能为 null")
                             .contains("用户名不能为空");
                 })
                 .andExpect(jsonPath("$.data").doesNotExist());
@@ -161,7 +161,7 @@ class ExceptionControllerAdviceTest {
                 .andExpect(result -> {
                     final String body = result.getResponse().getContentAsString();
                     assertThat(body)
-                            .contains("用户 ID 不能为 null")
+                            .contains("用户 id 不能为 null")
                             .contains("用户名不能为空");
                 })
                 .andExpect(jsonPath("$.data").doesNotExist());

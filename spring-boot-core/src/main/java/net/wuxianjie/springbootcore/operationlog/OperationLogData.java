@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class OperationLogData {
 
     /**
-     * 操作员 ID，当为开放 API 时，则为 {@code null}。
+     * 操作员 id，当为开放 API 时，则为 {@code null}。
      */
     private Integer operatorId;
 

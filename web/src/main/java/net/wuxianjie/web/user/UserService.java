@@ -1,6 +1,7 @@
 package net.wuxianjie.web.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
@@ -50,9 +51,13 @@ public class UserService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(final UserQuery query) {
-        verifyUsernameUniqueness(query.getUsername());
+        final boolean isExists = userMapper.existsUserByName(query.getUsername());
+        if (isExists) throw new DataConflictException("已存在相同用户名");
 
-        final User user = buildUser(query);
+        final User user = new User();
+        BeanUtil.copyProperties(query, user, "enabled");
+        user.setHashedPassword(passwordEncoder.encode(query.getPassword()));
+        user.setEnabled(YesOrNo.resolve(query.getEnabled()).orElseThrow());
 
         userMapper.insertUser(user);
     }
@@ -81,10 +86,11 @@ public class UserService {
      * @param query 查询参数
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateUserPassword(final UserQuery query) {
+    public void updatePassword(final UserQuery query) {
         final User user = getUserFromDbMustBeExists(query.getUserId());
 
-        verifyPassword(query.getOldPassword(), user.getHashedPassword());
+        final boolean isMatched = passwordEncoder.matches(query.getOldPassword(), user.getHashedPassword());
+        if (!isMatched) throw new BadRequestException("旧密码错误");
 
         final String rawPassword = query.getNewPassword();
         final String hashedPassword = passwordEncoder.encode(rawPassword);
@@ -96,32 +102,16 @@ public class UserService {
     /**
      * 删除用户。
      *
-     * @param userId 用户 ID
+     * @param userId 用户 id
      */
     @Transactional(rollbackFor = Exception.class)
     public void removeUser(int userId) {
         userMapper.deleteUserById(userId);
     }
 
-    private void verifyUsernameUniqueness(final String username) {
-        boolean isExists = userMapper.existsUserByName(username);
-        if (isExists) throw new DataConflictException("已存在相同用户名");
-    }
-
-    private User buildUser(final UserQuery query) {
-        final User user = new User();
-
-        BeanUtil.copyProperties(query, user, "enabled");
-
-        user.setHashedPassword(passwordEncoder.encode(query.getPassword()));
-        user.setEnabled(YesOrNo.resolve(query.getEnabled()).orElseThrow());
-
-        return user;
-    }
-
     private User getUserFromDbMustBeExists(final int userId) {
         return Optional.ofNullable(userMapper.selectUserById(userId))
-                .orElseThrow(() -> new NotFoundException("用户 ID 不存在"));
+                .orElseThrow(() -> new NotFoundException(StrUtil.format("未找到 id 为 {} 的用户", userId)));
     }
 
     private boolean needsUpdateUser(final User user, final UserQuery query) {
@@ -134,22 +124,17 @@ public class UserService {
         }
 
         final String newRoles = query.getRoles();
-        if (newRoles != null && StringUtils.equalsIgnoreBlank(newRoles, user.getRoles())) {
+        if (newRoles != null && !StringUtils.equalsIgnoreBlank(newRoles, user.getRoles())) {
             needsUpdate = true;
             user.setRoles(newRoles);
         }
 
         final YesOrNo newEnabled = YesOrNo.resolve(query.getEnabled()).orElse(null);
-        if (newEnabled != null && newEnabled == user.getEnabled()) {
+        if (newEnabled != null && newEnabled != user.getEnabled()) {
             needsUpdate = true;
             user.setEnabled(newEnabled);
         }
 
         return needsUpdate;
-    }
-
-    private void verifyPassword(final String oldPassword, final String hashedPassword) {
-        final boolean isMatched = passwordEncoder.matches(oldPassword, hashedPassword);
-        if (!isMatched) throw new BadRequestException("旧密码错误");
     }
 }

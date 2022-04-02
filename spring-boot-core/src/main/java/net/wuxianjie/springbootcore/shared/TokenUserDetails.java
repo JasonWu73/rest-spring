@@ -11,9 +11,9 @@ import net.wuxianjie.springbootcore.security.Role;
 public interface TokenUserDetails {
 
     /**
-     * 获取账号 ID。
+     * 获取账号 id。
      *
-     * @return Token 所绑定的账号 ID
+     * @return Token 所绑定的账号 id
      */
     Integer getAccountId();
 

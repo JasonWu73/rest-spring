@@ -74,7 +74,7 @@ class GroupTest {
                 .andExpect(result -> {
                     final String body = result.getResponse().getContentAsString();
                     assertThat(body)
-                            .contains("ID 不能为 null")
+                            .contains("id 不能为 null")
                             .contains("名称不能为空");
                 })
                 .andExpect(jsonPath("$.data").doesNotExist());
