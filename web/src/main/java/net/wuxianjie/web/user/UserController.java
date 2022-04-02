@@ -108,15 +108,15 @@ public class UserController {
     }
 
     private void setFuzzySearchValue(final UserQuery query) {
-        query.setUsername(StringUtils.getFuzzySearchValue(query.getUsername()));
+        query.setUsername(StringUtils.toFuzzy(query.getUsername()));
     }
 
     private void setRoleAfterDeduplication(final UserQuery query) {
         toDeduplicatedCommaSeparatedLowerCase(query.getRoles())
-                .ifPresent(roleStr -> {
-                    verifyRole(roleStr);
+                .ifPresent(s -> {
+                    verifyRole(s);
 
-                    query.setRoles(roleStr);
+                    query.setRoles(s);
                 });
     }
 
@@ -140,7 +140,7 @@ public class UserController {
         if (StrUtil.isEmpty(commaSeparatedRole)) return;
 
         final boolean hasInvalidRole = Arrays.stream(commaSeparatedRole.split(","))
-                .anyMatch(x -> Role.resolve(x).isEmpty());
+                .anyMatch(s -> Role.resolve(s).isEmpty());
         if (hasInvalidRole) throw new BadRequestException("包含未定义角色");
     }
 

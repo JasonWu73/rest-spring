@@ -5,7 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static net.wuxianjie.springbootcore.shared.util.StringUtils.equalsIgnoreBlank;
-import static net.wuxianjie.springbootcore.shared.util.StringUtils.getFuzzySearchValue;
+import static net.wuxianjie.springbootcore.shared.util.StringUtils.toFuzzy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -17,16 +17,16 @@ class StringUtilsTest {
     @Test
     @DisplayName("获取数据库 LIKE 字符串格式")
     void canGetFuzzySearchValue() {
-        assertThat(getFuzzySearchValue(null)).isNull();
-        assertThat(getFuzzySearchValue("")).isNull();
-        assertThat(getFuzzySearchValue(" ")).isNull();
-        assertThat(getFuzzySearchValue(" \t\n")).isNull();
+        assertThat(toFuzzy(null)).isNull();
+        assertThat(toFuzzy("")).isNull();
+        assertThat(toFuzzy(" ")).isNull();
+        assertThat(toFuzzy(" \t\n")).isNull();
 
-        assertThat(getFuzzySearchValue("null")).isEqualTo("%null%");
-        assertThat(getFuzzySearchValue("ja")).isEqualTo("%ja%");
-        assertThat(getFuzzySearchValue(" ja")).isEqualTo("%ja%");
-        assertThat(getFuzzySearchValue("ja ")).isEqualTo("%ja%");
-        assertThat(getFuzzySearchValue(" ja ")).isEqualTo("%ja%");
+        assertThat(toFuzzy("null")).isEqualTo("%null%");
+        assertThat(toFuzzy("ja")).isEqualTo("%ja%");
+        assertThat(toFuzzy(" ja")).isEqualTo("%ja%");
+        assertThat(toFuzzy("ja ")).isEqualTo("%ja%");
+        assertThat(toFuzzy(" ja ")).isEqualTo("%ja%");
     }
 
     @Test

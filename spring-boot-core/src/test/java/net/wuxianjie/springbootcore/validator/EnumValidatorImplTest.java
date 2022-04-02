@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(controllers = ParamTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(controllers = ParameterTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
 @ComponentScan("net.wuxianjie.springbootcore.rest")
 class EnumValidatorImplTest {
 

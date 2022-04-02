@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
  * @see WebSecurityConfig
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class SecurityConfigData {
 
     /**

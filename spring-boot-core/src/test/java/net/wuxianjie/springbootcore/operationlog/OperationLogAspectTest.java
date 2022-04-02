@@ -1,8 +1,8 @@
 package net.wuxianjie.springbootcore.operationlog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.wuxianjie.springbootcore.operationlog.ApiTestController.Param;
-import org.assertj.core.api.Assertions;
+import net.wuxianjie.springbootcore.operationlog.ApiTestController.InnerParameter;
+import net.wuxianjie.springbootcore.operationlog.ApiTestController.OuterParameter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator;
@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -21,8 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 /**
  * @author 吴仙杰
  */
-@Import({AnnotationAwareAspectJAutoProxyCreator.class, OperationLogAspect.class})
 @WebMvcTest(controllers = ApiTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@Import({AnnotationAwareAspectJAutoProxyCreator.class, OperationLogAspect.class})
 class OperationLogAspectTest {
 
     @MockBean
@@ -30,20 +31,18 @@ class OperationLogAspectTest {
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private ApiTestController underTest;
 
     @Test
     @DisplayName("请求 HTTP API")
-    void itShouldCheckWhenRequestRestHttpApi() throws Exception {
+    void canLogHttpApiRequest() throws Exception {
         // given
-        final Param param = new Param() {{
+        final OuterParameter param = new OuterParameter() {{
             setName("测试数据 Outer");
-            setData(new ApiTestController.ParamData() {{
+            setData(new InnerParameter() {{
                 setName("测试数据 Inner");
                 setStatus(100);
             }});
@@ -59,33 +58,8 @@ class OperationLogAspectTest {
     }
 
     @Test
-    @DisplayName("调用无参无返回值方法")
-    void itShouldCheckWhenCallVoidReturnMethod() {
-        // given
-        // when
-        underTest.callMethod();
-
-        // then
-        verify(logService).saveLog(isA(OperationLogData.class));
-    }
-
-    @Test
-    @DisplayName("调用有原始类型入参及返回 null 值方法")
-    void itShouldCheckWhenCallReturnNullMethod() {
-        // given
-        final int i = 100;
-
-        // when
-        final Integer actual = underTest.callMethodReturnNull(i);
-
-        // then
-        verify(logService).saveLog(isA(OperationLogData.class));
-        Assertions.assertThat(actual).isNull();
-    }
-
-    @Test
-    @DisplayName("调用有原始类型入参及返回原始类型值方法")
-    void itShouldCheckWhenCallReturnPrimitiveMethod() {
+    @DisplayName("入参与返回值都是 int 的方法")
+    void canLogPrimitiveMethod() {
         // given
         final int i = 100;
 
@@ -94,6 +68,31 @@ class OperationLogAspectTest {
 
         // then
         verify(logService).saveLog(isA(OperationLogData.class));
-        Assertions.assertThat(actual).isEqualTo(i);
+        assertThat(actual).isEqualTo(i);
+    }
+
+    @Test
+    @DisplayName("入参为 int，返回值为 null 值的方法")
+    void canLogReturnNullMethod() {
+        // given
+        final int i = 100;
+
+        // when
+        final Integer actual = underTest.callMethodReturnNull(i);
+
+        // then
+        verify(logService).saveLog(isA(OperationLogData.class));
+        assertThat(actual).isNull();
+    }
+
+    @Test
+    @DisplayName("无参无返回值的方法")
+    void canLogVoidReturnTypeMethod() {
+        // given
+        // when
+        underTest.callMethod();
+
+        // then
+        verify(logService).saveLog(isA(OperationLogData.class));
     }
 }

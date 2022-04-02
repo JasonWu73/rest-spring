@@ -32,13 +32,11 @@ class TokenControllerTest {
 
     @MockBean
     private TokenService tokenService;
-
     @MockBean
     private TokenAuthenticationService authService;
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -55,7 +53,8 @@ class TokenControllerTest {
 
         final String accessToken = "fake_access_token";
         final String refreshToken = "fake_refresh_token";
-        final TokenData tokenData = new TokenData(1800, accessToken, refreshToken);
+        final int expiresIn = 1800;
+        final TokenData tokenData = new TokenData(expiresIn, accessToken, refreshToken);
         given(tokenService.getToken(account, password)).willReturn(tokenData);
 
         given(authService.authenticate(accessToken))
@@ -70,7 +69,7 @@ class TokenControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.expiresIn").value(1800))
+                .andExpect(jsonPath("$.data.expiresIn").value(expiresIn))
                 .andExpect(jsonPath("$.data.accessToken").value(accessToken))
                 .andExpect(jsonPath("$.data.refreshToken").value(refreshToken));
     }
@@ -131,9 +130,9 @@ class TokenControllerTest {
     void canNotRefreshTokenWhenInvalidToken() throws Exception {
         // given
         final String refreshToken = "fake_refresh_token";
-        final String errMsg = "Token 已过期";
+        final String errorMessage = "Token 已过期";
         given(tokenService.refreshToken(anyString()))
-                .willThrow(new TokenAuthenticationException(errMsg));
+                .willThrow(new TokenAuthenticationException(errorMessage));
 
         // when
         mockMvc.perform(get("/api/v1/refresh-token/" + refreshToken))
@@ -141,7 +140,7 @@ class TokenControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value(errMsg))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

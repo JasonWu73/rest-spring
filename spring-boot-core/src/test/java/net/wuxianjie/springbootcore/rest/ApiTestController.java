@@ -17,8 +17,8 @@ import java.sql.SQLException;
 /**
  * @author 吴仙杰
  */
-@Validated
 @RestController
+@Validated
 class ApiTestController {
 
     @GetMapping(value = "/html", produces = MediaType.TEXT_HTML_VALUE)
@@ -50,11 +50,17 @@ class ApiTestController {
 
     @GetMapping("/exception")
     String getException(final String type) {
-        if (StrUtil.equals(type, "not_found")) throw new NotFoundException("未找到 id 为 x 的数据");
+        if (StrUtil.equals(type, "not_found")) {
+            throw new NotFoundException("未找到 id 为 x 的数据");
+        }
 
-        if (StrUtil.equals(type, "bad_request")) throw new BadRequestException("客户端请求错误");
+        if (StrUtil.equals(type, "bad_request")) {
+            throw new BadRequestException("客户端请求错误");
+        }
 
-        if (StrUtil.equals(type, "conflict")) throw new DataConflictException("已存在相同数据");
+        if (StrUtil.equals(type, "conflict")) {
+            throw new ConflictException("已存在相同数据");
+        }
 
         if (StrUtil.equals(type, "internal")) {
             try {
@@ -87,12 +93,12 @@ class ApiTestController {
     void nothing() {
     }
 
-    @GetMapping("/null-obj")
+    @GetMapping("/null-when-object-return-type")
     User getObjectNullResult() {
         return null;
     }
 
-    @GetMapping("/null-str")
+    @GetMapping("/null-when-string-return-type")
     String getStringNullResult() {
         return null;
     }
@@ -104,7 +110,7 @@ class ApiTestController {
 
     @GetMapping(value = "/bytes")
     byte[] getBytes() {
-        return "Hello Bytes" .getBytes(StandardCharsets.UTF_8);
+        return "Hello Bytes".getBytes(StandardCharsets.UTF_8);
     }
 
     @Data

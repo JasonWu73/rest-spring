@@ -62,10 +62,14 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHand
                                  final Integer value) {
         if (enumClass == null || value == null) return null;
 
-        E[] enumConsts = enumClass.getEnumConstants();
-        if (enumConsts == null) return null;
+        E[] enumConstants = enumClass.getEnumConstants();
+        if (enumConstants == null) return null;
 
-        for (final E es : enumConsts) if (value == es.value()) return es;
+        for (final E e : enumConstants) {
+            if (value == e.value()) {
+                return e;
+            }
+        }
 
         return null;
     }

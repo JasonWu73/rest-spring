@@ -57,9 +57,9 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
         // 若已经是可用的响应对象，则直接返回
         if (body instanceof ApiResult
                 || body instanceof ResponseEntity
-                // 字节数组，如用于返回浏览器可直接打开的图片
+                // 字节数组，例如用于返回浏览器可直接打开的图片
                 || body instanceof byte[]
-                // 资源类型，如视频点播（HTTP STATUS 206）
+                // 资源类型，例如视频点播（HTTP STATUS 206）
                 || body instanceof ResourceRegion) {
             return body;
         }

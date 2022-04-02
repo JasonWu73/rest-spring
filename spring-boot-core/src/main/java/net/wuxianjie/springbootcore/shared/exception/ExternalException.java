@@ -17,7 +17,8 @@ public class ExternalException extends AbstractServerBaseException {
         super(message);
     }
 
-    public ExternalException(final String message, final Throwable cause) {
+    public ExternalException(final String message,
+                             final Throwable cause) {
         super(message, cause);
     }
 }

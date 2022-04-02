@@ -18,24 +18,29 @@ import javax.validation.constraints.NotNull;
 @Validated
 @RestController
 @RequestMapping("/param")
-class ParamTestController {
+class ParameterTestController {
 
+    @SuppressWarnings("unused")
     @GetMapping("enum")
     void test(@EnumValidator(message = "状态值错误", value = YesOrNo.class) Integer enabled) {
     }
 
+    @SuppressWarnings("unused")
     @GetMapping("enum-no-value-method")
     void test2(@EnumValidator(message = "类型值错误", value = TypeNoValueMethod.class) String type) {
     }
 
+    @SuppressWarnings("unused")
     @GetMapping("enum-error-value-method")
     void test3(@EnumValidator(message = "类型值错误", value = TypeErrorValueMethod.class) String type) {
     }
 
+    @SuppressWarnings("unused")
     @GetMapping("save")
     void save(@Validated(GroupOne.class) Param param) {
     }
 
+    @SuppressWarnings("unused")
     @GetMapping("update")
     void update(@Validated(GroupTwo.class) Param param) {
     }

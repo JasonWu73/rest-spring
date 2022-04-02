@@ -13,59 +13,60 @@ import java.util.List;
 @RestController
 class ApiTestController {
 
-    @OperationLogger("测试方法")
+    @SuppressWarnings("unused")
     @PostMapping("/test")
-    Result getResult(@RequestBody final Param param) {
-        return new Result() {{
+    @OperationLogger("参数与返回值都是 Object 的方法")
+    OuterResult getResult(@RequestBody final OuterParameter parameter) {
+        return new OuterResult() {{
             setError(0);
             setMessage("成功");
-            setData(new ResultData() {{
+            setData(new InnerResult() {{
                 setList(List.of("One", "Two"));
                 setSize(2);
             }});
         }};
     }
 
-    @OperationLogger("调用无参无返回值方法")
-    void callMethod() {
-    }
-
-    @SuppressWarnings({"unused", "SameParameterValue"})
-    @OperationLogger("调用有原始类型入参及返回 null 值方法")
-    Integer callMethodReturnNull(final int i) {
-        return null;
-    }
-
-    @SuppressWarnings({"unused", "SameParameterValue"})
-    @OperationLogger("调用有原始类型入参及返回原始类型值方法")
+    @SuppressWarnings("SameParameterValue")
+    @OperationLogger("入参与返回值都是 int 的方法")
     int callMethod(final int i) {
         return i;
     }
 
-    @Data
-    static class Param {
+    @SuppressWarnings({"unused", "SameParameterValue"})
+    @OperationLogger("入参为 int，返回值为 null 值的方法")
+    Integer callMethodReturnNull(final int i) {
+        return null;
+    }
 
-        private String name;
-        private ParamData data;
+    @OperationLogger("无参无返回值的方法")
+    void callMethod() {
     }
 
     @Data
-    static class ParamData {
+    static class OuterParameter {
+
+        private String name;
+        private InnerParameter data;
+    }
+
+    @Data
+    static class InnerParameter {
 
         private String name;
         private Integer status;
     }
 
     @Data
-    static class Result {
+    static class OuterResult {
 
         private Integer error;
         private String message;
-        private ResultData data;
+        private InnerResult data;
     }
 
     @Data
-    static class ResultData {
+    static class InnerResult {
 
         private List<String> list;
         private Integer size;

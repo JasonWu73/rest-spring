@@ -17,7 +17,8 @@ public class TokenAuthenticationException extends AbstractBaseException {
         super(message);
     }
 
-    public TokenAuthenticationException(final String message, final Throwable cause) {
+    public TokenAuthenticationException(final String message,
+                                        final Throwable cause) {
         super(message, cause);
     }
 }

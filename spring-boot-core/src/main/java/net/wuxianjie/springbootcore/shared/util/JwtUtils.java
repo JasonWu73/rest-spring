@@ -33,7 +33,7 @@ public class JwtUtils {
     }
 
     /**
-     * 生成一个新的 JSON Web Token。
+     * 生成一个 JSON Web Token。
      *
      * @param signingKey       JWT 签名密钥
      * @param payload          JWT 中的有效载荷

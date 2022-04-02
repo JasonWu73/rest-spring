@@ -1,5 +1,7 @@
 package net.wuxianjie.springbootcore.mybatis;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
@@ -22,12 +24,14 @@ class LocalDateTimeTypeHandlerTest {
     private UserMapper underTest;
 
     @Test
-    @DisplayName("插入 LocalDateTime")
-    void itShouldCheckWhenInsertLocalDateTime() {
+    @DisplayName("插入 LocalDateTime 值")
+    void canInsertLocalDateTime() {
         // given
         final String username = "测试用户";
         final LocalDateTime createTime = LocalDateTime.now();
-        final User user = new User(null, username, null, createTime, null);
+        final User user = new User();
+        user.setUsername(username);
+        user.setCreateTime(createTime);
         underTest.insertUser(user);
 
         // when
@@ -38,11 +42,12 @@ class LocalDateTimeTypeHandlerTest {
     }
 
     @Test
-    @DisplayName("插入 LocalDateTime null 值")
-    void itShouldCheckWhenInsertLocalDateTimeNull() {
+    @DisplayName("插入 LocalDateTime 值 - 插入 null 值")
+    void canInsertNullLocalDateTime() {
         // given
         final String username = "测试用户";
-        final User user = new User(null, username, null, null, null);
+        final User user = new User();
+        user.setUsername(username);
         underTest.insertUser(user);
 
         // when
@@ -53,12 +58,33 @@ class LocalDateTimeTypeHandlerTest {
     }
 
     @Test
-    @DisplayName("插入 LocalDate")
-    void itShouldCheckWhenInsertLocalDate() {
+    @DisplayName("插入 LocalDateTime 值 - 获取字符串")
+    void canInsertLocalDateTimeReturnString() {
+        // given
+        final String username = "测试用户";
+        final LocalDateTime createTime = LocalDateTime.now();
+        final User user = new User();
+        user.setUsername(username);
+        user.setCreateTime(createTime);
+        underTest.insertUser(user);
+
+        // when
+        final String actual = underTest.selectCreateTimeStringByUsername(username);
+
+        // then
+        final String expected = DateUtil.format(createTime, DatePattern.NORM_DATETIME_PATTERN);
+        assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("插入 LocalDate 值")
+    void canInsertLocalDate() {
         // given
         final String username = "测试用户";
         final LocalDate birthday = LocalDate.now();
-        final User user = new User(null, username, null, null, birthday);
+        final User user = new User();
+        user.setUsername(username);
+        user.setBirthday(birthday);
         underTest.insertUser(user);
 
         // when
@@ -66,20 +92,5 @@ class LocalDateTimeTypeHandlerTest {
 
         // then
         assertThat(actual).isEqualTo(birthday);
-    }
-
-    @Test
-    @DisplayName("插入 LocalDate null 值")
-    void itShouldCheckWhenInsertNullLocalDate() {
-        // given
-        final String username = "测试用户";
-        final User user = new User(null, username, null, null, null);
-        underTest.insertUser(user);
-
-        // when
-        final LocalDate actual = underTest.selectBirthdayByUsername(username);
-
-        // then
-        assertThat(actual).isNull();
     }
 }

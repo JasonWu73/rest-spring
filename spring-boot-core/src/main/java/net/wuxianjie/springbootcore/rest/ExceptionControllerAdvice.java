@@ -2,10 +2,10 @@ package net.wuxianjie.springbootcore.rest;
 
 import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.shared.exception.AbstractBaseException;
-import net.wuxianjie.springbootcore.shared.exception.AbstractServerBaseException;
 import net.wuxianjie.springbootcore.shared.AuthUtils;
 import net.wuxianjie.springbootcore.shared.TokenUserDetails;
+import net.wuxianjie.springbootcore.shared.exception.AbstractBaseException;
+import net.wuxianjie.springbootcore.shared.exception.AbstractServerBaseException;
 import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -38,8 +38,8 @@ import java.util.Set;
  * @author 吴仙杰
  * @see GlobalErrorController
  */
-@Slf4j
 @ControllerAdvice
+@Slf4j
 public class ExceptionControllerAdvice {
 
     /**
@@ -50,22 +50,22 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<ApiResult<Void>> handleHttpMediaTypeNotAcceptableException(final HttpServletRequest request) {
-        final String mime = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
-                .map(acceptEnum -> {
+        final String mimeTypes = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
+                .map(enumeration -> {
                     final List<String> accepts = new ArrayList<>();
-                    while (acceptEnum.hasMoreElements()) {
-                        accepts.add(acceptEnum.nextElement().trim());
+                    while (enumeration.hasMoreElements()) {
+                        accepts.add(enumeration.nextElement().trim());
                     }
                     return String.join(", ", accepts);
                 })
                 .orElse("null");
 
-        final String msg = StrUtil.format("API 不支持返回请求头指定的 MIME 类型 [{}: {}]",
-                HttpHeaders.ACCEPT, mime);
+        final String message = StrUtil.format("API 不支持返回请求头指定的 MIME 类型 [{}: {}]",
+                HttpHeaders.ACCEPT, mimeTypes);
 
-        logWarnOrError(request, msg, true);
+        logWarnOrError(request, message, true);
 
-        return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, msg);
+        return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, message);
     }
 
     /**
@@ -76,11 +76,11 @@ public class ExceptionControllerAdvice {
      */
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ApiResult<Void>> handleHttpRequestMethodNotSupportedException(final HttpServletRequest request) {
-        final String msg = StrUtil.format("API 不支持 {} 请求方法", request.getMethod());
+        final String message = StrUtil.format("API 不支持 {} 请求方法", request.getMethod());
 
-        logWarnOrError(request, msg, true);
+        logWarnOrError(request, message, true);
 
-        return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, msg);
+        return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, message);
     }
 
     /**
@@ -93,11 +93,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResult<Void>> handleHttpMessageNotReadableException(final HttpMessageNotReadableException e,
                                                                                  final HttpServletRequest request) {
-        final String msg = "请求体内容不合法";
+        final String message = "请求体内容不合法";
 
-        logWarnOrError(request, msg, e, true);
+        logWarnOrError(request, message, e, true);
 
-        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, message);
     }
 
     /**
@@ -110,11 +110,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiResult<Void>> handleMissingServletRequestParameterException(final MissingServletRequestParameterException e,
                                                                                          final HttpServletRequest request) {
-        final String msg = StrUtil.format("缺少必填参数 {}", e.getParameterName());
+        final String message = StrUtil.format("缺少必填参数 {}", e.getParameterName());
 
-        logWarnOrError(request, msg, true);
+        logWarnOrError(request, message, true);
 
-        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, msg);
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, message);
     }
 
     /**
@@ -127,27 +127,26 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ApiResult<Void>> handleConstraintViolationException(final ConstraintViolationException e,
                                                                               final HttpServletRequest request) {
-        final List<String> logMsgList = new ArrayList<>();
-        final List<String> msgList = new ArrayList<>();
+        final List<String> logMessageList = new ArrayList<>();
+        final List<String> messageList = new ArrayList<>();
 
         final Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
         for (final ConstraintViolation<?> violation : violations) {
-            final String msg = violation.getMessage();
-            msgList.add(msg);
+            final String message = violation.getMessage();
+            messageList.add(message);
 
             final String queryParamPath = violation.getPropertyPath().toString();
             final String queryParam = queryParamPath.contains(".")
                     ? queryParamPath.substring(queryParamPath.indexOf(".") + 1)
                     : queryParamPath;
             final String logMsg = StrUtil.format("{} [{}={}]",
-                    msg, queryParam, violation.getInvalidValue());
-            logMsgList.add(logMsg);
+                    message, queryParam, violation.getInvalidValue());
+            logMessageList.add(logMsg);
         }
 
-        logParamWarn(request, logMsgList);
+        logParameterWarn(request, logMessageList);
 
-        return buildResponseEntity(request, HttpStatus.BAD_REQUEST,
-                String.join("；", msgList));
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, String.join("；", messageList));
     }
 
     /**
@@ -160,23 +159,22 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ApiResult<Void>> handleBindException(final BindException e,
                                                                final HttpServletRequest request) {
-        final List<String> logMsgList = new ArrayList<>();
-        final List<String> msgList = new ArrayList<>();
+        final List<String> logMessageList = new ArrayList<>();
+        final List<String> messageList = new ArrayList<>();
 
         final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         for (final FieldError fieldError : fieldErrors) {
-            final String msg = fieldError.getDefaultMessage();
-            msgList.add(msg);
+            final String message = fieldError.getDefaultMessage();
+            messageList.add(message);
 
             final String logMsg = StrUtil.format("{} [{}={}]",
-                    msg, fieldError.getField(), fieldError.getRejectedValue());
-            logMsgList.add(logMsg);
+                    message, fieldError.getField(), fieldError.getRejectedValue());
+            logMessageList.add(logMsg);
         }
 
-        logParamWarn(request, logMsgList);
+        logParameterWarn(request, logMessageList);
 
-        return buildResponseEntity(request, HttpStatus.BAD_REQUEST,
-                String.join("；", msgList));
+        return buildResponseEntity(request, HttpStatus.BAD_REQUEST, String.join("；", messageList));
     }
 
     /**
@@ -189,14 +187,17 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(AbstractBaseException.class)
     public ResponseEntity<ApiResult<Void>> handleCustomException(final AbstractBaseException e,
                                                                  final HttpServletRequest request) {
-        final String msg = e.getMessage();
+        final String message = e.getMessage();
         final Throwable cause = e.getCause();
         final boolean isServerError = e instanceof AbstractServerBaseException;
 
-        if (cause == null) logWarnOrError(request, msg, !isServerError);
-        else logWarnOrError(request, msg, cause, !isServerError);
+        if (cause == null) {
+            logWarnOrError(request, message, !isServerError);
+        } else {
+            logWarnOrError(request, message, cause, !isServerError);
+        }
 
-        return buildResponseEntity(request, e.getHttpStatus(), msg);
+        return buildResponseEntity(request, e.getHttpStatus(), message);
     }
 
     /**
@@ -209,11 +210,11 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(UncategorizedDataAccessException.class)
     public ResponseEntity<ApiResult<Void>> handleJdbcException(final UncategorizedDataAccessException e,
                                                                final HttpServletRequest request) {
-        final String msg = "数据库操作异常";
+        final String message = "数据库操作异常";
 
-        logError(request, msg, e);
+        logError(request, message, e);
 
-        return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
+        return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     /**
@@ -227,21 +228,15 @@ public class ExceptionControllerAdvice {
     public ResponseEntity<ApiResult<Void>> handleAllException(final Throwable e,
                                                               final HttpServletRequest request) {
         // 不要处理 AccessDeniedException，否则会导致 Spring Security 无法处理 403
-        if (e instanceof AccessDeniedException) throw (AccessDeniedException) e;
+        if (e instanceof AccessDeniedException) {
+            throw (AccessDeniedException) e;
+        }
 
-        final String msg = "服务异常";
+        final String message = "服务异常";
 
-        logError(request, msg, e);
+        logError(request, message, e);
 
-        return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, msg);
-    }
-
-    private ResponseEntity<ApiResult<Void>> buildResponseEntity(final HttpServletRequest request,
-                                                                final HttpStatus httpStatus,
-                                                                final String msg) {
-        if (isJsonRequest(request)) return new ResponseEntity<>(ApiResultWrapper.fail(msg), httpStatus);
-
-        return new ResponseEntity<>(null, httpStatus);
+        return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
     private boolean isJsonRequest(final HttpServletRequest request) {
@@ -295,43 +290,62 @@ public class ExceptionControllerAdvice {
     private void logWarnOrError(final HttpServletRequest request,
                                 final String message,
                                 final boolean isWarn) {
-        final TokenUserDetails curUser = getCurrentUser();
-        final String msg = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}",
+        final TokenUserDetails currentUser = getCurrentUser();
+        final String logMessage = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}",
                 request.getRequestURI(), NetUtils.getRealIpAddress(request),
-                curUser.getAccountName(), curUser.getAccountId(), message);
+                currentUser.getAccountName(), currentUser.getAccountId(),
+                message);
 
-        if (isWarn) log.warn(msg);
-        else log.error(msg);
+        if (isWarn) {
+            log.warn(logMessage);
+        } else {
+            log.error(logMessage);
+        }
     }
 
     private void logWarnOrError(final HttpServletRequest request,
                                 final String message,
                                 final Throwable e,
                                 final boolean isWarn) {
-        final TokenUserDetails curUser = getCurrentUser();
-        final String msg = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}：{}",
-                NetUtils.getRealIpAddress(request), request.getRequestURI(),
-                curUser.getAccountName(), curUser.getAccountId(), message, e.getMessage());
+        final TokenUserDetails currentUser = getCurrentUser();
+        final String logMessage = StrUtil.format("uri={}；client={}；accountName={}；accountId={} -> {}：{}",
+                request.getRequestURI(), NetUtils.getRealIpAddress(request),
+                currentUser.getAccountName(), currentUser.getAccountId(),
+                message, e.getMessage());
 
-        if (isWarn) log.warn(msg);
-        else log.error(msg);
+        if (isWarn) {
+            log.warn(logMessage);
+        } else {
+            log.error(logMessage);
+        }
     }
 
-    private void logParamWarn(final HttpServletRequest request,
-                              final List<String> messageList) {
-        final TokenUserDetails curUser = getCurrentUser();
+    private void logParameterWarn(final HttpServletRequest request,
+                                  final List<String> messageList) {
+        final TokenUserDetails currentUser = getCurrentUser();
         log.warn("uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
-                NetUtils.getRealIpAddress(request), request.getRequestURI(),
-                curUser.getAccountName(), curUser.getAccountId(),
+                request.getRequestURI(), NetUtils.getRealIpAddress(request),
+                currentUser.getAccountName(), currentUser.getAccountId(),
                 String.join("；", messageList));
     }
 
     private void logError(final HttpServletRequest request,
                           final String message,
                           final Throwable e) {
-        final TokenUserDetails curUser = getCurrentUser();
+        final TokenUserDetails currentUser = getCurrentUser();
         log.error("uri={}；client={}；accountName={}；accountId={} -> {}",
-                NetUtils.getRealIpAddress(request), request.getRequestURI(),
-                curUser.getAccountName(), curUser.getAccountId(), message, e);
+                request.getRequestURI(), NetUtils.getRealIpAddress(request),
+                currentUser.getAccountName(), currentUser.getAccountId(),
+                message, e);
+    }
+
+    private ResponseEntity<ApiResult<Void>> buildResponseEntity(final HttpServletRequest request,
+                                                                final HttpStatus httpStatus,
+                                                                final String message) {
+        if (isJsonRequest(request)) {
+            return new ResponseEntity<>(ApiResultWrapper.fail(message), httpStatus);
+        }
+
+        return new ResponseEntity<>(null, httpStatus);
     }
 }

@@ -15,7 +15,7 @@ public interface TokenAuthenticationService {
      *
      * @param token 需要认证的 Token
      * @return 用户详细数据
-     * @throws TokenAuthenticationException 若 Token 认证不通过
+     * @throws TokenAuthenticationException 当 Token 认证不通过时
      */
     TokenUserDetails authenticate(String token) throws TokenAuthenticationException;
 }

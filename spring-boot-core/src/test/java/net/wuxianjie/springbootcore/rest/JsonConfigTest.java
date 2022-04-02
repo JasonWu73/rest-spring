@@ -72,12 +72,14 @@ class JsonConfigTest {
         final User actual = jacksonTester.parse(json).getObject();
 
         // then
+        assertThat(actual).isNotEqualTo(user);
+
         user.setUsername(user.getUsername().trim());
         assertThat(actual).isEqualTo(user);
     }
 
     @Test
-    @DisplayName("JSON 反序列化不符合格式要求的日期时间字符")
+    @DisplayName("JSON 反序列化 - 不符合格式要求的日期时间字符")
     void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
         // given
         final String json = "{\"modifyTime\":\"2022-03-26T10:59:30\"}";
@@ -89,8 +91,8 @@ class JsonConfigTest {
     }
 
     private User buildUser() {
-        final String dateStr = "2022-03-26 10:59:30";
-        final LocalDateTime createTime = LocalDateTimeUtil.parse(dateStr, DatePattern.NORM_DATETIME_PATTERN);
+        final String dateString = "2022-03-26 10:59:30";
+        final LocalDateTime createTime = LocalDateTimeUtil.parse(dateString, DatePattern.NORM_DATETIME_PATTERN);
         return new User(
                 100,
                 "\t\n吴仙杰 ",
@@ -103,8 +105,8 @@ class JsonConfigTest {
     }
 
     @Data
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
     static class User {
 
         private Integer userId;

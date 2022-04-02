@@ -45,6 +45,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
 
     private UserDetails getUserDetailsFromCache(final String username, final String token) {
         final UserDetails userDetails = tokenCache.getIfPresent(username);
+
         if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {
             throw new TokenAuthenticationException("Token 已过期");
         }

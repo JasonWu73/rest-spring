@@ -20,7 +20,7 @@ public class StringUtils {
      * @param value 需要转换的原字符串
      * @return 去除字符串首尾空白字符后的 {@code %value%} 字符串；若 {@code value} 为 null 或仅包含空白字符，则返回 null
      */
-    public static String getFuzzySearchValue(final String value) {
+    public static String toFuzzy(final String value) {
         return Optional.ofNullable(StrUtil.trimToNull(value))
                 .map(v -> "%" + v + "%")
                 .orElse(null);

@@ -34,7 +34,8 @@ public class OperationLogServiceImpl implements OperationLogService {
      * @param query  查询参数
      * @return 日志列表
      */
-    public PagingResult<OperationLogDto> getLogs(final PagingQuery paging, final OperationLogQuery query) {
+    public PagingResult<OperationLogDto> getLogs(final PagingQuery paging,
+                                                 final OperationLogQuery query) {
         final List<OperationLogDto> logs = logMapper.selectLogs(paging, query);
 
         final int total = logMapper.countLogs(query);

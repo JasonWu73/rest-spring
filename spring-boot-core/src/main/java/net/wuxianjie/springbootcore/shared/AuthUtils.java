@@ -25,14 +25,12 @@ public class AuthUtils {
      */
     public static Optional<TokenUserDetails> getCurrentUser() {
         return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
-                .map(auth -> {
-                    if (auth instanceof AnonymousAuthenticationToken) {
-                        // 匿名用户可访问的接口，则返回空
-                        // auth.getName() 为 anonymous
-                        return null;
-                    }
+                .map(authentication -> {
+                    // 匿名用户可访问的接口，则返回空
+                    // auth.getName() 为 anonymous
+                    if (authentication instanceof AnonymousAuthenticationToken) return null;
 
-                    return (TokenUserDetails) auth.getPrincipal();
+                    return (TokenUserDetails) authentication.getPrincipal();
                 });
     }
 }

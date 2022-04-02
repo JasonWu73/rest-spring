@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Configuration;
  * @see SecurityConfigData
  * @see WebSecurityConfig
  */
-@Getter
-@Setter
 @Configuration
 @ConfigurationProperties(prefix = "core.security")
+@Getter
+@Setter
 public class SecurityConfigProperties {
 
     /**

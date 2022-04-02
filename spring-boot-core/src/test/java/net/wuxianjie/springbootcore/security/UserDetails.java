@@ -9,8 +9,8 @@ import net.wuxianjie.springbootcore.shared.TokenUserDetails;
  * @author 吴仙杰
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 class UserDetails implements TokenUserDetails {
 
     private Integer accountId;

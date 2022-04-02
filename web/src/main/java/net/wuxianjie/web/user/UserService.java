@@ -7,7 +7,7 @@ import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
+import net.wuxianjie.springbootcore.shared.exception.ConflictException;
 import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import net.wuxianjie.springbootcore.shared.util.StringUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -36,7 +36,8 @@ public class UserService {
      * @param query  查询参数
      * @return 用户列表
      */
-    public PagingResult<UserDto> getUsers(final PagingQuery paging, final UserQuery query) {
+    public PagingResult<UserDto> getUsers(final PagingQuery paging,
+                                          final UserQuery query) {
         final List<UserDto> users = userMapper.selectUsers(paging, query);
 
         final int total = userMapper.countUsers(query);
@@ -52,7 +53,9 @@ public class UserService {
     @Transactional(rollbackFor = Exception.class)
     public void saveUser(final UserQuery query) {
         final boolean isExists = userMapper.existsUserByName(query.getUsername());
-        if (isExists) throw new DataConflictException("已存在相同用户名");
+        if (isExists) {
+            throw new ConflictException("已存在相同用户名");
+        }
 
         final User user = new User();
         BeanUtil.copyProperties(query, user, "enabled");
@@ -90,7 +93,9 @@ public class UserService {
         final User user = getUserFromDbMustBeExists(query.getUserId());
 
         final boolean isMatched = passwordEncoder.matches(query.getOldPassword(), user.getHashedPassword());
-        if (!isMatched) throw new BadRequestException("旧密码错误");
+        if (!isMatched) {
+            throw new BadRequestException("旧密码错误");
+        }
 
         final String rawPassword = query.getNewPassword();
         final String hashedPassword = passwordEncoder.encode(rawPassword);

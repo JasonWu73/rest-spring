@@ -40,13 +40,11 @@ class RoleTest {
     }
 
     @Test
-    @DisplayName("将 null 解析为枚举值")
+    @DisplayName("不可解析为枚举值 - 解析 null")
     void canNotResolveNull() {
         // given
-        final String value = null;
-
         // when
-        final Optional<Role> actual = Role.resolve(value);
+        final Optional<Role> actual = Role.resolve(null);
 
         // then
         assertThat(actual.isEmpty()).isTrue();

@@ -50,7 +50,8 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
     }
 
     @Override
-    public boolean isValid(final Object value, final ConstraintValidatorContext context) {
+    public boolean isValid(final Object value,
+                           final ConstraintValidatorContext context) {
         return isPassed || value == null || values.contains(value);
     }
 }

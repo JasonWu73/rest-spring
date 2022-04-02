@@ -14,10 +14,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@Getter
-@ToString
-@Accessors(fluent = true)
 @RequiredArgsConstructor
+@Getter
+@Accessors(fluent = true)
+@ToString
 public enum Role {
 
     USER("user"),
@@ -41,8 +41,12 @@ public enum Role {
      */
     public static Optional<Role> resolve(final String value) {
         return Optional.ofNullable(value)
-                .map(v -> {
-                    for (final Role e : VALUES) if (StrUtil.equals(v, e.value)) return e;
+                .map(s -> {
+                    for (final Role role : VALUES) {
+                        if (StrUtil.equals(s, role.value)) {
+                            return role;
+                        }
+                    }
 
                     return null;
                 });

@@ -20,11 +20,13 @@ class EnumTypeHandlerTest {
 
     @Test
     @DisplayName("插入枚举值")
-    void itShouldCheckWhenInsertEnum() {
+    void canInsertEnum() {
         // given
         final String username = "测试用户";
         final YesOrNo yes = YesOrNo.YES;
-        final User user = new User(null, username, yes, null, null);
+        final User user = new User();
+        user.setUsername(username);
+        user.setEnabled(yes);
         underTest.insertUser(user);
 
         // when
@@ -35,11 +37,12 @@ class EnumTypeHandlerTest {
     }
 
     @Test
-    @DisplayName("插入 null 值并获取枚举值")
-    void itShouldCheckWhenInsertNullReturnEnum() {
+    @DisplayName("插入枚举值 - 插入 null 值，并获取枚举值")
+    void canInsertNullEnumReturnEnum() {
         // given
         final String username = "测试用户";
-        final User user = new User(null, username, null, null, null);
+        final User user = new User();
+        user.setUsername(username);
         underTest.insertUser(user);
 
         // when
@@ -50,26 +53,27 @@ class EnumTypeHandlerTest {
     }
 
     @Test
-    @DisplayName("获取一个无法映射的枚举值")
-    void itShouldCheckWhenReturnCanNotResolvedEnum() {
+    @DisplayName("插入枚举值 - 插入 null 值，但获取原始类型值")
+    void canGetPrimitiveEnumValue() {
         // given
+        final String username = "测试用户";
+        final User user = new User();
+        user.setUsername(username);
+        underTest.insertUser(user);
+
         // when
-        final YesOrNo actual = underTest.selectNegativeOne();
+        final Integer actual = underTest.selectEnabledByUsernameReturnInt(username);
 
         // then
         assertThat(actual).isNull();
     }
 
     @Test
-    @DisplayName("插入 null 值并获取原始类型值")
-    void itShouldCheckWhenInsertNullReturnPrimitive() {
+    @DisplayName("无法获取一个无法解析的枚举值")
+    void canNotGetUnresolvedEnumValue() {
         // given
-        final String username = "测试用户";
-        final User user = new User(null, username, null, null, null);
-        underTest.insertUser(user);
-
         // when
-        final Integer actual = underTest.selectEnabledByUsernameReturnInt(username);
+        final YesOrNo actual = underTest.selectNegativeOne();
 
         // then
         assertThat(actual).isNull();

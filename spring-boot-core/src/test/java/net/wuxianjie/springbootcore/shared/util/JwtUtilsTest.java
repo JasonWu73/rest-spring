@@ -29,8 +29,8 @@ class JwtUtilsTest {
     private static String token = "";
 
     @Test
-    @Order(1)
     @DisplayName("生成 JWT 签名密钥")
+    @Order(1)
     void itShouldGenerateNewJwtSigningKey() {
         // when
         secretKey = generateSigningKey();
@@ -42,8 +42,8 @@ class JwtUtilsTest {
     }
 
     @Test
-    @Order(2)
     @DisplayName("生成 JWT")
+    @Order(2)
     void itShouldGenerateNewJwt() {
         // given
         final Map<String, Object> payload = new HashMap<>() {{
@@ -60,8 +60,8 @@ class JwtUtilsTest {
     }
 
     @Test
-    @Order(3)
     @DisplayName("验证并解析 JWT")
+    @Order(3)
     void itShouldVerifyJwt() {
         // given
         // when

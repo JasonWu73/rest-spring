@@ -23,10 +23,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@Slf4j
 @EnableWebSecurity
-@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
+@Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     /**
@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     static final String ACCESS_TOKEN_PATH = "/api/v1/access-token";
 
     /**
-     * 刷新 Access Token 的请求路径前缀，并不包含 URL 路径参数。
+     * 刷新 Access Token 的请求路径前缀，不包含 URL 路径参数。
      */
     static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
 
@@ -54,10 +54,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final TokenAuthenticationFilter authenticationFilter;
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         final String[] antPatterns = Optional.ofNullable(securityConfigData.getPermitAllAntPatterns())
-                .map(patterns -> StrSplitter.splitToArray(patterns,
-                        ',', 0, true, true))
+                .map(s -> StrSplitter.splitToArray(s, ',', 0, true, true))
                 .orElse(new String[]{});
 
         http.authorizeRequests()
@@ -112,7 +111,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
-    private void logWarn(final HttpServletRequest request, final String message) {
+    private void logWarn(final HttpServletRequest request,
+                         final String message) {
         log.warn("uri={}；client={} -> {}",
                 request.getRequestURI(), NetUtils.getRealIpAddress(request), message);
     }

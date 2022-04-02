@@ -75,8 +75,8 @@ class AuthTestController {
     }
 
     @Data
-    @NoArgsConstructor
     @AllArgsConstructor
+    @NoArgsConstructor
     private static class Result {
 
         private String message;

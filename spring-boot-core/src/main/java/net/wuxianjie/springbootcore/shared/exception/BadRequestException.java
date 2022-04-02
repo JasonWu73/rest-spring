@@ -17,7 +17,8 @@ public class BadRequestException extends AbstractBaseException {
         super(message);
     }
 
-    public BadRequestException(final String message, final Throwable cause) {
+    public BadRequestException(final String message,
+                               final Throwable cause) {
         super(message, cause);
     }
 }

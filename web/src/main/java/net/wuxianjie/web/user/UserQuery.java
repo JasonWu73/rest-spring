@@ -20,8 +20,8 @@ import javax.validation.constraints.Pattern;
  * @author 吴仙杰
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserQuery {
 
     /**

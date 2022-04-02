@@ -20,7 +20,6 @@ class PagingTestController {
 
     private PagingResult<String> buildPagingResult(final PagingQuery paging) {
         final List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
-
         return new PagingResult<>(
                 paging,
                 allData.size(),

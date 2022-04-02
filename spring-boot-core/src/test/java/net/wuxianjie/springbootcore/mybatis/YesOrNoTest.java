@@ -14,7 +14,7 @@ class YesOrNoTest {
 
     @Test
     @DisplayName("可识别为 YesOrNo 枚举")
-    void itShouldCheckWhenCanResolve() {
+    void canResolve() {
         // given
         final int value = 1;
 
@@ -28,7 +28,7 @@ class YesOrNoTest {
 
     @Test
     @DisplayName("不可识为 YesOrNo 枚举")
-    void itShouldCheckWhenCanNotResolve() {
+    void canNotResolve() {
         // given
         final int value = -1;
 

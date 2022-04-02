@@ -35,11 +35,11 @@ class ExceptionControllerAdviceTest {
     private MockMvc mockMvc;
 
     @Test
-    @DisplayName("Accept 中包含 JSON MIME 类型，但目标 API 不支持")
-    void itShouldCheckWhenAcceptRequestHeaderContainJsonButApiNotSupported() throws Exception {
+    @DisplayName("API MIME 类型不支持 - Accept 中包含 JSON")
+    void requestNotAcceptableWhenApiNotSupportedButAcceptRequestHeaderContainsJson() throws Exception {
         // given
-        final String errMsg = "API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, application/xml]";
         final Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
+        final String errorMessage = "API 不支持返回请求头指定的 MIME 类型 [Accept: application/json, application/xml]";
 
         // when
         mockMvc.perform(get("/html")
@@ -49,13 +49,13 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value(errMsg))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("Accept 不包含 JSON MIME 类型，且目标 API 也不支持")
-    void itShouldCheckWhenGetAcceptRequestHeaderNotContainJsonAndApiNotSupported() throws Exception {
+    @DisplayName("API MIME 类型不支持 - Accept 中不包含 JSON")
+    void requestNotAcceptableWhenApiNotSupportedAndAcceptRequestHeaderNotContainsJson() throws Exception {
         // given
         final Class<HttpMediaTypeNotAcceptableException> errorType = HttpMediaTypeNotAcceptableException.class;
 
@@ -71,9 +71,10 @@ class ExceptionControllerAdviceTest {
 
     @Test
     @DisplayName("API 不支持请求方法")
-    void itShouldCheckWhenRequestMethodApiNotSupported() throws Exception {
+    void requestMethodNotAllowedWhenApiNotSupported() throws Exception {
         // given
         final Class<HttpRequestMethodNotSupportedException> errorType = HttpRequestMethodNotSupportedException.class;
+        final String errorMessage = "API 不支持 POST 请求方法";
 
         // when
         mockMvc.perform(post("/html"))
@@ -82,35 +83,37 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("API 不支持 POST 请求方法"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
     @DisplayName("请求体内容不合法")
-    void itShouldCheckWhenMalformedRequestBody() throws Exception {
+    void badRequestWhenMalformedRequestBody() throws Exception {
         // given
-        final String reqBody = "{";
+        final String requestBody = "{";
         final Class<HttpMessageNotReadableException> errorType = HttpMessageNotReadableException.class;
+        final String errorMessage = "请求体内容不合法";
 
         // when
         mockMvc.perform(post("/body")
                         .contentType(APPLICATION_JSON)
-                        .content(reqBody))
+                        .content(requestBody))
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("请求体内容不合法"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
     @DisplayName("请求缺少必填参数")
-    void itShouldCheckWhenRequestLackOfRequiredParam() throws Exception {
+    void badRequestWhenLackOfRequiredRequestParameter() throws Exception {
         // given
         final Class<MissingServletRequestParameterException> errorType = MissingServletRequestParameterException.class;
+        final String errorMessage = "缺少必填参数 name";
 
         // when
         mockMvc.perform(get("/required"))
@@ -119,13 +122,13 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("缺少必填参数 name"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("请求参数不合法 @Validated")
-    void itShouldCheckWhenRequestParamInvalidByValidatedAnnotation() throws Exception {
+    @DisplayName("请求参数不合法 - @Validated")
+    void badRequestWhenInvalidRequestParameterByValidatedAnnotation() throws Exception {
         // given
         final Class<ConstraintViolationException> errorType = ConstraintViolationException.class;
 
@@ -146,8 +149,8 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("请求参数不合法 @Valid")
-    void itShouldCheckWhenRequestParamInvalidByValidAnnotation() throws Exception {
+    @DisplayName("请求参数不合法 - @Valid")
+    void badRequestWhenInvalidRequestParameterByValidAnnotation() throws Exception {
         // given
         final Class<BindException> errorType = BindException.class;
 
@@ -168,11 +171,12 @@ class ExceptionControllerAdviceTest {
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 NotFoundException")
-    void itShouldCheckWhenThrowNotFoundException() throws Exception {
+    @DisplayName("自定义异常 - NotFoundException")
+    void notFoundWhenThrowCustomException() throws Exception {
         // given
         final String type = "not_found";
         final Class<NotFoundException> errorType = NotFoundException.class;
+        final String errorMessage = "未找到 id 为 x 的数据";
 
         // when
         mockMvc.perform(get("/exception")
@@ -182,16 +186,17 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("未找到 id 为 x 的数据"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 BadRequestException")
-    void itShouldCheckWhenThrowBadRequestException() throws Exception {
+    @DisplayName("自定义异常 -  BadRequestException")
+    void badRequestWhenThrowCustomException() throws Exception {
         // given
         final String type = "bad_request";
         final Class<BadRequestException> errorType = BadRequestException.class;
+        final String errorMessage = "客户端请求错误";
 
         // when
         mockMvc.perform(get("/exception")
@@ -201,16 +206,17 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("客户端请求错误"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 DataConflictException")
-    void itShouldCheckWhenThrowDataConflictException() throws Exception {
+    @DisplayName("自定义异常 - ConflictException")
+    void conflictWhenThrowCustomException() throws Exception {
         // given
         final String type = "conflict";
-        final Class<DataConflictException> errorType = DataConflictException.class;
+        final Class<ConflictException> errorType = ConflictException.class;
+        final String errorMessage = "已存在相同数据";
 
         // when
         mockMvc.perform(get("/exception")
@@ -220,16 +226,17 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("已存在相同数据"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 InternalException")
-    void itShouldCheckWhenThrowInternalException() throws Exception {
+    @DisplayName("自定义异常 - InternalException")
+    void internalServerErrorWhenThrowCustomException() throws Exception {
         // given
         final String type = "internal";
         final Class<InternalException> errorType = InternalException.class;
+        final String errorMessage = "服务内部异常";
 
         // when
         mockMvc.perform(get("/exception")
@@ -239,16 +246,17 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("服务内部异常"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("当程序抛出自定义异常 ExternalException")
-    void itShouldCheckWhenThrowExternalException() throws Exception {
+    @DisplayName("自定义异常 - ExternalException")
+    void serviceUnavailableWhenThrowCustomException() throws Exception {
         // given
         final String type = " external";
         final Class<ExternalException> errorType = ExternalException.class;
+        final String errorMessage = "外部 API 不可用";
 
         // when
         mockMvc.perform(get("/exception")
@@ -258,33 +266,37 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("外部 API 不可用"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 
     @Test
-    @DisplayName("当程序抛出 JDBC 异常")
-    void itShouldCheckWhenThrowJdbcException() throws Exception {
+    @DisplayName("JDBC 操作异常")
+    void internalServerErrorWhenThrowJdbcException() throws Exception {
         // given
         final String type = "\tdb\n";
         final Class<UncategorizedDataAccessException> errorType = UncategorizedDataAccessException.class;
+        final String errorMessage = "数据库操作异常";
 
         // when
         mockMvc.perform(get("/exception")
                         .param("type", type))
                 // then
+                .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("数据库操作异常"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
+
     }
 
     @Test
-    @DisplayName("当程序抛出其他异常")
-    void itShouldCheckWhenThrowOtherException() throws Exception {
+    @DisplayName("程序内其他异常")
+    void internalServerErrorWhenThrowOtherException() throws Exception {
         // given
         final Class<Throwable> errorType = Throwable.class;
+        final String errorMessage = "服务异常";
 
         // when
         mockMvc.perform(get("/exception"))
@@ -293,7 +305,7 @@ class ExceptionControllerAdviceTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(result -> assertThat(result.getResolvedException()).isInstanceOf(errorType))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("服务异常"))
+                .andExpect(jsonPath("$.errMsg").value(errorMessage))
                 .andExpect(jsonPath("$.data").doesNotExist());
     }
 }

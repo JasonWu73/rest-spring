@@ -22,6 +22,7 @@ public class RestApiConfig implements WebMvcConfigurer {
         converters.stream()
                 .filter(MappingJackson2HttpMessageConverter.class::isInstance)
                 .findFirst()
-                .ifPresent(converter -> ((MappingJackson2HttpMessageConverter) converter).setDefaultCharset(StandardCharsets.UTF_8));
+                .ifPresent(converter -> ((MappingJackson2HttpMessageConverter) converter).
+                        setDefaultCharset(StandardCharsets.UTF_8));
     }
 }

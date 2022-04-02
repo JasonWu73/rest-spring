@@ -32,10 +32,8 @@ class OperationLogControllerTest {
 
     @MockBean
     private OperationLogServiceImpl logService;
-
     @MockBean
     private TokenAuthenticationService authService;
-
     @MockBean
     private SecurityConfigData configData;
 

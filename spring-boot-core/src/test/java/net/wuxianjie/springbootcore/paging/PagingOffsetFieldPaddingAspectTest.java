@@ -18,8 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@Import({AnnotationAwareAspectJAutoProxyCreator.class, PagingOffsetFieldPaddingAspect.class})
 @WebMvcTest(controllers = PagingTestController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@Import({AnnotationAwareAspectJAutoProxyCreator.class, PagingOffsetFieldPaddingAspect.class})
 class PagingOffsetFieldPaddingAspectTest {
 
     @Autowired
@@ -48,8 +48,8 @@ class PagingOffsetFieldPaddingAspectTest {
 
 
     @Test
-    @DisplayName("当分页查询参数不合法时抛出异常")
-    void willThrowExceptionWhenPagingParamInvalid() throws Exception {
+    @DisplayName("无法获取分页数据 - 分页参数错误")
+    void canNotGetPageDataWhenPagingInvalidParameter() throws Exception {
         //given
         final String pageNo = "0";
         final String pageSize = "0";

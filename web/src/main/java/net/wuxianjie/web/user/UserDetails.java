@@ -12,8 +12,8 @@ import net.wuxianjie.springbootcore.shared.TokenUserDetails;
  * @author 吴仙杰
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class UserDetails implements TokenUserDetails {
 
     /**

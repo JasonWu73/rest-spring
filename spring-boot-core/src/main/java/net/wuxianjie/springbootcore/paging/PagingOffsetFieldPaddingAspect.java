@@ -38,7 +38,7 @@ public class PagingOffsetFieldPaddingAspect {
      * @param joinpoint {@link JoinPoint}
      */
     @Before("pagingSearchPointcut()")
-    public void beforeCallControllerMethodGetByPaging(final JoinPoint joinpoint) {
+    public void beforeCallGetByPaging(final JoinPoint joinpoint) {
         Optional.ofNullable(joinpoint.getArgs())
                 .ifPresent(args -> Arrays.stream(args)
                         .filter(PagingQuery.class::isInstance)

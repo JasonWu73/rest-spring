@@ -18,7 +18,8 @@ public abstract class AbstractBaseException extends RuntimeException {
         super(message);
     }
 
-    public AbstractBaseException(final String message, final Throwable cause) {
+    public AbstractBaseException(final String message,
+                                 final Throwable cause) {
         super(message, cause);
     }
 

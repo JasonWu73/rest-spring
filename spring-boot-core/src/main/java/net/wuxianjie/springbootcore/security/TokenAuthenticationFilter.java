@@ -55,15 +55,15 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(final @NonNull HttpServletRequest request,
                                     final @NonNull HttpServletResponse response,
                                     final @NonNull FilterChain filterChain) throws IOException, ServletException {
-        final Optional<String> tokenOpt = getTokenFromRequest(request);
+        final Optional<String> tokenOptional = getTokenFromRequest(request);
 
-        if (tokenOpt.isEmpty()) {
+        if (tokenOptional.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            final TokenUserDetails userDetails = authService.authenticate(tokenOpt.get());
+            final TokenUserDetails userDetails = authService.authenticate(tokenOptional.get());
             loginToSpringSecurityContext(userDetails);
         } catch (TokenAuthenticationException e) {
             SecurityContextHolder.clearContext();
@@ -85,10 +85,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private Optional<String> getTokenFromRequest(final HttpServletRequest request) {
         return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
-                .map(bearer -> {
-                    if (!StrUtil.startWith(bearer, BEARER_PREFIX)) return null;
+                .map(s -> {
+                    if (!StrUtil.startWith(s, BEARER_PREFIX)) return null;
 
-                    final String token = StrUtil.subAfter(bearer, BEARER_PREFIX, false);
+                    final String token = StrUtil.subAfter(s, BEARER_PREFIX, false);
                     return StrUtil.trimToNull(token);
                 });
     }
@@ -96,18 +96,23 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private void loginToSpringSecurityContext(final TokenUserDetails userDetails) {
         final List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
 
-        final UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+        final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 userDetails, null, authorityList);
-        SecurityContextHolder.getContext().setAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
 
     private List<GrantedAuthority> getAuthorities(final String commaSeparatedRole) {
-        if (StrUtil.isEmpty(commaSeparatedRole)) return Collections.emptyList();
+        if (StrUtil.isEmpty(commaSeparatedRole)) {
+            return Collections.emptyList();
+        }
 
         final String roles = Arrays.stream(commaSeparatedRole.split(","))
                 .reduce("", (roleOne, roleTwo) -> {
                     final String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
-                    if (StrUtil.isEmpty(roleOne)) return appended;
+
+                    if (StrUtil.isEmpty(roleOne)) {
+                        return appended;
+                    }
 
                     return roleOne + "," + appended;
                 });

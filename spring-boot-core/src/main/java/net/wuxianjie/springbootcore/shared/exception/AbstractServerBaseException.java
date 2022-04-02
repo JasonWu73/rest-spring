@@ -14,7 +14,8 @@ public abstract class AbstractServerBaseException extends AbstractBaseException 
         super(message);
     }
 
-    public AbstractServerBaseException(final String message, final Throwable cause) {
+    public AbstractServerBaseException(final String message,
+                                       final Throwable cause) {
         super(message, cause);
     }
 }

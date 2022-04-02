@@ -6,7 +6,7 @@ import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.exception.DataConflictException;
+import net.wuxianjie.springbootcore.shared.exception.ConflictException;
 import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -110,7 +110,7 @@ class UserServiceTest {
         // when
         // then
         assertThatThrownBy(() -> underTest.saveUser(query))
-                .isInstanceOf(DataConflictException.class)
+                .isInstanceOf(ConflictException.class)
                 .hasMessage("已存在相同用户名");
         verify(userMapper, never()).insertUser(any());
     }

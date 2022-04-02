@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
  * @author 吴仙杰
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 class User {
 
     private Integer userId;

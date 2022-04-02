@@ -83,7 +83,7 @@ public class JsonConfig {
 
                 @Override
                 public LocalDateTime deserialize(final JsonParser p,
-                                                 final DeserializationContext ctxt) throws IOException {
+                                                 final DeserializationContext ctx) throws IOException {
                     return LocalDateTime.parse(p.getValueAsString(), dateTimeFormatter);
                 }
             });

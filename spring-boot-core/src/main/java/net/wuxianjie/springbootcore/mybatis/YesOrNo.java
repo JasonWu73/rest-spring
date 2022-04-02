@@ -13,10 +13,10 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@Getter
-@ToString
 @RequiredArgsConstructor
+@Getter
 @Accessors(fluent = true)
+@ToString
 public enum YesOrNo implements ValueEnum {
 
     /**
@@ -45,7 +45,11 @@ public enum YesOrNo implements ValueEnum {
      * @return 整数值所对应的枚举常量
      */
     public static Optional<YesOrNo> resolve(final int value) {
-        for (final YesOrNo e : VALUES) if (value == e.value) return Optional.of(e);
+        for (final YesOrNo yesOrNo : VALUES) {
+            if (value == yesOrNo.value) {
+                return Optional.of(yesOrNo);
+            }
+        }
 
         return Optional.empty();
     }

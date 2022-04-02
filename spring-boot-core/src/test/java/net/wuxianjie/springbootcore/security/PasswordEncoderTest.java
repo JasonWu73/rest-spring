@@ -13,8 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author 吴仙杰
  */
-@Slf4j
 @SpringBootTest(classes = SecurityConfig.class)
+@Slf4j
 class PasswordEncoderTest {
 
     private String rawPassword;
@@ -33,7 +33,7 @@ class PasswordEncoderTest {
     @Test
     @DisplayName("编码明文密码")
     void canGetHashedPassword() {
-        //given
+        // given
         // when
         hashedPassword = passwordEncoder.encode(rawPassword);
 

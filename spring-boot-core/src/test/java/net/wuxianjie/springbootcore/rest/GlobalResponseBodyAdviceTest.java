@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static net.wuxianjie.springbootcore.rest.GlobalResponseBodyAdvice.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,7 +40,7 @@ class GlobalResponseBodyAdviceTest {
     void itShouldCheckWhenObjectReturnTypeReturnNull() throws Exception {
         // given
         // when
-        mockMvc.perform(get("/null-obj"))
+        mockMvc.perform(get("/null-when-object-return-type"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
@@ -54,7 +54,7 @@ class GlobalResponseBodyAdviceTest {
     void itShouldCheckWhenStringReturnTypeReturnNull() throws Exception {
         // given
         // when
-        mockMvc.perform(get("/null-str"))
+        mockMvc.perform(get("/null-when-string-return-type"))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").doesNotExist());
@@ -62,26 +62,32 @@ class GlobalResponseBodyAdviceTest {
 
     @Test
     @DisplayName("Controller 返回 String 值")
-    void itShouldCheckWhenReturnStr() throws Exception {
+    void itShouldCheckWhenReturnString() throws Exception {
         // given
+        final String responseContentType = "text/plain;charset=UTF-8";
+        final String response = "Hello World";
+
         // when
         mockMvc.perform(get("/str"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=UTF-8"))
-                .andExpect(jsonPath("$").value("Hello World"));
+                .andExpect(content().contentType(responseContentType))
+                .andExpect(jsonPath("$").value(response));
     }
 
     @Test
     @DisplayName("Controller 返回 HTML")
     void itShouldCheckWhenReturnHtml() throws Exception {
         // given
+        final String responseContentType = "text/html;charset=UTF-8";
+        final String html = "<h1>Hello World</h1>";
+
         // when
         mockMvc.perform(get("/html"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("text/html;charset=UTF-8"))
-                .andExpect(jsonPath("$").value("<h1>Hello World</h1>"));
+                .andExpect(content().contentType(responseContentType))
+                .andExpect(jsonPath("$").value(html));
     }
 
     @Test
@@ -92,7 +98,7 @@ class GlobalResponseBodyAdviceTest {
         mockMvc.perform(get("/bytes"))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                .andExpect(content().contentType(APPLICATION_OCTET_STREAM_VALUE))
                 .andExpect(jsonPath("$").value("Hello Bytes"));
     }
 }

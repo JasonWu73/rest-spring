@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
  * @author 吴仙杰
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class TokenData {
 
     /**

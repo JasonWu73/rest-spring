@@ -27,9 +27,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan("net.wuxianjie.springbootcore.rest")
 class AuthControllerTest {
 
+    @SuppressWarnings("unused")
     @MockBean
     private TokenService tokenService;
-
     @MockBean
     private TokenAuthenticationService authService;
 
@@ -88,8 +88,8 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestPublicApiProvideExpiredAccessToken() throws Exception {
         // given
         final String token = "fake_access_token";
-        final String errMsg = "Token 已过期";
-        given(authService.authenticate(token)).willThrow(new TokenAuthenticationException(errMsg));
+        final String errorMessage = "Token 已过期";
+        given(authService.authenticate(token)).willThrow(new TokenAuthenticationException(errorMessage));
 
         // when
         mockMvc.perform(get("/api/v1/auth-test/public")
@@ -98,7 +98,7 @@ class AuthControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value(errMsg));
+                .andExpect(jsonPath("$.errMsg").value(errorMessage));
     }
 
     @Test
@@ -106,8 +106,8 @@ class AuthControllerTest {
     void itShouldCheckWhenRequestPublicApiButTokenFilterError() throws Exception {
         // given
         final String token = "fake_access_token";
-        final String errMsg = "执行 Token 认证发生未知错误";
-        given(authService.authenticate(token)).willThrow(new RuntimeException(errMsg));
+        final String errorMessage = "执行 Token 认证发生未知错误";
+        given(authService.authenticate(token)).willThrow(new RuntimeException(errorMessage));
 
         // when
         mockMvc.perform(get("/api/v1/auth-test/public")
@@ -116,7 +116,7 @@ class AuthControllerTest {
                 .andExpect(status().isInternalServerError())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value(errMsg));
+                .andExpect(jsonPath("$.errMsg").value(errorMessage));
     }
 
     @Test
@@ -137,6 +137,7 @@ class AuthControllerTest {
     @DisplayName("受保护 API - 有 Token")
     void itShouldCheckWhenRequestProtectedApiProvideAccessToken() throws Exception {
         // given
+        final String message = "只要通过 Token 认证（登录后）即可访问的 API";
         final String token = "fake_access_token";
         final UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
@@ -150,7 +151,7 @@ class AuthControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.message").value("只要通过 Token 认证（登录后）即可访问的 API"))
+                .andExpect(jsonPath("$.data.message").value(message))
                 .andExpect(jsonPath("$.data.username").value(userDetails.getAccountName()));
     }
 
@@ -158,7 +159,7 @@ class AuthControllerTest {
     @DisplayName("USER API - 有 USER 角色授权 Token")
     void itShouldCheckWhenRequestUserApiProvideUserRoleAccessToken() throws Exception {
         // given
-        final String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.USER.value());
+        final String message = StrUtil.format("通过 Token 认证且必须拥有 [{}] 角色才可访问的 API", Role.USER.value());
         final String token = "fake_access_token";
         final UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
@@ -173,7 +174,7 @@ class AuthControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.message").value(msg))
+                .andExpect(jsonPath("$.data.message").value(message))
                 .andExpect(jsonPath("$.data.username").value(userDetails.getAccountName()));
     }
 
@@ -322,7 +323,8 @@ class AuthControllerTest {
     @DisplayName("USER OR ADMIN API - 有 USER 角色授权 Token")
     void itShouldCheckWhenRequestUserOrAdminApiProvideUserRoleAccessToken() throws Exception {
         // given
-        final String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API", Role.USER.value(), Role.ADMIN.value());
+        final String message = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API",
+                Role.USER.value(), Role.ADMIN.value());
         final String token = "fake_access_token";
         final UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
@@ -337,7 +339,7 @@ class AuthControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.message").value(msg))
+                .andExpect(jsonPath("$.data.message").value(message))
                 .andExpect(jsonPath("$.data.username").value(userDetails.getAccountName()));
     }
 
@@ -345,7 +347,8 @@ class AuthControllerTest {
     @DisplayName("USER OR ADMIN API - 有 ADMIN 角色授权 Token")
     void itShouldCheckWhenRequestUserOrAdminApiProvideAdminRoleAccessToken() throws Exception {
         // given
-        final String msg = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API", Role.USER.value(), Role.ADMIN.value());
+        final String message = StrUtil.format("通过 Token 认证且必须拥有 [{}] 或 [{}] 角色才可访问的 API",
+                Role.USER.value(), Role.ADMIN.value());
         final String token = "fake_access_token";
         final UserDetails userDetails = new UserDetails();
         userDetails.setAccountName("测试用户");
@@ -360,7 +363,7 @@ class AuthControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.errMsg").doesNotExist())
-                .andExpect(jsonPath("$.data.message").value(msg))
+                .andExpect(jsonPath("$.data.message").value(message))
                 .andExpect(jsonPath("$.data.username").value(userDetails.getAccountName()));
     }
 

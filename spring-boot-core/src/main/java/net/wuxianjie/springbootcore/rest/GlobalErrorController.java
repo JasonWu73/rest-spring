@@ -23,9 +23,9 @@ import java.util.Optional;
  * @author 吴仙杰
  * @see ExceptionControllerAdvice
  */
-@Slf4j
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalErrorController implements ErrorController {
 
     private final ErrorAttributes errorAttributes;
@@ -39,26 +39,28 @@ public class GlobalErrorController implements ErrorController {
     @ResponseBody
     @RequestMapping("/error")
     public ResponseEntity<ApiResult<Void>> handleError(final WebRequest request) {
-        final Map<String, Object> attrs = errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
+        final Map<String, Object> attributes = errorAttributes
+                .getErrorAttributes(request, ErrorAttributeOptions.defaults());
 
-        final HttpStatus httpStatus = Optional.ofNullable((Integer) attrs.get("status"))
+        final HttpStatus httpStatus = Optional.ofNullable((Integer) attributes.get("status"))
                 .map(code -> Optional.ofNullable(HttpStatus.resolve(code)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
                 .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-        Optional<TokenUserDetails> curUserOpt = AuthUtils.getCurrentUser();
-        final Integer accountId = curUserOpt.map(TokenUserDetails::getAccountId).orElse(null);
-        final String accountName = curUserOpt.map(TokenUserDetails::getAccountName).orElse(null);
+        Optional<TokenUserDetails> userDetailsOptional = AuthUtils.getCurrentUser();
+        final Integer accountId = userDetailsOptional.map(TokenUserDetails::getAccountId).orElse(null);
+        final String accountName = userDetailsOptional.map(TokenUserDetails::getAccountName).orElse(null);
 
-        final String reqDesc = request.getDescription(true).replaceAll(";", "；");
+        final String requestDescription = request.getDescription(true)
+                .replaceAll(";", "；");
         if (httpStatus == HttpStatus.NOT_FOUND) {
             log.warn("{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
-                    reqDesc, accountName, accountId, attrs);
+                    requestDescription, accountName, accountId, attributes);
         } else {
             log.error("{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
-                    reqDesc, accountName, accountId, attrs);
+                    requestDescription, accountName, accountId, attributes);
         }
 
-        final String errMsg = (String) attrs.get("error");
-        return new ResponseEntity<>(ApiResultWrapper.fail(errMsg), httpStatus);
+        final String error = (String) attributes.get("error");
+        return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
     }
 }
