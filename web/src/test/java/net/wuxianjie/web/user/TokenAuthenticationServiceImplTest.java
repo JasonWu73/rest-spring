@@ -24,9 +24,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class TokenAuthenticationServiceImplTest {
 
+    private TokenAuthenticationService underTest;
+
     private Cache<String, UserDetails> tokenCache;
     private SecurityConfigData securityConfig;
-    private TokenAuthenticationService underTest;
 
     @BeforeEach
     void setUp() {

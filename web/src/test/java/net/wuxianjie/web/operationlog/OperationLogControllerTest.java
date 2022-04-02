@@ -1,5 +1,6 @@
 package net.wuxianjie.web.operationlog;
 
+import cn.hutool.core.date.LocalDateTimeUtil;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Role;
@@ -8,16 +9,21 @@ import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
 import net.wuxianjie.web.user.UserDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import static cn.hutool.core.date.DatePattern.NORM_DATETIME_PATTERN;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -34,6 +40,7 @@ class OperationLogControllerTest {
     private OperationLogServiceImpl logService;
     @MockBean
     private TokenAuthenticationService authService;
+    @SuppressWarnings("unused")
     @MockBean
     private SecurityConfigData configData;
 
@@ -70,11 +77,21 @@ class OperationLogControllerTest {
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$.error").value(0))
                 .andExpect(jsonPath("$.data.total").value(total));
+
+        // then
+        final ArgumentCaptor<OperationLogQuery> logArgumentCaptor = ArgumentCaptor.forClass(OperationLogQuery.class);
+        verify(logService).getLogs(any(), logArgumentCaptor.capture());
+
+        final OperationLogQuery logCaptured = logArgumentCaptor.getValue();
+        final LocalDateTime expectedStartTime = LocalDateTimeUtil.parse("2022-04-01 00:00:00", NORM_DATETIME_PATTERN);
+        final LocalDateTime expectedEndTime = LocalDateTimeUtil.parse("2022-04-01 23:59:59", NORM_DATETIME_PATTERN);
+        assertThat(logCaptured.getStartTimeInclusive()).isEqualToIgnoringNanos(expectedStartTime);
+        assertThat(logCaptured.getEndTimeInclusive()).isEqualToIgnoringNanos(expectedEndTime);
     }
 
     @Test
     @DisplayName("获取操作日志列表 - 开始日期不合法")
-    void getLogsWhenInvalidStartDate() throws Exception {
+    void canNotGetLogsWhenInvalidStartDate() throws Exception {
         // given
         final PagingQuery paging = new PagingQuery();
         paging.setPageNo(1);
@@ -106,7 +123,7 @@ class OperationLogControllerTest {
 
     @Test
     @DisplayName("获取操作日志列表 - 结束日期不合法")
-    void getLogsWhenInvalidEndDate() throws Exception {
+    void canNotGetLogsWhenInvalidEndDate() throws Exception {
         // given
         final PagingQuery paging = new PagingQuery();
         paging.setPageNo(1);
@@ -138,7 +155,7 @@ class OperationLogControllerTest {
 
     @Test
     @DisplayName("获取操作日志列表 - 开始日期晚于结束日期")
-    void getLogsWhenStartDateIsAfterEndDate() throws Exception {
+    void catNotGetLogsWhenStartDateIsAfterEndDate() throws Exception {
         // given
         final PagingQuery paging = new PagingQuery();
         paging.setPageNo(1);

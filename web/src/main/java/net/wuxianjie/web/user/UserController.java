@@ -88,7 +88,9 @@ public class UserController {
      */
     @PostMapping("password")
     public void updatePassword(@RequestBody @Validated(GroupTwo.class) final UserQuery query) {
-        verifyPasswordDifference(query.getOldPassword(), query.getNewPassword());
+        if (StrUtil.equals(query.getOldPassword(), query.getNewPassword())) {
+            throw new BadRequestException("新旧密码不能相同");
+        }
 
         setCurrentUserId(query);
 
@@ -145,7 +147,6 @@ public class UserController {
     }
 
     private void verifyPasswordDifference(final String oldPassword, final String newPassword) {
-        if (StrUtil.equals(oldPassword, newPassword)) throw new BadRequestException("新旧密码不能相同");
     }
 
     private void setCurrentUserId(final UserQuery query) {

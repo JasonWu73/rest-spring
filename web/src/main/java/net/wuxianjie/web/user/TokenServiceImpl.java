@@ -28,8 +28,8 @@ public class TokenServiceImpl implements TokenService {
 
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
-    private final SecurityConfigData securityConfig;
     private final Cache<String, UserDetails> tokenCache;
+    private final SecurityConfigData securityConfig;
 
     @Override
     public TokenData getToken(final String account,
@@ -38,7 +38,10 @@ public class TokenServiceImpl implements TokenService {
 
         verifyAccountAvailable(user.getEnabled());
 
-        verifyPassword(password, user.getHashedPassword());
+        final boolean isMatched = passwordEncoder.matches(password, user.getHashedPassword());
+        if (!isMatched) {
+            throw new TokenAuthenticationException("密码错误");
+        }
 
         final TokenData token = generateToken(user);
 
@@ -63,6 +66,8 @@ public class TokenServiceImpl implements TokenService {
                 .orElseThrow(() -> new TokenAuthenticationException(
                         StrUtil.format("Token 缺少 {} 信息", TokenAttributes.ACCOUNT_KEY)));
 
+        verifyRefreshExists(username, refreshToken);
+
         final User user = getUserFromDbMustBeExists(username);
 
         verifyAccountAvailable(user.getEnabled());
@@ -76,16 +81,13 @@ public class TokenServiceImpl implements TokenService {
 
     private User getUserFromDbMustBeExists(String username) {
         return Optional.ofNullable(userMapper.selectUserByName(username))
-                .orElseThrow(() -> new NotFoundException("账号不存在"));
+                .orElseThrow(() -> new NotFoundException("未找到账号"));
     }
 
     private void verifyAccountAvailable(final YesOrNo enabled) {
-        if (enabled != YesOrNo.YES) throw new TokenAuthenticationException("账号已被禁用");
-    }
-
-    private void verifyPassword(final String rawPassword, final String hashedPassword) {
-        final boolean isMatched = passwordEncoder.matches(rawPassword, hashedPassword);
-        if (!isMatched) throw new TokenAuthenticationException("密码错误");
+        if (enabled != YesOrNo.YES) {
+            throw new TokenAuthenticationException("账号已禁用");
+        }
     }
 
     private TokenData generateToken(final User user) {
@@ -116,5 +118,13 @@ public class TokenServiceImpl implements TokenService {
                 token.getRefreshToken()
         );
         tokenCache.put(user.getUsername(), userDetails);
+    }
+
+    private void verifyRefreshExists(final String username, final String refreshToken) {
+        final UserDetails userDetails = tokenCache.getIfPresent(username);
+
+        if (userDetails == null || !StrUtil.equals(refreshToken, userDetails.getRefreshToken())) {
+            throw new TokenAuthenticationException("Token 已过期");
+        }
     }
 }

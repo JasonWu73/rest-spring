@@ -78,6 +78,7 @@ class UserServiceTest {
         final UserQuery query = new UserQuery();
         final String username = "测试用户";
         final int enabled = 1;
+        query.setPassword("123");
         query.setUsername(username);
         query.setEnabled(enabled);
 
@@ -122,6 +123,7 @@ class UserServiceTest {
         final UserQuery query = new UserQuery();
         final String username = "测试用户";
         final int enabled = 10;
+        query.setPassword("123");
         query.setUsername(username);
         query.setEnabled(enabled);
 
@@ -280,6 +282,7 @@ class UserServiceTest {
         // then
         final ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
         verify(userMapper).deleteUserById(integerArgumentCaptor.capture());
+
         assertThat(integerArgumentCaptor.getValue()).isEqualTo(userId);
     }
 }
