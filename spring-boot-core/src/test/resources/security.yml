@@ -1,0 +1,4 @@
+core:
+  security:
+    jwt-signing-key: Qrjfl4tcKH9Yx5KROHQ8jQdRmJgbZWvy3v4hEoxzFq0=
+    permit-all-ant-patterns: /api/v1/auth-test/public, /public/**

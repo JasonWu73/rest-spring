@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
 import net.wuxianjie.springbootcore.shared.util.NetUtils;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -50,12 +53,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     };
 
     private final ObjectMapper objectMapper;
-    private final SecurityConfigData securityConfigData;
+    private final SecurityConfig securityConfig;
     private final TokenAuthenticationFilter authenticationFilter;
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final String[] antPatterns = Optional.ofNullable(securityConfigData.getPermitAllAntPatterns())
+        final String[] antPatterns = Optional.ofNullable(securityConfig.getPermitAllAntPatterns())
                 .map(s -> StrSplitter.splitToArray(s, ',', 0, true, true))
                 .orElse(new String[]{});
 
@@ -109,6 +112,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 添加 Token 认证过滤器
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    /**
+     * 密码哈希编码器。
+     *
+     * @return {@link PasswordEncoder}
+     */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     private void logWarn(final HttpServletRequest request,

@@ -1,11 +1,13 @@
 package net.wuxianjie.springbootcore.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,15 +15,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author 吴仙杰
  */
-@SpringBootTest(classes = SecurityConfig.class)
+@SpringBootTest(classes = WebSecurityConfig.class)
 @Slf4j
 class PasswordEncoderTest {
 
-    private String rawPassword;
-    private static String hashedPassword;
+    @SuppressWarnings("unused")
+    @MockBean
+    private ObjectMapper objectMapper;
+    @SuppressWarnings("unused")
+    @MockBean
+    private SecurityConfig securityConfig;
+    @SuppressWarnings("unused")
+    @MockBean
+    private TokenAuthenticationFilter authFilter;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    private String rawPassword;
+    private static String hashedPassword;
 
     @BeforeEach
     void setUp() {

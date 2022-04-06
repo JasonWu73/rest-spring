@@ -1,53 +1,32 @@
 package net.wuxianjie.springbootcore.security;
 
-import cn.hutool.core.util.StrUtil;
-import net.wuxianjie.springbootcore.shared.YamlSourceFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.constraints.NotBlank;
 
 /**
- * Web 安全相关所需配置。
+ * Web 安全相关的配置项属性说明。
  *
  * @author 吴仙杰
+ * @see WebSecurityConfig
  */
 @Configuration
-@PropertySource(value = "classpath:core.yml", factory = YamlSourceFactory.class)
+@ConfigurationProperties(prefix = "core.security")
+@Data
+@Validated
 public class SecurityConfig {
 
-    @Value("${core.security.jwt-signing-key}")
+    /**
+     * JWT 签名密钥。
+     */
+    @NotBlank(message = "JWT 签名密钥不能为空")
     private String jwtSigningKey;
 
-    @Value("${core.security.permit-all-ant-patterns}")
+    /**
+     * 无需认证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
+     */
     private String permitAllAntPatterns;
-
-    /**
-     * 密码哈希编码器。
-     *
-     * @return {@link PasswordEncoder}
-     */
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    /**
-     * Web 安全相关的配置对象。
-     *
-     * @return {@link SecurityConfigData}
-     */
-    @Bean
-    public SecurityConfigData securityConfigData() {
-        jwtSigningKey = StrUtil.trimToNull(jwtSigningKey);
-        permitAllAntPatterns = StrUtil.trimToNull(permitAllAntPatterns);
-
-        if (jwtSigningKey == null) {
-            throw new IllegalArgumentException("core.security.jwt-signing-key 不能为空");
-        }
-
-        return new SecurityConfigData(jwtSigningKey, permitAllAntPatterns);
-    }
 }
