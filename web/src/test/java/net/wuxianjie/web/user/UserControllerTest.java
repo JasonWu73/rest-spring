@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class UserControllerTest {
     private TokenAuthenticationService authService;
     @SuppressWarnings("unused")
     @MockBean
-    private SecurityConfigData configData;
+    private SecurityConfig configData;
 
     @Autowired
     private MockMvc mockMvc;

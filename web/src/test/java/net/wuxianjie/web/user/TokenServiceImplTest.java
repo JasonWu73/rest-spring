@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
 import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
@@ -37,14 +37,15 @@ class TokenServiceImplTest {
     private UserMapper userMapper;
 
     private Cache<String, UserDetails> tokenCache;
-    private SecurityConfigData securityConfig;
+    private SecurityConfig securityConfig;
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
     void setUp() {
         passwordEncoder = new BCryptPasswordEncoder();
         tokenCache = Caffeine.newBuilder().build();
-        securityConfig = new SecurityConfigData("kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=", null);
+        securityConfig = new SecurityConfig();
+        securityConfig.setJwtSigningKey("kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=");
         underTest = new TokenServiceImpl(userMapper, passwordEncoder, tokenCache, securityConfig);
     }
 

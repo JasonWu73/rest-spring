@@ -4,7 +4,7 @@ import cn.hutool.core.date.LocalDateTimeUtil;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
 import net.wuxianjie.web.user.UserDetails;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +42,7 @@ class OperationLogControllerTest {
     private TokenAuthenticationService authService;
     @SuppressWarnings("unused")
     @MockBean
-    private SecurityConfigData configData;
+    private SecurityConfig securityConfig;
 
     @Autowired
     private MockMvc mockMvc;

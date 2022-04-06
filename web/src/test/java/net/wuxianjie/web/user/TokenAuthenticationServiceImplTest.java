@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
 import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
@@ -27,12 +27,13 @@ class TokenAuthenticationServiceImplTest {
     private TokenAuthenticationService underTest;
 
     private Cache<String, UserDetails> tokenCache;
-    private SecurityConfigData securityConfig;
+    private SecurityConfig securityConfig;
 
     @BeforeEach
     void setUp() {
         tokenCache = Caffeine.newBuilder().build();
-        securityConfig = new SecurityConfigData("kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=", null);
+        securityConfig = new SecurityConfig();
+        securityConfig.setJwtSigningKey("kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=");
         underTest = new TokenAuthenticationServiceImpl(securityConfig, tokenCache);
     }
 

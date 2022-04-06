@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.SecurityConfigData;
+import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
 import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final Cache<String, UserDetails> tokenCache;
-    private final SecurityConfigData securityConfig;
+    private final SecurityConfig securityConfig;
 
     @Override
     public TokenData getToken(final String account,
