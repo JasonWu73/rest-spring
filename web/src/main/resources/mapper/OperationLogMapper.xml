@@ -9,6 +9,15 @@
             <if test="q.endTimeInclusive != null">
                 AND operation_time &lt;= #{q.endTimeInclusive}
             </if>
+            <if test="q.username != null">
+                AND username LIKE #{q.username}
+            </if>
+            <if test="q.requestIp != null">
+                AND request_ip LIKE #{q.requestIp}
+            </if>
+            <if test="q.methodMessage != null">
+                AND method_message LIKE #{q.methodMessage}
+            </if>
         </where>
     </sql>
 

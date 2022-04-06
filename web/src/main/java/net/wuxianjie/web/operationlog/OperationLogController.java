@@ -6,6 +6,7 @@ import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
+import net.wuxianjie.springbootcore.shared.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,6 +40,8 @@ public class OperationLogController {
     @GetMapping("list")
     public PagingResult<OperationLogDto> getLogs(@Validated final PagingQuery paging,
                                                  @Validated final OperationLogQuery query) {
+        setFuzzySearchValue(query);
+
         final LocalDateTime startTime = toStartTimeOfDay(query.getStartDate());
         query.setStartTimeInclusive(startTime);
 
@@ -76,5 +79,11 @@ public class OperationLogController {
         }
 
         return startDate.atStartOfDay();
+    }
+
+    private void setFuzzySearchValue(final OperationLogQuery query) {
+        query.setUsername(StringUtils.toFuzzy(query.getUsername()));
+        query.setRequestIp(StringUtils.toFuzzy(query.getRequestIp()));
+        query.setMethodMessage(StringUtils.toFuzzy(query.getMethodMessage()));
     }
 }
