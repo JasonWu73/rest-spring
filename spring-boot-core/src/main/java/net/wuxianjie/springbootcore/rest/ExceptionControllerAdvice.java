@@ -22,6 +22,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -81,6 +83,23 @@ public class ExceptionControllerAdvice {
         logWarnOrError(request, message, true);
 
         return buildResponseEntity(request, HttpStatus.METHOD_NOT_ALLOWED, message);
+    }
+
+    /**
+     * 处理因 HTTP 请求不是 Multipart Request，但 Controller 中参数存在 {@link MultipartFile} 而导致的异常。
+     *
+     * @param request {@link HttpServletRequest}
+     * @return {@link ResponseEntity}
+     */
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ApiResult<Void>> handleMultipartException(final MultipartException e,
+                                                                    final HttpServletRequest request) {
+
+        final String message = StrUtil.format("API 要求请求必须为 Multipart Request");
+
+        logWarnOrError(request, message, e, true);
+
+        return buildResponseEntity(request, HttpStatus.NOT_ACCEPTABLE, message);
     }
 
     /**
