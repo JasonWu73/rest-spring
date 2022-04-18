@@ -15,10 +15,12 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,7 +36,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class OperationLogAspect {
-    
+
     static final String VOID_RETURN_TYPE = "void";
 
     private final ObjectMapper objectMapper;
@@ -110,8 +112,18 @@ public class OperationLogAspect {
         final MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         return Optional.ofNullable(joinPoint.getArgs())
                 .map(args -> {
+                    final Object[] logArgs = Arrays.stream(args)
+                            .map(arg -> {
+                                if (arg instanceof MultipartFile) {
+                                    return ((MultipartFile) arg).getOriginalFilename();
+                                }
+
+                                return arg;
+                            })
+                            .toArray();
+
                     final String[] parameterNames = methodSignature.getParameterNames();
-                    return ArrayUtil.zip(parameterNames, args, true);
+                    return ArrayUtil.zip(parameterNames, logArgs, true);
                 })
                 .orElse(new HashMap<>());
     }
