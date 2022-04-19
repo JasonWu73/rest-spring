@@ -7,6 +7,7 @@ import net.wuxianjie.springbootcore.shared.TokenUserDetails;
 import net.wuxianjie.springbootcore.shared.exception.AbstractBaseException;
 import net.wuxianjie.springbootcore.shared.exception.AbstractServerBaseException;
 import net.wuxianjie.springbootcore.shared.util.NetUtils;
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -234,6 +235,20 @@ public class ExceptionControllerAdvice {
         logError(request, message, e);
 
         return buildResponseEntity(request, HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
+    /**
+     * 处理非正常关闭 socket 引发的错误。
+     *
+     * @param e       {@link ClientAbortException}
+     * @param request {@link HttpServletRequest}
+     */
+    @ExceptionHandler(ClientAbortException.class)
+    public void handleClientAbortException(final ClientAbortException e,
+                                           final HttpServletRequest request) {
+        final String message = "非正常关闭 socket";
+
+        logError(request, message, e);
     }
 
     /**
