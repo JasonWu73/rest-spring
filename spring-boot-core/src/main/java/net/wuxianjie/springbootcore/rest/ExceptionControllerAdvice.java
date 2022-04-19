@@ -246,9 +246,9 @@ public class ExceptionControllerAdvice {
     @ExceptionHandler(ClientAbortException.class)
     public void handleClientAbortException(final ClientAbortException e,
                                            final HttpServletRequest request) {
-        final String message = "非正常关闭 socket";
+        final String message = StrUtil.format("非正常关闭 socket：{}", e.getMessage());
 
-        logError(request, message, e);
+        logWarnOrError(request, message, true);
     }
 
     /**
