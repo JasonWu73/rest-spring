@@ -8,6 +8,7 @@ import net.wuxianjie.springbootcore.shared.exception.AbstractBaseException;
 import net.wuxianjie.springbootcore.shared.exception.AbstractServerBaseException;
 import net.wuxianjie.springbootcore.shared.util.NetUtils;
 import org.apache.catalina.connector.ClientAbortException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.UncategorizedDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -184,11 +185,26 @@ public class ExceptionControllerAdvice {
 
         final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
         for (final FieldError fieldError : fieldErrors) {
-            final String message = fieldError.getDefaultMessage();
+            // 当传参与请求对象字段的类型不匹配时不返回详细信息
+            final String message;
+            final boolean isTypeMismatch = fieldError.contains(TypeMismatchException.class);
+            final String field = fieldError.getField();
+
+            if (isTypeMismatch) {
+                message = StrUtil.format("{} 类型不匹配", field);
+            } else {
+                message = fieldError.getDefaultMessage();
+            }
+
             messageList.add(message);
 
-            final String logMsg = StrUtil.format("{} [{}={}]",
-                    message, fieldError.getField(), fieldError.getRejectedValue());
+            final String logMsg = StrUtil.format(
+                    "{} [{}={}]",
+                    message,
+                    field,
+                    fieldError.getRejectedValue()
+            );
+
             logMessageList.add(logMsg);
         }
 
