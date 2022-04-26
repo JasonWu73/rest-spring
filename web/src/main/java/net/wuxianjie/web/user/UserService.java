@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
-import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.exception.ConflictException;
-import net.wuxianjie.springbootcore.shared.exception.NotFoundException;
-import net.wuxianjie.springbootcore.shared.util.StringUtils;
+import net.wuxianjie.springbootcore.exception.BadRequestException;
+import net.wuxianjie.springbootcore.exception.ConflictException;
+import net.wuxianjie.springbootcore.exception.NotFoundException;
+import net.wuxianjie.springbootcore.util.StrUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,120 +26,120 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
+  private final UserMapper userMapper;
+  private final PasswordEncoder passwordEncoder;
 
-    /**
-     * 获取用户列表。
-     *
-     * @param paging 分页参数
-     * @param query  查询参数
-     * @return 用户列表
-     */
-    public PagingResult<UserDto> getUsers(final PagingQuery paging,
-                                          final UserQuery query) {
-        final List<UserDto> users = userMapper.selectUsers(paging, query);
+  /**
+   * 获取用户列表。
+   *
+   * @param paging 分页参数
+   * @param query  查询参数
+   * @return 用户列表
+   */
+  public PagingResult<UserDto> getUsers(PagingQuery paging,
+                                        GetUserQuery query) {
+    List<UserDto> users = userMapper.findByUsernameLikeAndEnabled(paging, query);
 
-        final int total = userMapper.countUsers(query);
+    int total = userMapper.countByUsernameLikeAndEnabled(query);
 
-        return new PagingResult<>(paging, total, users);
+    return new PagingResult<>(paging, total, users);
+  }
+
+  /**
+   * 新增用户。
+   *
+   * @param query 查询参数
+   */
+  @Transactional(rollbackFor = Exception.class)
+  public void saveUser(UserQuery query) {
+    boolean isExists = userMapper.existsUserByName(query.getUsername());
+    if (isExists) {
+      throw new ConflictException("已存在相同用户名");
     }
 
-    /**
-     * 新增用户。
-     *
-     * @param query 查询参数
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void saveUser(final UserQuery query) {
-        final boolean isExists = userMapper.existsUserByName(query.getUsername());
-        if (isExists) {
-            throw new ConflictException("已存在相同用户名");
-        }
+    User user = new User();
+    BeanUtil.copyProperties(query, user, "enabled");
+    user.setHashedPassword(passwordEncoder.encode(query.getPassword()));
+    user.setEnabled(YesOrNo.resolve(query.getEnabled()).orElseThrow());
 
-        final User user = new User();
-        BeanUtil.copyProperties(query, user, "enabled");
-        user.setHashedPassword(passwordEncoder.encode(query.getPassword()));
-        user.setEnabled(YesOrNo.resolve(query.getEnabled()).orElseThrow());
+    userMapper.insertUser(user);
+  }
 
-        userMapper.insertUser(user);
+  /**
+   * 修改用户。
+   * <p>
+   * 注意：此处为重置密码，即无需验证旧密码。
+   * </p>
+   *
+   * @param query 查询参数
+   */
+  @Transactional(rollbackFor = Exception.class)
+  public void updateUser(UserQuery query) {
+    User user = getUserFromDbMustBeExists(query.getUserId());
+
+    boolean needsUpdate = needsUpdateUser(user, query);
+    if (!needsUpdate) return;
+
+    userMapper.updateUser(user);
+  }
+
+  /**
+   * 修改当前用户密码。
+   *
+   * @param query 查询参数
+   */
+  @Transactional(rollbackFor = Exception.class)
+  public void updatePassword(UserQuery query) {
+    User user = getUserFromDbMustBeExists(query.getUserId());
+
+    boolean isMatched = passwordEncoder.matches(query.getOldPassword(), user.getHashedPassword());
+    if (!isMatched) {
+      throw new BadRequestException("旧密码错误");
     }
 
-    /**
-     * 修改用户。
-     * <p>
-     * 注意：此处为重置密码，即无需验证旧密码。
-     * </p>
-     *
-     * @param query 查询参数
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void updateUser(final UserQuery query) {
-        final User user = getUserFromDbMustBeExists(query.getUserId());
+    String rawPassword = query.getNewPassword();
+    String hashedPassword = passwordEncoder.encode(rawPassword);
+    user.setHashedPassword(hashedPassword);
 
-        boolean needsUpdate = needsUpdateUser(user, query);
-        if (!needsUpdate) return;
+    userMapper.updateUser(user);
+  }
 
-        userMapper.updateUser(user);
+  /**
+   * 删除用户。
+   *
+   * @param userId 用户 id
+   */
+  @Transactional(rollbackFor = Exception.class)
+  public void removeUser(int userId) {
+    userMapper.deleteUserById(userId);
+  }
+
+  private User getUserFromDbMustBeExists(int userId) {
+    return Optional.ofNullable(userMapper.selectUserById(userId))
+      .orElseThrow(() -> new NotFoundException(StrUtil.format("未找到 id 为 {} 的用户", userId)));
+  }
+
+  private boolean needsUpdateUser(User user, UserQuery query) {
+    boolean needsUpdate = false;
+
+    String newPassword = query.getPassword();
+    if (newPassword != null && !passwordEncoder.matches(newPassword, user.getHashedPassword())) {
+      needsUpdate = true;
+      user.setHashedPassword(passwordEncoder.encode(newPassword));
     }
 
-    /**
-     * 修改当前用户密码。
-     *
-     * @param query 查询参数
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void updatePassword(final UserQuery query) {
-        final User user = getUserFromDbMustBeExists(query.getUserId());
-
-        final boolean isMatched = passwordEncoder.matches(query.getOldPassword(), user.getHashedPassword());
-        if (!isMatched) {
-            throw new BadRequestException("旧密码错误");
-        }
-
-        final String rawPassword = query.getNewPassword();
-        final String hashedPassword = passwordEncoder.encode(rawPassword);
-        user.setHashedPassword(hashedPassword);
-
-        userMapper.updateUser(user);
+    String newRoles = query.getRoles();
+    if (newRoles != null && !StrUtils.equalsIgnoreBlank(newRoles, user.getRoles())) {
+      needsUpdate = true;
+      user.setRoles(newRoles);
     }
 
-    /**
-     * 删除用户。
-     *
-     * @param userId 用户 id
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void removeUser(int userId) {
-        userMapper.deleteUserById(userId);
+    YesOrNo newEnabled = YesOrNo.resolve(query.getEnabled()).orElse(null);
+    if (newEnabled != null && newEnabled != user.getEnabled()) {
+      needsUpdate = true;
+      user.setEnabled(newEnabled);
     }
 
-    private User getUserFromDbMustBeExists(final int userId) {
-        return Optional.ofNullable(userMapper.selectUserById(userId))
-                .orElseThrow(() -> new NotFoundException(StrUtil.format("未找到 id 为 {} 的用户", userId)));
-    }
-
-    private boolean needsUpdateUser(final User user, final UserQuery query) {
-        boolean needsUpdate = false;
-
-        final String newPassword = query.getPassword();
-        if (newPassword != null && !passwordEncoder.matches(newPassword, user.getHashedPassword())) {
-            needsUpdate = true;
-            user.setHashedPassword(passwordEncoder.encode(newPassword));
-        }
-
-        final String newRoles = query.getRoles();
-        if (newRoles != null && !StringUtils.equalsIgnoreBlank(newRoles, user.getRoles())) {
-            needsUpdate = true;
-            user.setRoles(newRoles);
-        }
-
-        final YesOrNo newEnabled = YesOrNo.resolve(query.getEnabled()).orElse(null);
-        if (newEnabled != null && newEnabled != user.getEnabled()) {
-            needsUpdate = true;
-            user.setEnabled(newEnabled);
-        }
-
-        return needsUpdate;
-    }
+    return needsUpdate;
+  }
 }

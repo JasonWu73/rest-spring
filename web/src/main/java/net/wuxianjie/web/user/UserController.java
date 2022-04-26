@@ -7,19 +7,20 @@ import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.shared.AuthUtils;
-import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.util.StringUtils;
+import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.exception.BadRequestException;
+import net.wuxianjie.springbootcore.util.StrUtils;
 import net.wuxianjie.springbootcore.validator.group.GroupOne;
 import net.wuxianjie.springbootcore.validator.group.GroupTwo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * 用户管理控制器。
+ * 用户管理 API 控制器。
  *
  * @author 吴仙杰
  */
@@ -28,129 +29,129 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    /**
-     * 获取用户列表。
-     *
-     * @param paging 分页参数
-     * @param query  查询参数
-     * @return 用户列表
-     */
-    @Admin
-    @GetMapping("list")
-    public PagingResult<UserDto> getUsers(@Validated final PagingQuery paging,
-                                          @Validated final UserQuery query) {
-        setFuzzySearchValue(query);
+  /**
+   * 获取用户列表。
+   *
+   * @param paging 分页参数
+   * @param query  查询参数
+   * @return 用户列表
+   */
+  @Admin
+  @GetMapping("list")
+  public PagingResult<UserDto> getUsers(@Valid PagingQuery paging,
+                                        @Valid GetUserQuery query) {
+    setFuzzySearchValue(query);
 
-        return userService.getUsers(paging, query);
+    return userService.getUsers(paging, query);
+  }
+
+  /**
+   * 新增用户。
+   *
+   * @param query 查询参数
+   */
+  @Admin
+  @OperationLogger("新增用户")
+  @PostMapping("add")
+  public void saveUser(@RequestBody @Validated(GroupOne.class) UserQuery query) {
+    setRoleAfterDeduplication(query);
+
+    userService.saveUser(query);
+  }
+
+  /**
+   * 修改用户。
+   * <p>
+   * 注意：此处为重置密码，即无需验证旧密码。
+   * </p>
+   *
+   * @param id    用户 id
+   * @param query 查询参数
+   */
+  @Admin
+  @OperationLogger("修改用户")
+  @PostMapping("update/{userId:\\d+}")
+  public void updateUser(@PathVariable("userId") int id,
+                         @RequestBody @Validated UserQuery query) {
+    query.setUserId(id);
+
+    setRoleAfterDeduplication(query);
+
+    userService.updateUser(query);
+  }
+
+  /**
+   * 修改当前用户密码。
+   *
+   * @param query 查询参数
+   */
+  @PostMapping("password")
+  public void updatePassword(@RequestBody @Validated(GroupTwo.class) UserQuery query) {
+    if (StrUtil.equals(query.getOldPassword(), query.getNewPassword())) {
+      throw new BadRequestException("新旧密码不能相同");
     }
 
-    /**
-     * 新增用户。
-     *
-     * @param query 查询参数
-     */
-    @Admin
-    @OperationLogger("新增用户")
-    @PostMapping("add")
-    public void saveUser(@RequestBody @Validated(GroupOne.class) final UserQuery query) {
-        setRoleAfterDeduplication(query);
+    setCurrentUserId(query);
 
-        userService.saveUser(query);
-    }
+    userService.updatePassword(query);
+  }
 
-    /**
-     * 修改用户。
-     * <p>
-     * 注意：此处为重置密码，即无需验证旧密码。
-     * </p>
-     *
-     * @param id    用户 id
-     * @param query 查询参数
-     */
-    @Admin
-    @OperationLogger("修改用户")
-    @PostMapping("update/{userId:\\d+}")
-    public void updateUser(@PathVariable("userId") final int id,
-                           @RequestBody @Validated final UserQuery query) {
-        query.setUserId(id);
+  /**
+   * 删除用户。
+   *
+   * @param id 用户 id
+   */
+  @Admin
+  @OperationLogger("删除用户")
+  @GetMapping("del/{userId:\\d+}")
+  public void removeUser(@PathVariable("userId") int id) {
+    userService.removeUser(id);
+  }
 
-        setRoleAfterDeduplication(query);
+  private void setFuzzySearchValue(GetUserQuery query) {
+    query.setUsername(StrUtils.toFuzzy(query.getUsername()));
+  }
 
-        userService.updateUser(query);
-    }
+  private void setRoleAfterDeduplication(UserQuery query) {
+    toDeduplicatedCommaSeparatedLowerCase(query.getRoles())
+      .ifPresent(s -> {
+        verifyRole(s);
 
-    /**
-     * 修改当前用户密码。
-     *
-     * @param query 查询参数
-     */
-    @PostMapping("password")
-    public void updatePassword(@RequestBody @Validated(GroupTwo.class) final UserQuery query) {
-        if (StrUtil.equals(query.getOldPassword(), query.getNewPassword())) {
-            throw new BadRequestException("新旧密码不能相同");
-        }
+        query.setRoles(s);
+      });
+  }
 
-        setCurrentUserId(query);
+  private Optional<String> toDeduplicatedCommaSeparatedLowerCase(String commaSeparatedRoles) {
+    if (StrUtil.isEmpty(commaSeparatedRoles)) return Optional.empty();
 
-        userService.updatePassword(query);
-    }
+    return Optional.of(Arrays.stream(commaSeparatedRoles.split(","))
+      .reduce("", (roleOne, roleTwo) -> {
+        String appended = roleTwo.trim().toLowerCase();
 
-    /**
-     * 删除用户。
-     *
-     * @param id 用户 id
-     */
-    @Admin
-    @OperationLogger("删除用户")
-    @GetMapping("del/{userId:\\d+}")
-    public void removeUser(@PathVariable("userId") final int id) {
-        userService.removeUser(id);
-    }
+        if (roleOne.contains(appended)) return roleOne;
 
-    private void setFuzzySearchValue(final UserQuery query) {
-        query.setUsername(StringUtils.toFuzzy(query.getUsername()));
-    }
+        if (StrUtil.isEmpty(roleOne)) return appended;
 
-    private void setRoleAfterDeduplication(final UserQuery query) {
-        toDeduplicatedCommaSeparatedLowerCase(query.getRoles())
-                .ifPresent(s -> {
-                    verifyRole(s);
+        return roleOne + "," + appended;
+      })
+    );
+  }
 
-                    query.setRoles(s);
-                });
-    }
+  private void verifyRole(String commaSeparatedRole) {
+    if (StrUtil.isEmpty(commaSeparatedRole)) return;
 
-    private Optional<String> toDeduplicatedCommaSeparatedLowerCase(final String commaSeparatedRoles) {
-        if (StrUtil.isEmpty(commaSeparatedRoles)) return Optional.empty();
+    boolean hasInvalidRole = Arrays.stream(commaSeparatedRole.split(","))
+      .anyMatch(s -> Role.resolve(s).isEmpty());
+    if (hasInvalidRole) throw new BadRequestException("包含未定义角色");
+  }
 
-        return Optional.of(Arrays.stream(commaSeparatedRoles.split(","))
-                .reduce("", (roleOne, roleTwo) -> {
-                    final String appended = roleTwo.trim().toLowerCase();
+  private void verifyPasswordDifference(String oldPassword, String newPassword) {
+  }
 
-                    if (roleOne.contains(appended)) return roleOne;
-
-                    if (StrUtil.isEmpty(roleOne)) return appended;
-
-                    return roleOne + "," + appended;
-                })
-        );
-    }
-
-    private void verifyRole(final String commaSeparatedRole) {
-        if (StrUtil.isEmpty(commaSeparatedRole)) return;
-
-        final boolean hasInvalidRole = Arrays.stream(commaSeparatedRole.split(","))
-                .anyMatch(s -> Role.resolve(s).isEmpty());
-        if (hasInvalidRole) throw new BadRequestException("包含未定义角色");
-    }
-
-    private void verifyPasswordDifference(final String oldPassword, final String newPassword) {
-    }
-
-    private void setCurrentUserId(final UserQuery query) {
-        final UserDetails userDetails = (UserDetails) AuthUtils.getCurrentUser().orElseThrow();
-        query.setUserId(userDetails.getAccountId());
-    }
+  private void setCurrentUserId(UserQuery query) {
+    UserDetails userDetails = (UserDetails) AuthUtils.getCurrentUser().orElseThrow();
+    query.setUserId(userDetails.getAccountId());
+  }
 }

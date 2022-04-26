@@ -1,8 +1,6 @@
 package net.wuxianjie.web.user;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.security.Role;
 
@@ -14,44 +12,42 @@ import java.time.LocalDateTime;
  * @author 吴仙杰
  */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class User {
 
-    /**
-     * 用户 id。
-     */
-    private Integer userId;
+  /**
+   * 用户 id。
+   */
+  private Integer userId;
 
-    /**
-     * 创建时间。
-     */
-    private LocalDateTime createTime;
+  /**
+   * 创建时间。
+   */
+  private LocalDateTime createTime;
 
-    /**
-     * 修改时间。
-     */
-    private LocalDateTime modifyTime;
+  /**
+   * 修改时间。
+   */
+  private LocalDateTime modifyTime;
 
-    /**
-     * 启用状态：1：启用，0：禁用。
-     */
-    private YesOrNo enabled;
+  /**
+   * 启用状态：1：启用，0：禁用。
+   */
+  private YesOrNo enabled;
 
-    /**
-     * 用户名。
-     */
-    private String username;
+  /**
+   * 用户名。
+   */
+  private String username;
 
-    /**
-     * 哈希密码。
-     */
-    private String hashedPassword;
+  /**
+   * 哈希密码。
+   */
+  private String hashedPassword;
 
-    /**
-     * 用户绑定的角色，多个角色以英文逗号分隔。
-     *
-     * @see Role#value()
-     */
-    private String roles;
+  /**
+   * 用户绑定的角色，多个角色以英文逗号分隔。
+   *
+   * @see Role#value()
+   */
+  private String roles;
 }

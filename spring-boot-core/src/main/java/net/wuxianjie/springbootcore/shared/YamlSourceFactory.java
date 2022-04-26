@@ -1,13 +1,12 @@
 package net.wuxianjie.springbootcore.shared;
 
-import net.wuxianjie.springbootcore.shared.exception.InternalException;
+import net.wuxianjie.springbootcore.exception.InternalException;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.EncodedResource;
 import org.springframework.core.io.support.PropertySourceFactory;
-import org.springframework.lang.NonNull;
 
 import java.util.Optional;
 import java.util.Properties;
@@ -22,20 +21,19 @@ import java.util.Properties;
  */
 public class YamlSourceFactory implements PropertySourceFactory {
 
-    @NonNull
-    @Override
-    public PropertySource<?> createPropertySource(final String name,
-                                                  final EncodedResource resource) throws InternalException {
-        final YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
-        final Resource heldResource = resource.getResource();
-        factory.setResources(heldResource);
+  @Override
+  public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws InternalException {
+    YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
+    Resource heldResource = resource.getResource();
 
-        final String filename = Optional.ofNullable(heldResource.getFilename())
-                .orElseThrow(() -> new InternalException("无法识别 YAML 配置文件的文件名"));
+    factory.setResources(heldResource);
 
-        final Properties properties = Optional.ofNullable(factory.getObject())
-                .orElseThrow(() -> new InternalException("YAML 配置文件读取失败"));
+    String filename = Optional.ofNullable(heldResource.getFilename())
+      .orElseThrow(() -> new InternalException("无法识别 YAML 配置文件的文件名"));
 
-        return new PropertiesPropertySource(filename, properties);
-    }
+    Properties properties = Optional.ofNullable(factory.getObject())
+      .orElseThrow(() -> new InternalException("YAML 配置文件读取失败"));
+
+    return new PropertiesPropertySource(filename, properties);
+  }
 }

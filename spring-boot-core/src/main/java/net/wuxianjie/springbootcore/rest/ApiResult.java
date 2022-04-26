@@ -11,22 +11,22 @@ import lombok.NoArgsConstructor;
  * @author 吴仙杰
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ApiResult<T> {
 
-    /**
-     * 错误码：0：成功，1：失败。
-     */
-    private ApiErrorCode error;
+  /**
+   * 错误码：0：成功，1：失败。
+   */
+  private ApiErrorCode error;
 
-    /**
-     * 错误信息。
-     */
-    private String errMsg;
+  /**
+   * 错误信息。
+   */
+  private String errMsg;
 
-    /**
-     * 具体数据。
-     */
-    private T data;
+  /**
+   * 具体数据。
+   */
+  private T data;
 }

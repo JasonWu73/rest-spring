@@ -30,91 +30,92 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Import(JsonConfig.class)
 class JsonConfigTest {
 
-    @Autowired
-    private JacksonTester<User> jacksonTester;
+  @Autowired
+  private JacksonTester<User> jacksonTester;
 
-    @Test
-    @DisplayName("JSON 序列化")
-    void itShouldCheckJsonSerialize() throws IOException {
-        // given
-        final String json = "{" +
-                "\"userId\":100," +
-                "\"username\":\"吴仙杰\"," +
-                "\"createTime\":\"2022-03-26 10:59:30\"," +
-                "\"birthday\":\"2022-03-26\"," +
-                "\"modifyTime\":\"2022-03-26 10:59:30\"," +
-                "\"enabled\":1" +
-                "}";
-        final User user = buildUser();
+  @Test
+  @DisplayName("JSON 序列化")
+  void testJsonSerialize() throws IOException {
+    // given
+    User user = buildUser();
 
-        // when
-        final String actual = jacksonTester.write(user).getJson();
+    // when
+    String actual = jacksonTester.write(user).getJson();
 
-        // then
-        assertThat(actual).isEqualTo(json);
-    }
+    // then
+    String expected = "{" +
+      "\"userId\":100," +
+      "\"username\":\"吴仙杰\"," +
+      "\"createTime\":\"2022-03-26 10:59:30\"," +
+      "\"birthday\":\"2022-03-26\"," +
+      "\"modifyTime\":\"2022-03-26 10:59:30\"," +
+      "\"enabled\":1" +
+      "}";
 
-    @Test
-    @DisplayName("JSON 反序列化")
-    void itShouldCheckJsonDeserialize() throws IOException {
-        // given
-        final String json = "{" +
-                "\"userId\":100," +
-                "\"username\":\"\\t\\n吴仙杰 \"," +
-                "\"createTime\":\"2022-03-26 10:59:30\"," +
-                "\"birthday\":\"2022-03-26\"," +
-                "\"modifyTime\":\"2022-03-26 10:59:30\"," +
-                "\"enabled\":1" +
-                "}";
-        final User user = buildUser();
+    assertThat(actual).isEqualTo(expected);
+  }
 
-        // when
-        final User actual = jacksonTester.parse(json).getObject();
+  @Test
+  @DisplayName("JSON 反序列化")
+  void testJsonDeserialize() throws IOException {
+    // given
+    String json = "{" +
+      "\"userId\":100," +
+      "\"username\":\"\\t\\n吴仙杰 \"," +
+      "\"createTime\":\"2022-03-26 10:59:30\"," +
+      "\"birthday\":\"2022-03-26\"," +
+      "\"modifyTime\":\"2022-03-26 10:59:30\"," +
+      "\"enabled\":1" +
+      "}";
 
-        // then
-        assertThat(actual).isNotEqualTo(user);
 
-        user.setUsername(user.getUsername().trim());
-        assertThat(actual).isEqualTo(user);
-    }
+    // when
+    User actual = jacksonTester.parse(json).getObject();
 
-    @Test
-    @DisplayName("JSON 反序列化 - 不符合格式要求的日期时间字符")
-    void itShouldCheckMalformedDateTimeStrJsonDeserialize() {
-        // given
-        final String json = "{\"modifyTime\":\"2022-03-26T10:59:30\"}";
+    // then
+    User expected = buildUser();
 
-        // when
-        // then
-        assertThatThrownBy(() -> jacksonTester.parse(json))
-                .isInstanceOf(InvalidFormatException.class);
-    }
+    assertThat(actual).isNotEqualTo(expected);
 
-    private User buildUser() {
-        final String dateString = "2022-03-26 10:59:30";
-        final LocalDateTime createTime = LocalDateTimeUtil.parse(dateString, DatePattern.NORM_DATETIME_PATTERN);
-        return new User(
-                100,
-                "\t\n吴仙杰 ",
-                null,
-                createTime,
-                LocalDate.parse("2022-03-26"),
-                Date.from(createTime.atZone(ZoneId.systemDefault()).toInstant()),
-                YesOrNo.YES
-        );
-    }
+    expected.setUsername(expected.getUsername().trim());
+    assertThat(actual).isEqualTo(expected);
+  }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    static class User {
+  @Test
+  @DisplayName("JSON 反序列化：不符合格式要求的日期时间字符")
+  void testWhenMalformedDateTimeStrJsonDeserialize() {
+    // given
+    // when
+    // then
+    assertThatThrownBy(() -> jacksonTester.parse("{\"modifyTime\":\"2022-03-26T10:59:30\"}"))
+      .isInstanceOf(InvalidFormatException.class);
+  }
 
-        private Integer userId;
-        private String username;
-        private String password;
-        private LocalDateTime createTime;
-        private LocalDate birthday;
-        private Date modifyTime;
-        private YesOrNo enabled;
-    }
+  @Data
+  @AllArgsConstructor
+  @NoArgsConstructor
+  static class User {
+
+    private Integer userId;
+    private String username;
+    private String password;
+    private LocalDateTime createTime;
+    private LocalDate birthday;
+    private Date modifyTime;
+    private YesOrNo enabled;
+  }
+
+  private User buildUser() {
+    LocalDateTime createTime = LocalDateTimeUtil.parse("2022-03-26 10:59:30", DatePattern.NORM_DATETIME_PATTERN);
+
+    return new User(
+      100,
+      "\t\n吴仙杰 ",
+      null,
+      createTime,
+      LocalDate.parse("2022-03-26"),
+      Date.from(createTime.atZone(ZoneId.systemDefault()).toInstant()),
+      YesOrNo.YES
+    );
+  }
 }

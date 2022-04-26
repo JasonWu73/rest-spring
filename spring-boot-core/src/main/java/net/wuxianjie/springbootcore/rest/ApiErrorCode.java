@@ -11,22 +11,22 @@ import lombok.experimental.Accessors;
  *
  * @author 吴仙杰
  */
-@RequiredArgsConstructor
 @Getter
-@Accessors(fluent = true)
 @ToString
+@RequiredArgsConstructor
+@Accessors(fluent = true)
 public enum ApiErrorCode {
 
-    /**
-     * 服务响应成功。
-     */
-    SUCCESS(0),
+  /**
+   * 服务响应成功。
+   */
+  SUCCESS(0),
 
-    /**
-     * 服务响应失败。
-     */
-    FAIL(1);
+  /**
+   * 服务响应失败。
+   */
+  FAIL(1);
 
-    @JsonValue
-    private final int value;
+  @JsonValue
+  private final int value;
 }

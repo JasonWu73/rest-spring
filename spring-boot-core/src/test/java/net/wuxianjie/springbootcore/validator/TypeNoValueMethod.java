@@ -5,6 +5,6 @@ package net.wuxianjie.springbootcore.validator;
  */
 enum TypeNoValueMethod {
 
-    GOOGLE,
-    YOUTUBE
+  GOOGLE,
+  YOUTUBE
 }

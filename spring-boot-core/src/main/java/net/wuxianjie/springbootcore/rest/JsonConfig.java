@@ -34,74 +34,74 @@ import java.util.Date;
 @Configuration
 public class JsonConfig {
 
-    /**
-     * 配置 JSON 序列化与反序列化行为。
-     */
-    @Bean
-    public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
-        return builder -> {
-            // 序列化时排除值为 null 的字段
-            builder.serializationInclusion(JsonInclude.Include.NON_NULL);
+  /**
+   * 配置 JSON 序列化与反序列化行为。
+   *
+   * @return {@link Jackson2ObjectMapperBuilderCustomizer}
+   */
+  @Bean
+  public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
+    return builder -> {
+      // 序列化时排除值为 null 的字段
+      builder.serializationInclusion(JsonInclude.Include.NON_NULL);
 
-            // 设置与 JVM 相同的时区，默认使用 UTC 时间
-            builder.timeZone(ZoneId.systemDefault().getId());
+      // 设置与 JVM 相同的时区，默认使用 UTC 时间
+      builder.timeZone(ZoneId.systemDefault().getId());
 
-            // 设置 Date 序列化后的字符串格式
-            final SimpleDateFormat dateFormat = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
-            builder.serializers(new DateSerializer(false, dateFormat));
+      // 设置 Date 序列化后的字符串格式
+      SimpleDateFormat dateFormat = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
 
-            // 设置 Java 8 LocalDate 序列化后的字符串格式
-            builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
+      builder.serializers(new DateSerializer(false, dateFormat));
 
-            // 设置 Java 8 LocalDateTime 序列化后的字符串格式
-            final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN);
-            builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
+      // 设置 Java 8 LocalDate 序列化后的字符串格式
+      builder.serializers(new LocalDateSerializer(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN)));
 
-            // 在序列化时去除字符串值的首尾空白字符
-            builder.serializerByType(String.class, new JsonSerializer<String>() {
+      // 设置 Java 8 LocalDateTime 序列化后的字符串格式
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN);
 
-                @Override
-                public void serialize(final String value,
-                                      final JsonGenerator gen,
-                                      final SerializerProvider serializers) throws IOException {
-                    gen.writeString(StrUtil.trim(value));
-                }
-            });
+      builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
 
-            // 在反序列化时去除字符串值的首尾空白字符
-            builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
+      // 在序列化时去除字符串值的首尾空白字符
+      builder.serializerByType(String.class, new JsonSerializer<String>() {
 
-                @Override
-                public String deserialize(final JsonParser p,
-                                          final DeserializationContext ctx) throws IOException {
-                    return StrUtil.trim(p.getValueAsString());
-                }
-            });
+        @Override
+        public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+          gen.writeString(StrUtil.trim(value));
+        }
+      });
 
-            // 设置 Java 8 LocalDateTime / LocalDate 反序列化
-            builder.deserializerByType(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
+      // 在反序列化时去除字符串值的首尾空白字符
+      builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
 
-                @Override
-                public LocalDateTime deserialize(final JsonParser p,
-                                                 final DeserializationContext ctx) throws IOException {
-                    return LocalDateTime.parse(p.getValueAsString(), dateTimeFormatter);
-                }
-            });
+        @Override
+        public String deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+          return StrUtil.trim(p.getValueAsString());
+        }
+      });
 
-            // 设置 Date 反序列化
-            builder.deserializerByType(Date.class, new JsonDeserializer<Date>() {
+      // 设置 Java 8 LocalDateTime / LocalDate 反序列化
+      builder.deserializerByType(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
 
-                @Override
-                public Date deserialize(final JsonParser p,
-                                        final DeserializationContext ctx) throws IOException {
-                    final String value = p.getValueAsString();
-                    try {
-                        return dateFormat.parse(value);
-                    } catch (ParseException e) {
-                        throw new InvalidFormatException(p, e.getMessage(), value, Date.class);
-                    }
-                }
-            });
-        };
-    }
+        @Override
+        public LocalDateTime deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+          return LocalDateTime.parse(p.getValueAsString(), dateTimeFormatter);
+        }
+      });
+
+      // 设置 Date 反序列化
+      builder.deserializerByType(Date.class, new JsonDeserializer<Date>() {
+
+        @Override
+        public Date deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
+          String value = p.getValueAsString();
+
+          try {
+            return dateFormat.parse(value);
+          } catch (ParseException e) {
+            throw new InvalidFormatException(p, e.getMessage(), value, Date.class);
+          }
+        }
+      });
+    };
+  }
 }

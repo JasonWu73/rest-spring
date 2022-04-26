@@ -2,6 +2,7 @@ package net.wuxianjie.springbootcore.security;
 
 import net.wuxianjie.springbootcore.shared.YamlSourceFactory;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +23,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 @PropertySource(value = "classpath:security.yml", factory = YamlSourceFactory.class)
 class SecurityConfigTest {
 
-    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
-    @Autowired
-    private SecurityConfig securityConfig;
+  @Autowired
+  private SecurityConfig securityConfig;
 
-    private static Validator validator;
+  private static Validator validator;
 
-    @BeforeAll
-    static void beforeAll() {
-        validator = Validation.buildDefaultValidatorFactory().getValidator();
-    }
+  @BeforeAll
+  static void beforeAll() {
+    validator = Validation.buildDefaultValidatorFactory().getValidator();
+  }
 
-    @Test
-    void canGetSecurityConfig() {
-        // given
-        // when
-        // then
-        validator.validate(securityConfig.getJwtSigningKey());
-        validator.validate(securityConfig.getPermitAllAntPatterns());
+  @Test
+  @DisplayName("获取配置信息")
+  void canGetSecurityConfig() {
+    // given
+    // when
+    // then
+    validator.validate(securityConfig.getJwtSigningKey());
+    validator.validate(securityConfig.getPermitAllAntPatterns());
 
-        assertThat(securityConfig.getJwtSigningKey()).isEqualTo("Qrjfl4tcKH9Yx5KROHQ8jQdRmJgbZWvy3v4hEoxzFq0=");
-        assertThat(securityConfig.getPermitAllAntPatterns()).isEqualTo("/api/v1/auth-test/public, /public/**");
-    }
+    assertThat(securityConfig.getJwtSigningKey()).isEqualTo("Qrjfl4tcKH9Yx5KROHQ8jQdRmJgbZWvy3v4hEoxzFq0=");
+    assertThat(securityConfig.getPermitAllAntPatterns()).isEqualTo("/api/v1/auth-test/public, /public/**");
+  }
 }

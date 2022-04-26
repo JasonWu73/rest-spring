@@ -10,22 +10,22 @@ import lombok.NoArgsConstructor;
  * @author 吴仙杰
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class TokenData {
 
-    /**
-     * Token 的有效期，单位秒。
-     */
-    private Integer expiresIn;
+  /**
+   * Token 的有效期，单位秒。
+   */
+  private Integer expiresIn;
 
-    /**
-     * 用于 API 鉴权的 Token，在请求头中携带：`Authorization: Bearer accessToken`。
-     */
-    private String accessToken;
+  /**
+   * 用于 API 鉴权的 Token，在请求头中携带：{@code Authorization: Bearer accessToken}。
+   */
+  private String accessToken;
 
-    /**
-     * 用于刷新鉴权信息的 Token。
-     */
-    private String refreshToken;
+  /**
+   * 用于刷新鉴权信息的 Token。
+   */
+  private String refreshToken;
 }

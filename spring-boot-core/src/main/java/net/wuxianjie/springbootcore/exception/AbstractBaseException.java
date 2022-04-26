@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared.exception;
+package net.wuxianjie.springbootcore.exception;
 
 import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
 import org.springframework.http.HttpStatus;
@@ -14,19 +14,18 @@ import org.springframework.http.HttpStatus;
  */
 public abstract class AbstractBaseException extends RuntimeException {
 
-    public AbstractBaseException(final String message) {
-        super(message);
-    }
+  public AbstractBaseException(String message) {
+    super(message);
+  }
 
-    public AbstractBaseException(final String message,
-                                 final Throwable cause) {
-        super(message, cause);
-    }
+  public AbstractBaseException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-    /**
-     * 获取以响应何种 HTTP 状态码来指明异常信息。
-     *
-     * @return HTTP 状态码
-     */
-    public abstract HttpStatus getHttpStatus();
+  /**
+   * 获取以响应何种 HTTP 状态码来指明异常信息。
+   *
+   * @return HTTP 状态码
+   */
+  public abstract HttpStatus getHttpStatus();
 }

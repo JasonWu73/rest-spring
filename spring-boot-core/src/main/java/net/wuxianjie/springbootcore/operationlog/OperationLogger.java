@@ -7,6 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * 日志记录器注解。
+ * <p>
+ * 将 {@link OperationLogger} 用于方法后，只要该方法正确执行后，会自动调用 {@link OperationLogService#saveLog(OperationLogData)} 进行处理。
+ * </p>
  *
  * @author 吴仙杰
  * @see OperationLogAspect
@@ -15,10 +18,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OperationLogger {
 
-    /**
-     * 操作描述。
-     *
-     * @return 操作描述
-     */
-    String value();
+  /**
+   * 操作描述。
+   *
+   * @return 操作描述
+   */
+  String value();
 }

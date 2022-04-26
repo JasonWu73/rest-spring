@@ -8,9 +8,11 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
- * MyBatis 类型处理器：映射 Java 枚举常量与数据库 INT 数据类型。
+ * MyBatis 类型处理器：映射 Java 枚举常量与数据库 INTEGER 数据类型。
  * <p>
  * 全局配置（application.yml）<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
@@ -22,55 +24,50 @@ import java.sql.SQLException;
 @NoArgsConstructor
 public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHandler<ValueEnum> {
 
-    private Class<E> enumType;
+  private Class<E> enumType;
 
-    public EnumTypeHandler(final Class<E> enumType) {
-        if (enumType == null) {
-            throw new IllegalArgumentException("enumType 参数不能为 null");
-        }
-
-        this.enumType = enumType;
+  public EnumTypeHandler(Class<E> enumType) {
+    if (enumType == null) {
+      throw new IllegalArgumentException("enumType 不能为 null");
     }
 
-    @Override
-    public void setNonNullParameter(final PreparedStatement ps,
-                                    final int i,
-                                    final ValueEnum parameter,
-                                    final JdbcType jdbcType) throws SQLException {
-        ps.setInt(i, parameter.value());
+    this.enumType = enumType;
+  }
+
+  @Override
+  public void setNonNullParameter(PreparedStatement ps,
+                                  int i,
+                                  ValueEnum parameter,
+                                  JdbcType jdbcType) throws SQLException {
+    ps.setInt(i, parameter.value());
+  }
+
+  @Override
+  public ValueEnum getNullableResult(ResultSet rs, String columnName) throws SQLException {
+    return toNullableEnum(enumType, rs.getInt(columnName));
+  }
+
+  @Override
+  public ValueEnum getNullableResult(ResultSet rs, int columnIndex) throws SQLException {
+    return toNullableEnum(enumType, rs.getInt(columnIndex));
+  }
+
+  @Override
+  public ValueEnum getNullableResult(CallableStatement cs, int columnIndex) throws SQLException {
+    return toNullableEnum(enumType, cs.getInt(columnIndex));
+  }
+
+  private E toNullableEnum(Class<E> enumClass, int val) {
+    if (enumClass == null) {
+      throw new IllegalArgumentException("enumClass 不能为 null");
     }
 
-    @Override
-    public ValueEnum getNullableResult(final ResultSet rs,
-                                       final String columnName) throws SQLException {
-        return toNullableValueNum(enumType, rs.getInt(columnName));
-    }
+    E[] enumConstants = Optional.ofNullable(enumClass.getEnumConstants())
+      .orElseThrow(() -> new IllegalArgumentException("enumClass 不是枚举类型"));
 
-    @Override
-    public ValueEnum getNullableResult(final ResultSet rs,
-                                       final int columnIndex) throws SQLException {
-        return toNullableValueNum(enumType, rs.getInt(columnIndex));
-    }
-
-    @Override
-    public ValueEnum getNullableResult(final CallableStatement cs,
-                                       final int columnIndex) throws SQLException {
-        return toNullableValueNum(enumType, cs.getInt(columnIndex));
-    }
-
-    private E toNullableValueNum(final Class<E> enumClass,
-                                 final Integer value) {
-        if (enumClass == null || value == null) return null;
-
-        E[] enumConstants = enumClass.getEnumConstants();
-        if (enumConstants == null) return null;
-
-        for (final E e : enumConstants) {
-            if (value == e.value()) {
-                return e;
-            }
-        }
-
-        return null;
-    }
+    return Arrays.stream(enumConstants)
+      .filter(e -> val == e.value())
+      .findFirst()
+      .orElse(null);
+  }
 }

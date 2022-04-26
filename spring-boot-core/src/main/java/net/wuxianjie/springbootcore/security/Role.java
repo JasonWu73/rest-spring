@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -14,41 +15,35 @@ import java.util.Optional;
  *
  * @author 吴仙杰
  */
-@RequiredArgsConstructor
 @Getter
-@Accessors(fluent = true)
 @ToString
+@RequiredArgsConstructor
+@Accessors(fluent = true)
 public enum Role {
 
-    USER("user"),
+  USER("user"),
 
-    ADMIN("admin");
+  ADMIN("admin");
 
-    private static final Role[] VALUES;
+  private static final Role[] VALUES;
 
-    static {
-        VALUES = values();
-    }
+  static {
+    VALUES = values();
+  }
 
-    @JsonValue
-    private final String value;
+  @JsonValue
+  private final String value;
 
-    /**
-     * 将字符串值解析为枚举常量。
-     *
-     * @param value 字符串值
-     * @return 字符串值所对应的枚举常量
-     */
-    public static Optional<Role> resolve(final String value) {
-        return Optional.ofNullable(value)
-                .map(s -> {
-                    for (final Role role : VALUES) {
-                        if (StrUtil.equals(s, role.value)) {
-                            return role;
-                        }
-                    }
-
-                    return null;
-                });
-    }
+  /**
+   * 将字符串值解析为枚举常量。
+   *
+   * @param value 字符串值
+   * @return 字符串值所对应的枚举常量
+   */
+  public static Optional<Role> resolve(String value) {
+    return Optional.ofNullable(value)
+      .flatMap(val -> Arrays.stream(VALUES)
+        .filter(role -> StrUtil.equals(val, role.value))
+        .findFirst());
+  }
 }

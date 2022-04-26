@@ -15,36 +15,34 @@ import java.util.List;
  * @see PagingOffsetFieldPaddingAspect
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class PagingResult<E> {
 
-    /**
-     * 页码。
-     */
-    private int pageNo;
+  /**
+   * 页码。
+   */
+  private int pageNo;
 
-    /**
-     * 每页条数。
-     */
-    private int pageSize;
+  /**
+   * 每页条数。
+   */
+  private int pageSize;
 
-    /**
-     * 总数。
-     */
-    private long total;
+  /**
+   * 总数。
+   */
+  private long total;
 
-    /**
-     * 具体数据列表。
-     */
-    private List<E> list;
+  /**
+   * 具体数据列表。
+   */
+  private List<E> list;
 
-    public PagingResult(final PagingQuery paging,
-                        final long total,
-                        final List<E> list) {
-        this.pageNo = paging.getPageNo();
-        this.pageSize = paging.getPageSize();
-        this.total = total;
-        this.list = list;
-    }
+  public PagingResult(PagingQuery paging, long total, List<E> list) {
+    this.pageNo = paging.getPageNo();
+    this.pageSize = paging.getPageSize();
+    this.total = total;
+    this.list = list;
+  }
 }

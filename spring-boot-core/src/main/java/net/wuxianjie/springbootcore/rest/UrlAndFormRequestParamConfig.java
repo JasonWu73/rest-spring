@@ -11,11 +11,10 @@ import org.springframework.web.bind.annotation.InitBinder;
  * @author 吴仙杰
  */
 @ControllerAdvice
-public class UrlAndFormRequestParameterConfig {
+public class UrlAndFormRequestParamConfig {
 
-    @InitBinder
-    public void initBinder(final WebDataBinder binder) {
-        binder.registerCustomEditor(String.class,
-                new StringTrimmerEditor(false));
-    }
+  @InitBinder
+  public void initBinder(WebDataBinder binder) {
+    binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
+  }
 }

@@ -13,10 +13,10 @@ import static java.lang.annotation.ElementType.*;
  * 枚举值校验注解，例如：
  *
  * <pre>{@code
- * @RequiredArgsConstructor
  * @Getter
- * @Accessors(fluent = true)
  * @ToString
+ * @RequiredArgsConstructor
+ * @Accessors(fluent = true)
  * public enum Type {
  *
  *     ME(1);
@@ -32,7 +32,7 @@ import static java.lang.annotation.ElementType.*;
  *
  *     private static class Query {
  *
- *         @EnumValidator(message = "类型错误", value = Type.class)
+ *         @EnumValidator(message = "类型不合法", value = Type.class)
  *         private Integer type;
  *     }
  * }}</pre>
@@ -45,18 +45,18 @@ import static java.lang.annotation.ElementType.*;
 @Repeatable(EnumValidator.List.class)
 public @interface EnumValidator {
 
-    Class<? extends Enum<?>> value();
+  Class<? extends Enum<?>> value();
 
-    String message() default "{com.qgs.trial.validator.EnumValidator.message}";
+  String message() default "枚举类型值不合法";
 
-    Class<?>[] groups() default {};
+  Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+  Class<? extends Payload>[] payload() default {};
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
-    @Retention(RetentionPolicy.RUNTIME)
-    @interface List {
+  @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface List {
 
-        EnumValidator[] value();
-    }
+    EnumValidator[] value();
+  }
 }

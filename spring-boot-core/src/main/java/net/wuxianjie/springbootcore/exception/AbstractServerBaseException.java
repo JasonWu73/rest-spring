@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.shared.exception;
+package net.wuxianjie.springbootcore.exception;
 
 import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
 
@@ -10,12 +10,11 @@ import net.wuxianjie.springbootcore.rest.ExceptionControllerAdvice;
  */
 public abstract class AbstractServerBaseException extends AbstractBaseException {
 
-    public AbstractServerBaseException(final String message) {
-        super(message);
-    }
+  public AbstractServerBaseException(String message) {
+    super(message);
+  }
 
-    public AbstractServerBaseException(final String message,
-                                       final Throwable cause) {
-        super(message, cause);
-    }
+  public AbstractServerBaseException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

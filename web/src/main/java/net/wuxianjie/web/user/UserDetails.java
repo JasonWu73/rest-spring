@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.security.Role;
-import net.wuxianjie.springbootcore.shared.TokenUserDetails;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 
 /**
  * Token 认证后的用户详细数据。

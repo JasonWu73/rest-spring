@@ -4,13 +4,12 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wuxianjie.springbootcore.rest.ApiResult;
 import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
-import net.wuxianjie.springbootcore.shared.TokenUserDetails;
-import net.wuxianjie.springbootcore.shared.exception.TokenAuthenticationException;
-import net.wuxianjie.springbootcore.shared.util.NetUtils;
+import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.util.NetUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -38,95 +37,107 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    /**
-     * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
-     */
-    static final String BEARER_PREFIX = "Bearer ";
+  /**
+   * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
+   */
+  static final String BEARER_PREFIX = "Bearer ";
 
-    /**
-     * Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
-     */
-    static final String ROLE_PREFIX = "ROLE_";
+  /**
+   * Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
+   */
+  static final String ROLE_PREFIX = "ROLE_";
 
-    private final ObjectMapper objectMapper;
-    private final TokenAuthenticationService authService;
+  private final ObjectMapper objectMapper;
+  private final TokenAuthenticationService authService;
 
-    @Override
-    protected void doFilterInternal(final @NonNull HttpServletRequest request,
-                                    final @NonNull HttpServletResponse response,
-                                    final @NonNull FilterChain filterChain) throws IOException, ServletException {
-        final Optional<String> tokenOptional = getTokenFromRequest(request);
+  @Override
+  protected void doFilterInternal(HttpServletRequest req,
+                                  HttpServletResponse resp,
+                                  FilterChain chain) throws IOException, ServletException {
+    Optional<String> tokenOptional = getTokenFromRequest(req);
 
-        if (tokenOptional.isEmpty()) {
-            filterChain.doFilter(request, response);
-            return;
+    if (tokenOptional.isEmpty()) {
+      chain.doFilter(req, resp);
+      return;
+    }
+
+    try {
+      TokenUserDetails user = authService.authenticate(tokenOptional.get());
+      loginToSpringSecurityContext(user);
+    } catch (TokenAuthenticationException e) {
+      SecurityContextHolder.clearContext();
+
+      sendToResponse(resp, e.getMessage(), HttpStatus.UNAUTHORIZED);
+      return;
+    } catch (Throwable e) {
+      String respMsg = "Token 认证异常";
+
+      log.error(
+        "uri={}；client={} -> " + respMsg,
+        req.getRequestURI(),
+        NetUtils.getRealIpAddress(req),
+        e
+      );
+
+      SecurityContextHolder.clearContext();
+
+      sendToResponse(resp, respMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+      return;
+    }
+
+    chain.doFilter(req, resp);
+  }
+
+  private Optional<String> getTokenFromRequest(HttpServletRequest req) {
+    String bearer = StrUtil.trim(req.getHeader(HttpHeaders.AUTHORIZATION));
+
+    return Optional.ofNullable(bearer)
+      .map(s -> {
+        if (!StrUtil.startWith(s, BEARER_PREFIX)) {
+          return null;
         }
 
-        try {
-            final TokenUserDetails userDetails = authService.authenticate(tokenOptional.get());
-            loginToSpringSecurityContext(userDetails);
-        } catch (TokenAuthenticationException e) {
-            SecurityContextHolder.clearContext();
+        String token = StrUtil.subAfter(s, BEARER_PREFIX, false);
 
-            sendToResponse(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
-            return;
-        } catch (Throwable e) {
-            log.error("uri={}；client={} -> Token 认证异常",
-                    request.getRequestURI(), NetUtils.getRealIpAddress(request), e);
+        return StrUtil.trimToNull(token);
+      });
+  }
 
-            SecurityContextHolder.clearContext();
+  private void loginToSpringSecurityContext(TokenUserDetails user) {
+    List<GrantedAuthority> authorityList = getAuthorities(user.getRoles());
 
-            sendToResponse(response, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-            return;
+    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, authorityList);
+    SecurityContextHolder.getContext().setAuthentication(token);
+  }
+
+  private List<GrantedAuthority> getAuthorities(String commaSeparatedRole) {
+    if (StrUtil.isEmpty(commaSeparatedRole)) {
+      return Collections.emptyList();
+    }
+
+    String roles = Arrays.stream(commaSeparatedRole.split(","))
+      .reduce("", (roleOne, roleTwo) -> {
+        String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
+
+        if (StrUtil.isEmpty(roleOne)) {
+          return appended;
         }
 
-        filterChain.doFilter(request, response);
-    }
+        return roleOne + "," + appended;
+      });
 
-    private Optional<String> getTokenFromRequest(final HttpServletRequest request) {
-        return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
-                .map(s -> {
-                    if (!StrUtil.startWith(s, BEARER_PREFIX)) return null;
+    return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+  }
 
-                    final String token = StrUtil.subAfter(s, BEARER_PREFIX, false);
-                    return StrUtil.trimToNull(token);
-                });
-    }
+  private void sendToResponse(HttpServletResponse resp,
+                              String respMsg,
+                              HttpStatus httpStatus) throws IOException {
+    resp.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
+    resp.setStatus(httpStatus.value());
 
-    private void loginToSpringSecurityContext(final TokenUserDetails userDetails) {
-        final List<GrantedAuthority> authorityList = getAuthorities(userDetails.getRoles());
+    ApiResult<Void> fail = ApiResultWrapper.fail(respMsg);
+    String json = objectMapper.writeValueAsString(fail);
 
-        final UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDetails, null, authorityList);
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
-
-    private List<GrantedAuthority> getAuthorities(final String commaSeparatedRole) {
-        if (StrUtil.isEmpty(commaSeparatedRole)) {
-            return Collections.emptyList();
-        }
-
-        final String roles = Arrays.stream(commaSeparatedRole.split(","))
-                .reduce("", (roleOne, roleTwo) -> {
-                    final String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
-
-                    if (StrUtil.isEmpty(roleOne)) {
-                        return appended;
-                    }
-
-                    return roleOne + "," + appended;
-                });
-
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
-    }
-
-    private void sendToResponse(final HttpServletResponse response,
-                                final String message,
-                                final HttpStatus httpStatus) throws IOException {
-        response.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
-        response.setStatus(httpStatus.value());
-
-        final String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(message));
-        response.getWriter().write(json);
-    }
+    resp.getWriter().write(json);
+  }
 }

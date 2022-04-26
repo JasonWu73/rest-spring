@@ -2,8 +2,8 @@ package net.wuxianjie.springbootcore.rest;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.shared.AuthUtils;
-import net.wuxianjie.springbootcore.shared.TokenUserDetails;
+import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -23,44 +23,55 @@ import java.util.Optional;
  * @author 吴仙杰
  * @see ExceptionControllerAdvice
  */
+@Slf4j
 @Controller
 @RequiredArgsConstructor
-@Slf4j
 public class GlobalErrorController implements ErrorController {
 
-    private final ErrorAttributes errorAttributes;
+  private final ErrorAttributes errorAttributes;
 
-    /**
-     * 处理在进入 Controller 之前就抛出的异常。
-     *
-     * @param request {@link WebRequest}
-     * @return {@link ResponseEntity}
-     */
-    @ResponseBody
-    @RequestMapping("/error")
-    public ResponseEntity<ApiResult<Void>> handleError(final WebRequest request) {
-        final Map<String, Object> attributes = errorAttributes
-                .getErrorAttributes(request, ErrorAttributeOptions.defaults());
+  /**
+   * 处理在进入 Controller 之前就抛出的异常。
+   *
+   * @param req {@link WebRequest}
+   * @return {@link ResponseEntity}
+   */
+  @ResponseBody
+  @RequestMapping("/error")
+  public ResponseEntity<ApiResult<Void>> handleError(WebRequest req) {
+    Map<String, Object> attributes = errorAttributes.getErrorAttributes(req, ErrorAttributeOptions.defaults());
 
-        final HttpStatus httpStatus = Optional.ofNullable((Integer) attributes.get("status"))
-                .map(code -> Optional.ofNullable(HttpStatus.resolve(code)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
-                .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
+    HttpStatus httpStatus = Optional.ofNullable((Integer) attributes.get("status"))
+      .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
+        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
+      .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-        Optional<TokenUserDetails> userDetailsOptional = AuthUtils.getCurrentUser();
-        final Integer accountId = userDetailsOptional.map(TokenUserDetails::getAccountId).orElse(null);
-        final String accountName = userDetailsOptional.map(TokenUserDetails::getAccountName).orElse(null);
+    Optional<TokenUserDetails> userOpt = AuthUtils.getCurrentUser();
+    Integer accountId = userOpt.map(TokenUserDetails::getAccountId).orElse(null);
+    String accountName = userOpt.map(TokenUserDetails::getAccountName).orElse(null);
 
-        final String requestDescription = request.getDescription(true)
-                .replaceAll(";", "；");
-        if (httpStatus == HttpStatus.NOT_FOUND) {
-            log.warn("{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
-                    requestDescription, accountName, accountId, attributes);
-        } else {
-            log.error("{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
-                    requestDescription, accountName, accountId, attributes);
-        }
+    String reqDes = req.getDescription(true).replaceAll(";", "；");
 
-        final String error = (String) attributes.get("error");
-        return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
+    if (httpStatus == HttpStatus.NOT_FOUND) {
+      log.warn(
+        "{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
+        reqDes,
+        accountName,
+        accountId,
+        attributes
+      );
+    } else {
+      log.error(
+        "{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
+        reqDes,
+        accountName,
+        accountId,
+        attributes
+      );
     }
+
+    String error = (String) attributes.get("error");
+
+    return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
+  }
 }

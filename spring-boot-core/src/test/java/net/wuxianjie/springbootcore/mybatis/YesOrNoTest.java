@@ -12,30 +12,29 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class YesOrNoTest {
 
-    @Test
-    @DisplayName("可识别为 YesOrNo 枚举")
-    void canResolve() {
-        // given
-        final int value = 1;
+  @Test
+  @DisplayName("可识别为 YesOrNo 枚举")
+  void canResolve() {
+    // given
+    final int value = YesOrNo.YES.value();
 
-        // when
-        final Optional<YesOrNo> actual = YesOrNo.resolve(value);
+    // when
+    final Optional<YesOrNo> actual = YesOrNo.resolve(value);
 
-        // then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(YesOrNo.YES);
-    }
+    // then
+    assertThat(actual.orElseThrow()).isEqualTo(YesOrNo.YES);
+  }
 
-    @Test
-    @DisplayName("不可识为 YesOrNo 枚举")
-    void canNotResolve() {
-        // given
-        final int value = -1;
+  @Test
+  @DisplayName("不可识为 YesOrNo 枚举")
+  void canNotResolve() {
+    // given
+    final int value = -1;
 
-        // when
-        final Optional<YesOrNo> actual = YesOrNo.resolve(value);
+    // when
+    final Optional<YesOrNo> actual = YesOrNo.resolve(value);
 
-        // then
-        assertThat(actual.isEmpty()).isTrue();
-    }
+    // then
+    assertThat(actual.isEmpty()).isTrue();
+  }
 }

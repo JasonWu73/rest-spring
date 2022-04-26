@@ -12,41 +12,40 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class RoleTest {
 
-    @Test
-    @DisplayName("可解析为枚举值")
-    void canResolve() {
-        // given
-        final String value = "admin";
+  @Test
+  @DisplayName("可解析为枚举值")
+  void canResolve() {
+    // given
+    String value = Role.ADMIN.value();
 
-        // when
-        final Optional<Role> actual = Role.resolve(value);
+    // when
+    Optional<Role> actual = Role.resolve(value);
 
-        // then
-        assertThat(actual.isPresent()).isTrue();
-        assertThat(actual.get()).isEqualTo(Role.ADMIN);
-    }
+    // then
+    assertThat(actual.orElseThrow()).isEqualTo(Role.ADMIN);
+  }
 
-    @Test
-    @DisplayName("不可解析为枚举值")
-    void canNotResolve() {
-        // given
-        final String value = "super";
+  @Test
+  @DisplayName("不可解析为枚举值")
+  void canNotResolve() {
+    // given
+    String value = "super";
 
-        // when
-        final Optional<Role> actual = Role.resolve(value);
+    // when
+    Optional<Role> actual = Role.resolve(value);
 
-        // then
-        assertThat(actual.isEmpty()).isTrue();
-    }
+    // then
+    assertThat(actual.isEmpty()).isTrue();
+  }
 
-    @Test
-    @DisplayName("不可解析为枚举值 - 解析 null")
-    void canNotResolveNull() {
-        // given
-        // when
-        final Optional<Role> actual = Role.resolve(null);
+  @Test
+  @DisplayName("不可解析为枚举值：解析 null 值")
+  void canNotResolveNull() {
+    // given
+    // when
+    Optional<Role> actual = Role.resolve(null);
 
-        // then
-        assertThat(actual.isEmpty()).isTrue();
-    }
+    // then
+    assertThat(actual.isEmpty()).isTrue();
+  }
 }

@@ -17,40 +17,41 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * @author 吴仙杰
  */
-@WebMvcTest(controllers = GlobalErrorController.class, excludeAutoConfiguration = SecurityAutoConfiguration.class)
+@WebMvcTest(
+  controllers = GlobalErrorController.class,
+  excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class GlobalErrorControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Test
-    @DisplayName("404 Spring Boot 白标签错误页")
-    void itShouldCheckWhen404WhiteLabelErrorPage() throws Exception {
-        // given
-        final int httpStatus = HttpStatus.NOT_FOUND.value();
+  @Test
+  @DisplayName("404 Spring Boot 白标签错误页")
+  void testWhen404WhiteLabelErrorPage() throws Exception {
+    // given
+    // when
+    mockMvc.perform(get("/error")
+        .requestAttr(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.NOT_FOUND.value()))
+      // then
+      .andExpect(status().isNotFound())
+      .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+      .andExpect(jsonPath("$.error").value(1))
+      .andExpect(jsonPath("$.errMsg").value("Not Found"))
+      .andExpect(jsonPath("$.data").doesNotExist());
+  }
 
-        // when
-        mockMvc.perform(get("/error")
-                        .requestAttr(RequestDispatcher.ERROR_STATUS_CODE, httpStatus))
-                // then
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("Not Found"))
-                .andExpect(jsonPath("$.data").doesNotExist());
-    }
-
-    @Test
-    @DisplayName("500 Spring Boot 白标签错误页")
-    void itShouldCheckWhen500WhiteLabelErrorPage() throws Exception {
-        // given
-        // when
-        mockMvc.perform(get("/error"))
-                // then
-                .andExpect(status().isInternalServerError())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath("$.error").value(1))
-                .andExpect(jsonPath("$.errMsg").value("None"))
-                .andExpect(jsonPath("$.data").doesNotExist());
-    }
+  @Test
+  @DisplayName("500 Spring Boot 白标签错误页")
+  void testWhen500WhiteLabelErrorPage() throws Exception {
+    // given
+    // when
+    mockMvc.perform(get("/error"))
+      // then
+      .andExpect(status().isInternalServerError())
+      .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+      .andExpect(jsonPath("$.error").value(1))
+      .andExpect(jsonPath("$.errMsg").value("None"))
+      .andExpect(jsonPath("$.data").doesNotExist());
+  }
 }

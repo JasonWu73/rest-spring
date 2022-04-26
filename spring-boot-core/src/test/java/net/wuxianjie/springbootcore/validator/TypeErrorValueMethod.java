@@ -5,10 +5,10 @@ package net.wuxianjie.springbootcore.validator;
  */
 enum TypeErrorValueMethod {
 
-    GOOGLE,
-    YOUTUBE;
+  GOOGLE,
+  YOUTUBE;
 
-    String value() {
-        throw new RuntimeException("有意为之");
-    }
+  String value() {
+    throw new RuntimeException("有意为之");
+  }
 }

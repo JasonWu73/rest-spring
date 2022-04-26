@@ -15,65 +15,65 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * @author 吴仙杰
  */
-@SpringBootTest(classes = WebSecurityConfig.class)
 @Slf4j
+@SpringBootTest(classes = WebSecurityConfig.class)
 class PasswordEncoderTest {
 
-    @SuppressWarnings("unused")
-    @MockBean
-    private ObjectMapper objectMapper;
-    @SuppressWarnings("unused")
-    @MockBean
-    private SecurityConfig securityConfig;
-    @SuppressWarnings("unused")
-    @MockBean
-    private TokenAuthenticationFilter authFilter;
+  @Autowired
+  private PasswordEncoder underTest;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @MockBean
+  private ObjectMapper objectMapper;
 
-    private String rawPassword;
-    private static String hashedPassword;
+  @MockBean
+  private SecurityConfig securityConfig;
 
-    @BeforeEach
-    void setUp() {
-        rawPassword = "123";
-        hashedPassword = passwordEncoder.encode(rawPassword);
-        log.info("原密码：{}，编码后为：{}", rawPassword, hashedPassword);
-    }
+  @MockBean
+  private TokenAuthenticationFilter authFilter;
 
-    @Test
-    @DisplayName("编码明文密码")
-    void canGetHashedPassword() {
-        // given
-        // when
-        hashedPassword = passwordEncoder.encode(rawPassword);
+  private String rawPassword;
+  private String hashedPassword;
 
-        // then
-        assertThat(hashedPassword).isNotNull();
-    }
+  @BeforeEach
+  void setUp() {
+    rawPassword = "123";
+    hashedPassword = underTest.encode(rawPassword);
 
-    @Test
-    @DisplayName("哈希密码与明文密码匹配")
-    void itShouldCheckMatch() {
-        // given
-        // when
-        final boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
+    log.info("原密码：{}，编码后为：{}", rawPassword, hashedPassword);
+  }
 
-        // then
-        assertThat(actual).isTrue();
-    }
+  @Test
+  @DisplayName("编码明文密码")
+  void canGetHashedPassword() {
+    // given
+    // when
+    hashedPassword = underTest.encode(rawPassword);
 
-    @Test
-    @DisplayName("哈希密码与明文密码不匹配")
-    void itShouldCheckNotMatch() {
-        // given
-        rawPassword = "234";
+    // then
+    assertThat(hashedPassword).isNotNull();
+  }
 
-        // when
-        final boolean actual = passwordEncoder.matches(rawPassword, hashedPassword);
+  @Test
+  @DisplayName("验证密码：匹配")
+  void testMatchPassword() {
+    // given
+    // when
+    boolean actual = underTest.matches(rawPassword, hashedPassword);
 
-        // then
-        assertThat(actual).isFalse();
-    }
+    // then
+    assertThat(actual).isTrue();
+  }
+
+  @Test
+  @DisplayName("验证密码：不匹配")
+  void testNotMatch() {
+    // given
+    rawPassword = "234";
+
+    // when
+    boolean actual = underTest.matches(rawPassword, hashedPassword);
+
+    // then
+    assertThat(actual).isFalse();
+  }
 }

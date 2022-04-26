@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
-import net.wuxianjie.springbootcore.shared.exception.BadRequestException;
-import net.wuxianjie.springbootcore.shared.util.StringUtils;
+import net.wuxianjie.springbootcore.exception.BadRequestException;
+import net.wuxianjie.springbootcore.util.StrUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -82,8 +82,8 @@ public class OperationLogController {
     }
 
     private void setFuzzySearchValue(final OperationLogQuery query) {
-        query.setUsername(StringUtils.toFuzzy(query.getUsername()));
-        query.setRequestIp(StringUtils.toFuzzy(query.getRequestIp()));
-        query.setMethodMessage(StringUtils.toFuzzy(query.getMethodMessage()));
+        query.setUsername(StrUtils.toFuzzy(query.getUsername()));
+        query.setRequestIp(StrUtils.toFuzzy(query.getRequestIp()));
+        query.setMethodMessage(StrUtils.toFuzzy(query.getMethodMessage()));
     }
 }

@@ -14,20 +14,33 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-    User selectUserById(@Param("id") int userId);
+  User selectUserById(@Param("id") int userId);
 
-    User selectUserByName(String username);
+  User selectUserByName(String username);
 
-    List<UserDto> selectUsers(@Param("p") PagingQuery paging,
-                              @Param("q") UserQuery query);
+  /**
+   * 获取用户分页列表。
+   *
+   * @param paging 分页参数
+   * @param query  查询参数
+   * @return 用户分页列表
+   */
+  List<UserDto> findByUsernameLikeAndEnabled(@Param("p") PagingQuery paging,
+                                             @Param("q") GetUserQuery query);
 
-    int countUsers(@Param("q") UserQuery query);
+  /**
+   * 统计用户数量。
+   *
+   * @param query 查询参数
+   * @return 符合条件的用户总数
+   */
+  int countByUsernameLikeAndEnabled(@Param("q") GetUserQuery query);
 
-    boolean existsUserByName(String username);
+  boolean existsUserByName(String username);
 
-    void insertUser(User user);
+  void insertUser(User user);
 
-    void updateUser(User user);
+  void updateUser(User user);
 
-    void deleteUserById(@Param("id") int userId);
+  void deleteUserById(@Param("id") int userId);
 }

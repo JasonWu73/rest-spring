@@ -13,20 +13,17 @@ import java.util.stream.Collectors;
 @RestController
 class PagingTestController {
 
-    @GetMapping("/paging")
-    public PagingResult<String> getPagingList(final @Valid PagingQuery paging) {
-        return buildPagingResult(paging);
-    }
+  @GetMapping("/paging")
+  public PagingResult<String> getPagingList(@Valid PagingQuery paging) {
+    List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
 
-    private PagingResult<String> buildPagingResult(final PagingQuery paging) {
-        final List<String> allData = List.of("One", "Two", "Three", "Four", "Five");
-        return new PagingResult<>(
-                paging,
-                allData.size(),
-                allData.stream()
-                        .skip(paging.getOffset())
-                        .limit(paging.getPageSize())
-                        .collect(Collectors.toList())
-        );
-    }
+    return new PagingResult<>(
+      paging,
+      allData.size(),
+      allData.stream()
+        .skip(paging.getOffset())
+        .limit(paging.getPageSize())
+        .collect(Collectors.toList())
+    );
+  }
 }

@@ -13,20 +13,20 @@ import javax.validation.constraints.NotBlank;
  * @author 吴仙杰
  * @see WebSecurityConfig
  */
-@Configuration
-@ConfigurationProperties(prefix = "core.security")
 @Data
 @Validated
+@Configuration
+@ConfigurationProperties(prefix = "core.security")
 public class SecurityConfig {
 
-    /**
-     * JWT 签名密钥。
-     */
-    @NotBlank(message = "JWT 签名密钥不能为空")
-    private String jwtSigningKey;
+  /**
+   * JWT 签名密钥。
+   */
+  @NotBlank(message = "JWT 签名密钥不能为空")
+  private String jwtSigningKey;
 
-    /**
-     * 无需认证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
-     */
-    private String permitAllAntPatterns;
+  /**
+   * 无需认证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
+   */
+  private String permitAllAntPatterns;
 }
