@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.user.UserMapper">
-  <select id="selectUserById" resultType="net.wuxianjie.web.user.User">
+  <select id="findByUserId" resultType="net.wuxianjie.web.user.User">
     SELECT user_id         AS userId,
            is_enabled      AS enabled,
            username,
            hashed_password AS hashedPassword,
            roles
     FROM users
-    WHERE user_id = #{id}
+    WHERE user_id = #{userId}
   </select>
 
-  <select id="selectUserByName" resultType="net.wuxianjie.web.user.User">
+  <select id="findByUsername" resultType="net.wuxianjie.web.user.User">
     SELECT user_id         AS userId,
            is_enabled      AS enabled,
            username,
@@ -32,7 +32,7 @@
     </where>
   </sql>
 
-  <select id="findByUsernameLikeAndEnabled" resultType="net.wuxianjie.web.user.UserDto">
+  <select id="findByUsernameLikeAndEnabled" resultType="net.wuxianjie.web.user.UserItemDto">
     SELECT user_id                                    AS userId,
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,
@@ -50,11 +50,11 @@
     <include refid="whereUsernameLikeAndEnabled"/>
   </select>
 
-  <select id="existsUserByName" resultType="boolean">
+  <select id="existsByUsername" resultType="boolean">
     SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})
   </select>
 
-  <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId" parameterType="net.wuxianjie.web.user.User">
+  <insert id="save" useGeneratedKeys="true" keyProperty="userId" parameterType="net.wuxianjie.web.user.User">
     INSERT INTO users (create_time,
                        modify_time,
                        is_enabled,
@@ -69,20 +69,18 @@
             #{roles})
   </insert>
 
-  <update id="updateUser">
+  <update id="update">
     UPDATE users
-    <set>
-      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-      <if test="hashedPassword != null">hashed_password = #{hashedPassword},</if>
-      <if test="roles != null">roles = #{roles},</if>
-      <if test="enabled != null">is_enabled = #{enabled}</if>
-    </set>
+    SET modify_time     = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+        hashed_password = #{hashedPassword},
+        roles           = #{roles},
+        is_enabled      = #{enabled}
     WHERE user_id = #{userId}
   </update>
 
-  <delete id="deleteUserById">
+  <delete id="deleteByUserId">
     DELETE
     FROM users
-    WHERE user_id = #{id}
+    WHERE user_id = #{userId}
   </delete>
 </mapper>

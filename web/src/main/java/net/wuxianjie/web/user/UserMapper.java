@@ -7,16 +7,28 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 用户表相关。
+ * 用户表相关 SQL。
  *
  * @author 吴仙杰
  */
 @Mapper
 public interface UserMapper {
 
-  User selectUserById(@Param("id") int userId);
+  /**
+   * 通过用户 id 获取用户数据。
+   *
+   * @param userId 用户 id
+   * @return 用户数据
+   */
+  User findByUserId(int userId);
 
-  User selectUserByName(String username);
+  /**
+   * 通过用户名获取用户数据。
+   *
+   * @param username 用户名
+   * @return 用户数据
+   */
+  User findByUsername(String username);
 
   /**
    * 获取用户分页列表。
@@ -25,8 +37,8 @@ public interface UserMapper {
    * @param query  查询参数
    * @return 用户分页列表
    */
-  List<UserDto> findByUsernameLikeAndEnabled(@Param("p") PagingQuery paging,
-                                             @Param("q") GetUserQuery query);
+  List<UserItemDto> findByUsernameLikeAndEnabled(@Param("p") PagingQuery paging,
+                                                 @Param("q") GetUserQuery query);
 
   /**
    * 统计用户数量。
@@ -36,11 +48,32 @@ public interface UserMapper {
    */
   int countByUsernameLikeAndEnabled(@Param("q") GetUserQuery query);
 
-  boolean existsUserByName(String username);
+  /**
+   * 检查是否已存在相同用户名。
+   *
+   * @param username 用户名
+   * @return true：已存在，false：不存在
+   */
+  boolean existsByUsername(String username);
 
-  void insertUser(User user);
+  /**
+   * 保存用户数据。
+   *
+   * @param user 需要保存的用户数据
+   */
+  void save(User user);
 
-  void updateUser(User user);
+  /**
+   * 更新用户数据。
+   *
+   * @param user 需要更新的用户数据
+   */
+  void update(User user);
 
-  void deleteUserById(@Param("id") int userId);
+  /**
+   * 删除用户。
+   *
+   * @param userId 用户 id
+   */
+  void deleteByUserId(int userId);
 }

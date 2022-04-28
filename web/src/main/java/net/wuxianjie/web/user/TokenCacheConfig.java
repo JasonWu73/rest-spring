@@ -18,7 +18,7 @@ public class TokenCacheConfig {
     /**
      * Token 本地缓存。
      *
-     * @return {@code username: TokenUserDetails}
+     * @return {@code {username : TokenUserDetails}}
      */
     @Bean
     public Cache<String, UserDetails> tokenCache() {

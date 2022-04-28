@@ -14,8 +14,6 @@ spring:
 mybatis:
   type-handlers-package: net.wuxianjie.springbootcore.mybatis
   mapper-locations: classpath:mapper/*.xml
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 core:
   security:
     jwt-signing-key: kbeiTd5Q7rQr7ZLsrv0OhEwSBf5teTqlQWNV5Az+vQ0=

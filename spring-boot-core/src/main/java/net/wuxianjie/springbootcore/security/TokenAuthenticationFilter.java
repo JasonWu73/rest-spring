@@ -110,23 +110,23 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(token);
   }
 
-  private List<GrantedAuthority> getAuthorities(String commaSeparatedRole) {
-    if (StrUtil.isEmpty(commaSeparatedRole)) {
-      return Collections.emptyList();
-    }
+  private List<GrantedAuthority> getAuthorities(String roles) {
+    return Optional.ofNullable(StrUtil.trimToNull(roles))
+      .map(s -> {
+        String commaSeparatedRoles = Arrays.stream(s.split(","))
+          .reduce("", (roleOne, roleTwo) -> {
+            String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
 
-    String roles = Arrays.stream(commaSeparatedRole.split(","))
-      .reduce("", (roleOne, roleTwo) -> {
-        String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
+            if (StrUtil.isEmpty(roleOne)) {
+              return appended;
+            }
 
-        if (StrUtil.isEmpty(roleOne)) {
-          return appended;
-        }
+            return roleOne + "," + appended;
+          });
 
-        return roleOne + "," + appended;
-      });
-
-    return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(commaSeparatedRoles);
+      })
+      .orElse(Collections.emptyList());
   }
 
   private void sendToResponse(HttpServletResponse resp,

@@ -12,8 +12,8 @@ import net.wuxianjie.springbootcore.security.TokenUserDetails;
  * @author 吴仙杰
  */
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserDetails implements TokenUserDetails {
 
     /**
@@ -34,7 +34,7 @@ public class UserDetails implements TokenUserDetails {
     private String roles;
 
     /**
-     * 用于 API 鉴权的 Token，在请求头中携带：`Authorization: Bearer accessToken`。
+     * 用于 API 鉴权的 Token，在请求头中携带：{@code Authorization: Bearer accessToken}。
      */
     private String accessToken;
 

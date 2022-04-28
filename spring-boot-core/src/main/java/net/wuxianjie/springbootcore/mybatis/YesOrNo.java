@@ -42,12 +42,13 @@ public enum YesOrNo implements ValueEnum {
   /**
    * 将整数值解析为枚举常量。
    *
-   * @param val 整数值
+   * @param value 整数值
    * @return 整数值所对应的枚举常量
    */
-  public static Optional<YesOrNo> resolve(int val) {
-    return Arrays.stream(VALUES)
-      .filter(yesOrNo -> val == yesOrNo.value)
-      .findFirst();
+  public static Optional<YesOrNo> resolve(Integer value) {
+    return Optional.ofNullable(value)
+      .flatMap(val -> Arrays.stream(VALUES)
+        .filter(yesOrNo -> value == yesOrNo.value)
+        .findFirst());
   }
 }

@@ -1,17 +1,16 @@
 package net.wuxianjie.web.operationlog;
 
 import lombok.Data;
-import net.wuxianjie.springbootcore.operationlog.OperationLogData;
 
 import java.time.LocalDateTime;
 
 /**
- * 操作日志表。
+ * 操作日志列表项数据传输对象。
  *
  * @author 吴仙杰
  */
 @Data
-public class OperationLog {
+public class LogItemDto {
 
   /**
    * 日志 id。
@@ -62,16 +61,4 @@ public class OperationLog {
    * 目标方法返回值的 JSON 字符串。
    */
   private String returnJson;
-
-  public OperationLog(OperationLogData logData) {
-    this.operationTime = logData.getOperationTime();
-    this.userId = logData.getOperatorId();
-    this.username = logData.getOperatorName();
-    this.requestIp = logData.getRequestIp();
-    this.requestUri = logData.getRequestUri();
-    this.methodName = logData.getMethodName();
-    this.methodMessage = logData.getMethodMessage();
-    this.paramJson = logData.getParamJson();
-    this.returnJson = logData.getReturnJson();
-  }
 }

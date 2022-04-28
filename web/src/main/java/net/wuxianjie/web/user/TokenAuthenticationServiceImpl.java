@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 实现 Token 认证业务逻辑。
+ * Token 认证业务逻辑实现类。
  *
  * @author 吴仙杰
  */
@@ -25,31 +25,31 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
   private final Cache<String, UserDetails> tokenCache;
 
   @Override
-  public UserDetails authenticate(final String token) throws TokenAuthenticationException {
-    final Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
+  public UserDetails authenticate(String token) throws TokenAuthenticationException {
+    Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
-    final String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException(
-        StrUtil.format("Token 缺少 {} 信息", TokenAttributes.TOKEN_TYPE_KEY)));
+    String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
+      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 信息"));
 
     if (!StrUtil.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
-      throw new TokenAuthenticationException("非 Access Token");
+      throw new TokenAuthenticationException("非 Access Token 不可用于访问");
     }
 
-    final String username = Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException(
-        StrUtil.format("Token 缺少 {} 信息", TokenAttributes.ACCOUNT_KEY)));
+    String username = Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
+      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.ACCOUNT_KEY + " 信息"));
 
     return getUserDetailsFromCache(username, token);
   }
 
-  private UserDetails getUserDetailsFromCache(final String username, final String token) {
-    final UserDetails userDetails = tokenCache.getIfPresent(username);
+  private UserDetails getUserDetailsFromCache(String username, String token) {
+    return Optional.ofNullable(tokenCache.getIfPresent(username))
+      .map(userDetails -> {
+        if (!StrUtil.equals(token, userDetails.getAccessToken())) {
+          throw new TokenAuthenticationException("Token 已弃用");
+        }
 
-    if (userDetails == null || !StrUtil.equals(token, userDetails.getAccessToken())) {
-      throw new TokenAuthenticationException("Token 已过期");
-    }
-
-    return userDetails;
+        return userDetails;
+      })
+      .orElseThrow(() -> new TokenAuthenticationException("Token 已过期"));
   }
 }

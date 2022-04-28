@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * 操作日志业务逻辑处理类。
+ * 操作日志业务逻辑实现类。
  *
  * @author 吴仙杰
  */
@@ -19,27 +19,26 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OperationLogServiceImpl implements OperationLogService {
 
-    private final OperationLogMapper logMapper;
+  private final OperationLogMapper logMapper;
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void saveLog(final OperationLogData logData) {
-        logMapper.insertLog(new OperationLog(logData));
-    }
+  @Override
+  @Transactional(rollbackFor = Exception.class)
+  public void saveLog(OperationLogData logData) {
+    logMapper.insertLog(new OperationLog(logData));
+  }
 
-    /**
-     * 获取操作日志列表。
-     *
-     * @param paging 分页参数
-     * @param query  查询参数
-     * @return 日志列表
-     */
-    public PagingResult<OperationLogDto> getLogs(final PagingQuery paging,
-                                                 final OperationLogQuery query) {
-        final List<OperationLogDto> logs = logMapper.selectLogs(paging, query);
+  /**
+   * 获取操作日志列表。
+   *
+   * @param paging 分页参数
+   * @param query  查询参数
+   * @return 操作日志列表
+   */
+  public PagingResult<LogItemDto> getLogs(PagingQuery paging, GetLogQuery query) {
+    List<LogItemDto> logs = logMapper.findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(paging, query);
 
-        final int total = logMapper.countLogs(query);
+    int total = logMapper.countByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(query);
 
-        return new PagingResult<>(paging, total, logs);
-    }
+    return new PagingResult<>(paging, total, logs);
+  }
 }

@@ -14,10 +14,23 @@ import java.util.List;
 @Mapper
 public interface OperationLogMapper {
 
-    List<OperationLogDto> selectLogs(@Param("p") PagingQuery paging,
-                                     @Param("q") OperationLogQuery query);
+  /**
+   * 获取操作日志分页列表。
+   *
+   * @param paging 分页参数
+   * @param query  查询参数
+   * @return 操作日志分页列表
+   */
+  List<LogItemDto> findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(@Param("p") PagingQuery paging,
+                                                                                                 @Param("q") GetLogQuery query);
 
-    int countLogs(@Param("q") OperationLogQuery query);
+  /**
+   * 统计操作日志数量。
+   *
+   * @param query 查询参数
+   * @return 符合条件的操作日志总数
+   */
+  int countByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(@Param("q") GetLogQuery query);
 
-    void insertLog(OperationLog log);
+  void insertLog(OperationLog log);
 }
