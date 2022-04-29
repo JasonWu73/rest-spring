@@ -35,7 +35,7 @@ public class OperationLogServiceImpl implements OperationLogService {
    * @return 操作日志列表
    */
   public PagingResult<LogItemDto> getLogs(PagingQuery paging, GetLogQuery query) {
-    List<LogItemDto> logs = logMapper.findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(paging, query);
+    List<LogItemDto> logs = logMapper.findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLikeOrderByOperationTimeDesc(paging, query);
 
     int total = logMapper.countByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(query);
 

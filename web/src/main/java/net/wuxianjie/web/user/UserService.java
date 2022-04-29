@@ -36,7 +36,7 @@ public class UserService {
    * @return 用户列表
    */
   public PagingResult<UserItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
-    List<UserItemDto> users = userMapper.findByUsernameLikeAndEnabled(paging, query);
+    List<UserItemDto> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query);
 
     int total = userMapper.countByUsernameLikeAndEnabled(query);
 

@@ -32,7 +32,7 @@
     </where>
   </sql>
 
-  <select id="findByUsernameLikeAndEnabled" resultType="net.wuxianjie.web.user.UserItemDto">
+  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.UserItemDto">
     SELECT user_id                                    AS userId,
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,

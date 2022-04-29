@@ -21,7 +21,7 @@
     </where>
   </sql>
 
-  <select id="findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike" resultType="net.wuxianjie.web.operationlog.LogItemDto">
+  <select id="findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLikeOrderByOperationTimeDesc" resultType="net.wuxianjie.web.operationlog.LogItemDto">
     SELECT log_id         AS logId,
            operation_time AS operationTime,
            user_id        AS userId,

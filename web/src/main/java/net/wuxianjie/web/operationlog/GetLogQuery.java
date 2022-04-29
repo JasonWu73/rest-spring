@@ -1,7 +1,6 @@
 package net.wuxianjie.web.operationlog;
 
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -31,18 +30,15 @@ public class GetLogQuery {
   /**
    * 用户名，当为开放 API 时，则不存在。
    */
-  @Length(message = "用户名最长不能超过 100 个字符", max = 100)
   private String username;
 
   /**
    * 请求 IP。
    */
-  @Length(message = "请求 IP 最长不能超过 100 个字符", max = 100)
   private String requestIp;
 
   /**
    * 操作描述。
    */
-  @Length(message = "操作描述最长不能超过 100 个字符", max = 100)
   private String methodMessage;
 }
