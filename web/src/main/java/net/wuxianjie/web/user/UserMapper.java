@@ -37,8 +37,8 @@ public interface UserMapper {
    * @param query  查询参数
    * @return 用户分页列表
    */
-  List<UserItemDto> findByUsernameLikeAndEnabled(@Param("p") PagingQuery paging,
-                                                 @Param("q") GetUserQuery query);
+  List<UserItemDto> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
+                                                                      @Param("q") GetUserQuery query);
 
   /**
    * 统计用户数量。

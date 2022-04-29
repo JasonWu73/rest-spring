@@ -21,8 +21,8 @@ public interface OperationLogMapper {
    * @param query  查询参数
    * @return 操作日志分页列表
    */
-  List<LogItemDto> findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(@Param("p") PagingQuery paging,
-                                                                                                 @Param("q") GetLogQuery query);
+  List<LogItemDto> findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLikeOrderByOperationTimeDesc(@Param("p") PagingQuery paging,
+                                                                                                                         @Param("q") GetLogQuery query);
 
   /**
    * 统计操作日志数量。

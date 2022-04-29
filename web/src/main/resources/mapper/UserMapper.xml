@@ -32,7 +32,7 @@
     </where>
   </sql>
 
-  <select id="findByUsernameLikeAndEnabled" resultType="net.wuxianjie.web.user.UserItemDto">
+  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.UserItemDto">
     SELECT user_id                                    AS userId,
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,
@@ -71,10 +71,12 @@
 
   <update id="update">
     UPDATE users
-    SET modify_time     = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
-        hashed_password = #{hashedPassword},
-        roles           = #{roles},
-        is_enabled      = #{enabled}
+    <set>
+      modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+      <if test="hashedPassword != null">hashed_password = #{hashedPassword},</if>
+      <if test="roles != null">roles = #{roles},</if>
+      <if test="enabled != null">is_enabled = #{enabled}</if>
+    </set>
     WHERE user_id = #{userId}
   </update>
 

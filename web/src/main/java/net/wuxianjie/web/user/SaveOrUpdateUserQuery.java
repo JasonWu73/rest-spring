@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 /**
- * 新增用户请求参数。
+ * 新增或修改用户请求参数。
  *
  * @author 吴仙杰
  */

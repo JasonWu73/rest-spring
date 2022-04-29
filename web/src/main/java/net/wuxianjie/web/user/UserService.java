@@ -36,7 +36,7 @@ public class UserService {
    * @return 用户列表
    */
   public PagingResult<UserItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
-    List<UserItemDto> users = userMapper.findByUsernameLikeAndEnabled(paging, query);
+    List<UserItemDto> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query);
 
     int total = userMapper.countByUsernameLikeAndEnabled(query);
 
@@ -154,18 +154,24 @@ public class UserService {
     if (newPassword != null && !passwordEncoder.matches(newPassword, toUpdate.getHashedPassword())) {
       needsUpdate = true;
       toUpdate.setHashedPassword(passwordEncoder.encode(newPassword));
+    } else {
+      toUpdate.setHashedPassword(null);
     }
 
     String newRoles = query.getRoles();
     if (newRoles != null && !StrUtils.equalsIgnoreBlank(newRoles, toUpdate.getRoles())) {
       needsUpdate = true;
       toUpdate.setRoles(newRoles);
+    } else {
+      toUpdate.setRoles(null);
     }
 
     Optional<YesOrNo> newEnabledOpt = YesOrNo.resolve(query.getEnabled());
     if (newEnabledOpt.isPresent() && newEnabledOpt.get() != toUpdate.getEnabled()) {
       needsUpdate = true;
       toUpdate.setEnabled(newEnabledOpt.get());
+    } else {
+      toUpdate.setEnabled(null);
     }
 
     return needsUpdate;
