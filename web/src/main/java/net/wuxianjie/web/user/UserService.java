@@ -116,12 +116,13 @@ public class UserService {
    */
   @Transactional(rollbackFor = Exception.class)
   public void deleteUser(DelUserQuery query) {
-    User user = getUserFromDbMustBeExists(query.getUserId());
+    int userId = query.getUserId();
+    User toDel = getUserFromDbMustBeExists(userId);
 
-    userMapper.deleteByUserId(user.getUserId());
+    userMapper.deleteByUserId(userId);
 
     // 为了记录操作日志
-    query.setUsername(user.getUsername());
+    query.setUsername(toDel.getUsername());
   }
 
   private User buildUserToSave(SaveOrUpdateUserQuery query) {
