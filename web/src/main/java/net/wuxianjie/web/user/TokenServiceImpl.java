@@ -3,12 +3,12 @@ package net.wuxianjie.web.user;
 import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.springbootcore.exception.NotFoundException;
+import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
-import net.wuxianjie.springbootcore.exception.NotFoundException;
-import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
 import net.wuxianjie.springbootcore.util.JwtUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,15 +54,13 @@ public class TokenServiceImpl implements TokenService {
   public TokenData refreshToken(String refreshToken) throws TokenAuthenticationException {
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), refreshToken);
 
-    String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 信息"));
+    String tokenType = TokenUtils.getTokenType(payload);
 
     if (!StrUtil.equals(tokenType, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE)) {
-      throw new TokenAuthenticationException("非 Refresh Token 不可用于刷新");
+      throw new TokenAuthenticationException("仅 Refresh Token 才可刷新");
     }
 
-    String username = Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.ACCOUNT_KEY + " 信息"));
+    String username = TokenUtils.getTokenAccount(payload);
 
     verifyRefreshTokenUsability(username, refreshToken);
 
@@ -79,12 +77,12 @@ public class TokenServiceImpl implements TokenService {
 
   private User getUserFromDbMustBeExists(String username) {
     return Optional.ofNullable(userMapper.findByUsername(username))
-      .orElseThrow(() -> new NotFoundException("未找到账号 " + username));
+      .orElseThrow(() -> new NotFoundException("用户名 [" + username + "] 不存在"));
   }
 
   private void verifyAccountUsability(String username, YesOrNo enabled) {
     if (enabled != YesOrNo.YES) {
-      throw new TokenAuthenticationException("账号 " + username + " 已禁用");
+      throw new TokenAuthenticationException("账号 [" + username + "] 已被停用");
     }
   }
 
@@ -128,8 +126,8 @@ public class TokenServiceImpl implements TokenService {
   private void verifyRefreshTokenUsability(String username, String refreshToken) {
     Optional.ofNullable(tokenCache.getIfPresent(username))
       .ifPresentOrElse(
-        userDetails -> {
-          if (!StrUtil.equals(refreshToken, userDetails.getRefreshToken())) {
+        u -> {
+          if (!StrUtil.equals(refreshToken, u.getRefreshToken())) {
             throw new TokenAuthenticationException("Token 已弃用");
           }
         },

@@ -1,21 +1,17 @@
 package net.wuxianjie.web.operationlog;
 
-import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.springbootcore.exception.BadRequestException;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.util.StrUtils;
+import net.wuxianjie.web.shared.ParamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 
 /**
  * 操作日志控制器。
@@ -33,7 +29,7 @@ public class OperationLogController {
    * 获取操作日志列表。
    *
    * @param paging 分页参数
-   * @param query  查询参数
+   * @param query  请求参数
    * @return 操作日志列表
    */
   @Admin
@@ -42,15 +38,13 @@ public class OperationLogController {
                                           @Valid GetLogQuery query) {
     setFuzzySearchValue(query);
 
-    LocalDateTime startTime = toStartTimeOfDay(query.getStartDate());
+    LocalDateTime startTime = ParamUtils.toStartTimeOfDay(query.getStartDate(), "开始日期不合法");
     query.setStartTimeInclusive(startTime);
 
-    LocalDateTime endTime = toEndTimeOfDay(query.getEndDate());
+    LocalDateTime endTime = ParamUtils.toEndTimeOfDay(query.getEndDate(), "结束日期不合法");
     query.setEndTimeInclusive(endTime);
 
-    if (startTime != null && endTime != null && startTime.isAfter(endTime)) {
-      throw new BadRequestException("开始日期不能晚于结束日期");
-    }
+    ParamUtils.verifyStartTimeIsBeforeEndTime(startTime, endTime);
 
     return logService.getLogs(paging, query);
   }
@@ -59,37 +53,5 @@ public class OperationLogController {
     query.setUsername(StrUtils.toFuzzy(query.getUsername()));
     query.setRequestIp(StrUtils.toFuzzy(query.getRequestIp()));
     query.setMethodMessage(StrUtils.toFuzzy(query.getMethodMessage()));
-  }
-
-  private LocalDateTime toStartTimeOfDay(String dateStr) {
-    if (StrUtil.isEmpty(dateStr)) {
-      return null;
-    }
-
-    LocalDate startDate;
-
-    try {
-      startDate = LocalDate.parse(dateStr);
-    } catch (DateTimeParseException e) {
-      throw new BadRequestException("开始日期不合法", e);
-    }
-
-    return startDate.atStartOfDay();
-  }
-
-  private LocalDateTime toEndTimeOfDay(String dateStr) {
-    if (StrUtil.isEmpty(dateStr)) {
-      return null;
-    }
-
-    LocalDate endDate;
-
-    try {
-      endDate = LocalDate.parse(dateStr);
-    } catch (DateTimeParseException e) {
-      throw new BadRequestException("结束日期不合法", e);
-    }
-
-    return endDate.atTime(LocalTime.MAX);
   }
 }

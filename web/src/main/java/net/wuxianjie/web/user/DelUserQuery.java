@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.Data;
 
 /**
- * 删除用户查询参数。
+ * 删除用户请求参数。
  *
  * @author 吴仙杰
  */

@@ -44,7 +44,7 @@
     <include refid="whereOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike"/>
   </select>
 
-  <insert id="insertLog">
+  <insert id="save">
     INSERT INTO operation_logs (operation_time,
                                 user_id,
                                 username,

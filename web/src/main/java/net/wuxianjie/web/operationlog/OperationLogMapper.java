@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 操作日志表相关。
+ * 操作日志表相关 SQL。
  *
  * @author 吴仙杰
  */
@@ -32,5 +32,10 @@ public interface OperationLogMapper {
    */
   int countByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike(@Param("q") GetLogQuery query);
 
-  void insertLog(OperationLog log);
+  /**
+   * 保存日志数据。
+   *
+   * @param log 需要保存的日志数据
+   */
+  void save(OperationLog log);
 }

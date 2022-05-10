@@ -34,7 +34,7 @@ public class UserController {
    * 获取用户列表。
    *
    * @param paging 分页参数
-   * @param query  查询参数
+   * @param query  请求参数
    * @return 用户列表
    */
   @Admin

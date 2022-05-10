@@ -3,9 +3,9 @@ package net.wuxianjie.web.user;
 import cn.hutool.core.util.StrUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
+import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
 import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenAuthenticationService;
-import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
 import net.wuxianjie.springbootcore.util.JwtUtils;
 import org.springframework.stereotype.Service;
 
@@ -28,27 +28,25 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
   public UserDetails authenticate(String token) throws TokenAuthenticationException {
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
-    String tokenType = Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 信息"));
+    String tokenType = TokenUtils.getTokenType(payload);
 
     if (!StrUtil.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE)) {
-      throw new TokenAuthenticationException("非 Access Token 不可用于访问");
+      throw new TokenAuthenticationException("仅 Access Token 才可访问");
     }
 
-    String username = Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.ACCOUNT_KEY + " 信息"));
+    String username = TokenUtils.getTokenAccount(payload);
 
     return getUserDetailsFromCache(username, token);
   }
 
   private UserDetails getUserDetailsFromCache(String username, String token) {
     return Optional.ofNullable(tokenCache.getIfPresent(username))
-      .map(userDetails -> {
-        if (!StrUtil.equals(token, userDetails.getAccessToken())) {
+      .map(u -> {
+        if (!StrUtil.equals(token, u.getAccessToken())) {
           throw new TokenAuthenticationException("Token 已弃用");
         }
 
-        return userDetails;
+        return u;
       })
       .orElseThrow(() -> new TokenAuthenticationException("Token 已过期"));
   }

@@ -32,7 +32,7 @@ public class UserService {
    * 获取用户列表。
    *
    * @param paging 分页参数
-   * @param query  查询参数
+   * @param query  请求参数
    * @return 用户列表
    */
   public PagingResult<UserItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
@@ -54,7 +54,7 @@ public class UserService {
     boolean isExisted = userMapper.existsByUsername(username);
 
     if (isExisted) {
-      throw new ConflictException("已存在用户名 " + username);
+      throw new ConflictException("用户名 [" + username + "] 已存在");
     }
 
     User toSave = buildUserToSave(query);
@@ -77,7 +77,7 @@ public class UserService {
   public void updateUser(SaveOrUpdateUserQuery query) {
     User toUpdate = getUserFromDbMustBeExists(query.getUserId());
 
-    populateNonUpdateField(toUpdate, query);
+    populateQueryForOperationLog(toUpdate, query);
 
     boolean needsUpdate = needsUpdate(toUpdate, query);
 
@@ -122,7 +122,7 @@ public class UserService {
     userMapper.deleteByUserId(userId);
 
     // 为了记录操作日志
-    query.setUsername(toDel.getUsername());
+    populateQueryForOperationLog(toDel, query);
   }
 
   private User buildUserToSave(SaveOrUpdateUserQuery query) {
@@ -131,9 +131,9 @@ public class UserService {
     BeanUtil.copyProperties(query, toSave, "enabled", "password");
 
     YesOrNo enabled = YesOrNo.resolve(query.getEnabled()).orElseThrow();
-    String hashedPassword = passwordEncoder.encode(query.getPassword());
-
     toSave.setEnabled(enabled);
+
+    String hashedPassword = passwordEncoder.encode(query.getPassword());
     toSave.setHashedPassword(hashedPassword);
 
     return toSave;
@@ -141,10 +141,14 @@ public class UserService {
 
   private User getUserFromDbMustBeExists(int userId) {
     return Optional.ofNullable(userMapper.findByUserId(userId))
-      .orElseThrow(() -> new NotFoundException("未找到 id 为 " + userId + " 的用户"));
+      .orElseThrow(() -> new NotFoundException("用户不存在 [id=" + userId + "]"));
   }
 
-  private void populateNonUpdateField(User user, SaveOrUpdateUserQuery query) {
+  private void populateQueryForOperationLog(User user, SaveOrUpdateUserQuery query) {
+    query.setUsername(user.getUsername());
+  }
+
+  private void populateQueryForOperationLog(User user, DelUserQuery query) {
     query.setUsername(user.getUsername());
   }
 

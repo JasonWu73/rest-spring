@@ -6,7 +6,7 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 /**
- * 获取操作日志查询参数。
+ * 获取操作日志请求参数。
  *
  * @author 吴仙杰
  */

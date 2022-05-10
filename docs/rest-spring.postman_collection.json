@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "c03fa150-73be-4240-8f84-53f74501572d",
+		"_postman_id": "0a0c8028-5f8e-440a-b8ee-e2bd0934e56c",
 		"name": "rest-spring",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -185,7 +185,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/operation-log/list?pageNo=1&pageSize=2",
+									"raw": "{{host}}/api/v1/operation-log/list?pageNo=1&pageSize=10",
 									"host": [
 										"{{host}}"
 									],
@@ -203,19 +203,19 @@
 										},
 										{
 											"key": "pageSize",
-											"value": "2",
+											"value": "10",
 											"description": "每页条数，必填"
 										},
 										{
 											"key": "startDate",
 											"value": "2022-02-10",
-											"description": "开始日期，包含，格式为 yyyy-MM-dd",
+											"description": "开始日期（包含），格式为 yyyy-MM-dd",
 											"disabled": true
 										},
 										{
 											"key": "endDate",
 											"value": "2023-02-12",
-											"description": "结束日期，包含，格式为 yyyy-MM-dd",
+											"description": "结束日期（包含），格式为 yyyy-MM-dd",
 											"disabled": true
 										},
 										{
@@ -238,7 +238,7 @@
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"total\": 100, // 总数\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 1, // 日志 id\n        \"operationTime\": \"...\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id，当为开放 API 时，则不存在\n        \"username\": \"...\", // 用户名，当为开放 API 时，则不存在\n        \"requestIp\": \"...\", // 请求 IP\n        \"requestUri\": \"...\", // 请求 URI\n        \"methodName\": \"...\", // 目标方法的全限定名\n        \"methodMessage\": \"...\", // 目标方法的描述，即操作描述\n        \"paramJson\": \"...\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"...\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 100, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 1, // 日志 id\n        \"operationTime\": \"...\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id，当为开放 API 时，则不存在\n        \"username\": \"...\", // 用户名，当为开放 API 时，则不存在\n        \"requestIp\": \"...\", // 请求 IP\n        \"requestUri\": \"...\", // 请求 URI\n        \"methodName\": \"...\", // 目标方法的全限定名\n        \"methodMessage\": \"...\", // 目标方法的描述，即操作描述\n        \"paramJson\": \"...\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"...\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						}
@@ -306,13 +306,13 @@
 										},
 										{
 											"key": "enabled",
-											"value": "1",
+											"value": "0",
 											"description": "启用状态：1：启用，0：禁用",
 											"disabled": true
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"total\": 100, // 总数\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 1, // 用户 id\n        \"modifyTime\": \"...\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 1, // 启用状态：1：启用，0：禁用\n        \"username\": \"...\", // 用户名\n        \"roles\": \"...\" // 用户绑定的角色，多个角色以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 100, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 1, // 用户 id\n        \"modifyTime\": \"...\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 1, // 启用状态：1：启用，0：禁用\n        \"username\": \"...\", // 用户名\n        \"roles\": \"...\" // 用户绑定的角色，多个角色以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -340,7 +340,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"enabled\": 1,\n  \"username\": \" test123 \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,,,user  \"\n}",
+									"raw": "{\n  \"enabled\": 0,\n  \"username\": \" test123 \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,admin,,user  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
