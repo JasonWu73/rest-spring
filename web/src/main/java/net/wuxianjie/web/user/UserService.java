@@ -60,8 +60,6 @@ public class UserService {
     User toSave = buildUserToSave(query);
 
     userMapper.save(toSave);
-
-    populateQueryForOperationLog(toSave, query);
   }
 
   /**
@@ -75,8 +73,6 @@ public class UserService {
   @Transactional(rollbackFor = Exception.class)
   public void updateUser(SaveOrUpdateUserQuery query) {
     User toUpdate = getUserFromDbMustBeExists(query.getUserId());
-
-    populateQueryForOperationLog(toUpdate, query);
 
     boolean needsUpdate = needsUpdate(toUpdate, query);
 
@@ -140,11 +136,6 @@ public class UserService {
   private User getUserFromDbMustBeExists(int userId) {
     return Optional.ofNullable(userMapper.findByUserId(userId))
       .orElseThrow(() -> new NotFoundException("用户不存在 [id=" + userId + "]"));
-  }
-
-  private void populateQueryForOperationLog(User user, SaveOrUpdateUserQuery query) {
-    query.setUserId(user.getUserId());
-    query.setUsername(user.getUsername());
   }
 
   private void populateQueryForOperationLog(User user, DelUserQuery query) {
