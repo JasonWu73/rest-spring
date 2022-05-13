@@ -138,10 +138,6 @@ public class UserService {
       .orElseThrow(() -> new NotFoundException("用户不存在 [id=" + userId + "]"));
   }
 
-  private void populateQueryForOperationLog(User user, DelUserQuery query) {
-    query.setUsername(user.getUsername());
-  }
-
   private boolean needsUpdate(User toUpdate, SaveOrUpdateUserQuery query) {
     boolean needsUpdate = false;
 
@@ -170,5 +166,9 @@ public class UserService {
     }
 
     return needsUpdate;
+  }
+
+  private void populateQueryForOperationLog(User user, DelUserQuery query) {
+    query.setUsername(user.getUsername());
   }
 }
