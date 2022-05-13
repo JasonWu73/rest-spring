@@ -110,7 +110,7 @@ public class UserService {
    * @param query 需要删除的用户
    */
   @Transactional(rollbackFor = Exception.class)
-  public void deleteUser(DelUserQuery query) {
+  public void deleteUser(LogOfDelUserQuery query) {
     int userId = query.getUserId();
     User toDel = getUserFromDbMustBeExists(userId);
 
@@ -168,7 +168,7 @@ public class UserService {
     return needsUpdate;
   }
 
-  private void populateQueryForOperationLog(User user, DelUserQuery query) {
+  private void populateQueryForOperationLog(User user, LogOfDelUserQuery query) {
     query.setUsername(user.getUsername());
   }
 }

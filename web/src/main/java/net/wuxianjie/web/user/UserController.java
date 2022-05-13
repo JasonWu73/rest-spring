@@ -107,7 +107,7 @@ public class UserController {
   @OperationLogger("删除用户")
   @GetMapping("del/{userId:\\d+}")
   public void deleteUser(@PathVariable int userId,
-                         DelUserQuery query) {
+                         LogOfDelUserQuery query) {
     query.setUserId(userId);
 
     userService.deleteUser(query);
