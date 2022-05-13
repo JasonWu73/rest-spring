@@ -61,8 +61,7 @@ public class UserService {
 
     userMapper.save(toSave);
 
-    // 为了记录操作日志
-    query.setUserId(toSave.getUserId());
+    populateQueryForOperationLog(toSave, query);
   }
 
   /**
@@ -121,7 +120,6 @@ public class UserService {
 
     userMapper.deleteByUserId(userId);
 
-    // 为了记录操作日志
     populateQueryForOperationLog(toDel, query);
   }
 
@@ -145,6 +143,7 @@ public class UserService {
   }
 
   private void populateQueryForOperationLog(User user, SaveOrUpdateUserQuery query) {
+    query.setUserId(user.getUserId());
     query.setUsername(user.getUsername());
   }
 
