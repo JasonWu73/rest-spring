@@ -1,5 +1,6 @@
 package net.wuxianjie.web.operationlog;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
  * @author 吴仙杰
  */
 @Data
+@JsonInclude
 public class LogItemDto {
 
   /**

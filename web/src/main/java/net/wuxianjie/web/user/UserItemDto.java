@@ -1,5 +1,6 @@
 package net.wuxianjie.web.user;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.security.Role;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
  * @author 吴仙杰
  */
 @Data
+@JsonInclude
 public class UserItemDto {
 
   /**

@@ -37,7 +37,7 @@
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,
            username,
-           IFNULL(roles, '')                          AS roles
+           roles
     FROM users
     <include refid="whereUsernameLikeAndEnabled"/>
     ORDER BY modify_time DESC

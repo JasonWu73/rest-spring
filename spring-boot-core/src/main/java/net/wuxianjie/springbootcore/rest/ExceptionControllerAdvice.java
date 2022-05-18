@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
@@ -148,6 +149,23 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestParameterException e,
                                                          HttpServletRequest req) {
     String respMsg = StrUtil.format("缺少必填参数 {}", e.getParameterName());
+
+    logWarnOrError(req, respMsg, e, true);
+
+    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+  }
+
+  /**
+   * 处理因 HTTP 请求缺少必传文件而导致的异常。
+   *
+   * @param e   {@link MissingServletRequestPartException}
+   * @param req {@link HttpServletRequest}
+   * @return {@link ResponseEntity}
+   */
+  @ExceptionHandler(MissingServletRequestPartException.class)
+  public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestPartException e,
+                                                         HttpServletRequest req) {
+    String respMsg = StrUtil.format("缺少必传文件 {}", e.getRequestPartName());
 
     logWarnOrError(req, respMsg, e, true);
 
