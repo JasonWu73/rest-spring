@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.Role;
+import net.wuxianjie.web.security.SysRole;
 
 import java.time.LocalDateTime;
 
@@ -39,7 +39,7 @@ public class UserItemDto {
   /**
    * 用户绑定的角色，多个角色以英文逗号分隔。
    *
-   * @see Role#value()
+   * @see SysRole#value()
    */
   private String roles;
 }

@@ -6,11 +6,11 @@ import net.wuxianjie.springbootcore.exception.BadRequestException;
 import net.wuxianjie.springbootcore.operationlog.OperationLogger;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
-import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.security.AuthUtils;
-import net.wuxianjie.springbootcore.security.Role;
 import net.wuxianjie.springbootcore.util.StrUtils;
 import net.wuxianjie.springbootcore.validator.group.GroupOne;
+import net.wuxianjie.web.security.SysRole;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,12 +37,11 @@ public class UserController {
    * @param query  请求参数
    * @return 用户列表
    */
-  @Admin
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_USER.name())")
   @GetMapping("list")
   public PagingResult<UserItemDto> getUsers(@Valid PagingQuery paging,
                                             @Valid GetUserQuery query) {
     setFuzzySearchValue(query);
-
     return userService.getUsers(paging, query);
   }
 
@@ -51,7 +50,7 @@ public class UserController {
    *
    * @param query 需要保存的用户数据
    */
-  @Admin
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_USER_ADD.name())")
   @OperationLogger("新增用户")
   @PostMapping("add")
   public void saveUser(@RequestBody @Validated(GroupOne.class) SaveOrUpdateUserQuery query) {
@@ -69,7 +68,7 @@ public class UserController {
    * @param userId 用户 id
    * @param query  需要更新的用户数据
    */
-  @Admin
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_USER_UPDATE.name())")
   @OperationLogger("修改用户")
   @PostMapping("update/{userId:\\d+}")
   public void updateUser(@PathVariable int userId,
@@ -86,6 +85,7 @@ public class UserController {
    *
    * @param query 新旧密码数据
    */
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_USER_RESET_PWD.name())")
   @PostMapping("password")
   public void updatePassword(@RequestBody @Valid PasswordQuery query) {
     if (StrUtil.equals(query.getOldPassword(), query.getNewPassword())) {
@@ -103,7 +103,7 @@ public class UserController {
    * @param userId 用户 id
    * @param query  需要删除的用户
    */
-  @Admin
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_USER_DEL.name())")
   @OperationLogger("删除用户")
   @GetMapping("del/{userId:\\d+}")
   public void deleteUser(@PathVariable int userId,
@@ -150,7 +150,7 @@ public class UserController {
     }
 
     boolean hasInvalidRole = Arrays.stream(roles.split(","))
-      .anyMatch(s -> Role.resolve(s).isEmpty());
+      .anyMatch(s -> SysRole.resolve(s).isEmpty());
 
     if (hasInvalidRole) {
       throw new BadRequestException("包含未定义角色");

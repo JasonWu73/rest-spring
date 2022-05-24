@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.Role;
+import net.wuxianjie.web.security.SysRole;
 import net.wuxianjie.springbootcore.validator.EnumValidator;
 import net.wuxianjie.springbootcore.validator.group.GroupOne;
 import org.hibernate.validator.constraints.Length;
@@ -49,7 +49,7 @@ public class SaveOrUpdateUserQuery {
   /**
    * 用户绑定的角色，只能包含 admin 或 user，且多个角色以英文逗号分隔。
    *
-   * @see Role#value()
+   * @see SysRole#value()
    */
   @Pattern(message = "角色只能包含 user 或 admin，且多个角色需以英文逗号分隔", regexp = "(^$|^(admin|user|,)*$)")
   private String roles;

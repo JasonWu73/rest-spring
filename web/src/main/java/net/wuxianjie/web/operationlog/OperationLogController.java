@@ -3,9 +3,9 @@ package net.wuxianjie.web.operationlog;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
-import net.wuxianjie.springbootcore.security.Admin;
 import net.wuxianjie.springbootcore.util.StrUtils;
 import net.wuxianjie.web.shared.ParamUtils;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -32,7 +32,7 @@ public class OperationLogController {
    * @param query  请求参数
    * @return 操作日志列表
    */
-  @Admin
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_OP_LOG.name())")
   @GetMapping("list")
   public PagingResult<LogItemDto> getLogs(@Valid PagingQuery paging,
                                           @Valid GetLogQuery query) {

@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.Role;
+import net.wuxianjie.web.security.SysRole;
 
 import java.time.LocalDateTime;
 
@@ -47,7 +47,7 @@ public class User {
   /**
    * 用户绑定的角色，多个角色以英文逗号分隔。
    *
-   * @see Role#value()
+   * @see SysRole#value()
    */
   private String roles;
 }
