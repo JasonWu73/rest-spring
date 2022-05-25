@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * 菜单项 API 控制器。
+ * 菜单项的 API 控制器。
  *
  * @author 吴仙杰
  */

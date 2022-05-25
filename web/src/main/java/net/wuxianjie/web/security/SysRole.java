@@ -32,6 +32,8 @@ public enum SysRole {
   ROLE_USER_RESET_PWD("user_reset_pwd", "重置用户密码"),
   ROLE_USER_DEL("user_del", "删除用户"),
 
+  ROLE_LOGIN_LOG("login_log", "登录日志"),
+
   ROLE_OP_LOG("op_log", "操作日志");
 
   private static final SysRole[] VALUES;
@@ -54,13 +56,15 @@ public enum SysRole {
   private static final List<MenuItem> MENUS = new ArrayList<>() {{
     add(new MenuItem(1, ROLE_SYS.message, ROLE_SYS.value, 0, new ArrayList<>() {{
       add(new MenuItem(11, ROLE_USER.message, ROLE_USER.value, 1, new ArrayList<>() {{
-        add(new MenuItem(111, ROLE_USER_ADD.message, ROLE_USER_ADD.value, 1, null));
-        add(new MenuItem(112, ROLE_USER_UPDATE.message, ROLE_USER_UPDATE.value, 1, null));
-        add(new MenuItem(113, ROLE_USER_RESET_PWD.message, ROLE_USER_RESET_PWD.value, 1, null));
-        add(new MenuItem(114, ROLE_USER_DEL.message, ROLE_USER_DEL.value, 1, null));
+        add(new MenuItem(111, ROLE_USER_ADD.message, ROLE_USER_ADD.value, 11, null));
+        add(new MenuItem(112, ROLE_USER_UPDATE.message, ROLE_USER_UPDATE.value, 11, null));
+        add(new MenuItem(113, ROLE_USER_RESET_PWD.message, ROLE_USER_RESET_PWD.value, 11, null));
+        add(new MenuItem(114, ROLE_USER_DEL.message, ROLE_USER_DEL.value, 11, null));
       }}));
 
-      add(new MenuItem(12, ROLE_OP_LOG.message, ROLE_OP_LOG.value, 0, null));
+      add(new MenuItem(12, ROLE_LOGIN_LOG.message, ROLE_LOGIN_LOG.value, 1, null));
+
+      add(new MenuItem(13, ROLE_OP_LOG.message, ROLE_OP_LOG.value, 1, null));
     }}));
   }};
 
@@ -70,16 +74,21 @@ public enum SysRole {
    * @return 角色层级结构字符串
    */
   public static String getRoleHierarchyStr() {
-    return StrUtil.format(
+    String template =
       "{} > {}\n" +
 
-        "{} > {}\n" +
-        "{} > {}\n" +
-        "{} > {}\n" +
-        "{} > {}\n" +
-        "{} > {}\n" +
+      "{} > {}\n" +
+      "{} > {}\n" +
+      "{} > {}\n" +
+      "{} > {}\n" +
+      "{} > {}\n" +
 
-        "{} > {}",
+      "{} > {}\n" +
+
+      "{} > {}";
+
+    return StrUtil.format(
+      template,
       ROLE_SU.name(), ROLE_SYS.name(),
 
       ROLE_SYS.name(), ROLE_USER.name(),
@@ -87,6 +96,8 @@ public enum SysRole {
       ROLE_USER.name(), ROLE_USER_UPDATE.name(),
       ROLE_USER.name(), ROLE_USER_RESET_PWD.name(),
       ROLE_USER.name(), ROLE_USER_DEL.name(),
+
+      ROLE_SYS.name(), ROLE_LOGIN_LOG.name(),
 
       ROLE_SYS.name(), ROLE_OP_LOG.name()
     );

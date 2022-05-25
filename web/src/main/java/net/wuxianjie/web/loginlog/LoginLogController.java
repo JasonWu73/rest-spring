@@ -1,4 +1,4 @@
-package net.wuxianjie.web.operationlog;
+package net.wuxianjie.web.loginlog;
 
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
@@ -14,30 +14,39 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 /**
- * 操作日志的 API 控制器。
+ * 登录日志的 API 控制器。
  *
  * @author 吴仙杰
  */
 @RestController
-@RequestMapping("/api/v1/op-log")
+@RequestMapping("/api/v1/login-log")
 @RequiredArgsConstructor
-public class OperationLogController {
+public class LoginLogController {
 
-  private final OperationLogServiceImpl logService;
+  private final LoginLogService loginLogService;
 
   /**
-   * 获取操作日志列表。
+   * 获取登录日志列表。
    *
    * @param paging 分页参数
    * @param query  请求参数
-   * @return 操作日志列表
+   * @return 登录日志列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_OP_LOG.name())")
-  public PagingResult<LogItemDto> getLogs(@Valid PagingQuery paging,
-                                          @Valid GetLogQuery query) {
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_LOGIN_LOG.name())")
+  public PagingResult<LoginLog> getLoginLogs(@Valid PagingQuery paging,
+                                             @Valid GetLoginLogQuery query) {
     setFuzzySearchValue(query);
+    setStartAndEndTime(query);
+    return loginLogService.getLoginLogs(paging, query);
+  }
 
+  private void setFuzzySearchValue(GetLoginLogQuery query) {
+    query.setUsername(StrUtils.toFuzzy(query.getUsername()));
+    query.setReqIp(StrUtils.toFuzzy(query.getReqIp()));
+  }
+
+  private void setStartAndEndTime(GetLoginLogQuery query) {
     LocalDateTime startTime = ParamUtils.toNullableStartTime(query.getStartDate(), "开始日期不合法");
     query.setStartTimeInclusive(startTime);
 
@@ -45,13 +54,5 @@ public class OperationLogController {
     query.setEndTimeInclusive(endTime);
 
     ParamUtils.verifyStartTimeIsBeforeEndTime(startTime, endTime, "开始日期不能晚于结束日期");
-
-    return logService.getLogs(paging, query);
-  }
-
-  private void setFuzzySearchValue(GetLogQuery query) {
-    query.setUsername(StrUtils.toFuzzy(query.getUsername()));
-    query.setRequestIp(StrUtils.toFuzzy(query.getRequestIp()));
-    query.setMethodMessage(StrUtils.toFuzzy(query.getMethodMessage()));
   }
 }
