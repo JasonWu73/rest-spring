@@ -33,7 +33,7 @@ public class OpLogController {
    * @return 操作日志列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_OP_LOG.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_OP_LOG.name())")
   public PagingResult<OpLog> getLogs(@Valid PagingQuery paging,
                                      @Valid GetOpLogQuery query) {
     setFuzzySearchValue(query);

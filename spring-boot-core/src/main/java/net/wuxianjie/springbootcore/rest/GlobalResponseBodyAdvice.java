@@ -41,9 +41,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
                                 Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                 ServerHttpRequest request,
                                 ServerHttpResponse response) {
-    if (!selectedContentType.isCompatibleWith(MediaType.APPLICATION_JSON)) {
-      return body;
-    }
+    if (!selectedContentType.isCompatibleWith(MediaType.APPLICATION_JSON)) return body;
 
     // 自动包装字符串为 JSON
     if (body instanceof String) {
@@ -62,9 +60,7 @@ public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     // 资源类型，例如视频点播（HTTP STATUS 206）
     boolean isResource = body instanceof ResourceRegion;
 
-    if (isRestApiResult || isBytes || isResource) {
-      return body;
-    }
+    if (isRestApiResult || isBytes || isResource) return body;
 
     // 其他情况一律包装为 JSON
     return ApiResultWrapper.success(body);

@@ -17,14 +17,14 @@ public final class TokenAttributes {
   public static final int EXPIRES_IN_SECONDS_VALUE = 1800;
 
   /**
-   * JWT 载荷属性：账号名。
+   * JWT 载荷属性：用户名。
    */
-  public static final String ACCOUNT_KEY = "account";
+  public static final String USERNAME_KEY = "username";
 
   /**
-   * JWT 载荷属性：角色。
+   * JWT 载荷属性：菜单项。
    */
-  public static final String ROLE_KEY = "roles";
+  public static final String MENU_KEY = "menus";
 
   /**
    * JWT 载荷属性：Token 类型。

@@ -3,18 +3,18 @@ package net.wuxianjie.web.user;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.web.security.SysRole;
+import net.wuxianjie.web.security.SysMenu;
 
 import java.time.LocalDateTime;
 
 /**
- * 用户列表项数据传输对象。
+ * 用户数据传输对象。
  *
  * @author 吴仙杰
  */
 @Data
 @JsonInclude
-public class UserItemDto {
+public class UserDto {
 
   /**
    * 用户 id。
@@ -37,9 +37,9 @@ public class UserItemDto {
   private String username;
 
   /**
-   * 用户绑定的角色，多个角色以英文逗号分隔。
+   * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔。
    *
-   * @see SysRole#value()
+   * @see SysMenu#value()
    */
-  private String roles;
+  private String menus;
 }

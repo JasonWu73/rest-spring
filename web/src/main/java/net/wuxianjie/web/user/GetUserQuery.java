@@ -5,7 +5,7 @@ import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.validator.EnumValidator;
 
 /**
- * 获取用户请求参数。
+ * 获取用户的查询参数。
  *
  * @author 吴仙杰
  */

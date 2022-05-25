@@ -88,8 +88,8 @@ public class TokenServiceImpl implements TokenService {
 
   private TokenData generateToken(User user) {
     Map<String, Object> payload = new HashMap<>();
-    payload.put(TokenAttributes.ACCOUNT_KEY, user.getUsername());
-    payload.put(TokenAttributes.ROLE_KEY, user.getRoles());
+    payload.put(TokenAttributes.USERNAME_KEY, user.getUsername());
+    payload.put(TokenAttributes.MENU_KEY, user.getMenus());
 
     String accessToken = generateToken(payload, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
     String refreshToken = generateToken(payload, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE);
@@ -115,7 +115,7 @@ public class TokenServiceImpl implements TokenService {
     UserDetails userDetails = new UserDetails(
       user.getUserId(),
       user.getUsername(),
-      user.getRoles(),
+      user.getMenus(),
       token.getAccessToken(),
       token.getRefreshToken()
     );

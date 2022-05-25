@@ -33,7 +33,7 @@ public class LoginLogController {
    * @return 登录日志列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_LOGIN_LOG.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_LOGIN_LOG.name())")
   public PagingResult<LoginLog> getLoginLogs(@Valid PagingQuery paging,
                                              @Valid GetLoginLogQuery query) {
     setFuzzySearchValue(query);

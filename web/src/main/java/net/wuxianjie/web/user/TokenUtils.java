@@ -33,7 +33,7 @@ class TokenUtils {
    * @return Token 账号名
    */
   public static String getTokenAccount(Map<String, Object> payload) {
-    return Optional.ofNullable((String) payload.get(TokenAttributes.ACCOUNT_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少载荷 [" + TokenAttributes.ACCOUNT_KEY + "]"));
+    return Optional.ofNullable((String) payload.get(TokenAttributes.USERNAME_KEY))
+      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少载荷 [" + TokenAttributes.USERNAME_KEY + "]"));
   }
 }

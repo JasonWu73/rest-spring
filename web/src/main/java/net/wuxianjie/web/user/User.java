@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.web.security.SysRole;
+import net.wuxianjie.web.security.SysMenu;
 
 import java.time.LocalDateTime;
 
@@ -45,9 +45,9 @@ public class User {
   private String hashedPassword;
 
   /**
-   * 用户绑定的角色，多个角色以英文逗号分隔。
+   * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔。
    *
-   * @see SysRole#value()
+   * @see SysMenu#value()
    */
-  private String roles;
+  private String menus;
 }

@@ -6,7 +6,7 @@
            is_enabled      AS enabled,
            username,
            hashed_password AS hashedPassword,
-           roles
+           menus
     FROM users
     WHERE user_id = #{userId}
   </select>
@@ -16,7 +16,7 @@
            is_enabled      AS enabled,
            username,
            hashed_password AS hashedPassword,
-           roles
+           menus
     FROM users
     WHERE username = #{username}
   </select>
@@ -32,12 +32,12 @@
     </where>
   </sql>
 
-  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.UserItemDto">
+  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.UserDto">
     SELECT user_id                                    AS userId,
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,
            username,
-           roles
+           menus
     FROM users
     <include refid="whereUsernameLikeAndEnabled"/>
     ORDER BY modify_time DESC
@@ -60,13 +60,13 @@
                        is_enabled,
                        username,
                        hashed_password,
-                       roles)
+                       menus)
     VALUES (DATETIME(CURRENT_TIMESTAMP, 'localtime'),
             DATETIME(CURRENT_TIMESTAMP, 'localtime'),
             #{enabled},
             #{username},
             #{hashedPassword},
-            #{roles})
+            #{menus})
   </insert>
 
   <update id="update">

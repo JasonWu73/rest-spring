@@ -17,24 +17,21 @@ import java.util.List;
 public class MenuItem {
 
   /**
-   * 菜单 id。
-   */
-  private Integer id;
-
-  /**
    * 菜单名称。
+   *
+   * @see SysMenu#msg()
    */
   private String name;
 
   /**
    * 菜单编号。
+   *
+   * @see SysMenu#value()
    */
   private String code;
 
   /**
-   * 上级菜单的菜单 id。
+   * 子菜单项。
    */
-  private Integer pid;
-
   private List<MenuItem> children;
 }

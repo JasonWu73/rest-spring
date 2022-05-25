@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.web.security.SysRole;
+import net.wuxianjie.web.security.SysMenu;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 
 /**
@@ -27,9 +27,9 @@ public class UserDetails implements TokenUserDetails {
     private String accountName;
 
     /**
-     * 用户绑定的角色，多个角色以英文逗号分隔。
+     * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔。
      *
-     * @see SysRole#value()
+     * @see SysMenu#value()
      */
     private String roles;
 

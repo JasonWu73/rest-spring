@@ -1,6 +1,5 @@
 package net.wuxianjie.web.user;
 
-import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.exception.BadRequestException;
 import net.wuxianjie.springbootcore.exception.ConflictException;
@@ -13,11 +12,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
- * 用户管理业务逻辑实现类。
+ * 用户管理的业务逻辑处理类。
  *
  * @author 吴仙杰
  */
@@ -35,11 +36,9 @@ public class UserService {
    * @param query  请求参数
    * @return 用户列表
    */
-  public PagingResult<UserItemDto> getUsers(PagingQuery paging, GetUserQuery query) {
-    List<UserItemDto> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query);
-
+  public PagingResult<UserDto> getUsers(PagingQuery paging, GetUserQuery query) {
+    List<UserDto> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query);
     int total = userMapper.countByUsernameLikeAndEnabled(query);
-
     return new PagingResult<>(paging, total, users);
   }
 
@@ -47,19 +46,27 @@ public class UserService {
    * 新增用户。
    *
    * @param query 需要保存的用户数据
+   * @return 新增成功后的提示信息
    */
   @Transactional(rollbackFor = Exception.class)
-  public void saveUser(SaveOrUpdateUserQuery query) {
+  public Map<String, String> saveUser(SaveUserQuery query) {
+    // 用户名唯一性校验
     String username = query.getUsername();
     boolean isExisted = userMapper.existsByUsername(username);
+    if (isExisted) throw new ConflictException("已存在用户名 " + username);
 
-    if (isExisted) {
-      throw new ConflictException("用户名 [" + username + "] 已存在");
-    }
-
-    User toSave = buildUserToSave(query);
+    // 用户入库
+    User toSave = new User();
+    toSave.setEnabled(YesOrNo.resolve(query.getEnabled()).orElseThrow());
+    toSave.setUsername(query.getUsername());
+    toSave.setHashedPassword(passwordEncoder.encode(query.getPassword()));
+    toSave.setMenus(query.getMenus());
 
     userMapper.save(toSave);
+
+    return new HashMap<>() {{
+      put("msg", "用户（" + username + "）新增成功");
+    }};
   }
 
   /**
@@ -119,20 +126,6 @@ public class UserService {
     populateQueryForOperationLog(toDel, query);
   }
 
-  private User buildUserToSave(SaveOrUpdateUserQuery query) {
-    User toSave = new User();
-
-    BeanUtil.copyProperties(query, toSave, "enabled", "password");
-
-    YesOrNo enabled = YesOrNo.resolve(query.getEnabled()).orElseThrow();
-    toSave.setEnabled(enabled);
-
-    String hashedPassword = passwordEncoder.encode(query.getPassword());
-    toSave.setHashedPassword(hashedPassword);
-
-    return toSave;
-  }
-
   private User getUserFromDbMustBeExists(int userId) {
     return Optional.ofNullable(userMapper.findByUserId(userId))
       .orElseThrow(() -> new NotFoundException("用户不存在 [id=" + userId + "]"));
@@ -150,11 +143,11 @@ public class UserService {
     }
 
     String newRoles = query.getRoles();
-    if (newRoles != null && !StrUtils.equalsIgnoreBlank(newRoles, toUpdate.getRoles())) {
+    if (newRoles != null && !StrUtils.equalsIgnoreBlank(newRoles, toUpdate.getMenus())) {
       needsUpdate = true;
-      toUpdate.setRoles(newRoles);
+      toUpdate.setMenus(newRoles);
     } else {
-      toUpdate.setRoles(null);
+      toUpdate.setMenus(null);
     }
 
     Optional<YesOrNo> newEnabledOpt = YesOrNo.resolve(query.getEnabled());

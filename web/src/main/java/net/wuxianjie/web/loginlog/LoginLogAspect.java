@@ -53,7 +53,7 @@ public class LoginLogAspect {
     // 用户信息
     String accessToken = tokenData.getAccessToken();
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), accessToken);
-    String username = (String) payload.get(TokenAttributes.ACCOUNT_KEY);
+    String username = (String) payload.get(TokenAttributes.USERNAME_KEY);
     Integer userId = Optional.ofNullable(tokenCache.getIfPresent(username))
       .map(UserDetails::getAccountId)
       .orElse(null);

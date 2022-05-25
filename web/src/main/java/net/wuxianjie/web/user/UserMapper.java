@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 /**
- * 用户表相关 SQL。
+ * 与用户表相关的 SQL。
  *
  * @author 吴仙杰
  */
@@ -37,8 +37,8 @@ public interface UserMapper {
    * @param query  查询参数
    * @return 用户分页列表
    */
-  List<UserItemDto> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                                      @Param("q") GetUserQuery query);
+  List<UserDto> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
+                                                                  @Param("q") GetUserQuery query);
 
   /**
    * 统计用户数量。

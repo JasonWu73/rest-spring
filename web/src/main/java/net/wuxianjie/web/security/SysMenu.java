@@ -9,7 +9,6 @@ import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,9 +20,9 @@ import java.util.Optional;
 @ToString
 @RequiredArgsConstructor
 @Accessors(fluent = true)
-public enum SysRole {
+public enum SysMenu {
 
-  ROLE_SU("su", "超级账号（非菜单项角色）"),
+  ROLE_ROOT("root", "全部"),
 
   ROLE_SYS("sys", "系统管理"),
   ROLE_USER("user", "用户管理"),
@@ -36,37 +35,37 @@ public enum SysRole {
 
   ROLE_OP_LOG("op_log", "操作日志");
 
-  private static final SysRole[] VALUES;
+  private static final SysMenu[] VALUES;
 
   static {
     VALUES = values();
   }
 
   /**
-   * 角色值。
+   * 菜单编号。
    */
   @JsonValue
   private final String value;
 
   /**
-   * 角色描述。
+   * 菜单名称。
    */
-  private final String message;
+  private final String msg;
 
-  private static final List<MenuItem> MENUS = new ArrayList<>() {{
-    add(new MenuItem(1, ROLE_SYS.message, ROLE_SYS.value, 0, new ArrayList<>() {{
-      add(new MenuItem(11, ROLE_USER.message, ROLE_USER.value, 1, new ArrayList<>() {{
-        add(new MenuItem(111, ROLE_USER_ADD.message, ROLE_USER_ADD.value, 11, null));
-        add(new MenuItem(112, ROLE_USER_UPDATE.message, ROLE_USER_UPDATE.value, 11, null));
-        add(new MenuItem(113, ROLE_USER_RESET_PWD.message, ROLE_USER_RESET_PWD.value, 11, null));
-        add(new MenuItem(114, ROLE_USER_DEL.message, ROLE_USER_DEL.value, 11, null));
+  private static final MenuItem MENU = new MenuItem(ROLE_ROOT.msg, ROLE_ROOT.value, new ArrayList<>() {{
+    add(new MenuItem(ROLE_SYS.msg, ROLE_SYS.value, new ArrayList<>() {{
+      add(new MenuItem(ROLE_USER.msg, ROLE_USER.value, new ArrayList<>() {{
+        add(new MenuItem(ROLE_USER_ADD.msg, ROLE_USER_ADD.value, null));
+        add(new MenuItem(ROLE_USER_UPDATE.msg, ROLE_USER_UPDATE.value, null));
+        add(new MenuItem(ROLE_USER_RESET_PWD.msg, ROLE_USER_RESET_PWD.value, null));
+        add(new MenuItem(ROLE_USER_DEL.msg, ROLE_USER_DEL.value, null));
       }}));
 
-      add(new MenuItem(12, ROLE_LOGIN_LOG.message, ROLE_LOGIN_LOG.value, 1, null));
+      add(new MenuItem(ROLE_LOGIN_LOG.msg, ROLE_LOGIN_LOG.value, null));
 
-      add(new MenuItem(13, ROLE_OP_LOG.message, ROLE_OP_LOG.value, 1, null));
+      add(new MenuItem(ROLE_OP_LOG.msg, ROLE_OP_LOG.value, null));
     }}));
-  }};
+  }});
 
   /**
    * 获取符合 Spring Security 的角色层级结构字符串。
@@ -89,7 +88,7 @@ public enum SysRole {
 
     return StrUtil.format(
       template,
-      ROLE_SU.name(), ROLE_SYS.name(),
+      ROLE_ROOT.name(), ROLE_SYS.name(),
 
       ROLE_SYS.name(), ROLE_USER.name(),
       ROLE_USER.name(), ROLE_USER_ADD.name(),
@@ -106,19 +105,19 @@ public enum SysRole {
   /**
    * 获取全部菜单项。
    *
-   * @return 树形结构的全部菜单顶数据
+   * @return 树形结构的全部菜单项数据
    */
-  public static List<MenuItem> getAllMenus() {
-    return MENUS;
+  public static MenuItem getAllMenus() {
+    return MENU;
   }
 
   /**
    * 将字符串值解析为枚举常量。
    *
    * @param value 字符串值
-   * @return {@link SysRole} 的 Optional 包装对象
+   * @return {@link SysMenu} 的 Optional 包装对象
    */
-  public static Optional<SysRole> resolve(String value) {
+  public static Optional<SysMenu> resolve(String value) {
     return Optional.ofNullable(value)
       .flatMap(val -> Arrays.stream(VALUES)
         .filter(role -> StrUtil.equals(val, role.value))
