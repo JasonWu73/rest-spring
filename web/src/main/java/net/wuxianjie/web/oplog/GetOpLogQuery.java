@@ -1,4 +1,4 @@
-package net.wuxianjie.web.operationlog;
+package net.wuxianjie.web.oplog;
 
 import lombok.Data;
 
@@ -6,12 +6,12 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 /**
- * 获取操作日志请求参数。
+ * 获取操作日志的查询参数。
  *
  * @author 吴仙杰
  */
 @Data
-public class GetLogQuery {
+public class GetOpLogQuery {
 
   /**
    * 开始日期，包含，格式为 yyyy-MM-dd。
@@ -28,17 +28,17 @@ public class GetLogQuery {
   private LocalDateTime endTimeInclusive;
 
   /**
-   * 用户名，当为开放 API 时，则不存在。
+   * 用户名。
    */
   private String username;
 
   /**
    * 请求 IP。
    */
-  private String requestIp;
+  private String reqIp;
 
   /**
    * 操作描述。
    */
-  private String methodMessage;
+  private String methodMsg;
 }

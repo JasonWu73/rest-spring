@@ -25,7 +25,7 @@ public interface LoginLogMapper {
                                                                                        @Param("q") GetLoginLogQuery query);
 
   /**
-   * 统计登录日志的总记录数。
+   * 统计登录日志总数。
    *
    * @param query 查询参数
    * @return 符合条件的登录日志总数
@@ -33,9 +33,9 @@ public interface LoginLogMapper {
   int countByLoginTimeBetweenAndUsernameLikeAndReqIpLike(@Param("q") GetLoginLogQuery query);
 
   /**
-   * 保存登录日志。
+   * 保存登录日志数据。
    *
-   * @param logData 需要保存的数据
+   * @param logData 需要保存的操作日志数据
    */
   void save(LoginLog logData);
 }

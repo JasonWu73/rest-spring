@@ -1,18 +1,16 @@
-package net.wuxianjie.web.operationlog;
+package net.wuxianjie.web.oplog;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
- * 操作日志列表项数据传输对象。
+ * 操作日志表。
  *
  * @author 吴仙杰
  */
 @Data
-@JsonInclude
-public class LogItemDto {
+public class OpLog {
 
   /**
    * 日志 id。
@@ -22,7 +20,7 @@ public class LogItemDto {
   /**
    * 操作时间，格式为 yyyy-MM-dd HH:mm:ss。
    */
-  private LocalDateTime operationTime;
+  private LocalDateTime opTime;
 
   /**
    * 用户 id，当为开放 API 时，则为 null。
@@ -37,12 +35,12 @@ public class LogItemDto {
   /**
    * 请求 IP。
    */
-  private String requestIp;
+  private String reqIp;
 
   /**
    * 请求 URI。
    */
-  private String requestUri;
+  private String reqUri;
 
   /**
    * 目标方法的全限定名。
@@ -50,9 +48,9 @@ public class LogItemDto {
   private String methodName;
 
   /**
-   * 目标方法的描述，即操作描述。
+   * 操作描述。
    */
-  private String methodMessage;
+  private String methodMsg;
 
   /**
    * 目标方法入参的 JSON 字符串。

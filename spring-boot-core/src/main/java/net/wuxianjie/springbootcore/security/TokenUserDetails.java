@@ -26,7 +26,6 @@ public interface TokenUserDetails {
    * 用户绑定的角色，多个角色以英文逗号分隔。
    *
    * @return Token 所绑定的角色
-   * @see Role#value()
    */
   String getRoles();
 

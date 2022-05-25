@@ -1,4 +1,4 @@
-package net.wuxianjie.web.operationlog;
+package net.wuxianjie.web.oplog;
 
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
@@ -21,9 +21,9 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/v1/op-log")
 @RequiredArgsConstructor
-public class OperationLogController {
+public class OpLogController {
 
-  private final OperationLogServiceImpl logService;
+  private final OpLogService logService;
 
   /**
    * 获取操作日志列表。
@@ -34,10 +34,20 @@ public class OperationLogController {
    */
   @GetMapping("list")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysRole).ROLE_OP_LOG.name())")
-  public PagingResult<LogItemDto> getLogs(@Valid PagingQuery paging,
-                                          @Valid GetLogQuery query) {
+  public PagingResult<OpLog> getLogs(@Valid PagingQuery paging,
+                                     @Valid GetOpLogQuery query) {
     setFuzzySearchValue(query);
+    setSTartAndEndTime(query);
+    return logService.getOpLogs(paging, query);
+  }
 
+  private void setFuzzySearchValue(GetOpLogQuery query) {
+    query.setUsername(StrUtils.toFuzzy(query.getUsername()));
+    query.setReqIp(StrUtils.toFuzzy(query.getReqIp()));
+    query.setMethodMsg(StrUtils.toFuzzy(query.getMethodMsg()));
+  }
+
+  private void setSTartAndEndTime(GetOpLogQuery query) {
     LocalDateTime startTime = ParamUtils.toNullableStartTime(query.getStartDate(), "开始日期不合法");
     query.setStartTimeInclusive(startTime);
 
@@ -45,13 +55,5 @@ public class OperationLogController {
     query.setEndTimeInclusive(endTime);
 
     ParamUtils.verifyStartTimeIsBeforeEndTime(startTime, endTime, "开始日期不能晚于结束日期");
-
-    return logService.getLogs(paging, query);
-  }
-
-  private void setFuzzySearchValue(GetLogQuery query) {
-    query.setUsername(StrUtils.toFuzzy(query.getUsername()));
-    query.setRequestIp(StrUtils.toFuzzy(query.getRequestIp()));
-    query.setMethodMessage(StrUtils.toFuzzy(query.getMethodMessage()));
   }
 }

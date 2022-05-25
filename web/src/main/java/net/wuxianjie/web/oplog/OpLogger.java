@@ -1,4 +1,4 @@
-package net.wuxianjie.springbootcore.operationlog;
+package net.wuxianjie.web.oplog;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,17 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 日志记录器注解。
- * <p>
- * 将 {@link OperationLogger} 用于方法后，只要该方法正确执行后，会自动调用 {@link OperationLogService#saveLog(OperationLogData)} 进行处理。
- * </p>
+ * 标注需要记录操作日志的方法。
  *
  * @author 吴仙杰
- * @see OperationLogAspect
+ * @see OpLogAspect
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OperationLogger {
+public @interface OpLogger {
 
   /**
    * 操作描述。

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,15 +17,16 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LoginLogService {
 
-  private final LoginLogMapper mapper;
+  private final LoginLogMapper loginLogMapper;
 
   /**
    * 保存登录日志。
    *
-   * @param logData 需要保存的数据
+   * @param logData 需要保存的登录日志数据
    */
+  @Transactional(rollbackFor = Exception.class)
   public void saveLoginLog(LoginLog logData) {
-    mapper.save(logData);
+    loginLogMapper.save(logData);
   }
 
   /**
@@ -35,10 +37,8 @@ public class LoginLogService {
    * @return 登录日志列表
    */
   public PagingResult<LoginLog> getLoginLogs(PagingQuery paging, GetLoginLogQuery query) {
-    List<LoginLog> logs = mapper.findByLoginTimeBetweenAndUsernameLikeAndReqIpLikeOrderByLoginTimeDesc(paging, query);
-
-    int total = mapper.countByLoginTimeBetweenAndUsernameLikeAndReqIpLike(query);
-
+    List<LoginLog> logs = loginLogMapper.findByLoginTimeBetweenAndUsernameLikeAndReqIpLikeOrderByLoginTimeDesc(paging, query);
+    int total = loginLogMapper.countByLoginTimeBetweenAndUsernameLikeAndReqIpLike(query);
     return new PagingResult<>(paging, total, logs);
   }
 }

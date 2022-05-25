@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * 登录日志。
+ * 登录日志切面类。
  *
  * @author 吴仙杰
  */
@@ -48,6 +48,7 @@ public class LoginLogAspect {
     // 请求信息
     Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
     String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
+    String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
 
     // 用户信息
     String accessToken = tokenData.getAccessToken();
@@ -58,9 +59,9 @@ public class LoginLogAspect {
       .orElse(null);
 
     // 打印到控制台
-    log.info("用户 {} 登录系统，请求 IP 为 {}", username, reqIp);
+    log.info("用户（{}）成功登录系统，其请求 IP 为 {}，请求路径为 {}", username, reqIp, reqUri);
 
-    // 日志入库
+    // 登录日志入库
     LoginLog toSave = new LoginLog();
     toSave.setLoginTime(LocalDateTime.now());
     toSave.setUserId(userId);
