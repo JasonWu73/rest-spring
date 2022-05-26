@@ -7,7 +7,7 @@ import net.wuxianjie.springbootcore.security.SecurityConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.util.JwtUtils;
 import net.wuxianjie.springbootcore.util.NetUtils;
-import net.wuxianjie.web.user.TokenAttributes;
+import net.wuxianjie.web.security.TokenAttributes;
 import net.wuxianjie.web.user.CustomUserDetails;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;

@@ -76,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling()
       // 401
       .authenticationEntryPoint((req, resp, authException) -> {
-        String respMsg = "Token 认证失败";
+        String respMsg = "Token 验证失败";
 
         logWarn(req, respMsg);
 
@@ -107,7 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       // 禁用 CSRF 措施
       .csrf()
       .disable()
-      // 无状态鉴权机制，每次请求都需要 Token 认证，故不需要设置服务器端 HttpSession，也不需要设置客户端 JSESSIONID Cookies
+      // 无状态鉴权机制，每次请求都需要 Token 验证，故不需要设置服务器端 HttpSession，也不需要设置客户端 JSESSIONID Cookies
       .sessionManagement()
       .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
@@ -115,7 +115,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .cors()
       .configurationSource(req -> new CorsConfiguration().applyPermitDefaultValues())
       .and()
-      // 添加 Token 认证过滤器
+      // 添加 Token 验证过滤器
       .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
   }
 

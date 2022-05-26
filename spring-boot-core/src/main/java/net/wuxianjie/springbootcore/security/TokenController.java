@@ -24,7 +24,7 @@ public class TokenController {
    *
    * @param query 请求参数
    * @return {@link TokenData}
-   * @throws TokenAuthenticationException 当 Token 认证失败时抛出
+   * @throws TokenAuthenticationException 当 Token 验证失败时抛出
    */
   @PostMapping(WebSecurityConfig.ACCESS_TOKEN_PATH)
   public TokenData getToken(@RequestBody @Validated Query query) throws TokenAuthenticationException {
@@ -36,7 +36,7 @@ public class TokenController {
    *
    * @param refreshToken 用于刷新的 Token
    * @return {@link TokenData}
-   * @throws TokenAuthenticationException 当 Token 认证失败时抛出
+   * @throws TokenAuthenticationException 当 Token 验证失败时抛出
    */
   @GetMapping(WebSecurityConfig.REFRESH_TOKEN_PATH_PREFIX + "/{refreshToken:.+}")
   public TokenData refreshToken(@PathVariable String refreshToken) throws TokenAuthenticationException {

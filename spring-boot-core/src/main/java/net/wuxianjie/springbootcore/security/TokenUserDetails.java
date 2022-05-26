@@ -1,7 +1,7 @@
 package net.wuxianjie.springbootcore.security;
 
 /**
- * Token 认证所需的用户详细数据接口。
+ * Token 验证所需的用户详细数据接口。
  *
  * @author 吴仙杰
  * @see AuthUtils

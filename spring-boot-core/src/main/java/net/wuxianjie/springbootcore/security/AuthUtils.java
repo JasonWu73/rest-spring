@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 /**
- * Token 认证工具类。
+ * Token 验证工具类。
  *
  * @author 吴仙杰
  */
@@ -17,12 +17,12 @@ import java.util.Optional;
 public class AuthUtils {
 
   /**
-   * 获取已通过 Token 认证后的用户详细数据。
+   * 获取已通过 Token 验证后的用户详细数据。
    * <p>
-   * 若是开放 API，即无需 Token 认证的接口，则返回空。
+   * 若是开放 API，即无需 Token 验证的接口，则返回空。
    * </p>
    *
-   * @return 通过 Token 认证后的用户详细数据
+   * @return 通过 Token 验证后的用户详细数据
    */
   public static Optional<TokenUserDetails> getCurrentUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

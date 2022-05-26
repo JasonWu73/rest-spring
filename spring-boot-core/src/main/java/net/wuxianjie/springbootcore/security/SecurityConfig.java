@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Web 安全相关的配置项属性说明。
+ * 安全配置项的配置类。
  *
  * @author 吴仙杰
  * @see WebSecurityConfig
@@ -26,7 +26,7 @@ public class SecurityConfig {
   private String jwtSigningKey;
 
   /**
-   * 无需认证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
+   * 无需验证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
    */
   private String permitAllAntPatterns;
 }

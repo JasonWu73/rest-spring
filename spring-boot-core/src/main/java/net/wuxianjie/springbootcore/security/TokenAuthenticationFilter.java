@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Token 认证过滤器。
+ * Token 验证过滤器。
  *
  * @author 吴仙杰
  */
@@ -48,7 +48,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
   static final String ROLE_PREFIX = "ROLE_";
 
   private final ObjectMapper objectMapper;
-  private final TokenAuthenticationService authService;
+  private final TokenAuthService authService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest req,
@@ -70,7 +70,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
       sendToResponse(resp, e.getMessage(), HttpStatus.UNAUTHORIZED);
       return;
     } catch (Throwable e) {
-      String respMsg = "Token 认证异常";
+      String respMsg = "Token 验证异常";
 
       log.error(
         "uri={}；client={} -> " + respMsg,

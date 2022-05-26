@@ -28,7 +28,7 @@ public class JwtUtils {
    *
    * @return Base64 字符串格式的 JWT 签名密钥
    */
-  public static String generateSigningKey() {
+  public static String createSigningKey() {
     SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     byte[] encoded = secretKey.getEncoded();
 
@@ -43,9 +43,9 @@ public class JwtUtils {
    * @param expiresInSeconds JWT 的过期时间，单位秒
    * @return JWT
    */
-  public static String generateJwt(String signingKey,
-                                   Map<String, Object> payload,
-                                   int expiresInSeconds) {
+  public static String createJwt(String signingKey,
+                                 Map<String, Object> payload,
+                                 int expiresInSeconds) {
     return Jwts.builder()
       .setClaims(payload)
       .setNotBefore(new Date())

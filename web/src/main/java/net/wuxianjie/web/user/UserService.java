@@ -28,6 +28,7 @@ public class UserService {
 
   private final UserMapper userMapper;
   private final PasswordEncoder passwordEncoder;
+  private final ComUserService comUserService;
 
   /**
    * 获取用户列表。

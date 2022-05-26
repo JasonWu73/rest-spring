@@ -1,10 +1,10 @@
-package net.wuxianjie.web.user;
+package net.wuxianjie.web.security;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 /**
- * JWT 相关的属性名及属性值。
+ * JWT 属性名及属性值常量类。
  *
  * @author 吴仙杰
  */
