@@ -43,7 +43,7 @@ public enum YesOrNo implements ValueEnum {
    * 将整数值解析为枚举常量。
    *
    * @param value 整数值
-   * @return 整数值所对应的枚举常量
+   * @return {@link YesOrNo} 的 {@link Optional} 包装对象
    */
   public static Optional<YesOrNo> resolve(Integer value) {
     return Optional.ofNullable(value)

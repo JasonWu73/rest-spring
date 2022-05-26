@@ -3,13 +3,13 @@ package net.wuxianjie.springbootcore.security;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Access Token 管理控制器。
+ * Access Token 管理的 API 控制器。
  *
  * @author 吴仙杰
  */
@@ -27,8 +27,8 @@ public class TokenController {
    * @throws TokenAuthenticationException 当 Token 验证失败时抛出
    */
   @PostMapping(WebSecurityConfig.ACCESS_TOKEN_PATH)
-  public TokenData getToken(@RequestBody @Validated Query query) throws TokenAuthenticationException {
-    return tokenService.getToken(query.getAccount(), query.getPassword());
+  public TokenData getToken(@RequestBody @Valid Query query) throws TokenAuthenticationException {
+    return tokenService.getToken(query.getUsername(), query.getPassword());
   }
 
   /**
@@ -47,10 +47,10 @@ public class TokenController {
   private static class Query {
 
     /**
-     * 账号。
+     * 用户名。
      */
-    @NotBlank(message = "账号不能为空")
-    private String account;
+    @NotBlank(message = "用户名不能为空")
+    private String username;
 
     /**
      * 密码。

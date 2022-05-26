@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * MyBatis 类型处理器：映射 Java 枚举常量与数据库 INTEGER 数据类型。
+ * MyBatis 类型处理器，映射 Java 枚举常量与数据库 INTEGER 数据类型。
  * <p>
  * 全局配置（application.yml）<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}
@@ -27,9 +27,7 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHand
   private Class<E> enumType;
 
   public EnumTypeHandler(Class<E> enumType) {
-    if (enumType == null) {
-      throw new IllegalArgumentException("enumType 不能为 null");
-    }
+    if (enumType == null) throw new IllegalArgumentException("enumType 不能为 null");
 
     this.enumType = enumType;
   }
@@ -58,9 +56,7 @@ public class EnumTypeHandler<E extends Enum<?> & ValueEnum> extends BaseTypeHand
   }
 
   private E toNullableEnum(Class<E> enumClass, int val) {
-    if (enumClass == null) {
-      throw new IllegalArgumentException("enumClass 不能为 null");
-    }
+    if (enumClass == null) throw new IllegalArgumentException("enumClass 不能为 null");
 
     E[] enumConstants = Optional.ofNullable(enumClass.getEnumConstants())
       .orElseThrow(() -> new IllegalArgumentException("enumClass 不是枚举类型"));

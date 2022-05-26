@@ -38,12 +38,10 @@ public class EnumValidatorImpl implements ConstraintValidator<EnumValidator, Obj
             values.add(method.invoke(anEnum));
           } catch (NoSuchMethodException e) {
             log.warn("{} 不存在 value() 方法，故无法校验枚举值", className);
-
             isPassed = true;
             break;
           } catch (InvocationTargetException | IllegalAccessException e) {
             log.warn("{}.value() 方法执行出错，故无法校验枚举值", className);
-
             isPassed = true;
             break;
           }

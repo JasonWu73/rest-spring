@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
- * REST API 配置。
+ * REST API 配置类。
  *
  * @author 吴仙杰
  */

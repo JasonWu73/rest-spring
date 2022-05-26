@@ -4,9 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.rest.ApiResult;
-import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
 import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
+import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
 import net.wuxianjie.springbootcore.util.NetUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,98 +27,106 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Token 验证过滤器。
+ * Token 身份验证过滤器。
  *
  * @author 吴仙杰
  */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TokenAuthenticationFilter extends OncePerRequestFilter {
+public class TokenAuthFilter extends OncePerRequestFilter {
 
   /**
    * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
    */
-  static final String BEARER_PREFIX = "Bearer ";
+  private static final String BEARER_PREFIX = "Bearer ";
 
   /**
    * Spring Security 要求角色名必须是大写，且以 ROLE_ 为前缀
    */
-  static final String ROLE_PREFIX = "ROLE_";
+  private static final String ROLE_PREFIX = "ROLE_";
 
   private final ObjectMapper objectMapper;
-  private final TokenAuthService authService;
+  private final TokenAuthService tokenAuthService;
 
   @Override
   protected void doFilterInternal(HttpServletRequest req,
                                   HttpServletResponse resp,
                                   FilterChain chain) throws IOException, ServletException {
-    Optional<String> tokenOptional = getTokenFromRequest(req);
-
-    if (tokenOptional.isEmpty()) {
+    Optional<String> tokenOpt = getTokenFromReq(req);
+    if (tokenOpt.isEmpty()) {
       chain.doFilter(req, resp);
       return;
     }
 
     try {
-      TokenUserDetails user = authService.authenticate(tokenOptional.get());
+      TokenUserDetails user = tokenAuthService.authenticate(tokenOpt.get());
       loginToSpringSecurityContext(user);
     } catch (TokenAuthenticationException e) {
       SecurityContextHolder.clearContext();
 
-      sendToResponse(resp, e.getMessage(), HttpStatus.UNAUTHORIZED);
+      sendToResp(resp, e.getMessage(), HttpStatus.UNAUTHORIZED);
       return;
     } catch (Throwable e) {
-      String respMsg = "Token 验证异常";
-
+      String respMsg = "Token 身份验证异常";
       log.error(
-        "uri={}；client={} -> " + respMsg,
+        respMsg + "，请求 IP 为 {}，请求路径为 {}",
+        NetUtils.getRealIpAddr(req),
         req.getRequestURI(),
-        NetUtils.getRealIpAddress(req),
         e
       );
 
       SecurityContextHolder.clearContext();
 
-      sendToResponse(resp, respMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+      sendToResp(resp, respMsg, HttpStatus.INTERNAL_SERVER_ERROR);
       return;
     }
 
     chain.doFilter(req, resp);
   }
 
-  private Optional<String> getTokenFromRequest(HttpServletRequest req) {
-    String bearer = StrUtil.trim(req.getHeader(HttpHeaders.AUTHORIZATION));
+  /**
+   * 输出至响应体中。
+   *
+   * @param resp       {@link  HttpServletRequest}
+   * @param respMsg    提示信息
+   * @param httpStatus HTTP 状态码
+   * @throws IOException 当写入响应体异常时抛出
+   */
+  public void sendToResp(HttpServletResponse resp,
+                         String respMsg,
+                         HttpStatus httpStatus) throws IOException {
+    resp.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
+    resp.setStatus(httpStatus.value());
 
-    return Optional.ofNullable(bearer)
-      .map(s -> {
-        if (!StrUtil.startWith(s, BEARER_PREFIX)) {
-          return null;
-        }
+    String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(respMsg));
+    resp.getWriter().write(json);
+  }
 
-        String token = StrUtil.subAfter(s, BEARER_PREFIX, false);
+  private Optional<String> getTokenFromReq(HttpServletRequest req) {
+    return Optional.ofNullable(StrUtil.trim(req.getHeader(HttpHeaders.AUTHORIZATION)))
+      .map(bearer -> {
+        boolean isNotBearerStr = !StrUtil.startWith(bearer, BEARER_PREFIX);
+        if (isNotBearerStr) return null;
 
-        return StrUtil.trimToNull(token);
+        return StrUtil.trimToNull(StrUtil.subAfter(bearer, BEARER_PREFIX, false));
       });
   }
 
   private void loginToSpringSecurityContext(TokenUserDetails user) {
-    List<GrantedAuthority> authorityList = getAuthorities(user.getRoles());
-
-    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, authorityList);
+    List<GrantedAuthority> authorities = getAuthorities(user.getRoles());
+    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(user, null, authorities);
     SecurityContextHolder.getContext().setAuthentication(token);
   }
 
   private List<GrantedAuthority> getAuthorities(String roles) {
     return Optional.ofNullable(StrUtil.trimToNull(roles))
-      .map(s -> {
-        String commaSeparatedRoles = Arrays.stream(s.split(","))
+      .map(notNullRoles -> {
+        String commaSeparatedRoles = Arrays.stream(notNullRoles.split(","))
           .reduce("", (roleOne, roleTwo) -> {
             String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
 
-            if (StrUtil.isEmpty(roleOne)) {
-              return appended;
-            }
+            if (StrUtil.isEmpty(roleOne)) return appended;
 
             return roleOne + "," + appended;
           });
@@ -127,17 +134,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return AuthorityUtils.commaSeparatedStringToAuthorityList(commaSeparatedRoles);
       })
       .orElse(Collections.emptyList());
-  }
-
-  private void sendToResponse(HttpServletResponse resp,
-                              String respMsg,
-                              HttpStatus httpStatus) throws IOException {
-    resp.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
-    resp.setStatus(httpStatus.value());
-
-    ApiResult<Void> fail = ApiResultWrapper.fail(respMsg);
-    String json = objectMapper.writeValueAsString(fail);
-
-    resp.getWriter().write(json);
   }
 }

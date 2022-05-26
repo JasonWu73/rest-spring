@@ -3,13 +3,12 @@ package net.wuxianjie.springbootcore.security;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
 /**
- * Token 验证工具类。
+ * Token 身份验证工具类。
  *
  * @author 吴仙杰
  */
@@ -17,17 +16,16 @@ import java.util.Optional;
 public class AuthUtils {
 
   /**
-   * 获取已通过 Token 验证后的用户详细数据。
+   * 获取已通过 Token 身份验证后的用户详细数据。
+   *
    * <p>
-   * 若是开放 API，即无需 Token 验证的接口，则返回空。
+   * 若是开放 API，即无需 Token 身份验证的接口，则返回空。
    * </p>
    *
-   * @return 通过 Token 验证后的用户详细数据
+   * @return 通过 Token 身份验证后的用户详细数据
    */
   public static Optional<TokenUserDetails> getCurrentUser() {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    return Optional.ofNullable(authentication)
+    return Optional.ofNullable(SecurityContextHolder.getContext().getAuthentication())
       .map(auth -> {
         // 匿名用户可访问的接口，则返回空
         // auth.getName() 为 anonymous

@@ -9,7 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * MyBatis 类型处理器：映射 Java {@link LocalDateTime} 与数据库日期时间数据类型，其中已包含了 {@link LocalDate}。
+ * MyBatis 类型处理器，映射 Java {@link LocalDateTime} 与数据库日期时间数据类型，其中已包含了 {@link LocalDate}。
+ *
  * <p>
  * 全局配置（application.yml）<br>
  * {@code mybatis.type-handlers-package: net.wuxianjie.springbootcore.mybatis}

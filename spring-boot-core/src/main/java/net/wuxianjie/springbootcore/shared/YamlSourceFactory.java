@@ -13,6 +13,7 @@ import java.util.Properties;
 
 /**
  * 支持对 YAML 自定义配置文件的读取。
+ *
  * <p>
  * 默认 Spring Boot 仅支持读取 application.yml 配置文件。
  * </p>
@@ -25,14 +26,13 @@ public class YamlSourceFactory implements PropertySourceFactory {
   public PropertySource<?> createPropertySource(String name, EncodedResource resource) throws InternalException {
     YamlPropertiesFactoryBean factory = new YamlPropertiesFactoryBean();
     Resource heldResource = resource.getResource();
-
     factory.setResources(heldResource);
 
     String filename = Optional.ofNullable(heldResource.getFilename())
       .orElseThrow(() -> new InternalException("无法识别 YAML 配置文件的文件名"));
 
     Properties properties = Optional.ofNullable(factory.getObject())
-      .orElseThrow(() -> new InternalException("YAML 配置文件读取失败"));
+      .orElseThrow(() -> new InternalException("无法读取 YAML 配置文件内容"));
 
     return new PropertiesPropertySource(filename, properties);
   }

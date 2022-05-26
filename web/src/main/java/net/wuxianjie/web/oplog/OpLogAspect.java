@@ -53,7 +53,7 @@ public class OpLogAspect {
   public void log(JoinPoint joinPoint, Object returnObj) throws JsonProcessingException {
     // 请求信息
     Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
-    String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
+    String reqIp = reqOpt.map(NetUtils::getRealIpAddr).orElse(null);
     String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
 
     // 用户信息

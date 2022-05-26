@@ -30,9 +30,7 @@ public class JwtUtils {
    */
   public static String createSigningKey() {
     SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    byte[] encoded = secretKey.getEncoded();
-
-    return Encoders.BASE64.encode(encoded);
+    return Encoders.BASE64.encode(secretKey.getEncoded());
   }
 
   /**
@@ -50,7 +48,7 @@ public class JwtUtils {
       .setClaims(payload)
       .setNotBefore(new Date())
       .setExpiration(DateUtil.offsetSecond(new Date(), expiresInSeconds))
-      .signWith(generateSecretKey(signingKey))
+      .signWith(createSecretKey(signingKey))
       .compact();
   }
 
@@ -60,12 +58,12 @@ public class JwtUtils {
    * @param signingKey JWT 签名密钥
    * @param jwt        JWT
    * @return JWT 中的有效载荷
-   * @throws TokenAuthenticationException 当 JWT 校验不通过时抛出
+   * @throws TokenAuthenticationException 当 JWT 验证不通过时抛出
    */
   public static Map<String, Object> verifyJwt(String signingKey, String jwt) throws TokenAuthenticationException {
     try {
       Claims claims = Jwts.parserBuilder()
-        .setSigningKey(generateSecretKey(signingKey))
+        .setSigningKey(createSecretKey(signingKey))
         .build()
         .parseClaimsJws(jwt)
         .getBody();
@@ -80,9 +78,8 @@ public class JwtUtils {
     }
   }
 
-  private static SecretKey generateSecretKey(String signingKey) {
+  private static SecretKey createSecretKey(String signingKey) {
     byte[] decode = Decoders.BASE64.decode(signingKey);
-
     return Keys.hmacShaKeyFor(decode);
   }
 }

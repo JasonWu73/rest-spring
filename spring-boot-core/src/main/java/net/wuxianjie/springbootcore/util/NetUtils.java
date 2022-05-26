@@ -3,7 +3,6 @@ package net.wuxianjie.springbootcore.util;
 import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.springbootcore.exception.InternalException;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 
@@ -26,18 +25,18 @@ public class NetUtils {
    *
    * @return 客户端 IP
    */
-  public static String getRealIpAddress(HttpServletRequest request) {
-    return Optional.ofNullable(request.getHeader("X-FORWARDED-FOR"))
+  public static String getRealIpAddr(HttpServletRequest req) {
+    return Optional.ofNullable(req.getHeader("X-FORWARDED-FOR"))
       .map(StrUtil::trimToNull)
-      .orElse(request.getRemoteAddr());
+      .orElse(req.getRemoteAddr());
   }
 
   /**
    * 获取 Servlet 环境中当前线程中的请求对象。
    *
-   * @return {@link Optional<HttpServletRequest>}
+   * @return {@link HttpServletRequest} 的 {@link Optional} 包装对象
    */
-  public static Optional<HttpServletRequest> getRequest() throws InternalException {
+  public static Optional<HttpServletRequest> getRequest() {
     return Optional.ofNullable(RequestContextHolder.getRequestAttributes())
       .map(attr -> (HttpServletRequest) attr.resolveReference(RequestAttributes.REFERENCE_REQUEST));
   }

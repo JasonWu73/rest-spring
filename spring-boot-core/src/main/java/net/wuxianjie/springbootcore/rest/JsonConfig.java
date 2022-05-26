@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- * JSON 反序列化（请求提交的 JSON 参数）以及 JSON 序列化（API 响应结果）配置。
+ * JSON 反序列化（请求提交的 JSON 参数）以及 JSON 序列化（API 响应结果）配置类。
  *
  * @author 吴仙杰
  */
@@ -50,7 +50,6 @@ public class JsonConfig {
 
       // 设置 Date 序列化后的字符串格式
       SimpleDateFormat dateFormat = new SimpleDateFormat(DatePattern.NORM_DATETIME_PATTERN);
-
       builder.serializers(new DateSerializer(false, dateFormat));
 
       // 设置 Java 8 LocalDate 序列化后的字符串格式
@@ -58,12 +57,10 @@ public class JsonConfig {
 
       // 设置 Java 8 LocalDateTime 序列化后的字符串格式
       DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN);
-
       builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
 
       // 在序列化时去除字符串值的首尾空白字符
       builder.serializerByType(String.class, new JsonSerializer<String>() {
-
         @Override
         public void serialize(String value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
           gen.writeString(StrUtil.trim(value));
@@ -72,7 +69,6 @@ public class JsonConfig {
 
       // 在反序列化时去除字符串值的首尾空白字符
       builder.deserializerByType(String.class, new StdScalarDeserializer<String>(String.class) {
-
         @Override
         public String deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
           return StrUtil.trim(p.getValueAsString());
@@ -81,7 +77,6 @@ public class JsonConfig {
 
       // 设置 Java 8 LocalDateTime / LocalDate 反序列化
       builder.deserializerByType(LocalDateTime.class, new JsonDeserializer<LocalDateTime>() {
-
         @Override
         public LocalDateTime deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
           return LocalDateTime.parse(p.getValueAsString(), dateTimeFormatter);
@@ -90,7 +85,6 @@ public class JsonConfig {
 
       // 设置 Date 反序列化
       builder.deserializerByType(Date.class, new JsonDeserializer<Date>() {
-
         @Override
         public Date deserialize(JsonParser p, DeserializationContext ctx) throws IOException {
           String value = p.getValueAsString();

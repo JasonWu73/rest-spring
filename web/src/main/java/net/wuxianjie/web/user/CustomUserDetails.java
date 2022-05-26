@@ -7,7 +7,7 @@ import net.wuxianjie.web.security.SysMenu;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 
 /**
- * Token 验证后的用户详细数据。
+ * Token 身份验证后的用户详细数据。
  *
  * @author 吴仙杰
  */

@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 安全配置项的配置类。
+ * 安全参数的配置类。
  *
  * @author 吴仙杰
  * @see WebSecurityConfig

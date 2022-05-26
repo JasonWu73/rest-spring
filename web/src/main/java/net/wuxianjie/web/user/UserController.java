@@ -7,6 +7,7 @@ import net.wuxianjie.springbootcore.exception.BadRequestException;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.util.StrUtils;
 import net.wuxianjie.web.oplog.OpLogger;
 import net.wuxianjie.web.security.SysMenu;
@@ -144,7 +145,7 @@ public class UserController {
   }
 
   private void setCurrentUserId(UpdateUserPwdQuery query) {
-    CustomUserDetails user = (CustomUserDetails) AuthUtils.getCurrentUser().orElseThrow();
+    TokenUserDetails user = AuthUtils.getCurrentUser().orElseThrow();
     query.setUserId(user.getUserId());
   }
 }

@@ -53,9 +53,8 @@ public class ExceptionControllerAdvice {
   @ExceptionHandler(ClientAbortException.class)
   public void handleException(ClientAbortException e,
                               HttpServletRequest req) {
-    String msg = StrUtil.format("非正常关闭 socket：{}", e.getMessage());
-
-    logWarnOrError(req, msg, e, true);
+    String respMsg = "非正常关闭 socket：" + e.getMessage();
+    logWarnOrError(req, respMsg, true);
   }
 
   /**
@@ -70,10 +69,8 @@ public class ExceptionControllerAdvice {
     String mimeTypes = Optional.ofNullable(req.getHeaders(HttpHeaders.ACCEPT))
       .map(enumeration -> {
         List<String> accepts = new ArrayList<>();
-
         while (enumeration.hasMoreElements()) {
           String accept = enumeration.nextElement().trim();
-
           accepts.add(accept);
         }
 
@@ -81,11 +78,10 @@ public class ExceptionControllerAdvice {
       })
       .orElse("null");
 
-    String respMsg = StrUtil.format("API 不支持当前请求的 MIME 类型 [{}: {}]", HttpHeaders.ACCEPT, mimeTypes);
+    String respMsg = StrUtil.format("不支持请求头中的 MIME 类型 [{}: {}]", HttpHeaders.ACCEPT, mimeTypes);
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.NOT_ACCEPTABLE, respMsg);
+    return createRespEntity(req, HttpStatus.NOT_ACCEPTABLE, respMsg);
   }
 
   /**
@@ -97,11 +93,10 @@ public class ExceptionControllerAdvice {
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   public ResponseEntity<ApiResult<Void>> handleException(HttpRequestMethodNotSupportedException e,
                                                          HttpServletRequest req) {
-    String respMsg = StrUtil.format("API 不支持 {} 请求方法", req.getMethod());
+    String respMsg = "不支持 " + req.getMethod() + " 请求方法";
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.METHOD_NOT_ALLOWED, respMsg);
+    return createRespEntity(req, HttpStatus.METHOD_NOT_ALLOWED, respMsg);
   }
 
   /**
@@ -114,11 +109,10 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleException(MultipartException e,
                                                          HttpServletRequest req) {
 
-    String respMsg = StrUtil.format("API 请求必须为 Multipart Request");
+    String respMsg = "仅支持 Multipart 请求";
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
   }
 
   /**
@@ -132,10 +126,9 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleException(HttpMessageNotReadableException e,
                                                          HttpServletRequest req) {
     String respMsg = "请求体内容不合法";
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
   }
 
   /**
@@ -148,11 +141,10 @@ public class ExceptionControllerAdvice {
   @ExceptionHandler(MissingServletRequestParameterException.class)
   public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestParameterException e,
                                                          HttpServletRequest req) {
-    String respMsg = StrUtil.format("缺少必填参数 {}", e.getParameterName());
+    String respMsg = "缺少必填参数 " + e.getParameterName();
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
   }
 
   /**
@@ -165,11 +157,10 @@ public class ExceptionControllerAdvice {
   @ExceptionHandler(MissingServletRequestPartException.class)
   public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestPartException e,
                                                          HttpServletRequest req) {
-    String respMsg = StrUtil.format("缺少必传文件 {}", e.getRequestPartName());
+    String respMsg = "缺少必传文件参数 " + e.getRequestPartName();
+    logWarnOrError(req, respMsg, e.getMessage(), true);
 
-    logWarnOrError(req, respMsg, e, true);
-
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
   }
 
   /**
@@ -188,19 +179,19 @@ public class ExceptionControllerAdvice {
     Optional.ofNullable(e.getConstraintViolations())
       .ifPresent(violations -> violations.forEach(violation -> {
         String rspMsg = violation.getMessage();
-
         respMsgList.add(rspMsg);
 
         String queryParamPath = violation.getPropertyPath().toString();
-        String queryParam = queryParamPath.contains(".") ? queryParamPath.substring(queryParamPath.indexOf(".") + 1) : queryParamPath;
+        String queryParam = queryParamPath.contains(".")
+          ? queryParamPath.substring(queryParamPath.indexOf(".") + 1)
+          : queryParamPath;
         String logMsg = StrUtil.format("{} [{}={}]", rspMsg, queryParam, violation.getInvalidValue());
-
         logMsgList.add(logMsg);
       }));
 
     logParamWarn(req, logMsgList);
 
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
   }
 
   /**
@@ -219,26 +210,20 @@ public class ExceptionControllerAdvice {
     e.getBindingResult().getFieldErrors()
       .forEach(fieldError -> {
         // 当 Controller 接收的参数类型不符合要求时，只需提示参数有误即可，而不是返回服务异常
-        boolean isControllerArgTypeError = fieldError.contains(TypeMismatchException.class);
         String field = fieldError.getField();
-        String respMsg;
-
-        if (isControllerArgTypeError) {
-          respMsg = StrUtil.format("{} 类型不匹配", field);
-        } else {
-          respMsg = fieldError.getDefaultMessage();
-        }
-
+        boolean isControllerArgTypeError = fieldError.contains(TypeMismatchException.class);
+        String respMsg = isControllerArgTypeError
+          ? field + " 参数类型不匹配"
+          : fieldError.getDefaultMessage();
         respMsgList.add(respMsg);
 
         String logMsg = StrUtil.format("{} [{}={}]", respMsg, field, fieldError.getRejectedValue());
-
         logMsgList.add(logMsg);
       });
 
     logParamWarn(req, logMsgList);
 
-    return buildResponseEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
+    return createRespEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
   }
 
   /**
@@ -252,10 +237,9 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleException(UncategorizedDataAccessException e,
                                                          HttpServletRequest req) {
     String respMsg = "数据库操作异常";
-
     logError(req, respMsg, e);
 
-    return buildResponseEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
+    return createRespEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
   }
 
   /**
@@ -269,15 +253,15 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleCustomException(AbstractBaseException e,
                                                                HttpServletRequest req) {
     String respMsg = e.getMessage();
-    boolean isServerError = e instanceof AbstractServerBaseException;
 
+    boolean isServerError = e instanceof AbstractServerBaseException;
     Optional.ofNullable(e.getCause())
       .ifPresentOrElse(
-        cause -> logWarnOrError(req, respMsg, cause, !isServerError),
+        cause -> logWarnOrError(req, respMsg, cause.getMessage(), !isServerError),
         () -> logWarnOrError(req, respMsg, !isServerError)
       );
 
-    return buildResponseEntity(req, e.getHttpStatus(), respMsg);
+    return createRespEntity(req, e.getHttpStatus(), respMsg);
   }
 
   /**
@@ -291,121 +275,53 @@ public class ExceptionControllerAdvice {
   public ResponseEntity<ApiResult<Void>> handleAllException(Throwable e,
                                                             HttpServletRequest req) {
     // 不要处理 AccessDeniedException，否则会导致 Spring Security 无法处理 403
-    if (e instanceof AccessDeniedException) {
-      throw (AccessDeniedException) e;
-    }
+    boolean isSpringSecurity403Exception = e instanceof AccessDeniedException;
+    if (isSpringSecurity403Exception) throw (AccessDeniedException) e;
 
     String respMsg = "服务异常";
-
     logError(req, respMsg, e);
 
-    return buildResponseEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
+    return createRespEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
+  }
+
+  private void logWarnOrError(HttpServletRequest req,
+                              String respMsg,
+                              String rawMsg,
+                              boolean isWarn) {
+    String username = AuthUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
+    String template = (rawMsg == null ? "{}" : "{}：{}") + "，用户（{}），其请求 IP 为 {}，请求路径为 {}";
+    String logMsg = rawMsg == null
+      ? StrUtil.format(template, respMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI())
+      : StrUtil.format(template, respMsg, rawMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI());
+
+    if (isWarn) {
+      log.warn(logMsg);
+      return;
+    }
+
+    log.error(logMsg);
   }
 
   private void logWarnOrError(HttpServletRequest req,
                               String respMsg,
                               boolean isWarn) {
-    TokenUserDetails currentUser = getCurrentUser();
-    String logMsg = StrUtil.format(
-      "uri={}；client={}；accountName={}；accountId={} -> {}",
-      req.getRequestURI(),
-      NetUtils.getRealIpAddress(req),
-      currentUser.getUsername(),
-      currentUser.getUserId(),
-      respMsg
-    );
-
-    if (isWarn) {
-      log.warn(logMsg);
-    } else {
-      log.error(logMsg);
-    }
-  }
-
-  private void logWarnOrError(HttpServletRequest req,
-                              String respMsg,
-                              Throwable e,
-                              boolean isWarn) {
-    TokenUserDetails currentUser = getCurrentUser();
-    String logMsg = StrUtil.format(
-      "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
-      req.getRequestURI(),
-      NetUtils.getRealIpAddress(req),
-      currentUser.getUsername(),
-      currentUser.getUserId(),
-      respMsg,
-      e.getMessage()
-    );
-
-    if (isWarn) {
-      log.warn(logMsg);
-    } else {
-      log.error(logMsg);
-    }
+    logWarnOrError(req, respMsg, null, isWarn);
   }
 
   private void logParamWarn(HttpServletRequest req, List<String> logMsgList) {
-    TokenUserDetails currentUser = getCurrentUser();
-    log.warn(
-      "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
-      req.getRequestURI(),
-      NetUtils.getRealIpAddress(req),
-      currentUser.getUsername(),
-      currentUser.getUserId(),
-      String.join("；", logMsgList)
-    );
+    logWarnOrError(req, "参数不合法", String.join("；", logMsgList), true);
   }
 
-  private void logError(HttpServletRequest req, String respMsg, Throwable e) {
-    TokenUserDetails currentUser = getCurrentUser();
-
-    log.error(
-      "uri={}；client={}；accountName={}；accountId={} -> {}",
-      req.getRequestURI(),
-      NetUtils.getRealIpAddress(req),
-      currentUser.getUsername(),
-      currentUser.getUserId(),
-      respMsg,
-      e
-    );
+  private void logError(HttpServletRequest req,
+                        String respMsg,
+                        Throwable e) {
+    logWarnOrError(req, respMsg, e.toString(), false);
   }
 
-  private TokenUserDetails getCurrentUser() {
-    return AuthUtils.getCurrentUser()
-      .orElse(new TokenUserDetails() {
-        @Override
-        public Integer getUserId() {
-          return null;
-        }
-
-        @Override
-        public String getUsername() {
-          return null;
-        }
-
-        @Override
-        public String getRoles() {
-          return null;
-        }
-
-        @Override
-        public String getAccessToken() {
-          return null;
-        }
-
-        @Override
-        public String getRefreshToken() {
-          return null;
-        }
-      });
-  }
-
-  private ResponseEntity<ApiResult<Void>> buildResponseEntity(HttpServletRequest req,
-                                                              HttpStatus httpStatus,
-                                                              String respMsg) {
-    if (isJsonRequest(req)) {
-      return new ResponseEntity<>(ApiResultWrapper.fail(respMsg), httpStatus);
-    }
+  private ResponseEntity<ApiResult<Void>> createRespEntity(HttpServletRequest req,
+                                                           HttpStatus httpStatus,
+                                                           String respMsg) {
+    if (isJsonRequest(req)) return new ResponseEntity<>(ApiResultWrapper.fail(respMsg), httpStatus);
 
     return new ResponseEntity<>(null, httpStatus);
   }
@@ -413,20 +329,14 @@ public class ExceptionControllerAdvice {
   private boolean isJsonRequest(HttpServletRequest req) {
     // 只有在 Accept 请求头中明确指定不包含 JSON 时才认为非 JSON 请求
     return Optional.ofNullable(req.getHeaders(HttpHeaders.ACCEPT))
-      .map(acceptEnum -> {
-        if (!acceptEnum.hasMoreElements()) {
-          return true;
-        }
+      .map(enumeration -> {
+        if (!enumeration.hasMoreElements()) return true;
 
-        while (acceptEnum.hasMoreElements()) {
-          String accept = acceptEnum.nextElement();
+        while (enumeration.hasMoreElements()) {
+          String accept = enumeration.nextElement();
           String[] jsonArray = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE};
-
           boolean containsJson = StrUtil.containsAnyIgnoreCase(accept, jsonArray);
-
-          if (containsJson) {
-            return true;
-          }
+          if (containsJson) return true;
         }
 
         return false;

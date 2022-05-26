@@ -4,8 +4,6 @@ import cn.hutool.core.text.StrSplitter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.rest.ApiResult;
-import net.wuxianjie.springbootcore.rest.ApiResultWrapper;
 import net.wuxianjie.springbootcore.util.NetUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
@@ -33,6 +31,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+  static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+
   /**
    * 获取 Access Token 的请求路径。
    */
@@ -43,11 +43,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
    */
   static final String REFRESH_TOKEN_PATH_PREFIX = "/api/v1/refresh-token";
 
-  static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+  private static final String FAVICON_PATH = "/favicon.ico";
 
-  static final String FAVICON_PATH = "/favicon.ico";
-
-  static final String[] DEFAULT_PERMIT_ALL = {
+  private static final String[] DEFAULT_PERMIT_ALL = {
     ACCESS_TOKEN_PATH,
     REFRESH_TOKEN_PATH_PREFIX + "/{.+}",
     FAVICON_PATH
@@ -55,7 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final ObjectMapper objectMapper;
   private final SecurityConfig securityConfig;
-  private final TokenAuthenticationFilter authenticationFilter;
+  private final TokenAuthFilter tokenAuthFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -76,38 +74,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .exceptionHandling()
       // 401
       .authenticationEntryPoint((req, resp, authException) -> {
-        String respMsg = "Token 验证失败";
-
+        String respMsg = "非法 Token";
         logWarn(req, respMsg);
 
-        resp.setContentType(APPLICATION_JSON_UTF8_VALUE);
-        resp.setStatus(HttpStatus.UNAUTHORIZED.value());
-
-        ApiResult<Void> fail = ApiResultWrapper.fail(respMsg);
-        String json = objectMapper.writeValueAsString(fail);
-
-        resp.getWriter().write(json);
+        tokenAuthFilter.sendToResp(resp, respMsg, HttpStatus.UNAUTHORIZED);
       })
       // 403
       // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
       .accessDeniedHandler((req, resp, deniedException) -> {
-        String respMsg = "Token 未授权";
-
+        String respMsg = "未授权 Token";
         logWarn(req, respMsg);
 
-        resp.setContentType(APPLICATION_JSON_UTF8_VALUE);
-        resp.setStatus(HttpStatus.FORBIDDEN.value());
-
-        ApiResult<Void> fail = ApiResultWrapper.fail(respMsg);
-        String json = objectMapper.writeValueAsString(fail);
-
-        resp.getWriter().write(json);
+        tokenAuthFilter.sendToResp(resp, respMsg, HttpStatus.FORBIDDEN);
       })
       .and()
       // 禁用 CSRF 措施
       .csrf()
       .disable()
-      // 无状态鉴权机制，每次请求都需要 Token 验证，故不需要设置服务器端 HttpSession，也不需要设置客户端 JSESSIONID Cookies
+      // 无状态鉴权机制，每次请求都需要 Token 身份验证，故不需要设置服务器端 HttpSession，也不需要设置客户端 JSESSIONID Cookies
       .sessionManagement()
       .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       .and()
@@ -115,8 +99,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .cors()
       .configurationSource(req -> new CorsConfiguration().applyPermitDefaultValues())
       .and()
-      // 添加 Token 验证过滤器
-      .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+      // 添加 Token 身份验证过滤器
+      .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
   /**
@@ -131,10 +115,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
   private void logWarn(HttpServletRequest req, String respMsg) {
     log.warn(
-      "uri={}；client={} -> {}",
-      req.getRequestURI(),
-      NetUtils.getRealIpAddress(req),
-      respMsg
+      respMsg + "，请求 IP 为 {}，请求路径为 {}",
+      NetUtils.getRealIpAddr(req),
+      req.getRequestURI()
     );
   }
 }

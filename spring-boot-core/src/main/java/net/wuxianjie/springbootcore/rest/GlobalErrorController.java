@@ -42,35 +42,30 @@ public class GlobalErrorController implements ErrorController {
     Map<String, Object> attributes = errorAttributes.getErrorAttributes(req, ErrorAttributeOptions.defaults());
 
     HttpStatus httpStatus = Optional.ofNullable((Integer) attributes.get("status"))
-      .map(code -> Optional.ofNullable(HttpStatus.resolve(code))
-        .orElse(HttpStatus.INTERNAL_SERVER_ERROR))
+      .map(code -> Optional.ofNullable(HttpStatus.resolve(code)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
       .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    Optional<TokenUserDetails> userOpt = AuthUtils.getCurrentUser();
-    Integer accountId = userOpt.map(TokenUserDetails::getUserId).orElse(null);
-    String accountName = userOpt.map(TokenUserDetails::getUsername).orElse(null);
-
-    String reqDes = req.getDescription(true).replaceAll(";", "；");
+    String username = AuthUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
+    String reqDes = req.getDescription(true);
+    String error = (String) attributes.get("error");
 
     if (httpStatus == HttpStatus.NOT_FOUND) {
       log.warn(
-        "{}；accountName={}；accountId={} - Spring Boot 全局 404 处理：{}",
-        reqDes,
-        accountName,
-        accountId,
-        attributes
+        "Spring Boot 全局 404 处理：{}，用户（{}），客户端信息：{}",
+        username,
+        attributes,
+        reqDes
       );
-    } else {
-      log.error(
-        "{}；accountName={}；accountId={} - Spring Boot 全局异常处理：{}",
-        reqDes,
-        accountName,
-        accountId,
-        attributes
-      );
+
+      return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
     }
 
-    String error = (String) attributes.get("error");
+    log.error(
+      "Spring Boot 全局异常处理：{}，用户（{}），客户端信息：{}",
+      username,
+      attributes,
+      reqDes
+    );
 
     return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
   }

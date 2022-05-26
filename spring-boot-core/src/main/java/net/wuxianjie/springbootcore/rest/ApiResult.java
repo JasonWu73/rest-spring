@@ -18,7 +18,7 @@ public class ApiResult<T> {
   /**
    * 错误码：0：成功，1：失败。
    */
-  private ApiErrorCode error;
+  private ApiErrCode errCode;
 
   /**
    * 错误信息。

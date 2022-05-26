@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Token 验证的业务逻辑处理类。
+ * Token 身份验证的业务逻辑处理类。
  *
  * @author 吴仙杰
  */

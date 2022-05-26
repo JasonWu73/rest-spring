@@ -47,7 +47,7 @@ public class LoginLogAspect {
   public void log(TokenData tokenData) {
     // 请求信息
     Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
-    String reqIp = reqOpt.map(NetUtils::getRealIpAddress).orElse(null);
+    String reqIp = reqOpt.map(NetUtils::getRealIpAddr).orElse(null);
     String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
 
     // 用户信息

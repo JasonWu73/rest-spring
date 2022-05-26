@@ -24,7 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 @RequiredArgsConstructor
 public class GlobalResponseBodyAdvice implements ResponseBodyAdvice<Object> {
 
-  static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
+  private static final String APPLICATION_JSON_UTF8_VALUE = "application/json;charset=UTF-8";
 
   private final ObjectMapper objectMapper;
 

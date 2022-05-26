@@ -115,7 +115,7 @@ public enum SysMenu {
    * 将字符串值解析为枚举常量。
    *
    * @param value 字符串值
-   * @return {@link SysMenu} 的 Optional 包装对象
+   * @return {@link SysMenu} 的 {@link Optional} 包装对象
    */
   public static Optional<SysMenu> resolve(String value) {
     return Optional.ofNullable(value)
