@@ -58,8 +58,8 @@ public class OpLogAspect {
 
     // 用户信息
     Optional<TokenUserDetails> userOpt = AuthUtils.getCurrentUser();
-    Integer userId = userOpt.map(TokenUserDetails::getAccountId).orElse(null);
-    String username = userOpt.map(TokenUserDetails::getAccountName).orElse(null);
+    Integer userId = userOpt.map(TokenUserDetails::getUserId).orElse(null);
+    String username = userOpt.map(TokenUserDetails::getUsername).orElse(null);
 
     // 方法信息
     String methodMsg = getMethodMsg(joinPoint);

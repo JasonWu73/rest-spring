@@ -29,7 +29,7 @@ public class TokenServiceImpl implements TokenService {
   private final UserMapper userMapper;
   private final SecurityConfig securityConfig;
   private final PasswordEncoder passwordEncoder;
-  private final Cache<String, UserDetails> tokenCache;
+  private final Cache<String, CustomUserDetails> tokenCache;
 
   @Override
   public TokenData getToken(String account, String password) throws TokenAuthenticationException {
@@ -77,7 +77,7 @@ public class TokenServiceImpl implements TokenService {
 
   private User getUserFromDbMustBeExists(String username) {
     return Optional.ofNullable(userMapper.findByUsername(username))
-      .orElseThrow(() -> new NotFoundException("用户名 [" + username + "] 不存在"));
+      .orElseThrow(() -> new NotFoundException("未找到用户（" + username + "）"));
   }
 
   private void verifyAccountUsability(String username, YesOrNo enabled) {
@@ -112,7 +112,7 @@ public class TokenServiceImpl implements TokenService {
   }
 
   private void addToCache(User user, TokenData token) {
-    UserDetails userDetails = new UserDetails(
+    CustomUserDetails userDetails = new CustomUserDetails(
       user.getUserId(),
       user.getUsername(),
       user.getMenus(),

@@ -31,9 +31,7 @@ public class AuthUtils {
       .map(auth -> {
         // 匿名用户可访问的接口，则返回空
         // auth.getName() 为 anonymous
-        if (auth instanceof AnonymousAuthenticationToken) {
-          return null;
-        }
+        if (auth instanceof AnonymousAuthenticationToken) return null;
 
         return (TokenUserDetails) auth.getPrincipal();
       });

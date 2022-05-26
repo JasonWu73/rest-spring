@@ -22,10 +22,10 @@ import java.util.Optional;
 public class TokenAuthenticationServiceImpl implements TokenAuthenticationService {
 
   private final SecurityConfig securityConfig;
-  private final Cache<String, UserDetails> tokenCache;
+  private final Cache<String, CustomUserDetails> tokenCache;
 
   @Override
-  public UserDetails authenticate(String token) throws TokenAuthenticationException {
+  public CustomUserDetails authenticate(String token) throws TokenAuthenticationException {
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), token);
 
     String tokenType = TokenUtils.getTokenType(payload);
@@ -39,7 +39,7 @@ public class TokenAuthenticationServiceImpl implements TokenAuthenticationServic
     return getUserDetailsFromCache(username, token);
   }
 
-  private UserDetails getUserDetailsFromCache(String username, String token) {
+  private CustomUserDetails getUserDetailsFromCache(String username, String token) {
     return Optional.ofNullable(tokenCache.getIfPresent(username))
       .map(u -> {
         if (!StrUtil.equals(token, u.getAccessToken())) {

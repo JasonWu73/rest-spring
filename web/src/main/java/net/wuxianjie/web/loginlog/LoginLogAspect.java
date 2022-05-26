@@ -8,7 +8,7 @@ import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.util.JwtUtils;
 import net.wuxianjie.springbootcore.util.NetUtils;
 import net.wuxianjie.web.user.TokenAttributes;
-import net.wuxianjie.web.user.UserDetails;
+import net.wuxianjie.web.user.CustomUserDetails;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -31,7 +31,7 @@ import java.util.Optional;
 public class LoginLogAspect {
 
   private final SecurityConfig securityConfig;
-  private final Cache<String, UserDetails> tokenCache;
+  private final Cache<String, CustomUserDetails> tokenCache;
   private final LoginLogService loginLogService;
 
   @Pointcut("execution(public net.wuxianjie.springbootcore.security.TokenData net.wuxianjie.springbootcore.security.TokenController.getToken(..))")
@@ -55,7 +55,7 @@ public class LoginLogAspect {
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), accessToken);
     String username = (String) payload.get(TokenAttributes.USERNAME_KEY);
     Integer userId = Optional.ofNullable(tokenCache.getIfPresent(username))
-      .map(UserDetails::getAccountId)
+      .map(CustomUserDetails::getUserId)
       .orElse(null);
 
     // 打印到控制台

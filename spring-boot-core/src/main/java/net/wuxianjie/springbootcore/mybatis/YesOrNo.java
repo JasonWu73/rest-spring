@@ -15,9 +15,9 @@ import java.util.Optional;
  * @author 吴仙杰
  */
 @Getter
+@Accessors(fluent = true)
 @ToString
 @RequiredArgsConstructor
-@Accessors(fluent = true)
 public enum YesOrNo implements ValueEnum {
 
   /**

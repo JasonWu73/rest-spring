@@ -73,7 +73,7 @@ public interface UserMapper {
   /**
    * 删除用户。
    *
-   * @param userId 用户 id
+   * @param userId 需要删除的用户 id
    */
   void deleteByUserId(int userId);
 }

@@ -47,8 +47,8 @@ public class GlobalErrorController implements ErrorController {
       .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
     Optional<TokenUserDetails> userOpt = AuthUtils.getCurrentUser();
-    Integer accountId = userOpt.map(TokenUserDetails::getAccountId).orElse(null);
-    String accountName = userOpt.map(TokenUserDetails::getAccountName).orElse(null);
+    Integer accountId = userOpt.map(TokenUserDetails::getUserId).orElse(null);
+    String accountName = userOpt.map(TokenUserDetails::getUsername).orElse(null);
 
     String reqDes = req.getDescription(true).replaceAll(";", "；");
 

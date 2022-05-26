@@ -14,20 +14,20 @@ import net.wuxianjie.springbootcore.security.TokenUserDetails;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDetails implements TokenUserDetails {
+public class CustomUserDetails implements TokenUserDetails {
 
     /**
      * 用户 id。
      */
-    private Integer accountId;
+    private Integer userId;
 
     /**
      * 用户名。
      */
-    private String accountName;
+    private String username;
 
     /**
-     * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔。
+     * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可。
      *
      * @see SysMenu#value()
      */

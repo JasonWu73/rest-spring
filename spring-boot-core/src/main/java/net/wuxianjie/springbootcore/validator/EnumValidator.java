@@ -14,9 +14,9 @@ import static java.lang.annotation.ElementType.*;
  *
  * <pre>{@code
  * @Getter
+ * @Accessors(fluent = true)
  * @ToString
  * @RequiredArgsConstructor
- * @Accessors(fluent = true)
  * public enum Type {
  *
  *     ME(1);

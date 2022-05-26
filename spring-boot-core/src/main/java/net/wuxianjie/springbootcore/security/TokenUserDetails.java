@@ -9,18 +9,18 @@ package net.wuxianjie.springbootcore.security;
 public interface TokenUserDetails {
 
   /**
-   * 获取账号 id。
+   * 获取用户 id。
    *
-   * @return Token 所绑定的账号 id
+   * @return Token 的用户 id
    */
-  Integer getAccountId();
+  Integer getUserId();
 
   /**
-   * 获取账号。
+   * 获取用户名。
    *
-   * @return Token 所绑定的账号
+   * @return Token 所绑定的用户名
    */
-  String getAccountName();
+  String getUsername();
 
   /**
    * 用户绑定的角色，多个角色以英文逗号分隔。

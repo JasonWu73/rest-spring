@@ -310,8 +310,8 @@ public class ExceptionControllerAdvice {
       "uri={}；client={}；accountName={}；accountId={} -> {}",
       req.getRequestURI(),
       NetUtils.getRealIpAddress(req),
-      currentUser.getAccountName(),
-      currentUser.getAccountId(),
+      currentUser.getUsername(),
+      currentUser.getUserId(),
       respMsg
     );
 
@@ -331,8 +331,8 @@ public class ExceptionControllerAdvice {
       "uri={}；client={}；accountName={}；accountId={} -> {}：{}",
       req.getRequestURI(),
       NetUtils.getRealIpAddress(req),
-      currentUser.getAccountName(),
-      currentUser.getAccountId(),
+      currentUser.getUsername(),
+      currentUser.getUserId(),
       respMsg,
       e.getMessage()
     );
@@ -350,8 +350,8 @@ public class ExceptionControllerAdvice {
       "uri={}；client={}；accountName={}；accountId={} -> 参数不合法：{}",
       req.getRequestURI(),
       NetUtils.getRealIpAddress(req),
-      currentUser.getAccountName(),
-      currentUser.getAccountId(),
+      currentUser.getUsername(),
+      currentUser.getUserId(),
       String.join("；", logMsgList)
     );
   }
@@ -363,8 +363,8 @@ public class ExceptionControllerAdvice {
       "uri={}；client={}；accountName={}；accountId={} -> {}",
       req.getRequestURI(),
       NetUtils.getRealIpAddress(req),
-      currentUser.getAccountName(),
-      currentUser.getAccountId(),
+      currentUser.getUsername(),
+      currentUser.getUserId(),
       respMsg,
       e
     );
@@ -374,12 +374,12 @@ public class ExceptionControllerAdvice {
     return AuthUtils.getCurrentUser()
       .orElse(new TokenUserDetails() {
         @Override
-        public Integer getAccountId() {
+        public Integer getUserId() {
           return null;
         }
 
         @Override
-        public String getAccountName() {
+        public String getUsername() {
           return null;
         }
 
