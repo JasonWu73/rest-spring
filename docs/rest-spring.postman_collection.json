@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "开放接口",
+			"name": "免登录接口",
 			"item": [
 				{
 					"name": "获取 Access Token",
@@ -16,7 +16,7 @@
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.error === 0) {",
+									"if (jsonData.errCode === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -30,7 +30,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"account\": \"  管理员   \",\n  \"password\": \" 123  \"\n}",
+							"raw": "{\n  \"username\": \"  su   \",\n  \"password\": \" 123  \"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -48,7 +48,7 @@
 								"access-token"
 							]
 						},
-						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"account\": \"...\", // 账号，必填\n  \"password\": \"...\" // 密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"username\": \"...\", // 用户名，必填\n  \"password\": \"...\" // 密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6ImFjY2VzcyIsImFjY291bnQiOiJzdSIsIm5iZiI6MTY1MzM5MTg5NiwiZXhwIjoxNjUzMzkzNjk2fQ.k9gNFBF_MMLhNgUYDAreKhJOsZVNLXIceDq0nssqyZA\",  // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6InJlZnJlc2giLCJhY2NvdW50Ijoic3UiLCJuYmYiOjE2NTMzOTE4OTYsImV4cCI6MTY1MzM5MzY5Nn0.AKTP6ANQ2iSpY8AR9IBj53LQQJjYSi5dI_oCcU4VrQM\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				},
@@ -60,7 +60,7 @@
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.error === 0) {",
+									"if (jsonData.errCode === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -91,7 +91,7 @@
 								"{{refreshToken}}"
 							]
 						},
-						"description": "## 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/refresh-token/<Refresh Token>\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/refresh-token/<Refresh Token>\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
@@ -132,7 +132,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/user/password",
+							"raw": "{{host}}/api/v1/user/chg-pwd",
 							"host": [
 								"{{host}}"
 							],
@@ -140,110 +140,63 @@
 								"api",
 								"v1",
 								"user",
-								"password"
+								"chg-pwd"
 							]
 						},
-						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"...\", // 旧密码，必填\n  \"newPassword\": \"...\", // 新密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0 // 错误码：0：成功，1：失败\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, //错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"...\", // 旧密码，必填\n  \"newPassword\": \"...\", // 新密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）密码修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, //错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+					},
+					"response": []
+				},
+				{
+					"name": "获取全部菜单项",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{host}}/api/v1/menu/list",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"menu",
+								"list"
+							]
+						},
+						"description": "# 请求参数\n\n无。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": [ // 具体数据\n    {\n      \"name\": \"全部\", // 菜单名称\n      \"code\": \"root\", // 菜单编号\n      \"children\": [ // 子菜单项\n        {\n          \"name\": \"系统管理\",\n          \"code\": \"sys\",\n          \"children\": [\n            ...\n          ]\n        }\n      ]\n    }\n  ]\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
 			]
 		},
 		{
-			"name": "管理员接口",
+			"name": "系统管理",
 			"item": [
-				{
-					"name": "操作日志",
-					"item": [
-						{
-							"name": "获取操作日志列表",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"exec": [
-											""
-										],
-										"type": "text/javascript"
-									}
-								}
-							],
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer {{accessToken}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "urlencoded",
-									"urlencoded": []
-								},
-								"url": {
-									"raw": "{{host}}/api/v1/operation-log/list?pageNo=1&pageSize=10",
-									"host": [
-										"{{host}}"
-									],
-									"path": [
-										"api",
-										"v1",
-										"operation-log",
-										"list"
-									],
-									"query": [
-										{
-											"key": "pageNo",
-											"value": "1",
-											"description": "页码，从 1 开始，必填"
-										},
-										{
-											"key": "pageSize",
-											"value": "10",
-											"description": "每页条数，必填"
-										},
-										{
-											"key": "startDate",
-											"value": "2022-02-10",
-											"description": "开始日期（包含），格式为 yyyy-MM-dd",
-											"disabled": true
-										},
-										{
-											"key": "endDate",
-											"value": "2023-02-12",
-											"description": "结束日期（包含），格式为 yyyy-MM-dd",
-											"disabled": true
-										},
-										{
-											"key": "username",
-											"value": "管理员",
-											"description": "用户名，当为开放 API 时，则不存在",
-											"disabled": true
-										},
-										{
-											"key": "requestIp",
-											"value": "127",
-											"description": "请求 IP",
-											"disabled": true
-										},
-										{
-											"key": "methodMessage",
-											"value": "新增",
-											"description": "操作描述",
-											"disabled": true
-										}
-									]
-								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 100, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 1, // 日志 id\n        \"operationTime\": \"...\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id\n        \"username\": \"...\", // 用户名\n        \"requestIp\": \"...\", // 请求 IP\n        \"requestUri\": \"...\", // 请求 URI\n        \"methodName\": \"...\", // 目标方法的全限定名\n        \"methodMessage\": \"...\", // 目标方法的描述，即操作描述\n        \"paramJson\": \"...\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"...\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
-							},
-							"response": []
-						}
-					]
-				},
 				{
 					"name": "用户管理",
 					"item": [
@@ -277,7 +230,7 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/list?pageNo=1&pageSize=2",
+									"raw": "{{host}}/api/v1/user/list?pageNo=1&pageSize=10",
 									"host": [
 										"{{host}}"
 									],
@@ -295,24 +248,24 @@
 										},
 										{
 											"key": "pageSize",
-											"value": "2",
+											"value": "10",
 											"description": "每页条数，必填"
 										},
 										{
 											"key": "username",
-											"value": "u",
+											"value": "su",
 											"description": "用户名",
 											"disabled": true
 										},
 										{
 											"key": "enabled",
-											"value": "0",
+											"value": "1",
 											"description": "启用状态：1：启用，0：禁用",
 											"disabled": true
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 100, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 1, // 用户 id\n        \"modifyTime\": \"...\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 1, // 启用状态：1：启用，0：禁用\n        \"username\": \"...\", // 用户名\n        \"roles\": \"...\" // 用户绑定的角色，多个角色以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 1, // 每页条数\n    \"total\": 5, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 25, // 用户 id\n        \"modifyTime\": \"2022-05-25 14:48:55\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 0, // 启用状态：1：启用，0：禁用\n        \"username\": \"test\", // 用户名\n        \"menus\": \"\" // 用户绑定的菜单，多个菜单以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -340,7 +293,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"enabled\": 0,\n  \"username\": \" test123 \",\n  \"password\": \"123\",\n  \"roles\": \"  admin,admin,,user  \"\n}",
+									"raw": "{\n  \"enabled\": 0,\n  \"username\": \" test \",\n  \"password\": \"123\",\n  \"menus\": \"  ,user,login_log  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -359,7 +312,7 @@
 										"add"
 									]
 								},
-								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"enabled\": 1, // 启用状态：1：启用，0：禁用，必填\n  \"username\": \" ... \", // 用户名，必填\n  \"password\": \"...\", // 密码，必填\n  \"roles\": \"...\" // 用户绑定的角色，只能包含 admin 或 user，且多个角色以英文逗号分隔，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0 // 错误码：0：成功，1：失败\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"enabled\": 0, // 启用状态：1：启用，0：禁用，必填\n  \"username\": \"test\", // 用户名，必填\n  \"password\": \"123\", // 密码，必填\n  \"menus\": \"user,login_log\" // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）新增成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -387,7 +340,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"password\": \"123\",\n    \"roles\": \"  admin,,,user,admin,user  \",\n    \"enabled\": 1\n}",
+									"raw": "{\n  \"menus\": \"  login_log,user  \",\n  \"enabled\": 1\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -395,7 +348,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/update/22",
+									"raw": "{{host}}/api/v1/user/update/40",
 									"host": [
 										"{{host}}"
 									],
@@ -404,10 +357,58 @@
 										"v1",
 										"user",
 										"update",
-										"22"
+										"40"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/update/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"...\", // 密码\n  \"roles\": \"...\", // 用户绑定的角色，只能包含 admin 或 user，且多个角色以英文逗号分隔\n  \"enabled\": 0 // 启用状态：1：启用，0：禁用\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0 // 错误码：0：成功，1：失败\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/update/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"menus\": \"user\", // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n  \"enabled\": 0 // 启用状态：1：启用，0：禁用\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "重置用户密码",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"password\": \"  123  \"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/user/reset-pwd/40",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"user",
+										"reset-pwd",
+										"40"
+									]
+								},
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/rest-pwd/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"123\" // 密码\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）密码无需重置\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -446,7 +447,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/del/22",
+									"raw": "{{host}}/api/v1/user/del/40",
 									"host": [
 										"{{host}}"
 									],
@@ -455,10 +456,377 @@
 										"v1",
 										"user",
 										"del",
-										"22"
+										"40"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/del/<用户 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"error\": 0 // 错误码：0：成功，1：失败\n}\n```\n\n失败时：\n\n```json\n{\n  \"error\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/del/<用户 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）删除成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 失败时提示消息\n}\n```"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "角色管理",
+					"item": [
+						{
+							"name": "获取全部角色列表",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/role/list",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role",
+										"list"
+									]
+								},
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": [ // 具体数据\n    {\n      \"roleId\": 1, // 角色 id\n      \"roleName\": \"管理员\", // 角色名\n      \"menus\": \",user,login_log\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔\n    }\n  ]\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "新增角色",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"roleName\": \"管理员\",\n  \"menus\": \"user, role, role\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/role/add",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role",
+										"add"
+									]
+								},
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"管理员\", // 角色名，必填\n  \"menus\": \"user,role\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）新增成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "修改角色",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"roleName\": \"管理理（改）\",\n  \"menus\": \"  role_add,  role_del \"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/role/update/11",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role",
+										"update",
+										"11"
+									]
+								},
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/update/<角色 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"管理员\", // 角色名\n  \"menus\": \"role_add,role_del\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+							},
+							"response": []
+						},
+						{
+							"name": "删除角色",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/role/del/11",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"role",
+										"del",
+										"11"
+									]
+								},
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/del/<角色 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）删除成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 失败时提示消息\n}\n```"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "登录日志",
+					"item": [
+						{
+							"name": "获取登录日志列表",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{host}}/api/v1/login-log/list?pageNo=1&pageSize=10",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"login-log",
+										"list"
+									],
+									"query": [
+										{
+											"key": "pageNo",
+											"value": "1",
+											"description": "页码，从 1 开始，必填"
+										},
+										{
+											"key": "pageSize",
+											"value": "10",
+											"description": "每页条数，必填"
+										},
+										{
+											"key": "startDate",
+											"value": "2022-02-10",
+											"description": "开始日期（包含），格式为 yyyy-MM-dd",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-02-12",
+											"description": "结束日期（包含），格式为 yyyy-MM-dd",
+											"disabled": true
+										},
+										{
+											"key": "username",
+											"value": "su",
+											"description": "用户名",
+											"disabled": true
+										},
+										{
+											"key": "reqIp",
+											"value": "127",
+											"description": "请求 IP",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 1, // 总数\n    \"list\": [\n      {\n        \"logId\": 1, // 日志 id\n        \"loginTime\": \"2022-05-25 11:10:38\", // 登录时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id\n        \"username\": \"su\", // 用户名\n        \"reqIp\": \"127.0.0.1\" // 请求 IP\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "操作日志",
+					"item": [
+						{
+							"name": "获取操作日志列表",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "{{host}}/api/v1/op-log/list?pageNo=1&pageSize=10",
+									"host": [
+										"{{host}}"
+									],
+									"path": [
+										"api",
+										"v1",
+										"op-log",
+										"list"
+									],
+									"query": [
+										{
+											"key": "pageNo",
+											"value": "1",
+											"description": "页码，从 1 开始，必填"
+										},
+										{
+											"key": "pageSize",
+											"value": "10",
+											"description": "每页条数，必填"
+										},
+										{
+											"key": "startDate",
+											"value": "2022-02-10",
+											"description": "开始日期（包含），格式为 yyyy-MM-dd",
+											"disabled": true
+										},
+										{
+											"key": "endDate",
+											"value": "2023-02-12",
+											"description": "结束日期（包含），格式为 yyyy-MM-dd",
+											"disabled": true
+										},
+										{
+											"key": "username",
+											"value": "su",
+											"description": "用户名",
+											"disabled": true
+										},
+										{
+											"key": "reqIp",
+											"value": "127",
+											"description": "请求 IP",
+											"disabled": true
+										},
+										{
+											"key": "methodMsg",
+											"value": "新增",
+											"description": "操作描述",
+											"disabled": true
+										}
+									]
+								},
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 1, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 29, // 日志 id\n        \"opTime\": \"2022-05-25 14:48:55\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id\n        \"username\": \"su\", // 用户名\n        \"reqIp\": \"127.0.0.1\", // 请求 IP\n        \"reqUri\": \"/api/v1/user/add\", // 请求 URI\n        \"methodName\": \"net.wuxianjie.web.user.UserController.saveUser\", // 目标方法的全限定名\n        \"methodMsg\": \"新增用户\", // 目标方法的描述，即操作描述\n        \"paramJson\": \"{\\\"query\\\":{\\\"enabled\\\":0,\\\"username\\\":\\\"test123\\\",\\\"password\\\":\\\"123\\\",\\\"roles\\\":\\\"\\\"}}\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"void\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						}
