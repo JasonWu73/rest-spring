@@ -287,12 +287,23 @@ public class ExceptionControllerAdvice {
   private void logWarnOrError(HttpServletRequest req,
                               String respMsg,
                               String rawMsg,
-                              boolean isWarn) {
+                              boolean isWarn,
+                              Throwable e) {
     String username = AuthUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
     String template = (rawMsg == null ? "{}" : "{}：{}") + "，用户（{}），其请求 IP 为 {}，请求路径为 {}";
     String logMsg = rawMsg == null
       ? StrUtil.format(template, respMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI())
       : StrUtil.format(template, respMsg, rawMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI());
+
+    if (isWarn && e != null) {
+      log.warn(logMsg, e);
+      return;
+    }
+
+    if (!isWarn && e != null) {
+      log.error(logMsg, e);
+      return;
+    }
 
     if (isWarn) {
       log.warn(logMsg);
@@ -301,21 +312,27 @@ public class ExceptionControllerAdvice {
 
     log.error(logMsg);
   }
+  private void logWarnOrError(HttpServletRequest req,
+                              String respMsg,
+                              String rawMsg,
+                              boolean isWarn) {
+    logWarnOrError(req, respMsg, rawMsg, isWarn, null);
+  }
 
   private void logWarnOrError(HttpServletRequest req,
                               String respMsg,
                               boolean isWarn) {
-    logWarnOrError(req, respMsg, null, isWarn);
+    logWarnOrError(req, respMsg, null, isWarn, null);
   }
 
   private void logParamWarn(HttpServletRequest req, List<String> logMsgList) {
-    logWarnOrError(req, "参数不合法", String.join("；", logMsgList), true);
+    logWarnOrError(req, "参数不合法", String.join("；", logMsgList), true, null);
   }
 
   private void logError(HttpServletRequest req,
                         String respMsg,
                         Throwable e) {
-    logWarnOrError(req, respMsg, e.toString(), false);
+    logWarnOrError(req, respMsg, e.toString(), false, e);
   }
 
   private ResponseEntity<ApiResult<Void>> createRespEntity(HttpServletRequest req,
