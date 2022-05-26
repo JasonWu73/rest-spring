@@ -73,9 +73,9 @@
     UPDATE users
     <set>
       modify_time = DATETIME(CURRENT_TIMESTAMP, 'localtime'),
+      <if test="enabled != null">is_enabled = #{enabled},</if>
+      <if test="menus != null">menus = #{menus},</if>
       <if test="hashedPassword != null">hashed_password = #{hashedPassword},</if>
-      <if test="roles != null">roles = #{roles},</if>
-      <if test="enabled != null">is_enabled = #{enabled}</if>
     </set>
     WHERE user_id = #{userId}
   </update>

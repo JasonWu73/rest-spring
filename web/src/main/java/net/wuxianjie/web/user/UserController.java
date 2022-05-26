@@ -4,14 +4,13 @@ import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.exception.BadRequestException;
-import net.wuxianjie.web.oplog.OpLogger;
 import net.wuxianjie.springbootcore.paging.PagingQuery;
 import net.wuxianjie.springbootcore.paging.PagingResult;
 import net.wuxianjie.springbootcore.security.AuthUtils;
 import net.wuxianjie.springbootcore.util.StrUtils;
+import net.wuxianjie.web.oplog.OpLogger;
 import net.wuxianjie.web.security.SysMenu;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -63,23 +62,19 @@ public class UserController {
 
   /**
    * 修改用户。
-   * <p>
-   * 注意：此处为重置密码，即无需验证旧密码。
-   * </p>
    *
    * @param userId 用户 id
    * @param query  需要更新的用户数据
+   * @return 修改成功后的提示信息
    */
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_UPDATE.name())")
   @OpLogger("修改用户")
   @PostMapping("update/{userId:\\d+}")
-  public void updateUser(@PathVariable int userId,
-                         @RequestBody @Validated SaveOrUpdateUserQuery query) {
+  public Map<String, String> updateUser(@PathVariable int userId,
+                         @RequestBody @Valid UpdateUserQuery query) {
     query.setUserId(userId);
-
-    // setRoleAfterDeduplication(query);
-    //
-    // userService.updateUser(query);
+    toDeduplicatedCommaSeparatedMenus(query.getMenus()).ifPresent(query::setMenus);
+    return userService.updateUser(query);
   }
 
   /**

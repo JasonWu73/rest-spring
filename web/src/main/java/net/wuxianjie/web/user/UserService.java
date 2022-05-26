@@ -71,23 +71,28 @@ public class UserService {
 
   /**
    * 修改用户。
-   * <p>
-   * 注意：此处为重置密码，即无需验证旧密码。
-   * </p>
    *
    * @param query 需要更新的用户数据
+   * @return 修改成功后的提示信息
    */
   @Transactional(rollbackFor = Exception.class)
-  public void updateUser(SaveOrUpdateUserQuery query) {
-    User toUpdate = getUserFromDbMustBeExists(query.getUserId());
+  public Map<String, String> updateUser(UpdateUserQuery query) {
+    // 判断用户是否存在
+    User oldUser = getUserFromDbMustBeExists(query.getUserId());
+    String username = oldUser.getUsername();
 
-    boolean needsUpdate = needsUpdate(toUpdate, query);
+    // 判断并设置需要更新的字段
+    Optional<User> toUpdate = getUserToUpdate(oldUser, query);
+    if (toUpdate.isEmpty()) return new HashMap<>() {{
+      put("msg", "用户（" + username + "）无需修改");
+    }};
 
-    if (!needsUpdate) {
-      return;
-    }
+    // 更新数据
+    userMapper.update(toUpdate.get());
 
-    userMapper.update(toUpdate);
+    return new HashMap<>() {{
+      put("msg", "用户（" + username + "）修改成功");
+    }};
   }
 
   /**
@@ -128,37 +133,29 @@ public class UserService {
 
   private User getUserFromDbMustBeExists(int userId) {
     return Optional.ofNullable(userMapper.findByUserId(userId))
-      .orElseThrow(() -> new NotFoundException("用户不存在 [id=" + userId + "]"));
+      .orElseThrow(() -> new NotFoundException("未找到 id 为 " + userId + " 的用户"));
   }
 
-  private boolean needsUpdate(User toUpdate, SaveOrUpdateUserQuery query) {
+  private Optional<User> getUserToUpdate(User oldUser, UpdateUserQuery query) {
     boolean needsUpdate = false;
+    User toUpdate = new User();
+    toUpdate.setUserId(oldUser.getUserId());
 
-    String newPassword = query.getPassword();
-    if (newPassword != null && !passwordEncoder.matches(newPassword, toUpdate.getHashedPassword())) {
+    YesOrNo newEnabled = YesOrNo.resolve(query.getEnabled()).orElse(null);
+    if (newEnabled != null && newEnabled != oldUser.getEnabled()) {
       needsUpdate = true;
-      toUpdate.setHashedPassword(passwordEncoder.encode(newPassword));
-    } else {
-      toUpdate.setHashedPassword(null);
+      toUpdate.setEnabled(newEnabled);
     }
 
-    String newRoles = query.getRoles();
-    if (newRoles != null && !StrUtils.equalsIgnoreBlank(newRoles, toUpdate.getMenus())) {
+    String newMenus = query.getMenus();
+    if (newMenus != null && !StrUtils.equalsIgnoreBlank(newMenus, oldUser.getMenus())) {
       needsUpdate = true;
-      toUpdate.setMenus(newRoles);
-    } else {
-      toUpdate.setMenus(null);
+      toUpdate.setMenus(newMenus);
     }
 
-    Optional<YesOrNo> newEnabledOpt = YesOrNo.resolve(query.getEnabled());
-    if (newEnabledOpt.isPresent() && newEnabledOpt.get() != toUpdate.getEnabled()) {
-      needsUpdate = true;
-      toUpdate.setEnabled(newEnabledOpt.get());
-    } else {
-      toUpdate.setEnabled(null);
-    }
+    if (!needsUpdate) return Optional.empty();
 
-    return needsUpdate;
+    return Optional.of(toUpdate);
   }
 
   private void populateQueryForOperationLog(User user, LogOfDelUserQuery query) {
