@@ -1,6 +1,5 @@
 package net.wuxianjie.web.user;
 
-import cn.hutool.core.text.StrSplitter;
 import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.exception.BadRequestException;
@@ -10,15 +9,11 @@ import net.wuxianjie.springbootcore.security.AuthUtils;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.util.StrUtils;
 import net.wuxianjie.web.oplog.OpLogger;
-import net.wuxianjie.web.security.SysMenu;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 用户管理的 API 控制器。
@@ -40,7 +35,7 @@ public class UserController {
    * @return 用户列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_LIST.name())")
   public PagingResult<UserDto> getUsers(@Valid PagingQuery paging,
                                         @Valid GetUserQuery query) {
     setFuzzySearchValue(query);
@@ -57,7 +52,6 @@ public class UserController {
   @OpLogger("新增用户")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_ADD.name())")
   public Map<String, String> saveUser(@RequestBody @Valid SaveUserQuery query) {
-    toDeduplicatedCommaSeparatedMenus(query.getMenus()).ifPresent(query::setMenus);
     return userService.saveUser(query);
   }
 
@@ -74,7 +68,6 @@ public class UserController {
   public Map<String, String> updateUser(@PathVariable int userId,
                          @RequestBody @Valid UpdateUserQuery query) {
     query.setUserId(userId);
-    toDeduplicatedCommaSeparatedMenus(query.getMenus()).ifPresent(query::setMenus);
     return userService.updateUser(query);
   }
 
@@ -126,23 +119,6 @@ public class UserController {
     query.setUsername(StrUtils.toFuzzy(query.getUsername()));
   }
 
-  private Optional<String> toDeduplicatedCommaSeparatedMenus(String menus) {
-    return Optional.ofNullable(StrUtil.trimToNull(menus))
-      .flatMap(notNullMenus -> {
-        String[] menusArray = StrSplitter.splitToArray(notNullMenus, ',', 0, true, true);
-
-        if (menusArray.length == 0) return Optional.empty();
-
-        boolean hasAnyInvalidMenu = Arrays.stream(menusArray)
-          .anyMatch(menu -> SysMenu.resolve(menu).isEmpty());
-
-        if (hasAnyInvalidMenu) throw new BadRequestException("包含非法菜单编号");
-
-        return Optional.of(Arrays.stream(menusArray)
-          .distinct()
-          .collect(Collectors.joining(",")));
-      });
-  }
 
   private void setCurrentUserId(UpdateUserPwdQuery query) {
     TokenUserDetails user = AuthUtils.getCurrentUser().orElseThrow();

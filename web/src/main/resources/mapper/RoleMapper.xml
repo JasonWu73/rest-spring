@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wuxianjie.web.role.RoleMapper">
+  <select id="findByRoleId" resultType="net.wuxianjie.web.role.Role">
+    SELECT role_id   AS roleId,
+           role_name AS roleName,
+           menus
+    FROM roles
+    WHERE role_id = #{roleId}
+  </select>
+
+  <select id="findAll" resultType="net.wuxianjie.web.role.Role">
+    SELECT role_id   AS roleId,
+           role_name AS roleName,
+           menus
+    FROM roles
+  </select>
+
+  <insert id="save">
+    INSERT INTO roles (role_name,
+                       menus)
+    VALUES (#{roleName},
+            #{menus})
+  </insert>
+
+  <update id="update">
+    UPDATE roles
+    <set>
+      <if test="roleName != null">role_name = #{roleName},</if>
+      <if test="menus != null">menus = #{menus},</if>
+    </set>
+    WHERE role_id = #{roleId}
+  </update>
+
+  <delete id="deleteByRoleId">
+    DELETE
+    FROM roles
+    WHERE role_id = #{roleId}
+  </delete>
+</mapper>

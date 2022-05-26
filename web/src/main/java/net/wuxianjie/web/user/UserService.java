@@ -51,6 +51,9 @@ public class UserService {
    */
   @Transactional(rollbackFor = Exception.class)
   public Map<String, String> saveUser(SaveUserQuery query) {
+    // 校验并去重菜单编号字符串
+    comUserService.toDeduplicatedCommaSeparatedMenus(query.getMenus()).ifPresent(query::setMenus);
+
     // 用户名唯一性校验
     String username = query.getUsername();
     boolean isExisted = userMapper.existsByUsername(username);
@@ -62,7 +65,6 @@ public class UserService {
     toSave.setUsername(query.getUsername());
     toSave.setHashedPassword(passwordEncoder.encode(query.getPassword()));
     toSave.setMenus(query.getMenus());
-
     userMapper.save(toSave);
 
     return new HashMap<>() {{
@@ -78,6 +80,9 @@ public class UserService {
    */
   @Transactional(rollbackFor = Exception.class)
   public Map<String, String> updateUser(UpdateUserQuery query) {
+    // 校验并去重菜单编号字符串
+    comUserService.toDeduplicatedCommaSeparatedMenus(query.getMenus()).ifPresent(query::setMenus);
+
     // 判断用户是否存在
     User oldUser = getUserFromDbMustBeExists(query.getUserId());
     String username = oldUser.getUsername();

@@ -69,8 +69,8 @@ public class OpLogAspect {
     String returnJson = isVoidReturnType(joinPoint) ? VOID_RETURN_TYPE : objectMapper.writeValueAsString(returnObj);
 
     // 打印到控制台
-    log.info("用户（{}）{}，其请求 IP 为 {}，请求路径为 {}，具体执行方法为 {}，入参为 {}，返回值为 {}",
-      username, methodMsg, reqIp, reqUri, qualifiedMethodName, paramJson, returnJson);
+    log.info("用户（{}）{}，具体执行方法为 {}，入参为 {}，返回值为 {}，其请求 IP 为 {}，请求路径为 {}",
+      username, methodMsg, qualifiedMethodName, paramJson, returnJson, reqIp, reqUri);
 
     // 操作日志入库
     OpLog toSave = new OpLog();
