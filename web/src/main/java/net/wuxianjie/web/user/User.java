@@ -7,7 +7,7 @@ import net.wuxianjie.web.security.SysMenu;
 import java.time.LocalDateTime;
 
 /**
- * 用户表。
+ * 用户表实体类。
  *
  * @author 吴仙杰
  */

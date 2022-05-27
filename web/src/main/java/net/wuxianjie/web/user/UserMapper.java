@@ -1,6 +1,6 @@
 package net.wuxianjie.web.user;
 
-import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.RequestOfPaging;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -31,14 +31,22 @@ public interface UserMapper {
   User findByUsername(String username);
 
   /**
+   * 检查是否已存在相同用户名。
+   *
+   * @param username 用户名
+   * @return true：已存在，false：不存在
+   */
+  boolean existsByUsername(String username);
+
+  /**
    * 获取用户分页列表。
    *
    * @param paging 分页参数
    * @param query  查询参数
    * @return 用户分页列表
    */
-  List<UserDto> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") PagingQuery paging,
-                                                                  @Param("q") GetUserQuery query);
+  List<ListItemOfUser> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") RequestOfPaging paging,
+                                                                         @Param("q") RequestOfGetUser query);
 
   /**
    * 统计用户数量。
@@ -46,15 +54,7 @@ public interface UserMapper {
    * @param query 查询参数
    * @return 符合条件的用户总数
    */
-  int countByUsernameLikeAndEnabled(@Param("q") GetUserQuery query);
-
-  /**
-   * 检查是否已存在相同用户名。
-   *
-   * @param username 用户名
-   * @return true：已存在，false：不存在
-   */
-  boolean existsByUsername(String username);
+  int countByUsernameLikeAndEnabled(@Param("q") RequestOfGetUser query);
 
   /**
    * 保存用户数据。

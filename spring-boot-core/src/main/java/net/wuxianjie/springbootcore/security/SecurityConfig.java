@@ -1,32 +1,25 @@
 package net.wuxianjie.springbootcore.security;
 
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.constraints.NotBlank;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * 安全参数的配置类。
+ * 安全相关配置类。
  *
  * @author 吴仙杰
- * @see WebSecurityConfig
  */
-@Data
-@Validated
 @Configuration
-@ConfigurationProperties(prefix = "core.security")
 public class SecurityConfig {
 
   /**
-   * JWT 签名密钥。
+   * 密码哈希编码器。
+   *
+   * @return {@link PasswordEncoder}
    */
-  @NotBlank(message = "JWT 签名密钥不能为空")
-  private String jwtSigningKey;
-
-  /**
-   * 无需验证即可访问的请求路径，多个路径以英文逗号分隔，支持 AntPathMatcher 的匹配模式。
-   */
-  private String permitAllAntPatterns;
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
 }

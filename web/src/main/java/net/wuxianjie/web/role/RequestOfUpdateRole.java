@@ -4,12 +4,12 @@ import lombok.Data;
 import net.wuxianjie.web.security.SysMenu;
 
 /**
- * 修改角色的请求参数。
+ * 修改角色请求参数。
  *
  * @author 吴仙杰
  */
 @Data
-public class UpdateRoleQuery {
+public class RequestOfUpdateRole {
 
   /**
    * 角色 id。

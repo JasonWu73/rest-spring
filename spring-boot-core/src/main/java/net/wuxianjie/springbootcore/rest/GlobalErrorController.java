@@ -1,9 +1,11 @@
 package net.wuxianjie.springbootcore.rest;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.AuthenticationUtils;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
+import net.wuxianjie.springbootcore.util.NetUtils;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,40 +36,32 @@ public class GlobalErrorController implements ErrorController {
   /**
    * 处理在进入 Controller 之前就抛出的异常。
    *
-   * @param req {@link WebRequest}
+   * @param webRequest {@link WebRequest}
    * @return {@link ResponseEntity}
    */
   @ResponseBody
   @RequestMapping("/error")
-  public ResponseEntity<ApiResult<Void>> handleError(WebRequest req) {
-    Map<String, Object> attributes = errorAttributes.getErrorAttributes(req, ErrorAttributeOptions.defaults());
+  public ResponseEntity<ApiResult<Void>> handleError(WebRequest webRequest) {
+    Map<String, Object> defaultErrorAttributes = errorAttributes.getErrorAttributes(webRequest, ErrorAttributeOptions.defaults());
 
-    HttpStatus httpStatus = Optional.ofNullable((Integer) attributes.get("status"))
-      .map(code -> Optional.ofNullable(HttpStatus.resolve(code)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
+    HttpStatus httpStatus = Optional.ofNullable((Integer) defaultErrorAttributes.get("status"))
+      .map(c -> Optional.ofNullable(HttpStatus.resolve(c)).orElse(HttpStatus.INTERNAL_SERVER_ERROR))
       .orElse(HttpStatus.INTERNAL_SERVER_ERROR);
 
-    String username = AuthUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
-    String reqDes = req.getDescription(true);
-    String error = (String) attributes.get("error");
-
+    String username = AuthenticationUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
+    String clientInfo = StrUtil.format("{};user={}", webRequest.getDescription(true), username);
+    String responseMessage;
     if (httpStatus == HttpStatus.NOT_FOUND) {
-      log.warn(
-        "Spring Boot 全局 404 处理：{}，用户（{}），客户端信息：{}",
-        username,
-        attributes,
-        reqDes
-      );
-
-      return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
+      HttpServletRequest servletRequest = NetUtils.getRequest().orElseThrow();
+      String requestMethod = servletRequest.getMethod();
+      String requestUri = (String) defaultErrorAttributes.get("path");
+      responseMessage = StrUtil.format("未找到 API [{} {}]", requestMethod, requestUri);
+      log.warn("响应信息：{}，原始信息：{}，客户端信息：{}", responseMessage, defaultErrorAttributes, clientInfo);
+    } else {
+      responseMessage = "服务异常";
+      log.error("响应信息：{}，原始信息：{}，客户端信息：{}", responseMessage, defaultErrorAttributes, clientInfo);
     }
 
-    log.error(
-      "Spring Boot 全局异常处理：{}，用户（{}），客户端信息：{}",
-      username,
-      attributes,
-      reqDes
-    );
-
-    return new ResponseEntity<>(ApiResultWrapper.fail(error), httpStatus);
+    return new ResponseEntity<>(ApiResultWrapper.fail(responseMessage), httpStatus);
   }
 }

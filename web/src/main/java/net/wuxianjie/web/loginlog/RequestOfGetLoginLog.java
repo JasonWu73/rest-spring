@@ -6,12 +6,12 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 /**
- * 获取登录日志的查询参数。
+ * 查询登录日志请求参数。
  *
  * @author 吴仙杰
  */
 @Data
-public class GetLoginLogQuery {
+public class RequestOfGetLoginLog {
 
   /**
    * 开始日期，包含，格式为 yyyy-MM-dd。
@@ -35,5 +35,5 @@ public class GetLoginLogQuery {
   /**
    * 请求 IP。
    */
-  private String reqIp;
+  private String requestIp;
 }

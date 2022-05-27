@@ -27,7 +27,7 @@ import static java.lang.annotation.ElementType.*;
  *
  * public class Controller {
  *
- *     public test(@RequestBody @Validated final Query query) {
+ *     public test(@RequestBody @Valid Query query) {
  *     }
  *
  *     private static class Query {

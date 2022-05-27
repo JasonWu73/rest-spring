@@ -1,16 +1,16 @@
-package net.wuxianjie.web.oplog;
+package net.wuxianjie.web.operationlog;
 
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 /**
- * 操作日志表。
+ * 操作日志表实体类。
  *
  * @author 吴仙杰
  */
 @Data
-public class OpLog {
+public class OperationLog {
 
   /**
    * 日志 id。
@@ -20,7 +20,7 @@ public class OpLog {
   /**
    * 操作时间，格式为 yyyy-MM-dd HH:mm:ss。
    */
-  private LocalDateTime opTime;
+  private LocalDateTime operationTime;
 
   /**
    * 用户 id，当为开放 API 时，则为 null。
@@ -35,12 +35,12 @@ public class OpLog {
   /**
    * 请求 IP。
    */
-  private String reqIp;
+  private String requestIp;
 
   /**
    * 请求 URI。
    */
-  private String reqUri;
+  private String requestUri;
 
   /**
    * 目标方法的全限定名。
@@ -50,12 +50,12 @@ public class OpLog {
   /**
    * 操作描述。
    */
-  private String methodMsg;
+  private String methodMessage;
 
   /**
    * 目标方法入参的 JSON 字符串。
    */
-  private String paramJson;
+  private String parameterJson;
 
   /**
    * 目标方法返回值的 JSON 字符串。

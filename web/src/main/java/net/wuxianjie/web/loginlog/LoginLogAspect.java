@@ -3,7 +3,7 @@ package net.wuxianjie.web.loginlog;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wuxianjie.springbootcore.security.SecurityConfig;
+import net.wuxianjie.springbootcore.security.SecurityPropertiesConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.util.JwtUtils;
 import net.wuxianjie.springbootcore.util.NetUtils;
@@ -30,7 +30,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LoginLogAspect {
 
-  private final SecurityConfig securityConfig;
+  private final SecurityPropertiesConfig securityConfig;
   private final Cache<String, CustomUserDetails> tokenCache;
   private final LoginLogService loginLogService;
 
@@ -46,9 +46,9 @@ public class LoginLogAspect {
   @AfterReturning(pointcut = "login()", returning = "tokenData")
   public void log(TokenData tokenData) {
     // 请求信息
-    Optional<HttpServletRequest> reqOpt = NetUtils.getRequest();
-    String reqIp = reqOpt.map(NetUtils::getRealIpAddr).orElse(null);
-    String reqUri = reqOpt.map(HttpServletRequest::getRequestURI).orElse(null);
+    Optional<HttpServletRequest> requestOptional = NetUtils.getRequest();
+    String requestIp = requestOptional.map(NetUtils::getRealIpAddress).orElse(null);
+    String requestUri = requestOptional.map(HttpServletRequest::getRequestURI).orElse(null);
 
     // 用户信息
     String accessToken = tokenData.getAccessToken();
@@ -59,15 +59,15 @@ public class LoginLogAspect {
       .orElse(null);
 
     // 打印到控制台
-    log.info("用户（{}）成功登录系统，其请求 IP 为 {}，请求路径为 {}", username, reqIp, reqUri);
+    log.info("登录系统，客户端信息：uri={};client={};user={}", requestUri, requestIp, username);
 
-    // 登录日志入库
-    LoginLog toSave = new LoginLog();
-    toSave.setLoginTime(LocalDateTime.now());
-    toSave.setUserId(userId);
-    toSave.setUsername(username);
-    toSave.setReqIp(reqIp);
+    // 保存登录日志数据
+    LoginLog logToSave = new LoginLog();
+    logToSave.setLoginTime(LocalDateTime.now());
+    logToSave.setUserId(userId);
+    logToSave.setUsername(username);
+    logToSave.setRequestIp(requestIp);
 
-    loginLogService.saveLoginLog(toSave);
+    loginLogService.saveLoginLog(logToSave);
   }
 }

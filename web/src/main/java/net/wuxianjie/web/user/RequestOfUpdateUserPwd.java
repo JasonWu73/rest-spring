@@ -11,7 +11,7 @@ import javax.validation.constraints.NotBlank;
  * @author 吴仙杰
  */
 @Data
-public class UpdateUserPwdQuery {
+public class RequestOfUpdateUserPwd {
 
   /**
    * 用户 id。

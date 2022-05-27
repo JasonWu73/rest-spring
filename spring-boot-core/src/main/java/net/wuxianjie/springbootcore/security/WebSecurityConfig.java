@@ -5,15 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.util.NetUtils;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
@@ -21,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
- * Spring Security 配置。
+ * Spring Security 配置类。
  *
  * @author 吴仙杰
  */
@@ -52,8 +49,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   };
 
   private final ObjectMapper objectMapper;
-  private final SecurityConfig securityConfig;
-  private final TokenAuthFilter tokenAuthFilter;
+  private final SecurityPropertiesConfig securityConfig;
+  private final TokenAuthenticationFilter tokenAuthFilter;
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -77,7 +74,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String respMsg = "非法 Token";
         logWarn(req, respMsg);
 
-        tokenAuthFilter.sendToResp(resp, respMsg, HttpStatus.UNAUTHORIZED);
+        tokenAuthFilter.sendToResponse(resp, respMsg, HttpStatus.UNAUTHORIZED);
       })
       // 403
       // 需由 Spring Security 自己处理 AccessDeniedException 异常，否则以下配置不生效
@@ -85,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         String respMsg = "未授权 Token";
         logWarn(req, respMsg);
 
-        tokenAuthFilter.sendToResp(resp, respMsg, HttpStatus.FORBIDDEN);
+        tokenAuthFilter.sendToResponse(resp, respMsg, HttpStatus.FORBIDDEN);
       })
       .and()
       // 禁用 CSRF 措施
@@ -103,20 +100,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
       .addFilterBefore(tokenAuthFilter, UsernamePasswordAuthenticationFilter.class);
   }
 
-  /**
-   * 密码哈希编码器。
-   *
-   * @return {@link PasswordEncoder}
-   */
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
   private void logWarn(HttpServletRequest req, String respMsg) {
     log.warn(
       respMsg + "，请求 IP 为 {}，请求路径为 {}",
-      NetUtils.getRealIpAddr(req),
+      NetUtils.getRealIpAddress(req),
       req.getRequestURI()
     );
   }

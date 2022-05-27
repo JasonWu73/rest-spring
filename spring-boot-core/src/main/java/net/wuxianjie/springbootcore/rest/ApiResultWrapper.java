@@ -20,23 +20,21 @@ public class ApiResultWrapper {
    */
   public static <T> ApiResult<T> success(T data) {
     ApiResult<T> result = new ApiResult<>();
-    result.setErrCode(ApiErrCode.SUCCESS);
+    result.setErrorCode(ApiErrorCode.SUCCESS);
     result.setData(data);
-
     return result;
   }
 
   /**
    * 构造服务响应失败的结果。
    *
-   * @param errMsg 失败的原因
+   * @param errorMessage 错误信息
    * @return 服务响应失败的结果
    */
-  public static ApiResult<Void> fail(String errMsg) {
+  public static ApiResult<Void> fail(String errorMessage) {
     ApiResult<Void> result = new ApiResult<>();
-    result.setErrCode(ApiErrCode.FAIL);
-    result.setErrMsg(errMsg);
-
+    result.setErrorCode(ApiErrorCode.FAIL);
+    result.setErrorMessage(errorMessage);
     return result;
   }
 }

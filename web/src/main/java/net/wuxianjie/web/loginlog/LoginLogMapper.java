@@ -1,6 +1,6 @@
 package net.wuxianjie.web.loginlog;
 
-import net.wuxianjie.springbootcore.paging.PagingQuery;
+import net.wuxianjie.springbootcore.paging.RequestOfPaging;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -21,8 +21,8 @@ public interface LoginLogMapper {
    * @param query  查询参数
    * @return 登录日志分页列表
    */
-  List<LoginLog> findByLoginTimeBetweenAndUsernameLikeAndReqIpLikeOrderByLoginTimeDesc(@Param("p") PagingQuery paging,
-                                                                                       @Param("q") GetLoginLogQuery query);
+  List<LoginLog> findByLoginTimeBetweenAndUsernameLikeAndRequestIpLikeOrderByLoginTimeDesc(@Param("p") RequestOfPaging paging,
+                                                                                           @Param("q") RequestOfGetLoginLog query);
 
   /**
    * 统计登录日志总数。
@@ -30,7 +30,7 @@ public interface LoginLogMapper {
    * @param query 查询参数
    * @return 符合条件的登录日志总数
    */
-  int countByLoginTimeBetweenAndUsernameLikeAndReqIpLike(@Param("q") GetLoginLogQuery query);
+  int countByLoginTimeBetweenAndUsernameLikeAndRequestIpLike(@Param("q") RequestOfGetLoginLog query);
 
   /**
    * 保存登录日志数据。

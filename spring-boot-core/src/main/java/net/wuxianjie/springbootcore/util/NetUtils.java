@@ -25,7 +25,7 @@ public class NetUtils {
    *
    * @return 客户端 IP
    */
-  public static String getRealIpAddr(HttpServletRequest req) {
+  public static String getRealIpAddress(HttpServletRequest req) {
     return Optional.ofNullable(req.getHeader("X-FORWARDED-FOR"))
       .map(StrUtil::trimToNull)
       .orElse(req.getRemoteAddr());

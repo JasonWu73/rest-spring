@@ -13,7 +13,7 @@ import java.util.Optional;
  * @author 吴仙杰
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AuthUtils {
+public class AuthenticationUtils {
 
   /**
    * 获取已通过 Token 身份验证后的用户详细数据。

@@ -21,6 +21,10 @@
     WHERE username = #{username}
   </select>
 
+  <select id="existsByUsername" resultType="boolean">
+    SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})
+  </select>
+
   <sql id="whereUsernameLikeAndEnabled">
     <where>
       <if test="q.username != null">
@@ -32,7 +36,7 @@
     </where>
   </sql>
 
-  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.UserDto">
+  <select id="findByUsernameLikeAndEnabledOrderByModifyTimeDesc" resultType="net.wuxianjie.web.user.ListItemOfUser">
     SELECT user_id                                    AS userId,
            STRFTIME('%Y-%m-%d %H:%M:%S', modify_time) AS modifyTime,
            is_enabled                                 AS enabled,
@@ -48,10 +52,6 @@
     SELECT COUNT(1)
     FROM users
     <include refid="whereUsernameLikeAndEnabled"/>
-  </select>
-
-  <select id="existsByUsername" resultType="boolean">
-    SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})
   </select>
 
   <insert id="save" parameterType="net.wuxianjie.web.user.User">
@@ -81,8 +81,6 @@
   </update>
 
   <delete id="deleteByUserId">
-    DELETE
-    FROM users
-    WHERE user_id = #{userId}
+    DELETE FROM users WHERE user_id = #{userId}
   </delete>
 </mapper>

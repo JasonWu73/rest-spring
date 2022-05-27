@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 import net.wuxianjie.springbootcore.exception.AbstractBaseException;
 import net.wuxianjie.springbootcore.exception.AbstractServerBaseException;
-import net.wuxianjie.springbootcore.security.AuthUtils;
+import net.wuxianjie.springbootcore.security.AuthenticationUtils;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 import net.wuxianjie.springbootcore.util.NetUtils;
 import org.apache.catalina.connector.ClientAbortException;
@@ -47,312 +47,239 @@ public class ExceptionControllerAdvice {
   /**
    * 处理非正常关闭 socket 引发的错误。
    *
-   * @param e   {@link ClientAbortException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link ClientAbortException}
    */
   @ExceptionHandler(ClientAbortException.class)
-  public void handleException(ClientAbortException e,
-                              HttpServletRequest req) {
-    String respMsg = "非正常关闭 socket：" + e.getMessage();
-    logWarnOrError(req, respMsg, true);
+  public void handleException(ClientAbortException e) {
+    logWarn("非正常关闭 socket", e);
   }
 
   /**
    * 处理因 HTTP 请求的 MIME 类型与目标 API 不匹配而导致的异常。
    *
-   * @param req {@link HttpServletRequest}
+   * @param e       {@link HttpMediaTypeNotAcceptableException}
+   * @param request {@link HttpServletRequest}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
   public ResponseEntity<ApiResult<Void>> handleException(HttpMediaTypeNotAcceptableException e,
-                                                         HttpServletRequest req) {
-    String mimeTypes = Optional.ofNullable(req.getHeaders(HttpHeaders.ACCEPT))
-      .map(enumeration -> {
+                                                         HttpServletRequest request) {
+    String mimeTypes = Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
+      .map(en -> {
         List<String> accepts = new ArrayList<>();
-        while (enumeration.hasMoreElements()) {
-          String accept = enumeration.nextElement().trim();
-          accepts.add(accept);
+        while (en.hasMoreElements()) {
+          accepts.add(en.nextElement().strip());
         }
 
-        return String.join(", ", accepts);
+        return String.join(",", accepts);
       })
       .orElse("null");
 
-    String respMsg = StrUtil.format("不支持请求头中的 MIME 类型 [{}: {}]", HttpHeaders.ACCEPT, mimeTypes);
-    logWarnOrError(req, respMsg, e.getMessage(), true);
+    String responseMessage = StrUtil.format("不支持 MIME [{}: {}]", HttpHeaders.ACCEPT, mimeTypes);
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.NOT_ACCEPTABLE, respMsg);
+    return createResponseEntity(HttpStatus.NOT_ACCEPTABLE, responseMessage);
   }
 
   /**
    * 处理因 HTTP 请求的请求方法与目标 API 要求的请求方法不匹配而导致的异常。
    *
-   * @param req {@link HttpServletRequest}
+   * @param e       {@link HttpRequestMethodNotSupportedException}
+   * @param request {@link HttpServletRequest}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
   public ResponseEntity<ApiResult<Void>> handleException(HttpRequestMethodNotSupportedException e,
-                                                         HttpServletRequest req) {
-    String respMsg = "不支持 " + req.getMethod() + " 请求方法";
-    logWarnOrError(req, respMsg, e.getMessage(), true);
+                                                         HttpServletRequest request) {
+    String responseMessage = StrUtil.format("不支持 {} 请求", request.getMethod());
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.METHOD_NOT_ALLOWED, respMsg);
+    return createResponseEntity(HttpStatus.METHOD_NOT_ALLOWED, responseMessage);
   }
 
   /**
    * 处理因 HTTP 请求不是 Multipart Request，但 Controller 中参数存在 {@link MultipartFile} 而导致的异常。
    *
-   * @param req {@link HttpServletRequest}
+   * @param e {@link MultipartException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(MultipartException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(MultipartException e,
-                                                         HttpServletRequest req) {
+  public ResponseEntity<ApiResult<Void>> handleException(MultipartException e) {
+    String responseMessage = "仅支持 Multipart 请求";
+    logWarn(responseMessage, e);
 
-    String respMsg = "仅支持 Multipart 请求";
-    logWarnOrError(req, respMsg, e.getMessage(), true);
-
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
    * 处理因无法解析 HTTP 请求体内容而导致的异常。
    *
-   * @param e   {@link HttpMessageNotReadableException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link HttpMessageNotReadableException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(HttpMessageNotReadableException e,
-                                                         HttpServletRequest req) {
-    String respMsg = "请求体内容不合法";
-    logWarnOrError(req, respMsg, e.getMessage(), true);
+  public ResponseEntity<ApiResult<Void>> handleException(HttpMessageNotReadableException e) {
+    String responseMessage = "请求体内容不合法";
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
    * 处理因 HTTP 请求缺少必填参数而导致的异常。
    *
-   * @param e   {@link MissingServletRequestParameterException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link MissingServletRequestParameterException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(MissingServletRequestParameterException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestParameterException e,
-                                                         HttpServletRequest req) {
-    String respMsg = "缺少必填参数 " + e.getParameterName();
-    logWarnOrError(req, respMsg, e.getMessage(), true);
+  public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestParameterException e) {
+    String responseMessage = StrUtil.format("缺少必填参数 [{}]", e.getParameterName());
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
    * 处理因 HTTP 请求缺少必传文件而导致的异常。
    *
-   * @param e   {@link MissingServletRequestPartException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link MissingServletRequestPartException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(MissingServletRequestPartException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestPartException e,
-                                                         HttpServletRequest req) {
-    String respMsg = "缺少必传文件参数 " + e.getRequestPartName();
-    logWarnOrError(req, respMsg, e.getMessage(), true);
+  public ResponseEntity<ApiResult<Void>> handleException(MissingServletRequestPartException e) {
+    String responseMessage = StrUtil.format("缺少必传文件，请检查参数 [{}]", e.getRequestPartName());
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, respMsg);
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
-   * 处理因 HTTP 请求参数校验（{@link Validated}）不通过而导致的异常。
+   * 处理因 HTTP 请求参数校验 [{@link Validated}] 不通过而导致的异常。
    *
-   * @param e   {@link ConstraintViolationException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link ConstraintViolationException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(ConstraintViolationException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(ConstraintViolationException e,
-                                                         HttpServletRequest req) {
-    List<String> logMsgList = new ArrayList<>();
-    List<String> respMsgList = new ArrayList<>();
+  public ResponseEntity<ApiResult<Void>> handleException(ConstraintViolationException e) {
+    List<String> responseMessages = new ArrayList<>();
 
     Optional.ofNullable(e.getConstraintViolations())
-      .ifPresent(violations -> violations.forEach(violation -> {
-        String rspMsg = violation.getMessage();
-        respMsgList.add(rspMsg);
+      .ifPresent(vs -> vs.forEach(v -> responseMessages.add(v.getMessage())));
 
-        String queryParamPath = violation.getPropertyPath().toString();
-        String queryParam = queryParamPath.contains(".")
-          ? queryParamPath.substring(queryParamPath.indexOf(".") + 1)
-          : queryParamPath;
-        String logMsg = StrUtil.format("{} [{}={}]", rspMsg, queryParam, violation.getInvalidValue());
-        logMsgList.add(logMsg);
-      }));
+    String responseMessage = String.join("；", responseMessages);
+    logWarn(responseMessage, e);
 
-    logParamWarn(req, logMsgList);
-
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
-   * 处理因 HTTP 请求参数校验不通过（{@link Valid}）而导致的异常。
+   * 处理因 HTTP 请求参数校验 [{@link Valid}] 不通过而导致的异常。
    *
-   * @param e   {@link BindException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link BindException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(BindException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(BindException e,
-                                                         HttpServletRequest req) {
-    List<String> logMsgList = new ArrayList<>();
-    List<String> respMsgList = new ArrayList<>();
+  public ResponseEntity<ApiResult<Void>> handleException(BindException e) {
+    List<String> responseMessages = new ArrayList<>();
 
     e.getBindingResult().getFieldErrors()
-      .forEach(fieldError -> {
+      .forEach(fe -> {
         // 当 Controller 接收的参数类型不符合要求时，只需提示参数有误即可，而不是返回服务异常
-        String field = fieldError.getField();
-        boolean isControllerArgTypeError = fieldError.contains(TypeMismatchException.class);
-        String respMsg = isControllerArgTypeError
-          ? field + " 参数类型不匹配"
-          : fieldError.getDefaultMessage();
-        respMsgList.add(respMsg);
-
-        String logMsg = StrUtil.format("{} [{}={}]", respMsg, field, fieldError.getRejectedValue());
-        logMsgList.add(logMsg);
+        boolean isControllerArgTypeError = fe.contains(TypeMismatchException.class);
+        String message = isControllerArgTypeError
+          ? StrUtil.format("参数类型不匹配，请检查参数 [{}]", fe.getField())
+          : fe.getDefaultMessage();
+        responseMessages.add(message);
       });
 
-    logParamWarn(req, logMsgList);
+    String responseMessage = String.join("；", responseMessages);
+    logWarn(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.BAD_REQUEST, String.join("；", respMsgList));
+    return createResponseEntity(HttpStatus.BAD_REQUEST, responseMessage);
   }
 
   /**
    * 处理 JDBC 操作异常。
    *
-   * @param e   {@link UncategorizedDataAccessException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link UncategorizedDataAccessException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(UncategorizedDataAccessException.class)
-  public ResponseEntity<ApiResult<Void>> handleException(UncategorizedDataAccessException e,
-                                                         HttpServletRequest req) {
-    String respMsg = "数据库操作异常";
-    logError(req, respMsg, e);
+  public ResponseEntity<ApiResult<Void>> handleException(UncategorizedDataAccessException e) {
+    String responseMessage = "数据库操作异常";
+    logError(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
+    return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, responseMessage);
   }
 
   /**
    * 处理自定义异常，且不记录异常堆栈信息。
    *
-   * @param e   {@link AbstractBaseException}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link AbstractBaseException}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(AbstractBaseException.class)
-  public ResponseEntity<ApiResult<Void>> handleCustomException(AbstractBaseException e,
-                                                               HttpServletRequest req) {
-    String respMsg = e.getMessage();
-
+  public ResponseEntity<ApiResult<Void>> handleCustomException(AbstractBaseException e) {
+    String responseMessage = e.getMessage();
     boolean isServerError = e instanceof AbstractServerBaseException;
-    Optional.ofNullable(e.getCause())
-      .ifPresentOrElse(
-        cause -> logWarnOrError(req, respMsg, cause.getMessage(), !isServerError),
-        () -> logWarnOrError(req, respMsg, !isServerError)
-      );
+    if (isServerError) {
+      logError(responseMessage, e);
+    } else {
+      logWarn(responseMessage, e);
+    }
 
-    return createRespEntity(req, e.getHttpStatus(), respMsg);
+    return createResponseEntity(e.getHttpStatus(), responseMessage);
   }
 
   /**
    * 处理所有未被特定 {@code handleException(...)} 方法捕获的异常。
    *
-   * @param e   {@link Throwable}
-   * @param req {@link HttpServletRequest}
+   * @param e {@link Throwable}
    * @return {@link ResponseEntity}
    */
   @ExceptionHandler(Throwable.class)
-  public ResponseEntity<ApiResult<Void>> handleAllException(Throwable e,
-                                                            HttpServletRequest req) {
+  public ResponseEntity<ApiResult<Void>> handleAllException(Throwable e) {
     // 不要处理 AccessDeniedException，否则会导致 Spring Security 无法处理 403
     boolean isSpringSecurity403Exception = e instanceof AccessDeniedException;
     if (isSpringSecurity403Exception) throw (AccessDeniedException) e;
 
-    String respMsg = "服务异常";
-    logError(req, respMsg, e);
+    String responseMessage = "服务异常";
+    logError(responseMessage, e);
 
-    return createRespEntity(req, HttpStatus.INTERNAL_SERVER_ERROR, respMsg);
+    return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, responseMessage);
   }
 
-  private void logWarnOrError(HttpServletRequest req,
-                              String respMsg,
-                              String rawMsg,
-                              boolean isWarn,
-                              Throwable e) {
-    String username = AuthUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
-    String template = (rawMsg == null ? "{}" : "{}：{}") + "，用户（{}），其请求 IP 为 {}，请求路径为 {}";
-    String logMsg = rawMsg == null
-      ? StrUtil.format(template, respMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI())
-      : StrUtil.format(template, respMsg, rawMsg, username, NetUtils.getRealIpAddr(req), req.getRequestURI());
-
-    if (isWarn && e != null) {
-      log.warn(logMsg, e);
-      return;
-    }
-
-    if (!isWarn && e != null) {
-      log.error(logMsg, e);
-      return;
-    }
-
-    if (isWarn) {
-      log.warn(logMsg);
-      return;
-    }
-
-    log.error(logMsg);
-  }
-  private void logWarnOrError(HttpServletRequest req,
-                              String respMsg,
-                              String rawMsg,
-                              boolean isWarn) {
-    logWarnOrError(req, respMsg, rawMsg, isWarn, null);
+  private void logWarn(String responseMessage, Throwable e) {
+    log.warn("响应信息：{}，原始信息：{}，客户端信息：{}", responseMessage, e.getMessage(), getClientInfo());
   }
 
-  private void logWarnOrError(HttpServletRequest req,
-                              String respMsg,
-                              boolean isWarn) {
-    logWarnOrError(req, respMsg, null, isWarn, null);
+  private void logError(String responseMessage, Throwable e) {
+    log.error("响应信息：{}，客户端信息：{}", responseMessage, getClientInfo(), e);
   }
 
-  private void logParamWarn(HttpServletRequest req, List<String> logMsgList) {
-    logWarnOrError(req, "参数不合法", String.join("；", logMsgList), true, null);
+  private String getClientInfo() {
+    HttpServletRequest request = NetUtils.getRequest().orElseThrow();
+    String username = AuthenticationUtils.getCurrentUser().map(TokenUserDetails::getUsername).orElse(null);
+    return StrUtil.format("uri={};client={};user={}", request.getRequestURI(), NetUtils.getRealIpAddress(request), username);
   }
 
-  private void logError(HttpServletRequest req,
-                        String respMsg,
-                        Throwable e) {
-    logWarnOrError(req, respMsg, e.toString(), false, e);
-  }
-
-  private ResponseEntity<ApiResult<Void>> createRespEntity(HttpServletRequest req,
-                                                           HttpStatus httpStatus,
-                                                           String respMsg) {
-    if (isJsonRequest(req)) return new ResponseEntity<>(ApiResultWrapper.fail(respMsg), httpStatus);
+  private ResponseEntity<ApiResult<Void>> createResponseEntity(HttpStatus httpStatus, String responseMessage) {
+    if (isJsonRequest()) return new ResponseEntity<>(ApiResultWrapper.fail(responseMessage), httpStatus);
 
     return new ResponseEntity<>(null, httpStatus);
   }
 
-  private boolean isJsonRequest(HttpServletRequest req) {
+  private boolean isJsonRequest() {
+    HttpServletRequest request = NetUtils.getRequest().orElseThrow();
     // 只有在 Accept 请求头中明确指定不包含 JSON 时才认为非 JSON 请求
-    return Optional.ofNullable(req.getHeaders(HttpHeaders.ACCEPT))
-      .map(enumeration -> {
-        if (!enumeration.hasMoreElements()) return true;
+    return Optional.ofNullable(request.getHeaders(HttpHeaders.ACCEPT))
+      .map(e -> {
+        if (!e.hasMoreElements()) return true;
 
-        while (enumeration.hasMoreElements()) {
-          String accept = enumeration.nextElement();
-          String[] jsonArray = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE};
-          boolean containsJson = StrUtil.containsAnyIgnoreCase(accept, jsonArray);
+        while (e.hasMoreElements()) {
+          String accept = e.nextElement().strip();
+          String[] jsonMimes = {MediaType.ALL_VALUE, MediaType.APPLICATION_JSON_VALUE};
+          boolean containsJson = StrUtil.containsAnyIgnoreCase(accept, jsonMimes);
           if (containsJson) return true;
         }
 

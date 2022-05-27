@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.wuxianjie.web.operationlog.OperationLogMapper">
+  <sql id="whereOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike">
+    <where>
+      <if test="q.startTimeInclusive != null">
+        operation_time &gt;= #{q.startTimeInclusive}
+      </if>
+      <if test="q.endTimeInclusive != null">
+        AND operation_time &lt;= #{q.endTimeInclusive}
+      </if>
+      <if test="q.username != null">
+        AND username LIKE #{q.username}
+      </if>
+      <if test="q.requestIp != null">
+        AND request_ip LIKE #{q.requestIp}
+      </if>
+      <if test="q.methodMessage != null">
+        AND method_message LIKE #{q.methodMessage}
+      </if>
+    </where>
+  </sql>
+
+  <select id="findByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLikeOrderByOpTimeDesc" resultType="net.wuxianjie.web.operationlog.OperationLog">
+    SELECT log_id         AS logId,
+           operation_time AS operationTime,
+           user_id        AS userId,
+           username,
+           request_ip     AS requestIp,
+           request_uri    AS requestUri,
+           method_name    AS methodName,
+           method_message AS methodMessage,
+           parameter_json AS parameterJson,
+           return_json    AS returnJSON
+    FROM operation_logs
+    <include refid="whereOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike"/>
+    ORDER BY operation_time DESC
+    LIMIT #{p.offset}, #{p.pageSize}
+  </select>
+
+  <select id="countByOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike" resultType="int">
+    SELECT COUNT(1)
+    FROM operation_logs
+    <include refid="whereOperationTimeBetweenAndUsernameLikeAndRequestIpLikeAndMethodMessageLike"/>
+  </select>
+
+  <insert id="save">
+    INSERT INTO operation_logs (operation_time,
+                                user_id,
+                                username,
+                                request_ip,
+                                request_uri,
+                                method_name,
+                                method_message,
+                                parameter_json,
+                                return_json)
+    VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{operationTime}),
+            #{userId},
+            #{username},
+            #{requestIp},
+            #{requestUri},
+            #{methodName},
+            #{methodMessage},
+            #{parameterJson},
+            #{returnJson})
+  </insert>
+</mapper>

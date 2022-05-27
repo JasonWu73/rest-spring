@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @ToString
 @RequiredArgsConstructor
-public enum ApiErrCode {
+public enum ApiErrorCode {
 
   /**
    * 服务响应成功。

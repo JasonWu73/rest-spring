@@ -11,11 +11,11 @@ import javax.validation.constraints.NotNull;
  * 分页查询参数。
  *
  * @author 吴仙杰
- * @see PagingResult
+ * @see ResultOfPaging
  * @see PagingOffsetFieldPaddingAspect
  */
 @Data
-public class PagingQuery {
+public class RequestOfPaging {
 
   /**
    * 页码，从 1 开始，即第一页为 1。

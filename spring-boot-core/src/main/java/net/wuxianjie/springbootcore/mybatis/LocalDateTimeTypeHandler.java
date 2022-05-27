@@ -44,9 +44,7 @@ public class LocalDateTimeTypeHandler extends BaseTypeHandler<LocalDateTime> {
   }
 
   private static LocalDateTime toNullableLocalDateTime(Timestamp timestamp) {
-    if (timestamp == null) {
-      return null;
-    }
+    if (timestamp == null) return null;
 
     return timestamp.toLocalDateTime();
   }

@@ -9,7 +9,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 /**
- * Access Token 管理的 API 控制器。
+ * Access Token API 控制器。
  *
  * @author 吴仙杰
  */

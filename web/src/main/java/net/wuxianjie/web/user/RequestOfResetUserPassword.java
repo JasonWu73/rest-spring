@@ -6,12 +6,12 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 重置用户密码的请求参数。
+ * 重置用户密码请求参数。
  *
  * @author 吴仙杰
  */
 @Data
-public class ResetUserPwdQuery {
+public class RequestOfResetUserPassword {
 
   /**
    * 用户 id。

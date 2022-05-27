@@ -34,7 +34,7 @@ class TokenUtils {
    * @return 用户名
    * @throws TokenAuthenticationException 当 Token 载荷中缺少用户名时抛出
    */
-  public static String getTokenAccount(Map<String, Object> payload) throws TokenAuthenticationException {
+  public static String getUsername(Map<String, Object> payload) throws TokenAuthenticationException {
     return Optional.ofNullable((String) payload.get(TokenAttributes.USERNAME_KEY))
       .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 载荷"));
   }

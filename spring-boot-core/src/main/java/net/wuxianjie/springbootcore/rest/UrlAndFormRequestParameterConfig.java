@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.InitBinder;
  * @author 吴仙杰
  */
 @ControllerAdvice
-public class UrlAndFormRequestParamConfig {
+public class UrlAndFormRequestParameterConfig {
 
   @InitBinder
   public void initBinder(WebDataBinder binder) {

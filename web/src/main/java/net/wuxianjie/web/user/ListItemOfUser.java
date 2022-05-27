@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @JsonInclude
-public class UserDto {
+public class ListItemOfUser {
 
   /**
    * 用户 id。

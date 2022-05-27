@@ -1,16 +1,16 @@
 package net.wuxianjie.web.role;
 
 import lombok.RequiredArgsConstructor;
-import net.wuxianjie.web.oplog.OpLogger;
+import net.wuxianjie.web.operationlog.OperationLogger;
+import net.wuxianjie.web.shared.SimpleResultOfWriteOperation;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 /**
- * 角色管理的 API 控制器。
+ * 角色 API 控制器。
  *
  * @author 吴仙杰
  */
@@ -24,7 +24,7 @@ public class RoleController {
   /**
    * 获取全部角色列表。
    *
-   * @return 全部角色列表
+   * @return 角色列表
    */
   @GetMapping("list")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_LIST.name())")
@@ -36,12 +36,12 @@ public class RoleController {
    * 新增角色。
    *
    * @param query 需要保存的角色数据
-   * @return 新增成功后的提示信息
+   * @return 操作结果
    */
   @PostMapping("add")
-  @OpLogger("新增角色")
+  @OperationLogger("新增角色")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_ADD.name())")
-  public Map<String, String> saveRole(@RequestBody @Valid SaveRoleQuery query) {
+  public SimpleResultOfWriteOperation saveRole(@RequestBody @Valid RequestOfSaveRole query) {
     return roleService.saveRole(query);
   }
 
@@ -50,13 +50,13 @@ public class RoleController {
    *
    * @param roleId 角色 id
    * @param query  需要更新的角色数据
-   * @return 修改成功后的提示信息
+   * @return 操作结果
    */
   @PostMapping("update/{roleId:\\d+}")
-  @OpLogger("修改角色")
+  @OperationLogger("修改角色")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_UPDATE.name())")
-  public Map<String, String> updateRole(@PathVariable int roleId,
-                         @RequestBody @Valid UpdateRoleQuery query) {
+  public SimpleResultOfWriteOperation updateRole(@PathVariable int roleId,
+                                                 @RequestBody @Valid RequestOfUpdateRole query) {
     query.setRoleId(roleId);
     return roleService.updateRole(query);
   }
@@ -65,12 +65,12 @@ public class RoleController {
    * 删除角色。
    *
    * @param roleId 需要删除的角色 id
-   * @return 删除成功后的提示信息
+   * @return 操作结果
    */
   @GetMapping("del/{roleId:\\d+}")
-  @OpLogger("删除角色")
+  @OperationLogger("删除角色")
   @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_DEL.name())")
-  public Map<String, String> deleteRole(@PathVariable int roleId) {
+  public SimpleResultOfWriteOperation deleteRole(@PathVariable int roleId) {
     return roleService.deleteRole(roleId);
   }
 }

@@ -18,7 +18,7 @@ import java.time.format.DateTimeParseException;
  * @author 吴仙杰
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ParamUtils {
+public class ParameterUtils {
 
   /**
    * 将日期字符串转为相应日期的开始时间。
@@ -88,9 +88,9 @@ public class ParamUtils {
    * @param errMsg    当开始时间晚于结束时间时抛出异常的提示信息
    * @throws BadRequestException 当开始时间晚于结束时间时抛出
    */
-  public static void verifyStartTimeIsBeforeEndTime(LocalDateTime startTime,
-                                                    LocalDateTime endTime,
-                                                    String errMsg) throws BadRequestException {
+  public static void checkForStartTimeIsBeforeEndTime(LocalDateTime startTime,
+                                                      LocalDateTime endTime,
+                                                      String errMsg) throws BadRequestException {
     if (startTime != null && endTime != null && startTime.isAfter(endTime)) {
       throw new BadRequestException(errMsg);
     }

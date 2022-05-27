@@ -6,12 +6,12 @@ import net.wuxianjie.web.security.SysMenu;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 新增角色的请求参数。
+ * 新增角色请求参数。
  *
  * @author 吴仙杰
  */
 @Data
-public class SaveRoleQuery {
+public class RequestOfSaveRole {
 
   /**
    * 角色名。

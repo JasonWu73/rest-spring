@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.wuxianjie.web.loginlog.LoginLogMapper">
-  <sql id="whereLoginTimeBetweenAndUsernameLikeAndReqIpLike">
+  <sql id="whereLoginTimeBetweenAndUsernameLikeAndRequestIpLike">
     <where>
       <if test="q.startTimeInclusive != null">
         login_time &gt;= #{q.startTimeInclusive}
@@ -12,39 +12,39 @@
       <if test="q.username != null">
         AND username LIKE #{q.username}
       </if>
-      <if test="q.reqIp != null">
-        AND req_ip LIKE #{q.reqIp}
+      <if test="q.requestIp != null">
+        AND request_ip LIKE #{q.requestIp}
       </if>
     </where>
   </sql>
 
-  <select id="findByLoginTimeBetweenAndUsernameLikeAndReqIpLikeOrderByLoginTimeDesc"
+  <select id="findByLoginTimeBetweenAndUsernameLikeAndRequestIpLikeOrderByLoginTimeDesc"
           resultType="net.wuxianjie.web.loginlog.LoginLog">
     SELECT log_id         AS logId,
            login_time     AS loginTime,
            user_id        AS userId,
            username,
-           req_ip         AS reqIp
+           request_ip         AS requestIp
     FROM login_logs
-    <include refid="whereLoginTimeBetweenAndUsernameLikeAndReqIpLike"/>
+    <include refid="whereLoginTimeBetweenAndUsernameLikeAndRequestIpLike"/>
     ORDER BY login_time DESC
     LIMIT #{p.offset}, #{p.pageSize}
   </select>
 
-  <select id="countByLoginTimeBetweenAndUsernameLikeAndReqIpLike" resultType="int">
+  <select id="countByLoginTimeBetweenAndUsernameLikeAndRequestIpLike" resultType="int">
     SELECT COUNT(1)
     FROM login_logs
-    <include refid="whereLoginTimeBetweenAndUsernameLikeAndReqIpLike"/>
+    <include refid="whereLoginTimeBetweenAndUsernameLikeAndRequestIpLike"/>
   </select>
 
   <insert id="save">
     INSERT INTO login_logs (login_time,
                             user_id,
                             username,
-                            req_ip)
+                            request_ip)
     VALUES (STRFTIME('%Y-%m-%d %H:%M:%S', #{loginTime}),
             #{userId},
             #{username},
-            #{reqIp})
+            #{requestIp})
   </insert>
 </mapper>

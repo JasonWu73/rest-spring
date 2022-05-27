@@ -6,7 +6,7 @@ import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 
 /**
- * 角色层级配置。
+ * 角色层级配置类。
  *
  * @author 吴仙杰
  */

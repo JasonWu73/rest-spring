@@ -11,13 +11,13 @@ import java.util.List;
  *
  * @param <E> 列表项类型
  * @author 吴仙杰
- * @see PagingResult
+ * @see ResultOfPaging
  * @see PagingOffsetFieldPaddingAspect
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PagingResult<E> {
+public class ResultOfPaging<E> {
 
   /**
    * 页码。
@@ -39,7 +39,7 @@ public class PagingResult<E> {
    */
   private List<E> list;
 
-  public PagingResult(PagingQuery paging, long total, List<E> list) {
+  public ResultOfPaging(RequestOfPaging paging, long total, List<E> list) {
     this.pageNo = paging.getPageNo();
     this.pageSize = paging.getPageSize();
     this.total = total;

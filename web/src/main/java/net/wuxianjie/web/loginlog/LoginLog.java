@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
- * 登录日志表。
+ * 登录日志表实体类。
  *
  * @author 吴仙杰
  */
@@ -35,5 +35,5 @@ public class LoginLog {
   /**
    * 请求 IP。
    */
-  private String reqIp;
+  private String requestIp;
 }

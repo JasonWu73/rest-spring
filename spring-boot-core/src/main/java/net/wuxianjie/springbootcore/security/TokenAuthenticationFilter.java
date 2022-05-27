@@ -34,7 +34,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class TokenAuthFilter extends OncePerRequestFilter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
   /**
    * HTTP Header: {@code Authorization: Bearer {{accessToken}}}.
@@ -47,67 +47,67 @@ public class TokenAuthFilter extends OncePerRequestFilter {
   private static final String ROLE_PREFIX = "ROLE_";
 
   private final ObjectMapper objectMapper;
-  private final TokenAuthService tokenAuthService;
+  private final TokenService tokenService;
 
   @Override
-  protected void doFilterInternal(HttpServletRequest req,
-                                  HttpServletResponse resp,
-                                  FilterChain chain) throws IOException, ServletException {
-    Optional<String> tokenOpt = getTokenFromReq(req);
+  protected void doFilterInternal(HttpServletRequest request,
+                                  HttpServletResponse response,
+                                  FilterChain filterChain) throws IOException, ServletException {
+    Optional<String> tokenOpt = getTokenFromRequestHeader(request);
     if (tokenOpt.isEmpty()) {
-      chain.doFilter(req, resp);
+      filterChain.doFilter(request, response);
       return;
     }
 
     try {
-      TokenUserDetails user = tokenAuthService.authenticate(tokenOpt.get());
+      TokenUserDetails user = tokenService.authenticate(tokenOpt.get());
       loginToSpringSecurityContext(user);
     } catch (TokenAuthenticationException e) {
       SecurityContextHolder.clearContext();
 
-      sendToResp(resp, e.getMessage(), HttpStatus.UNAUTHORIZED);
+      sendToResponse(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
       return;
     } catch (Throwable e) {
-      String respMsg = "Token 身份验证异常";
+      String message = "Token 身份验证异常";
       log.error(
-        respMsg + "，请求 IP 为 {}，请求路径为 {}",
-        NetUtils.getRealIpAddr(req),
-        req.getRequestURI(),
+        message + "，客户端信息：uri={};client={}",
+        request.getRequestURI(),
+        NetUtils.getRealIpAddress(request),
         e
       );
 
       SecurityContextHolder.clearContext();
 
-      sendToResp(resp, respMsg, HttpStatus.INTERNAL_SERVER_ERROR);
+      sendToResponse(response, message, HttpStatus.INTERNAL_SERVER_ERROR);
       return;
     }
 
-    chain.doFilter(req, resp);
+    filterChain.doFilter(request, response);
   }
 
   /**
    * 输出至响应体中。
    *
-   * @param resp       {@link  HttpServletRequest}
-   * @param respMsg    提示信息
+   * @param response   {@link  HttpServletRequest}
+   * @param message    提示信息
    * @param httpStatus HTTP 状态码
    * @throws IOException 当写入响应体异常时抛出
    */
-  public void sendToResp(HttpServletResponse resp,
-                         String respMsg,
-                         HttpStatus httpStatus) throws IOException {
-    resp.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
-    resp.setStatus(httpStatus.value());
+  public void sendToResponse(HttpServletResponse response,
+                             String message,
+                             HttpStatus httpStatus) throws IOException {
+    response.setContentType(WebSecurityConfig.APPLICATION_JSON_UTF8_VALUE);
+    response.setStatus(httpStatus.value());
 
-    String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(respMsg));
-    resp.getWriter().write(json);
+    String json = objectMapper.writeValueAsString(ApiResultWrapper.fail(message));
+    response.getWriter().write(json);
   }
 
-  private Optional<String> getTokenFromReq(HttpServletRequest req) {
-    return Optional.ofNullable(StrUtil.trim(req.getHeader(HttpHeaders.AUTHORIZATION)))
+  private Optional<String> getTokenFromRequestHeader(HttpServletRequest request) {
+    return Optional.ofNullable(StrUtil.trim(request.getHeader(HttpHeaders.AUTHORIZATION)))
       .map(bearer -> {
-        boolean isNotBearerStr = !StrUtil.startWith(bearer, BEARER_PREFIX);
-        if (isNotBearerStr) return null;
+        boolean isNotBearerString = !StrUtil.startWith(bearer, BEARER_PREFIX);
+        if (isNotBearerString) return null;
 
         return StrUtil.trimToNull(StrUtil.subAfter(bearer, BEARER_PREFIX, false));
       });
@@ -119,19 +119,19 @@ public class TokenAuthFilter extends OncePerRequestFilter {
     SecurityContextHolder.getContext().setAuthentication(token);
   }
 
-  private List<GrantedAuthority> getAuthorities(String roles) {
-    return Optional.ofNullable(StrUtil.trimToNull(roles))
-      .map(notNullRoles -> {
-        String commaSeparatedRoles = Arrays.stream(notNullRoles.split(","))
+  private List<GrantedAuthority> getAuthorities(String commaSeparatedRoles) {
+    return Optional.ofNullable(StrUtil.trimToNull(commaSeparatedRoles))
+      .map(r -> {
+        String roles = Arrays.stream(r.split(","))
           .reduce("", (roleOne, roleTwo) -> {
-            String appended = ROLE_PREFIX + roleTwo.trim().toUpperCase();
+            String appended = ROLE_PREFIX + roleTwo.strip().toUpperCase();
 
             if (StrUtil.isEmpty(roleOne)) return appended;
 
             return roleOne + "," + appended;
           });
 
-        return AuthorityUtils.commaSeparatedStringToAuthorityList(commaSeparatedRoles);
+        return AuthorityUtils.commaSeparatedStringToAuthorityList(roles);
       })
       .orElse(Collections.emptyList());
   }

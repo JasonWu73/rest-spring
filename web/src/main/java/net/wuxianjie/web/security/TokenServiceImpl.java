@@ -5,13 +5,13 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.springbootcore.security.SecurityConfig;
+import net.wuxianjie.springbootcore.security.SecurityPropertiesConfig;
 import net.wuxianjie.springbootcore.security.TokenData;
 import net.wuxianjie.springbootcore.security.TokenService;
 import net.wuxianjie.springbootcore.util.JwtUtils;
-import net.wuxianjie.web.user.ComUserService;
 import net.wuxianjie.web.user.CustomUserDetails;
 import net.wuxianjie.web.user.User;
+import net.wuxianjie.web.user.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Access Token 管理业务逻辑处理类。
+ * Access Token 业务逻辑实现类。
  *
  * @author 吴仙杰
  */
@@ -28,22 +28,37 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-  private final SecurityConfig securityConfig;
+  private final SecurityPropertiesConfig securityConfig;
   private final PasswordEncoder passwordEncoder;
   private final Cache<String, CustomUserDetails> tokenCache;
-  private final ComUserService comUserService;
+  private final UserService userService;
+
+  @Override
+  public CustomUserDetails authenticate(String accessToken) throws TokenAuthenticationException {
+    // 验证并解析 JWT
+    Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), accessToken);
+
+    // 检查是否为 Access Token
+    String tokenType = TokenUtils.getTokenType(payload);
+    boolean isAccessToken = StrUtil.equals(tokenType, TokenAttributes.ACCESS_TOKEN_TYPE_VALUE);
+    if (!isAccessToken) throw new TokenAuthenticationException(StrUtil.format("该 Token 不可用于 API 鉴权 [{}]", tokenType));
+
+    // 从缓存中获取用户数据
+    String username = TokenUtils.getUsername(payload);
+    return getUserFromCache(username, accessToken);
+  }
 
   @Override
   public TokenData getToken(String username, String password) throws TokenAuthenticationException {
-    // 判断用户是否存在
-    User user = comUserService.getUserFromDbMustBeExists(username);
+    // 检查用户是否存在
+    User user = userService.getUserFromDatabaseMustBeExists(username);
 
-    // 判断用户是否启用
-    verifyEnabled(user);
+    // 检查用户是否启用
+    checkForUserIsEnabled(user);
 
-    // 判断密码是否正确
+    // 检查密码是否正确
     boolean isMatched = passwordEncoder.matches(password, user.getHashedPassword());
-    if (!isMatched) throw new TokenAuthenticationException("用户（" + username + "）密码错误");
+    if (!isMatched) throw new TokenAuthenticationException("密码错误");
 
     // 生成 JWT
     TokenData token = createToken(user);
@@ -59,20 +74,20 @@ public class TokenServiceImpl implements TokenService {
     // 验证并解析 JWT
     Map<String, Object> payload = JwtUtils.verifyJwt(securityConfig.getJwtSigningKey(), refreshToken);
 
-    // 判断是否为 Refresh Token
+    // 检查是否为 Refresh Token
     String tokenType = TokenUtils.getTokenType(payload);
     boolean isRefreshToken = StrUtil.equals(tokenType, TokenAttributes.REFRESH_TOKEN_TYPE_VALUE);
-    if (!isRefreshToken) throw new TokenAuthenticationException("类型为 " + tokenType + " 的 Token 不可用于刷新鉴权");
+    if (!isRefreshToken) throw new TokenAuthenticationException(StrUtil.format("该 Token 不可用于刷新 [{}]", tokenType));
 
-    // 判断缓存中是否存在该 Refresh Token
-    String username = TokenUtils.getTokenAccount(payload);
-    verifyRefreshToken(username, refreshToken);
+    // 检查缓存中是否存在该 Refresh Token
+    String username = TokenUtils.getUsername(payload);
+    checkForRefreshTokenExists(username, refreshToken);
 
-    // 判断用户是否存在
-    User user = comUserService.getUserFromDbMustBeExists(username);
+    // 检查用户是否存在
+    User user = userService.getUserFromDatabaseMustBeExists(username);
 
-    // 判断用户是否启用
-    verifyEnabled(user);
+    // 检查用户是否启用
+    checkForUserIsEnabled(user);
 
     // 生成 JWT
     TokenData token = createToken(user);
@@ -83,9 +98,20 @@ public class TokenServiceImpl implements TokenService {
     return token;
   }
 
-  private void verifyEnabled(User user) {
+  private CustomUserDetails getUserFromCache(String username, String accessToken) {
+    return Optional.ofNullable(tokenCache.getIfPresent(username))
+      .map(userDetails -> {
+        boolean equalsAccessToken = StrUtil.equals(accessToken, userDetails.getAccessToken());
+        if (!equalsAccessToken) throw new TokenAuthenticationException(StrUtil.format("Token 已弃用 [{}]", username));
+
+        return userDetails;
+      })
+      .orElseThrow(() -> new TokenAuthenticationException(StrUtil.format("Token 已过期 [{}]", username)));
+  }
+
+  private void checkForUserIsEnabled(User user) {
     boolean isDisabled = user.getEnabled() != YesOrNo.YES;
-    if (isDisabled) throw new TokenAuthenticationException("用户（" + user.getUsername() + "）已被禁用");
+    if (isDisabled) throw new TokenAuthenticationException(StrUtil.format("用户已禁用 [{}]", user.getUsername()));
   }
 
   private TokenData createToken(User user) {
@@ -124,15 +150,15 @@ public class TokenServiceImpl implements TokenService {
     tokenCache.put(user.getUsername(), userDetails);
   }
 
-  private void verifyRefreshToken(String username, String refreshToken) {
+  private void checkForRefreshTokenExists(String username, String refreshToken) {
     Optional.ofNullable(tokenCache.getIfPresent(username))
       .ifPresentOrElse(
-        userDetails -> {
-          boolean equalsRefreshToken = StrUtil.equals(refreshToken, userDetails.getRefreshToken());
-          if (!equalsRefreshToken) throw new TokenAuthenticationException("用户（" + username + "）Refresh Token 已被刷新");
+        u -> {
+          boolean equalsRefreshToken = StrUtil.equals(refreshToken, u.getRefreshToken());
+          if (!equalsRefreshToken) throw new TokenAuthenticationException(StrUtil.format("Token 已弃用 [{}]", username));
         },
         () -> {
-          throw new TokenAuthenticationException("用户（" + username + "）Refresh Token 已过期");
+          throw new TokenAuthenticationException(StrUtil.format("Token 已过期 [{}]", username));
         }
       );
   }

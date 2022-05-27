@@ -16,6 +16,10 @@
     FROM roles
   </select>
 
+  <select id="existsByRoleName" resultType="boolean">
+    SELECT EXISTS(SELECT 1 FROM roles WHERE role_name = #{roleName})
+  </select>
+
   <insert id="save">
     INSERT INTO roles (role_name,
                        menus)
@@ -33,8 +37,6 @@
   </update>
 
   <delete id="deleteByRoleId">
-    DELETE
-    FROM roles
-    WHERE role_id = #{roleId}
+    DELETE FROM roles WHERE role_id = #{roleId}
   </delete>
 </mapper>

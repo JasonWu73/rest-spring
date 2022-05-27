@@ -18,12 +18,12 @@ public class ApiResult<T> {
   /**
    * 错误码：0：成功，1：失败。
    */
-  private ApiErrCode errCode;
+  private ApiErrorCode errorCode;
 
   /**
    * 错误信息。
    */
-  private String errMsg;
+  private String errorMessage;
 
   /**
    * 具体数据。

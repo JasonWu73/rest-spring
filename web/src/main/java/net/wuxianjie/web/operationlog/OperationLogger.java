@@ -1,4 +1,4 @@
-package net.wuxianjie.web.oplog;
+package net.wuxianjie.web.operationlog;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,11 +9,11 @@ import java.lang.annotation.Target;
  * 标注需要记录操作日志的方法。
  *
  * @author 吴仙杰
- * @see OpLogAspect
+ * @see OperationLogAspect
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface OpLogger {
+public @interface OperationLogger {
 
   /**
    * 操作描述。

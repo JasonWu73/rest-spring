@@ -14,7 +14,7 @@ import java.util.List;
  * @author 吴仙杰
  */
 @Configuration
-public class RestApiConfig implements WebMvcConfigurer {
+public class ApiConfig implements WebMvcConfigurer {
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

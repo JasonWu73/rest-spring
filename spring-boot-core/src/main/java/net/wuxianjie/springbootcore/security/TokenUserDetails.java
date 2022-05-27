@@ -4,7 +4,7 @@ package net.wuxianjie.springbootcore.security;
  * Token 身份验证所需的用户详细数据接口。
  *
  * @author 吴仙杰
- * @see AuthUtils
+ * @see AuthenticationUtils
  */
 public interface TokenUserDetails {
 

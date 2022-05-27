@@ -5,19 +5,12 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * 与角色表相关的 SQL。
+ * 角色 SQL 操作。
  *
  * @author 吴仙杰
  */
 @Mapper
 public interface RoleMapper {
-
-  /**
-   * 保存角色数据。
-   *
-   * @param role 需要保存的角色数据
-   */
-  void save(Role role);
 
   /**
    * 通过角色 id 获取角色数据。
@@ -28,11 +21,26 @@ public interface RoleMapper {
   Role findByRoleId(int roleId);
 
   /**
+   * 检查是否已存在相同角色名。
+   *
+   * @param roleName 角色名
+   * @return true：已存在，false：不存在
+   */
+  boolean existsByRoleName(String roleName);
+
+  /**
    * 获取全部角色列表。
    *
    * @return 全部角色列表
    */
   List<Role> findAll();
+
+  /**
+   * 保存角色数据。
+   *
+   * @param role 需要保存的角色数据
+   */
+  void save(Role role);
 
   /**
    * 更新角色数据。

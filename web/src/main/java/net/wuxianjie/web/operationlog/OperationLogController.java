@@ -1,4 +1,4 @@
-package net.wuxianjie.web.loginlog;
+package net.wuxianjie.web.operationlog;
 
 import lombok.RequiredArgsConstructor;
 import net.wuxianjie.springbootcore.paging.RequestOfPaging;
@@ -14,39 +14,40 @@ import javax.validation.Valid;
 import java.time.LocalDateTime;
 
 /**
- * 登录日志 API 控制器。
+ * 操作日志 API 控制器。
  *
  * @author 吴仙杰
  */
 @RestController
-@RequestMapping("/api/v1/login-log")
+@RequestMapping("/api/v1/operation-log")
 @RequiredArgsConstructor
-public class LoginLogController {
+public class OperationLogController {
 
-  private final LoginLogService loginLogService;
+  private final OperationLogService operationLogService;
 
   /**
-   * 获取登录日志列表。
+   * 获取操作日志列表。
    *
    * @param paging 分页参数
-   * @param query  请求参数
-   * @return 登录日志列表
+   * @param query  查询参数
+   * @return 操作日志列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_LOGIN_LOG.name())")
-  public ResultOfPaging<LoginLog> getLoginLogs(@Valid RequestOfPaging paging,
-                                               @Valid RequestOfGetLoginLog query) {
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_OP_LOG.name())")
+  public ResultOfPaging<OperationLog> getOperationLogs(@Valid RequestOfPaging paging,
+                                                       @Valid RequestOfGetOperationLog query) {
     setFuzzySearchValue(query);
     setStartAndEndTime(query);
-    return loginLogService.getLoginLogs(paging, query);
+    return operationLogService.getOpLogs(paging, query);
   }
 
-  private void setFuzzySearchValue(RequestOfGetLoginLog query) {
+  private void setFuzzySearchValue(RequestOfGetOperationLog query) {
     query.setUsername(StringUtils.toNullableFuzzyString(query.getUsername()));
     query.setRequestIp(StringUtils.toNullableFuzzyString(query.getRequestIp()));
+    query.setMethodMessage(StringUtils.toNullableFuzzyString(query.getMethodMessage()));
   }
 
-  private void setStartAndEndTime(RequestOfGetLoginLog query) {
+  private void setStartAndEndTime(RequestOfGetOperationLog query) {
     LocalDateTime startTime = ParameterUtils.toNullableStartTime(query.getStartDate(), "开始日期不合法");
     query.setStartTimeInclusive(startTime);
 
