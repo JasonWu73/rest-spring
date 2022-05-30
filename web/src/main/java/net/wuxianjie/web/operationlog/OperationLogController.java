@@ -33,7 +33,7 @@ public class OperationLogController {
    * @return 操作日志列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_OP_LOG.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_OP_LOG.name())")
   public ResultOfPaging<OperationLog> getOperationLogs(@Valid RequestOfPaging paging,
                                                        @Valid RequestOfGetOperationLog query) {
     setFuzzySearchValue(query);

@@ -19,14 +19,14 @@ public class MenuItem {
   /**
    * 菜单名称。
    *
-   * @see SysMenu#msg()
+   * @see RoleOfMenu#msg()
    */
   private String name;
 
   /**
    * 菜单编号。
    *
-   * @see SysMenu#value()
+   * @see RoleOfMenu#value()
    */
   private String code;
 

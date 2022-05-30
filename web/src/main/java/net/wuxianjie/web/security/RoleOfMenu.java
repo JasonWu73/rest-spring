@@ -20,7 +20,7 @@ import java.util.Optional;
 @Accessors(fluent = true)
 @ToString
 @RequiredArgsConstructor
-public enum SysMenu {
+public enum RoleOfMenu {
 
   ROLE_ROOT("root", "全部"),
 
@@ -43,7 +43,7 @@ public enum SysMenu {
 
   ROLE_OP_LOG("op_log", "操作日志");
 
-  private static final SysMenu[] VALUES;
+  private static final RoleOfMenu[] VALUES;
 
   static {
     VALUES = values();
@@ -144,9 +144,9 @@ public enum SysMenu {
    * 将字符串值解析为枚举常量。
    *
    * @param value 字符串值
-   * @return {@link SysMenu} 的 {@link Optional} 包装对象
+   * @return {@link RoleOfMenu} 的 {@link Optional} 包装对象
    */
-  public static Optional<SysMenu> resolve(String value) {
+  public static Optional<RoleOfMenu> resolve(String value) {
     return Optional.ofNullable(value)
       .flatMap(val -> Arrays.stream(VALUES)
         .filter(role -> StrUtil.equals(val, role.value))

@@ -10,7 +10,7 @@ import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.RequestOfPaging;
 import net.wuxianjie.springbootcore.paging.ResultOfPaging;
 import net.wuxianjie.springbootcore.util.StringUtils;
-import net.wuxianjie.web.security.SysMenu;
+import net.wuxianjie.web.security.RoleOfMenu;
 import net.wuxianjie.web.shared.SimpleResultOfWriteOperation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -193,7 +193,7 @@ public class UserService {
         if (menus.length == 0) return Optional.empty();
 
         boolean hasAnyInvalidMenu = Arrays.stream(menus)
-          .anyMatch(menu -> SysMenu.resolve(menu).isEmpty());
+          .anyMatch(menu -> RoleOfMenu.resolve(menu).isEmpty());
 
         if (hasAnyInvalidMenu) throw new BadRequestException("包含非法菜单编号");
 

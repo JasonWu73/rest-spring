@@ -1,5 +1,6 @@
 package net.wuxianjie.web.security;
 
+import cn.hutool.core.util.StrUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.wuxianjie.springbootcore.exception.TokenAuthenticationException;
@@ -24,7 +25,7 @@ class TokenUtils {
    */
   public static String getTokenType(Map<String, Object> payload) throws TokenAuthenticationException {
     return Optional.ofNullable((String) payload.get(TokenAttributes.TOKEN_TYPE_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 载荷"));
+      .orElseThrow(() -> new TokenAuthenticationException(StrUtil.format("Token 缺少载荷 [{}]", TokenAttributes.TOKEN_TYPE_KEY)));
   }
 
   /**
@@ -36,6 +37,6 @@ class TokenUtils {
    */
   public static String getUsername(Map<String, Object> payload) throws TokenAuthenticationException {
     return Optional.ofNullable((String) payload.get(TokenAttributes.USERNAME_KEY))
-      .orElseThrow(() -> new TokenAuthenticationException("Token 缺少 " + TokenAttributes.TOKEN_TYPE_KEY + " 载荷"));
+      .orElseThrow(() -> new TokenAuthenticationException(StrUtil.format("Token 缺少载荷 [{}]", TokenAttributes.USERNAME_KEY)));
   }
 }

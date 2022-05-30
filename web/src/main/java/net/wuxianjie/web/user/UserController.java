@@ -35,7 +35,7 @@ public class UserController {
    * @return 用户列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_LIST.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_LIST.name())")
   public ResultOfPaging<ListItemOfUser> getUsers(@Valid RequestOfPaging paging,
                                                  @Valid RequestOfGetUser query) {
     setFuzzySearchValue(query);
@@ -50,7 +50,7 @@ public class UserController {
    */
   @PostMapping("add")
   @OperationLogger("新增用户")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_ADD.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_ADD.name())")
   public SimpleResultOfWriteOperation saveUser(@RequestBody @Valid RequestOfSaveUser query) {
     return userService.saveUser(query);
   }
@@ -64,7 +64,7 @@ public class UserController {
    */
   @PostMapping("update/{userId:\\d+}")
   @OperationLogger("修改用户")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_UPDATE.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_UPDATE.name())")
   public SimpleResultOfWriteOperation updateUser(@PathVariable int userId,
                                                  @RequestBody @Valid RequestOfUpdateUser query) {
     query.setUserId(userId);
@@ -80,7 +80,7 @@ public class UserController {
    */
   @PostMapping("reset-password/{userId:\\d+}")
   @OperationLogger("重置用户密码")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_RESET_PWD.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_RESET_PWD.name())")
   public SimpleResultOfWriteOperation updateUserPassword(@PathVariable int userId,
                                                          @RequestBody @Valid RequestOfResetUserPassword query) {
     query.setUserId(userId);
@@ -94,7 +94,7 @@ public class UserController {
    * @return 操作结果
    */
   @PostMapping("change-password")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_RESET_PWD.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_RESET_PWD.name())")
   public SimpleResultOfWriteOperation updateCurrentUserPassword(@RequestBody @Valid RequestOfUpdateUserPwd query) {
     if (StrUtil.equals(query.getOldPassword(), query.getNewPassword())) throw new BadRequestException("新旧密码不能相同");
 
@@ -110,7 +110,7 @@ public class UserController {
    */
   @GetMapping("del/{userId:\\d+}")
   @OperationLogger("删除用户")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_USER_DEL.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_DEL.name())")
   public SimpleResultOfWriteOperation deleteUser(@PathVariable int userId) {
     return userService.deleteUser(userId);
   }

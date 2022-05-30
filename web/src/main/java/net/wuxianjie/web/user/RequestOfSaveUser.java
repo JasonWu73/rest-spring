@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.validator.EnumValidator;
-import net.wuxianjie.web.security.SysMenu;
+import net.wuxianjie.web.security.RoleOfMenu;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotBlank;
@@ -42,7 +42,7 @@ public class RequestOfSaveUser {
   /**
    * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可。
    *
-   * @see SysMenu#value()
+   * @see RoleOfMenu#value()
    */
   private String menus;
 }

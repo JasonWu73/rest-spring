@@ -3,7 +3,7 @@ package net.wuxianjie.web.user;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import net.wuxianjie.web.security.SysMenu;
+import net.wuxianjie.web.security.RoleOfMenu;
 import net.wuxianjie.springbootcore.security.TokenUserDetails;
 
 /**
@@ -29,7 +29,7 @@ public class CustomUserDetails implements TokenUserDetails {
     /**
      * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可。
      *
-     * @see SysMenu#value()
+     * @see RoleOfMenu#value()
      */
     private String roles;
 

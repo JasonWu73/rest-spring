@@ -20,6 +20,6 @@ public class MenuController {
    */
   @GetMapping("list")
   public MenuItem getAllMenus() {
-    return SysMenu.getAllMenus();
+    return RoleOfMenu.getAllMenus();
   }
 }

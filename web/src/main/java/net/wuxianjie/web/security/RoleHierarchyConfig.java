@@ -21,7 +21,7 @@ public class RoleHierarchyConfig {
   @Bean
   public RoleHierarchy roleHierarchy() {
     RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-    roleHierarchy.setHierarchy(SysMenu.getRoleHierarchyStr());
+    roleHierarchy.setHierarchy(RoleOfMenu.getRoleHierarchyStr());
     return roleHierarchy;
   }
 }

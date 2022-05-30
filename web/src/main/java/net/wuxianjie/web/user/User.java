@@ -2,7 +2,7 @@ package net.wuxianjie.web.user;
 
 import lombok.Data;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
-import net.wuxianjie.web.security.SysMenu;
+import net.wuxianjie.web.security.RoleOfMenu;
 
 import java.time.LocalDateTime;
 
@@ -47,7 +47,7 @@ public class User {
   /**
    * 用户绑定的菜单编号，多个菜单编号以英文逗号分隔。
    *
-   * @see SysMenu#value()
+   * @see RoleOfMenu#value()
    */
   private String menus;
 }

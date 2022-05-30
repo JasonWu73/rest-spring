@@ -27,7 +27,7 @@ public class RoleController {
    * @return 角色列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_LIST.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE_LIST.name())")
   public List<Role> getAllRoles() {
     return roleService.getAllRoles();
   }
@@ -40,7 +40,7 @@ public class RoleController {
    */
   @PostMapping("add")
   @OperationLogger("新增角色")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_ADD.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE_ADD.name())")
   public SimpleResultOfWriteOperation saveRole(@RequestBody @Valid RequestOfSaveRole query) {
     return roleService.saveRole(query);
   }
@@ -54,7 +54,7 @@ public class RoleController {
    */
   @PostMapping("update/{roleId:\\d+}")
   @OperationLogger("修改角色")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_UPDATE.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE_UPDATE.name())")
   public SimpleResultOfWriteOperation updateRole(@PathVariable int roleId,
                                                  @RequestBody @Valid RequestOfUpdateRole query) {
     query.setRoleId(roleId);
@@ -69,7 +69,7 @@ public class RoleController {
    */
   @GetMapping("del/{roleId:\\d+}")
   @OperationLogger("删除角色")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.SysMenu).ROLE_ROLE_DEL.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE_DEL.name())")
   public SimpleResultOfWriteOperation deleteRole(@PathVariable int roleId) {
     return roleService.deleteRole(roleId);
   }

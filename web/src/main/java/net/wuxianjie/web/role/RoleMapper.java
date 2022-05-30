@@ -5,7 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 /**
- * 角色 SQL 操作。
+ * 与角色角相关的 SQL。
  *
  * @author 吴仙杰
  */
