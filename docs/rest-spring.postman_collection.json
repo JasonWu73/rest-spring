@@ -16,7 +16,7 @@
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.errCode === 0) {",
+									"if (jsonData.errorCode === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -48,7 +48,7 @@
 								"access-token"
 							]
 						},
-						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"username\": \"...\", // 用户名，必填\n  \"password\": \"...\" // 密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n\n{\n  \"error\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6ImFjY2VzcyIsImFjY291bnQiOiJzdSIsIm5iZiI6MTY1MzM5MTg5NiwiZXhwIjoxNjUzMzkzNjk2fQ.k9gNFBF_MMLhNgUYDAreKhJOsZVNLXIceDq0nssqyZA\",  // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6InJlZnJlc2giLCJhY2NvdW50Ijoic3UiLCJuYmYiOjE2NTMzOTE4OTYsImV4cCI6MTY1MzM5MzY5Nn0.AKTP6ANQ2iSpY8AR9IBj53LQQJjYSi5dI_oCcU4VrQM\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"username\": \"...\", // 用户名，必填\n  \"password\": \"...\" // 密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 有效期，单位秒\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6ImFjY2VzcyIsImFjY291bnQiOiJzdSIsIm5iZiI6MTY1MzM5MTg5NiwiZXhwIjoxNjUzMzkzNjk2fQ.k9gNFBF_MMLhNgUYDAreKhJOsZVNLXIceDq0nssqyZA\",  // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiJ9.eyJyb2xlcyI6InN1IiwidHlwZSI6InJlZnJlc2giLCJhY2NvdW50Ijoic3UiLCJuYmYiOjE2NTMzOTE4OTYsImV4cCI6MTY1MzM5MzY5Nn0.AKTP6ANQ2iSpY8AR9IBj53LQQJjYSi5dI_oCcU4VrQM\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				},
@@ -60,7 +60,7 @@
 							"script": {
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"if (jsonData.errCode === 0) {",
+									"if (jsonData.errorCode === 0) {",
 									"  pm.collectionVariables.set('accessToken', jsonData.data.accessToken);",
 									"  pm.collectionVariables.set('refreshToken', jsonData.data.refreshToken);",
 									"}"
@@ -91,7 +91,7 @@
 								"{{refreshToken}}"
 							]
 						},
-						"description": "## 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/refresh-token/<Refresh Token>\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/refresh-token/<Refresh Token>\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"expiresIn\": 1800, // Token 的有效期，单位秒\n    \"accessToken\": \"...\", // 用于 API 鉴权的 Token，请求头中携带：`Authorization: Bearer accessToken`\n    \"refreshToken\": \"...\" // 用于刷新鉴权信息的 Token\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
@@ -132,7 +132,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{host}}/api/v1/user/chg-pwd",
+							"raw": "{{host}}/api/v1/user/change-password",
 							"host": [
 								"{{host}}"
 							],
@@ -140,10 +140,10 @@
 								"api",
 								"v1",
 								"user",
-								"chg-pwd"
+								"change-password"
 							]
 						},
-						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"...\", // 旧密码，必填\n  \"newPassword\": \"...\", // 新密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）密码修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, //错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "## 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"oldPassword\": \"...\", // 旧密码，必填\n  \"newPassword\": \"...\", // 新密码，必填\n}\n```\n\n## 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"修改用户密码 [test]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, //错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				},
@@ -265,7 +265,7 @@
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 1, // 每页条数\n    \"total\": 5, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 25, // 用户 id\n        \"modifyTime\": \"2022-05-25 14:48:55\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 0, // 启用状态：1：启用，0：禁用\n        \"username\": \"test\", // 用户名\n        \"menus\": \"\" // 用户绑定的菜单，多个菜单以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 1, // 每页条数\n    \"total\": 5, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"userId\": 25, // 用户 id\n        \"modifyTime\": \"2022-05-25 14:48:55\", // 修改时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"enabled\": 0, // 启用状态：1：启用，0：禁用\n        \"username\": \"test\", // 用户名\n        \"menus\": \"\" // 用户绑定的菜单，多个菜单以英文逗号分隔\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -312,7 +312,7 @@
 										"add"
 									]
 								},
-								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"enabled\": 0, // 启用状态：1：启用，0：禁用，必填\n  \"username\": \"test\", // 用户名，必填\n  \"password\": \"123\", // 密码，必填\n  \"menus\": \"user,login_log\" // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）新增成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"enabled\": 0, // 启用状态：1：启用，0：禁用，必填\n  \"username\": \"test\", // 用户名，必填\n  \"password\": \"123\", // 密码，必填\n  \"menus\": \"user,login_log\" // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"新增用户 [test]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"message\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -348,7 +348,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/update/40",
+									"raw": "{{host}}/api/v1/user/update/42",
 									"host": [
 										"{{host}}"
 									],
@@ -357,10 +357,10 @@
 										"v1",
 										"user",
 										"update",
-										"40"
+										"42"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/update/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"menus\": \"user\", // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n  \"enabled\": 0 // 启用状态：1：启用，0：禁用\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/update/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"menus\": \"user\", // 用户绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n  \"enabled\": 0 // 启用状态：1：启用，0：禁用\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"修改用户 [test]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -396,7 +396,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/reset-pwd/40",
+									"raw": "{{host}}/api/v1/user/reset-password/29",
 									"host": [
 										"{{host}}"
 									],
@@ -404,11 +404,11 @@
 										"api",
 										"v1",
 										"user",
-										"reset-pwd",
-										"40"
+										"reset-password",
+										"29"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/rest-pwd/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"123\" // 密码\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）密码无需重置\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/rest-password/<用户 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"password\": \"123\" // 密码\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"重置用户密码 [test]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -447,7 +447,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/user/del/40",
+									"raw": "{{host}}/api/v1/user/del/42",
 									"host": [
 										"{{host}}"
 									],
@@ -456,10 +456,10 @@
 										"v1",
 										"user",
 										"del",
-										"40"
+										"42"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/del/<用户 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"用户（test）删除成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/user/del/<用户 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"删除用户 [test]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 失败时提示消息\n}\n```"
 							},
 							"response": []
 						}
@@ -509,7 +509,7 @@
 										"list"
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": [ // 具体数据\n    {\n      \"roleId\": 1, // 角色 id\n      \"roleName\": \"管理员\", // 角色名\n      \"menus\": \",user,login_log\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔\n    }\n  ]\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": [ // 角色列表\n    {\n      \"roleId\": 1, // 角色 id\n      \"roleName\": \"管理员\", // 角色名\n      \"menus\": \",user,login_log\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔\n    }\n  ]\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -537,7 +537,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"roleName\": \"管理员\",\n  \"menus\": \"user, role, role\"\n}",
+									"raw": "{\n  \"roleName\": \"测试\",\n  \"menus\": \"user,role,role\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -556,7 +556,7 @@
 										"add"
 									]
 								},
-								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"管理员\", // 角色名，必填\n  \"menus\": \"user,role\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）新增成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"管理员\", // 角色名，必填\n  \"menus\": \"user,role\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可，必填\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"新增角色 [测试]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -584,7 +584,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"roleName\": \"管理理（改）\",\n  \"menus\": \"  role_add,  role_del \"\n}",
+									"raw": "{\n  \"roleName\": \"测试（改）\",\n  \"menus\": \"  \"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -592,7 +592,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/role/update/11",
+									"raw": "{{host}}/api/v1/role/update/23",
 									"host": [
 										"{{host}}"
 									],
@@ -601,10 +601,10 @@
 										"v1",
 										"role",
 										"update",
-										"11"
+										"23"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/update/<角色 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"管理员\", // 角色名\n  \"menus\": \"role_add,role_del\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）修改成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/update/<角色 id>\n```\n\nJSON 请求体：\n\n```json\n{\n  \"roleName\": \"测试\", // 角色名\n  \"menus\": \"role_add,role_del\" // 角色绑定的菜单编号，多个菜单编号以英文逗号分隔，且仅需包含上级菜单编号即可\n}\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"修改角色 [测试]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						},
@@ -643,7 +643,7 @@
 									}
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/role/del/11",
+									"raw": "{{host}}/api/v1/role/del/24",
 									"host": [
 										"{{host}}"
 									],
@@ -652,10 +652,10 @@
 										"v1",
 										"role",
 										"del",
-										"11"
+										"24"
 									]
 								},
-								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/del/<角色 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"msg\": \"角色（管理员）删除成功\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 失败时提示消息\n}\n```"
+								"description": "# 请求参数\n\nURL 路径参数：\n\n```\n/api/v1/role/del/<角色 id>\n```\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": {\n    \"message\": \"删除角色 [测试]\" // 提示信息\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 失败时提示消息\n}\n```"
 							},
 							"response": []
 						}
@@ -773,14 +773,14 @@
 									"urlencoded": []
 								},
 								"url": {
-									"raw": "{{host}}/api/v1/op-log/list?pageNo=1&pageSize=10",
+									"raw": "{{host}}/api/v1/operation-log/list?pageNo=1&pageSize=10",
 									"host": [
 										"{{host}}"
 									],
 									"path": [
 										"api",
 										"v1",
-										"op-log",
+										"operation-log",
 										"list"
 									],
 									"query": [
@@ -826,7 +826,7 @@
 										}
 									]
 								},
-								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 1, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 29, // 日志 id\n        \"opTime\": \"2022-05-25 14:48:55\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id\n        \"username\": \"su\", // 用户名\n        \"reqIp\": \"127.0.0.1\", // 请求 IP\n        \"reqUri\": \"/api/v1/user/add\", // 请求 URI\n        \"methodName\": \"net.wuxianjie.web.user.UserController.saveUser\", // 目标方法的全限定名\n        \"methodMsg\": \"新增用户\", // 目标方法的描述，即操作描述\n        \"paramJson\": \"{\\\"query\\\":{\\\"enabled\\\":0,\\\"username\\\":\\\"test123\\\",\\\"password\\\":\\\"123\\\",\\\"roles\\\":\\\"\\\"}}\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"void\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+								"description": "# 请求参数\n\n详见 URL 请求参数说明。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": { // 具体数据\n    \"pageNo\": 1, // 页码\n    \"pageSize\": 10, // 每页条数\n    \"total\": 1, // 总数\n    \"list\": [ // 具体数据列表\n      {\n        \"logId\": 29, // 日志 id\n        \"operationTime\": \"2022-05-25 14:48:55\", // 操作时间，格式为 yyyy-MM-dd HH:mm:ss\n        \"userId\": 1, // 用户 id\n        \"username\": \"su\", // 用户名\n        \"requestIp\": \"127.0.0.1\", // 请求 IP\n        \"requestUri\": \"/api/v1/user/add\", // 请求 URI\n        \"methodName\": \"net.wuxianjie.web.user.UserController.saveUser\", // 目标方法的全限定名\n        \"methodMessage\": \"新增用户\", // 目标方法的描述，即操作描述\n        \"parameterJson\": \"{\\\"query\\\":{\\\"enabled\\\":0,\\\"username\\\":\\\"test123\\\",\\\"password\\\":\\\"123\\\",\\\"roles\\\":\\\"\\\"}}\", // 目标方法入参的 JSON 字符串\n        \"returnJson\": \"void\" // 目标方法返回值的 JSON 字符串\n      }\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 							},
 							"response": []
 						}
