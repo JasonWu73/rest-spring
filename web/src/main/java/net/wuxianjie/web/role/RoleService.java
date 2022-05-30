@@ -116,13 +116,13 @@ public class RoleService {
     roleToUpdate.setRoleId(oldRole.getRoleId());
 
     String newRoleName = query.getRoleName();
-    if (equalsFieldValue(newRoleName, oldRole.getRoleName())) {
+    if (notEqualsFieldValue(newRoleName, oldRole.getRoleName())) {
       needsUpdate = true;
       roleToUpdate.setRoleName(newRoleName);
     }
 
     String newMenus = query.getMenus();
-    if (equalsFieldValue(newMenus, oldRole.getMenus())) {
+    if (notEqualsFieldValue(newMenus, oldRole.getMenus())) {
       needsUpdate = true;
       roleToUpdate.setMenus(newMenus);
     }
@@ -132,7 +132,7 @@ public class RoleService {
     return Optional.of(roleToUpdate);
   }
 
-  private boolean equalsFieldValue(String newValue, String oldValue) {
+  private boolean notEqualsFieldValue(String newValue, String oldValue) {
     return newValue != null && !StringUtils.equalsIgnoreBlank(newValue, oldValue);
   }
 }
