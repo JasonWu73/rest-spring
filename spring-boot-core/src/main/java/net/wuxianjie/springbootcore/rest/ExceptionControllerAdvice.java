@@ -225,7 +225,7 @@ public class ExceptionControllerAdvice {
     if (isServerError) {
       logError(responseMessage, e);
     } else {
-      logWarn(responseMessage, e);
+      logWarn(responseMessage, e.getCause());
     }
 
     return createResponseEntity(e.getHttpStatus(), responseMessage);
@@ -250,7 +250,7 @@ public class ExceptionControllerAdvice {
   }
 
   private void logWarn(String responseMessage, Throwable e) {
-    log.warn("响应信息：{}，原始信息：{}，客户端信息：{}", responseMessage, e.getMessage(), getClientInfo());
+    log.warn("响应信息：{}，原始信息：{}，客户端信息：{}", responseMessage, e == null ? "null" : e.getMessage(), getClientInfo());
   }
 
   private void logError(String responseMessage, Throwable e) {

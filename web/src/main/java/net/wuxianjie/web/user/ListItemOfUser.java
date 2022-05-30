@@ -8,7 +8,7 @@ import net.wuxianjie.web.security.RoleOfMenu;
 import java.time.LocalDateTime;
 
 /**
- * 用户数据传输对象。
+ * 用户列表项数据。
  *
  * @author 吴仙杰
  */
