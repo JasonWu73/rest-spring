@@ -158,10 +158,10 @@ public class UserService {
   @Transactional(rollbackFor = Exception.class)
   public SimpleResultOfWriteOperation deleteUser(int userId) {
     // 检查用户是否存在
-    User toDel = getUserFromDatabaseMustBeExists(userId);
-    String username = toDel.getUsername();
+    User userToDel = getUserFromDatabaseMustBeExists(userId);
+    String username = userToDel.getUsername();
 
-    // 删除数据
+    // 删除用户数据
     userMapper.deleteByUserId(userId);
 
     return new SimpleResultOfWriteOperation(StrUtil.format("删除用户 [{}]", username));
