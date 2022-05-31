@@ -35,7 +35,7 @@ public class UserController {
    * @return 用户列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_USER_LIST.name())")
   public ResultOfPaging<ListItemOfUser> getUsers(@Valid RequestOfPaging paging,
                                                  @Valid RequestOfGetUser query) {
     setFuzzySearchValue(query);
