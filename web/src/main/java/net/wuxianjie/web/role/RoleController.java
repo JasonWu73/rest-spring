@@ -27,7 +27,7 @@ public class RoleController {
    * @return 角色列表
    */
   @GetMapping("list")
-  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE_LIST.name())")
+  @PreAuthorize("hasRole(T(net.wuxianjie.web.security.RoleOfMenu).ROLE_ROLE.name())")
   public List<Role> getAllRoles() {
     return roleService.getAllRoles();
   }
