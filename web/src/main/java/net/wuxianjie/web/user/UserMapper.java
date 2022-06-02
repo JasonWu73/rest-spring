@@ -43,18 +43,22 @@ public interface UserMapper {
    *
    * @param paging 分页参数
    * @param query  查询参数
+   * @param isSu 是否为 su 用户，仅 su 用户才会显示 su 信息
    * @return 用户分页列表
    */
   List<ListItemOfUser> findByUsernameLikeAndEnabledOrderByModifyTimeDesc(@Param("p") RequestOfPaging paging,
-                                                                         @Param("q") RequestOfGetUser query);
+                                                                         @Param("q") RequestOfGetUser query,
+                                                                         boolean isSu);
 
   /**
    * 统计用户数量。
    *
    * @param query 查询参数
+   * @param isSu 是否为 su 用户，仅 su 用户才会显示 su 信息
    * @return 符合条件的用户总数
    */
-  int countByUsernameLikeAndEnabled(@Param("q") RequestOfGetUser query);
+  int countByUsernameLikeAndEnabled(@Param("q") RequestOfGetUser query,
+                                    boolean isSu);
 
   /**
    * 保存用户数据。

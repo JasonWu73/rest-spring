@@ -33,6 +33,9 @@
       <if test="q.enabled != null">
         AND is_enabled = #{q.enabled}
       </if>
+      <if test="isSu != true">
+        AND username != 'su'
+      </if>
     </where>
   </sql>
 

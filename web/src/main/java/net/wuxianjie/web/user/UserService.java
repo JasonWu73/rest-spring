@@ -9,6 +9,7 @@ import net.wuxianjie.springbootcore.exception.NotFoundException;
 import net.wuxianjie.springbootcore.mybatis.YesOrNo;
 import net.wuxianjie.springbootcore.paging.RequestOfPaging;
 import net.wuxianjie.springbootcore.paging.ResultOfPaging;
+import net.wuxianjie.springbootcore.security.AuthenticationUtils;
 import net.wuxianjie.springbootcore.util.StringUtils;
 import net.wuxianjie.web.security.RoleOfMenu;
 import net.wuxianjie.web.shared.SimpleResultOfWriteOperation;
@@ -39,8 +40,11 @@ public class UserService {
    * @return 用户列表
    */
   public ResultOfPaging<ListItemOfUser> getUsers(RequestOfPaging paging, RequestOfGetUser query) {
-    List<ListItemOfUser> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query);
-    int total = userMapper.countByUsernameLikeAndEnabled(query);
+    // 仅 su 账号才可看到 su 用户
+    boolean isSu = isCurrentSu();
+
+    List<ListItemOfUser> users = userMapper.findByUsernameLikeAndEnabledOrderByModifyTimeDesc(paging, query, isSu);
+    int total = userMapper.countByUsernameLikeAndEnabled(query, isSu);
     return new ResultOfPaging<>(paging, total, users);
   }
 
@@ -88,6 +92,11 @@ public class UserService {
     User oldUser = getUserFromDatabaseMustBeExists(query.getUserId());
     String username = oldUser.getUsername();
 
+    // 仅 su 用户才可修改 su 账号
+    boolean isAlterSu = username.equals("su");
+    boolean isSu = isCurrentSu();
+    if (isAlterSu && !isSu) throw new BadRequestException(StrUtil.format("不可修改用户 [{}]", username));
+
     // 检查是否需要更新
     Optional<User> userToUpdate = getUserToUpdate(oldUser, query);
     if (userToUpdate.isEmpty()) return new SimpleResultOfWriteOperation("无需修改");
@@ -109,6 +118,11 @@ public class UserService {
     // 检查用户是否存在
     User oldUser = getUserFromDatabaseMustBeExists(query.getUserId());
     String username = oldUser.getUsername();
+
+    // 仅 su 用户才可修改 su 账号
+    boolean isAlterSu = username.equals("su");
+    boolean isSu = isCurrentSu();
+    if (isAlterSu && !isSu) throw new BadRequestException(StrUtil.format("不可重置密码 [{}]", username));
 
     // 检查是否需要更新
     String newRawPassword = query.getPassword();
@@ -160,6 +174,11 @@ public class UserService {
     // 检查用户是否存在
     User userToDel = getUserFromDatabaseMustBeExists(userId);
     String username = userToDel.getUsername();
+
+    // 仅 su 用户才可删除 su 账号
+    boolean isAlterSu = username.equals("su");
+    boolean isSu = isCurrentSu();
+    if (isAlterSu && !isSu) throw new BadRequestException(StrUtil.format("不可删除用户 [{}]", username));
 
     // 删除用户数据
     userMapper.deleteByUserId(userId);
@@ -229,5 +248,10 @@ public class UserService {
     if (!needsUpdate) return Optional.empty();
 
     return Optional.of(userToUpdate);
+  }
+
+  private boolean isCurrentSu() {
+    String username = AuthenticationUtils.getCurrentUser().orElseThrow().getUsername();
+    return username.equals("su");
   }
 }
