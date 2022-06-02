@@ -1,6 +1,6 @@
 package net.wuxianjie.web.security;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
+@JsonInclude
 public class MenuItem {
 
   /**
@@ -31,7 +31,18 @@ public class MenuItem {
   private String code;
 
   /**
+   * 当前用户是否拥有该菜单项。
+   */
+  private Boolean has;
+
+  /**
    * 子菜单项。
    */
   private List<MenuItem> children;
+
+  public MenuItem(String name, String code, List<MenuItem> children) {
+    this.name = name;
+    this.code = code;
+    this.children = children;
+  }
 }

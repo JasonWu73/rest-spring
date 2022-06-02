@@ -18,11 +18,11 @@ import java.util.Optional;
 public class MenuService {
 
   /**
-   * 获取当前用户的菜单项
+   * 获取全部菜单项
    *
    * @return 树形结构的全部菜单项数据
    */
-  public List<MenuItem> getCurrentUserMenus() {
+  public MenuItem getAllMenus() {
     // 获取全部菜单项
     MenuItem rootMenu = RoleOfMenu.getAllMenus();
 
@@ -31,29 +31,37 @@ public class MenuService {
     Optional<TokenUserDetails> user = AuthenticationUtils.getCurrentUser();
     String roles = user.orElseThrow().getRoles();
     List<String> codes = new ArrayList<>(Arrays.asList(roles.split(",")));
-    if (codes.contains(rootMenu.getCode())) return List.of(rootMenu);
+    if (codes.contains(rootMenu.getCode())) {
+      rootMenu.setHas(true);
+      return rootMenu;
+    }
 
     // 一级
-    List<MenuItem> menuList = new ArrayList<>();
     List<MenuItem> children = rootMenu.getChildren();
     for (MenuItem first : children) {
       if (codes.contains(first.getCode())) {
-        menuList.add(first);
+        first.setHas(true);
         continue;
       }
 
       // 二级
       for (MenuItem second : first.getChildren()) {
-        if (codes.contains(second.getCode())) menuList.add(second);
+        if (codes.contains(second.getCode())) {
+          second.setHas(true);
+          continue;
+        }
 
         // 三级
         if (second.getChildren() == null) continue;
 
         for (MenuItem third : second.getChildren()) {
-          if (codes.contains(third.getCode())) menuList.add(third);
+          if (codes.contains(third.getCode())) {
+            third.setHas(true);
+          }
         }
       }
     }
-    return menuList;
+
+    return rootMenu;
   }
 }

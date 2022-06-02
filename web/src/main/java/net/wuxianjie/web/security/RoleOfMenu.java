@@ -60,29 +60,6 @@ public enum RoleOfMenu {
    */
   private final String msg;
 
-  private static final MenuItem MENU = new MenuItem(ROLE_ROOT.msg, ROLE_ROOT.value, new ArrayList<>() {{
-    add(new MenuItem(ROLE_SYS.msg, ROLE_SYS.value, new ArrayList<>() {{
-      add(new MenuItem(ROLE_USER.msg, ROLE_USER.value, new ArrayList<>() {{
-        add(new MenuItem(ROLE_USER_LIST.msg, ROLE_USER_LIST.value, null));
-        add(new MenuItem(ROLE_USER_ADD.msg, ROLE_USER_ADD.value, null));
-        add(new MenuItem(ROLE_USER_UPDATE.msg, ROLE_USER_UPDATE.value, null));
-        add(new MenuItem(ROLE_USER_RESET_PWD.msg, ROLE_USER_RESET_PWD.value, null));
-        add(new MenuItem(ROLE_USER_DEL.msg, ROLE_USER_DEL.value, null));
-      }}));
-
-      add(new MenuItem(ROLE_ROLE.msg, ROLE_ROLE.value, new ArrayList<>() {{
-        add(new MenuItem(ROLE_ROLE_LIST.msg, ROLE_ROLE_LIST.value, null));
-        add(new MenuItem(ROLE_ROLE_ADD.msg, ROLE_ROLE_ADD.value, null));
-        add(new MenuItem(ROLE_ROLE_UPDATE.msg, ROLE_ROLE_UPDATE.value, null));
-        add(new MenuItem(ROLE_ROLE_DEL.msg, ROLE_ROLE_DEL.value, null));
-      }}));
-
-      add(new MenuItem(ROLE_LOGIN_LOG.msg, ROLE_LOGIN_LOG.value, null));
-
-      add(new MenuItem(ROLE_OP_LOG.msg, ROLE_OP_LOG.value, null));
-    }}));
-  }});
-
   /**
    * 获取符合 Spring Security 的角色层级结构字符串。
    *
@@ -137,7 +114,28 @@ public enum RoleOfMenu {
    * @return 树形结构的全部菜单项数据
    */
   public static MenuItem getAllMenus() {
-    return MENU;
+    return new MenuItem(ROLE_ROOT.msg, ROLE_ROOT.value, new ArrayList<>() {{
+      add(new MenuItem(ROLE_SYS.msg, ROLE_SYS.value, new ArrayList<>() {{
+        add(new MenuItem(ROLE_USER.msg, ROLE_USER.value, new ArrayList<>() {{
+          add(new MenuItem(ROLE_USER_LIST.msg, ROLE_USER_LIST.value, null));
+          add(new MenuItem(ROLE_USER_ADD.msg, ROLE_USER_ADD.value, null));
+          add(new MenuItem(ROLE_USER_UPDATE.msg, ROLE_USER_UPDATE.value, null));
+          add(new MenuItem(ROLE_USER_RESET_PWD.msg, ROLE_USER_RESET_PWD.value, null));
+          add(new MenuItem(ROLE_USER_DEL.msg, ROLE_USER_DEL.value, null));
+        }}));
+
+        add(new MenuItem(ROLE_ROLE.msg, ROLE_ROLE.value, new ArrayList<>() {{
+          add(new MenuItem(ROLE_ROLE_LIST.msg, ROLE_ROLE_LIST.value, null));
+          add(new MenuItem(ROLE_ROLE_ADD.msg, ROLE_ROLE_ADD.value, null));
+          add(new MenuItem(ROLE_ROLE_UPDATE.msg, ROLE_ROLE_UPDATE.value, null));
+          add(new MenuItem(ROLE_ROLE_DEL.msg, ROLE_ROLE_DEL.value, null));
+        }}));
+
+        add(new MenuItem(ROLE_LOGIN_LOG.msg, ROLE_LOGIN_LOG.value, null));
+
+        add(new MenuItem(ROLE_OP_LOG.msg, ROLE_OP_LOG.value, null));
+      }}));
+    }});
   }
 
   /**

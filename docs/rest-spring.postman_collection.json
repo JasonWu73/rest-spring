@@ -148,7 +148,7 @@
 					"response": []
 				},
 				{
-					"name": "获取当前用户的菜单项",
+					"name": "获取全部菜单项",
 					"event": [
 						{
 							"listen": "test",
@@ -188,7 +188,7 @@
 								"list"
 							]
 						},
-						"description": "# 请求参数\n\n无。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errCode\": 0, // 错误码：0：成功，1：失败\n  \"data\": [ // 具体数据\n    {\n      \"name\": \"全部\", // 菜单名称\n      \"code\": \"root\", // 菜单编号\n      \"children\": [ // 子菜单项\n        {\n          \"name\": \"系统管理\",\n          \"code\": \"sys\",\n          \"children\": [\n            ...\n          ]\n        }\n      ]\n    }\n  ]\n}\n```\n\n失败时：\n\n```json\n{\n  \"errCode\": 1, // 错误码：0：成功，1：失败\n  \"errMsg\": \"...\" // 错误信息\n}\n```"
+						"description": "# 请求参数\n\n无。\n\n# 返回值\n\n成功时：\n\n```json\n{\n  \"errorCode\": 0,\n  \"data\": {\n    \"name\": \"全部\", // 菜单名\n    \"code\": \"root\", // 菜单编号\n    \"has\": true, // 当前用户是否拥有该菜单项，true：拥有\n    \"children\": [ // 子菜单项\n      ...\n    ]\n  }\n}\n```\n\n失败时：\n\n```json\n{\n  \"errorCode\": 1, // 错误码：0：成功，1：失败\n  \"errorMessage\": \"...\" // 错误信息\n}\n```"
 					},
 					"response": []
 				}
