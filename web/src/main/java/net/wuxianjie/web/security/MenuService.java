@@ -45,6 +45,8 @@ public class MenuService {
       }
 
       // 二级
+      if (first.getChildren() == null) continue;
+
       for (MenuItem second : first.getChildren()) {
         if (codes.contains(second.getCode())) {
           second.setHas(true);
